@@ -40,12 +40,14 @@ require('lazy').setup({
             disabled_plugins = {},
         },
     },
+    config = function()
+        -- apply options and keymaps
+        -- must be put here as hook because plugin loading is async
+        require('default.config.keymaps').apply()
+        require('default.config.options').apply()
+        -- require('default.config.autocmd')
+    end,
 } --[[@as LazyConfig]])
-
-
--- apply options and keymaps
-require("default.config.options").apply()
-require("default.config.keymaps").apply()
 
 --[[
                                                     
