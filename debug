@@ -1,3 +1,10 @@
 #! /usr/bin/bash
 
-/usr/bin/nvim -u ./init.lua
+TEST_ENV=`pwd`/nvim-cache
+mkdir -p $TEST_ENV/{share,state,cache}
+
+export XDG_DATA_HOME=$TEST_ENV/share
+export XDG_STATE_HOME=$TEST_ENV/state
+export XDG_CACHE_HOME=$TEST_ENV/cache
+
+nvim -u ./init.lua $@
