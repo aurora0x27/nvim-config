@@ -1,0 +1,5 @@
+#! /usr/bin/bash
+
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
+
+nvim -u $SCRIPT_DIR/init.lua $@

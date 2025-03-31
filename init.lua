@@ -29,7 +29,10 @@ vim.opt.rtp:prepend(lazypath)
 -- import plugins
 require('lazy').setup({
     -- all the plugins' configure files should be put under `lua/plugins`
-    { import = 'default.plugins' },
+    spec = {
+        { import = "default.plugins" }, -- 這會自動加載所有 lua/default/plugins/*.lua 文件
+        -- 其他全局插件...
+    },
 } --[[@as LazySpec]], {
     -- Configure any other `lazy.nvim` configuration options here
     install = { colorscheme = { 'catppuccin' } },
