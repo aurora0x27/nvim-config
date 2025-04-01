@@ -1,6 +1,7 @@
 -- Dash board config
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
+-- using snack as dashboard
 return {
     'folke/snacks.nvim',
     config = function()
@@ -36,7 +37,7 @@ return {
                     },
                 },
                 scope = {
-                    enabled = true, -- enable highlighting the current scope
+                    enabled = false, -- enable highlighting the current scope
                     priority = 200,
                     char = '┊',
                     underline = false, -- underline the start of the scope

@@ -1,3 +1,4 @@
+if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 return {
     "akinsho/bufferline.nvim",
     dependencies = "nvim-tree/nvim-web-devicons", -- 需要图标支持

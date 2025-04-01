@@ -18,6 +18,17 @@ return {
             bg       = mocha.base,   -- 默认背景色
         }
 
+        -- 获取所有 buffer
+        local function get_buffers()
+            local buffers = {}
+            for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+                if vim.api.nvim_buf_get_option(buf, "buflisted") then
+                    table.insert(buffers, buf)
+                end
+            end
+            return buffers
+        end
+
         -- 模式指示器
         local ViMode = {
             init = function(self)
@@ -53,14 +64,6 @@ return {
                 end),
             },
         }
-
-        -- -- 文件类型指示器
-        -- local FileType = {
-        --     provider = function()
-        --         return "  " .. vim.bo.filetype .. " "
-        --     end,
-        --     hl = { fg = mocha.mauve, bold = true },
-        -- }
 
         local FileType = {
             provider = function()
@@ -115,30 +118,83 @@ return {
             CursorPos,
         }
 
-        -- tabline: demonstrate buffers
-        opts.tabline = {
-            {
-              provider = function()
-                local buffers = vim.api.nvim_list_bufs()
-                local result = " "
-                for _, buf in ipairs(buffers) do
-                  if vim.api.nvim_buf_get_option(buf, "buflisted") then
-                    local name = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(buf), ":t")
-                    local is_active = buf == vim.api.nvim_get_current_buf()
-                    if is_active then
-                      result = result .. "%#TabLineSel# " .. name .. " %#TabLine#"
-                    else
-                      result = result .. " " .. name .. " "
-                    end
-                  end
+        -- -- tabline: demonstrate buffers
+        -- opts.tabline = {
+        --     {
+        --       provider = function()
+        --         local buffers = vim.api.nvim_list_bufs()
+        --         local result = " "
+        --         for _, buf in ipairs(buffers) do
+        --           if vim.api.nvim_buf_get_option(buf, "buflisted") then
+        --             local name = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(buf), ":t")
+        --             local is_active = buf == vim.api.nvim_get_current_buf()
+        --             if is_active then
+        --               result = result .. "%#TabLineSel# " .. name .. " %#TabLine#"
+        --             else
+        --               result = result .. " " .. name .. " "
+        --             end
+        --           end
+        --         end
+        --         return result
+        --       end,
+        --       hl = { fg = "white", bg = "none", bold = true },
+        --     },
+        -- }
+
+        -- Buffer 组件
+        local BufferBlock = {
+            init = function(self)
+                self.buffers = get_buffers()
+            end,
+            static = {
+                -- 计算当前 buffer 高亮
+                get_hl = function(self, buf)
+                    return buf == vim.api.nvim_get_current_buf() and { fg = colors.text_fg, bg = colors.active, bold = true }
+                        or { fg = colors.text_fg, bg = colors.bg }
                 end
-                return result
-              end,
-              hl = { fg = "white", bg = "none", bold = true },
             },
+            {
+                provider = function(self)
+                    local result = ""
+                    for i, buf in ipairs(self.buffers) do
+                        local name = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(buf), ":t")
+                        local is_active = buf == vim.api.nvim_get_current_buf()
+                        local modified = vim.api.nvim_buf_get_option(buf, "modified")
+
+                        -- 高亮
+                        local hl = self:get_hl(buf)
+
+                        -- 格式化 buffer 名称
+                        if is_active then
+                            result = result .. "%#TabLineSel# " .. name
+                        else
+                            result = result .. "%#TabLine# " .. name
+                        end
+
+                        -- 添加未保存标识
+                        if modified then
+                            result = result .. " +"
+                        end
+
+                        -- 关闭按钮
+                        result = result .. " %X❌%X "
+                    end
+                    return result
+                end,
+                hl = { fg = colors.insert, bg = colors.bg },
+            }
         }
 
-        opts.winbar = false
+        local WinBar = {
+            condition = function()
+                return not vim.bo.filetype:match("neo%-tree") -- 在 neo-tree 里隐藏 winbar
+            end,
+            BufferBlock
+        }
+
+        require('heirline').setup {
+            winbar = WinBar
+        }
 
         -- set global status line
         vim.o.laststatus = 3
