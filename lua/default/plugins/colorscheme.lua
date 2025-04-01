@@ -5,6 +5,10 @@ return {
     priority = 1000,
     config = function()
         require('catppuccin').setup {
+            integrations = {
+                noice = true,
+                notify = true,
+            },
             flavour = 'mocha', -- latte, frappe, macchiato, mocha
             background = { -- :h background
                 light = 'latte',

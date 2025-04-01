@@ -9,6 +9,14 @@ function keymaps.apply()
     vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Move to below window" })
     vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Move to above window" })
     vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
+
+    -- telescope
+    vim.keymap.set("n", "<Leader>ff", ":Telescope find_files<Enter>", { desc = "Telescope Find Files" })
+    vim.keymap.set("n", "<Leader>fo", ":Telescope oldfiles<Enter>", { desc = "Telescope Find Recent Files" })
+    vim.keymap.set("n", "<Leader>fw", ":Telescope live_grep<Enter>", { desc = "Telescope Find Word" })
+
+    vim.keymap.set("n", "H", ":bp<Enter>")
+    vim.keymap.set("n", "L", ":bn<Enter>")
 end
 
 return keymaps
