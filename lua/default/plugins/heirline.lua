@@ -1,3 +1,4 @@
+-- Status line
 return {
     'rebelot/heirline.nvim',
     opts = function(_, opts)
@@ -114,6 +115,32 @@ return {
             CursorPos,
         }
 
+        -- tabline: demonstrate buffers
+        opts.tabline = {
+            {
+              provider = function()
+                local buffers = vim.api.nvim_list_bufs()
+                local result = " "
+                for _, buf in ipairs(buffers) do
+                  if vim.api.nvim_buf_get_option(buf, "buflisted") then
+                    local name = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(buf), ":t")
+                    local is_active = buf == vim.api.nvim_get_current_buf()
+                    if is_active then
+                      result = result .. "%#TabLineSel# " .. name .. " %#TabLine#"
+                    else
+                      result = result .. " " .. name .. " "
+                    end
+                  end
+                end
+                return result
+              end,
+              hl = { fg = "white", bg = "none", bold = true },
+            },
+        }
+
         opts.winbar = false
+
+        -- set global status line
+        vim.o.laststatus = 3
     end,
 }

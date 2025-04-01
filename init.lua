@@ -10,10 +10,39 @@
 --]]
 
 -- TODO: set an sepearate environment while debugging
-local test_path = './nvim-cache'
-vim.fn.mkdir(test_path, 'p')
-vim.o.runtimepath = vim.o.runtimepath .. ',' .. test_path .. ', /home/aurora/Desktop/projects/debug/nvim-config'
+function set_rtpath()
+    -- local test_path = vim.fn.fnamemodify("./nvim-cache", ":p") -- 轉換為絕對路徑
+    vim.opt.rtp:prepend("/home/aurora/Desktop/projects/debug/nvim-config")
+    -- vim.opt.rtp:prepend(test_path)
+    -- vim.opt.rtp:prepend(vim.fn.fnamemodify(".", ":p")) -- 把當前目錄也加進去
+end
 -- TODO: end env settings
+
+-- FIXME: Move this when using it
+set_rtpath()
+-- END FIXME
+
+-- Load user defined settings after Lazy initialization
+vim.api.nvim_create_autocmd("User", {
+    pattern = "LazyVimStarted",
+    callback = function()
+        vim.schedule(function()
+            set_rtpath()
+            require('default.config.keymaps').apply()
+            require('default.config.options').apply()
+            require('default.config.autocmd').apply()
+        end)
+    end,
+})
+
+-- require('default.config.keymaps').apply()
+-- require('default.config.options').apply()
+
+-- set global leader
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
+require('default.config.preload').apply()
 
 -- set lazy path
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -46,8 +75,6 @@ require('lazy').setup({
     config = function()
         -- apply options and keymaps
         -- must be put here as hook because plugin loading is async
-        require('default.config.keymaps').apply()
-        require('default.config.options').apply()
         -- require('default.config.autocmd')
     end,
 } --[[@as LazyConfig]])

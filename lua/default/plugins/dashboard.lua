@@ -1,6 +1,9 @@
+-- Dash board config
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 return {
     'goolord/alpha-nvim',
+    priority = 2000,
+    lazy = false,
     requires = { 'kyazdani42/nvim-web-devicons' },
     config = function()
         local alpha = require 'alpha'
@@ -34,19 +37,16 @@ return {
             ' ⡝⡵⡕⡀⠑⠳⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠛⢉⡠⡲⡫⡪⡪⡣ ',
         }
 
-        dashboard.config.layout = {
-            { type = 'padding', val = 10 },
-            dashboard.section.header,
-            { type = 'padding', val = 2 },
-            dashboard.section.buttons,
-            { type = 'padding', val = 1 },
-            dashboard.section.footer,
+        dashboard.section.header.val = logo
+
+        dashboard.section.header.opts = {
+            position = "center", -- 让 logo 居中
+            hl = "Function",
         }
 
-        dashboard.section.header.val = logo
-        dashboard.section.header.opts = {
-            position = 'center',
-            hl = 'Function'
+        dashboard.opts.opts = {
+            number = false,
+            relativenumber = false,
         }
 
         --
@@ -59,18 +59,31 @@ return {
 
         dashboard.section.buttons.val = {
             dashboard.button('SPC n  ', '  New File', ':ene <BAR> startinsert<CR>'),
-            dashboard.button('SPC f f', '  Find File'),
-            dashboard.button('SPC f o', '󰈙  Recents'),
-            dashboard.button('SPC f w', '󰈭  Find Word'),
-            dashboard.button("SPC f '", '  Bookmarks'),
-            dashboard.button("SPC S l", '  Last Session'),
+            dashboard.button('SPC f f', '  Find File', ':Telescope find_files<CR>'),
+            dashboard.button('SPC f o', '󰈙  Recents', ':Telescope oldfiles<CR>'),
+            dashboard.button('SPC f w', '󰈭  Find Word', ':Telescope live_grep<CR>'),
+            -- dashboard.button("SPC f '", '  Bookmarks'),
+            dashboard.button("SPC S l", '  Last Session', [[:lua require("persistence").load({ last = true })<CR>]]),
         }
-        dashboard.section.buttons.opts = {
-            spacing = 1,
-        }
+
+        -- dashboard.button("ff", "  Find File", ":Telescope find_files<CR>"),
+        -- dashboard.button("fo", "󰈙  Recents", ":Telescope oldfiles<CR>"),
+        -- dashboard.button("fw", "󰈭  Find Word", ":Telescope live_grep<CR>"),
+        -- dashboard.button("Sl", "  Last Session", [[:lua require("persistence").load({ last = true })<CR>]]),
 
         dashboard.section.footer.val = footer()
         dashboard.section.footer.opts.hl = 'Type'
+
+        local lines = vim.o.lines
+
+        dashboard.config.layout = {
+            { type = 'padding', val = math.floor(lines / 4) },
+            dashboard.section.header,
+            { type = 'padding', val = 2 },
+            dashboard.section.buttons,
+            { type = 'padding', val = 1 },
+            dashboard.section.footer,
+        }
 
         alpha.setup(dashboard.opts)
 

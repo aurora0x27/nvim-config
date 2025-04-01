@@ -1,3 +1,4 @@
+-- Catppuccin Mocha scheme
 return {
     'catppuccin/nvim',
     name = 'catppuccin',
