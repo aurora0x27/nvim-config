@@ -187,8 +187,23 @@ return {
 
         local WinBar = {
             condition = function()
-                return not vim.bo.filetype:match("neo%-tree") -- 在 neo-tree 里隐藏 winbar
+                -- 使用预定义的排除列表
+                local exclude_ft = {
+                    ["neo-tree"] = true,
+                    ["TelescopePrompt"] = true,
+                    ["qf"] = true,
+                    ["help"] = true,
+                    ["terminal"] = true,
+                    ["toggleterm"] = true,
+                    ["NvimTree"] = true
+                }
+              
+                return vim.bo.buftype == ""
+                    and not exclude_ft[vim.bo.filetype]
+                    and not vim.wo.previewwindow
+                    and not vim.wo.diff
             end,
+            update = { "WinEnter", "BufEnter", "FileType" }, -- 动态更新
             BufferBlock
         }
 

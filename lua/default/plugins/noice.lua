@@ -1,3 +1,5 @@
+-- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+
 return {
     "folke/noice.nvim",
     event = "VeryLazy",
@@ -28,6 +30,15 @@ return {
                 backend = "nui",  -- 使用 `nui.nvim` 來美化補全菜單
             },
             lsp = {
+                hover = {
+                    enabled = true,  -- 允許 noice 接管 hover
+                    opts = {
+                        border = { style = "single" },  -- 邊框樣式
+                        win_options = {
+                            winbar = nil,  -- 明確禁用 Winbar
+                        },
+                    },
+                },
                 override = {
                     ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
                     ["vim.lsp.util.stylize_markdown"] = true,
@@ -44,3 +55,42 @@ return {
         })
     end
 }
+
+-- ---@diagnostic disable: missing-fields
+-- return {
+--     'folke/noice.nvim',
+--     keys = { ':', '/', '?' }, -- lazy load cmp on more keys along with insert mode
+--     config = function()
+--         require('noice').setup {
+--             presets = {
+--                 command_palette = false,
+--                 lsp_doc_border = {
+--                     views = {
+--                         hover = {
+--                             border = {
+--                                 style = 'single',
+--                             },
+--                         },
+--                     },
+--                 },
+--             },
+--             messages = {
+--                 enabled = true,
+--             },
+--             popupmenu = {
+--                 enabled = true,
+--             },
+--             lsp = {
+--                 signature = {
+--                     enabled = false,
+--                 },
+--                 progress = {
+--                     enabled = false,
+--                 },
+--                 hover = {
+--                     enabled = false,
+--                 },
+--             },
+--         }
+--     end,
+-- }

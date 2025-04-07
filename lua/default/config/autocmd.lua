@@ -13,6 +13,20 @@ function autocmd.apply()
             })
         end,
     })
+
+    -- -- add border
+    -- vim.api.nvim_create_autocmd("LspAttach", {
+    --     callback = function(args)
+    --         print("Notice callback called")
+    --         vim.keymap.set("n", "K", function()
+    --             vim.lsp.buf.hover({
+    --                 border = "single", -- 强制边框
+    --                 focusable = true
+    --             })
+    --         end, { buffer = args.buf })
+    --     end
+    -- })
+
 end
 
 return autocmd
