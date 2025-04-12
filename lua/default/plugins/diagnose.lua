@@ -1,7 +1,11 @@
-if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+-- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
 return {
     "rachartier/tiny-inline-diagnostic.nvim",
+    dependencies = {
+        -- to display git information
+        "lewis6991/gitsigns.nvim"
+    },
     event = "VeryLazy", -- Or `LspAttach`
     priority = 1000, -- needs to be loaded in first
     config = function()
@@ -13,7 +17,7 @@ return {
             -- "ghost", "simple", "nonerdfont", "amongus"
             preset = "modern",
 
-            transparent_bg = false, -- Set the background of the diagnostic to transparent
+            transparent_bg = true, -- Set the background of the diagnostic to transparent
 
             hi = {
                 error = "DiagnosticError", -- Highlight group for error messages
@@ -36,7 +40,7 @@ return {
                 show_source = false,
 
                 -- Use icons defined in the diagnostic configuration
-                use_icons_from_diagnostic = false,
+                use_icons_from_diagnostic = true,
 
                 -- Set the arrow icon to the same color as the first diagnostic severity
                 set_arrow_to_diag_color = false,
@@ -110,7 +114,10 @@ return {
                 -- format = function(diagnostic)
                 --     return diagnostic.message .. " [" .. diagnostic.source .. "]"
                 -- end
-                format = nil,
+
+                format = function(diagnostic)
+                    return diagnostic.message .. " [" .. diagnostic.source .. "]"
+                end,
 
 
                 virt_texts = {

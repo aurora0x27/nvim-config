@@ -1,13 +1,13 @@
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
--- Status line
 return {
     'rebelot/heirline.nvim',
     opts = function(_, opts)
         local conditions = require("heirline.conditions")
 
-        local utils = require("heirline.utils")
-        
-        local mocha = require("catppuccin.palettes").get_palette("mocha") -- 选择 "mocha" 配色
+        -- local utils = require("heirline.utils")
+
+        -- import colors from catppuccin
+        local mocha = require("catppuccin.palettes").get_palette("mocha")
 
         -- 颜色定义
         local colors = {
@@ -31,7 +31,65 @@ return {
             return buffers
         end
 
-        -- 模式指示器
+        local GitStatus = {
+            condition = conditions.is_git_repo,
+            init = function(self)
+                self.status = vim.b.gitsigns_status_dict or {}
+            end,
+            {
+                provider = function(self)
+                    local count = self.status.added or 0
+                    return count > 0 and (" "..count .. " ") or ""
+                end,
+                hl = { fg = mocha.green }
+            },
+            {
+                provider = function(self)
+                    local count = self.status.changed or 0
+                    return count > 0 and (" "..count .. " " ) or ""
+                end,
+                hl = { fg = mocha.yellow }
+            },
+            {
+                provider = function(self)
+                    local count = self.status.removed or 0
+                    return count > 0 and (" "..count .. " ") or ""
+                end,
+                hl = { fg = mocha.red }
+            },
+            hl = { bg = mocha.bg }
+        }
+
+        local Diagnostics = {
+            condition = conditions.has_diagnostics,
+            init = function(self)
+                self.errors = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR })
+                self.warnings = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.WARN })
+                self.hints = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.HINT })
+                self.info = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.INFO })
+            end,
+            {
+                provider = function(self)
+                  return self.errors > 0 and (" " .. self.errors .. " ") or ""
+                end,
+                hl = { fg = mocha.red }
+            },
+            {
+                provider = function(self)
+                  return self.warnings > 0 and (" " .. self.warnings .. " ") or ""
+                end,
+                hl = { fg = mocha.yellow }
+            },
+            {
+                provider = function(self)
+                  return self.hints > 0 and (" " .. self.hints .. " ") or ""
+                end,
+                hl = { fg = mocha.green }
+            },
+            hl = { bg = colors.bg }
+        }
+
+        -- Mode
         local ViMode = {
             init = function(self)
                 self.mode = vim.fn.mode()
@@ -86,23 +144,23 @@ return {
                 self.cwd = vim.fn.fnamemodify(cwd, ":~")
             end,
             provider = function(self)
-                return "  " .. self.cwd .. " "
+                return " " .. self.cwd .. " "
             end,
             hl = { fg = colors.text_fg, bold = true },
         }
 
-        -- LSP 指示器
+        -- Lsp status
         local LSP = {
             condition = conditions.lsp_attached,
             provider = function()
                 local clients = vim.lsp.get_active_clients()
                 if next(clients) == nil then return "" end
-                return " " .. clients[1].name .. " "
+                return " " .. clients[1].name .. " "
             end,
             hl = { fg = colors.normal, bold = true },
         }
 
-        -- 光标位置
+        -- Cursor position
         local CursorPos = {
             provider = function()
                 return string.format(" %d:%d ", vim.fn.line("."), vim.fn.col("."))
@@ -110,12 +168,14 @@ return {
             hl = { fg = colors.text_fg, bold = true },
         }
 
-        -- 状态栏结构
+        -- Status line layout
         opts.statusline = {
             ViMode,
             FileType,
+            GitStatus,
             WorkDir,
             { provider = "%=" }, -- 居中填充
+            Diagnostics,
             LSP,
             CursorPos,
         }
