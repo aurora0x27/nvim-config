@@ -8,11 +8,14 @@ function autocmd.apply()
         pattern = "*",
         callback = function()
             vim.highlight.on_yank({
-                higroup = "IncSearch",  -- 高亮组，Astronvim 使用 IncSearch
-                timeout = 200,          -- 高亮持续时间（毫秒）
+                higroup = "IncSearch",
+                timeout = 200,
             })
         end,
     })
+
+    -- Do not display warnings
+    vim.deprecate = function() end
 
     -- -- add border
     -- vim.api.nvim_create_autocmd("LspAttach", {

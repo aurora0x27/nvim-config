@@ -1,8 +1,10 @@
+-- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 -- Status line
 return {
     'rebelot/heirline.nvim',
     opts = function(_, opts)
         local conditions = require("heirline.conditions")
+
         local utils = require("heirline.utils")
         
         local mocha = require("catppuccin.palettes").get_palette("mocha") -- 选择 "mocha" 配色
@@ -43,7 +45,7 @@ return {
                     c = "COMMAND",
                     R = "REPLACE",
                 }
-                return " " .. (mode_map[self.mode] or self.mode) .. " "
+                return " " .. (mode_map[self.mode] or "V-BLOCK") .. " "
             end,
             hl = function(self)
                 local mode_hl = {
@@ -54,7 +56,7 @@ return {
                     c = colors.command,
                     R = colors.replace,
                 }
-                return { fg = "black", bg = mode_hl[self.mode] or colors.normal, bold = true }
+                return { fg = "black", bg = mode_hl[self.mode] or colors.visual, bold = true }
             end,
             update = {
                 "ModeChanged",
@@ -97,7 +99,7 @@ return {
                 if next(clients) == nil then return "" end
                 return " " .. clients[1].name .. " "
             end,
-            hl = { fg = "cyan", bold = true },
+            hl = { fg = colors.normal, bold = true },
         }
 
         -- 光标位置
@@ -161,23 +163,20 @@ return {
                         local is_active = buf == vim.api.nvim_get_current_buf()
                         local modified = vim.api.nvim_buf_get_option(buf, "modified")
 
-                        -- 高亮
                         local hl = self:get_hl(buf)
 
-                        -- 格式化 buffer 名称
-                        if is_active then
-                            result = result .. "%#TabLineSel# " .. name
-                        else
-                            result = result .. "%#TabLine# " .. name
-                        end
-
-                        -- 添加未保存标识
+                        -- 添加未保存標誌
                         if modified then
                             result = result .. " +"
                         end
 
-                        -- 关闭按钮
-                        result = result .. " %X❌%X "
+                        -- 顯示buffer名稱
+                        if is_active then
+                            -- 激活的時候帶上'x'代表關閉標誌
+                            result = result .. "%#TabLineSel# " .. name .. " %Xx%X "
+                        else
+                            result = result .. "%#TabLine# " .. name .. " "
+                        end
                     end
                     return result
                 end,
@@ -195,7 +194,8 @@ return {
                     ["help"] = true,
                     ["terminal"] = true,
                     ["toggleterm"] = true,
-                    ["NvimTree"] = true
+                    ["NvimTree"] = true,
+                    ["nofile"] = true,
                 }
               
                 return vim.bo.buftype == ""

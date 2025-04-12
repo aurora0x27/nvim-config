@@ -33,7 +33,7 @@ return {
                 hover = {
                     enabled = true,  -- 允許 noice 接管 hover
                     opts = {
-                        border = { style = "single" },  -- 邊框樣式
+                        border = { style = "rounded" },  -- 邊框樣式
                         win_options = {
                             winbar = nil,  -- 明確禁用 Winbar
                         },

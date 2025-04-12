@@ -20,7 +20,7 @@ return {
                   install_args = pip_args,
                 },
                 ui = {
-                  border = 'single',
+                  border = 'rounded',
                   width = 0.7,
                   height = 0.7,
                 },
@@ -33,7 +33,7 @@ return {
         local lspconfig = require 'lspconfig'
 
         vim.lsp.buf.hover({
-            border = "round", -- 强制边框
+            border = "rounded", -- 强制边框
             focusable = true
         })
 

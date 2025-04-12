@@ -10,19 +10,19 @@ return {
         local highlights = {
             { "NotifyERRORBorder", mocha.red },
             { "NotifyWARNBorder", mocha.yellow },
-            { "NotifyINFOBorder", mocha.green },
+            { "NotifyINFOBorder", mocha.blue },
             { "NotifyDEBUGBorder", mocha.subtext0 },
             { "NotifyTRACEBorder", mocha.mauve },
 
             { "NotifyERRORIcon", mocha.red },
             { "NotifyWARNIcon", mocha.yellow },
-            { "NotifyINFOIcon", mocha.green },
+            { "NotifyINFOIcon", mocha.blue },
             { "NotifyDEBUGIcon", mocha.subtext0 },
             { "NotifyTRACEIcon", mocha.mauve },
 
             { "NotifyERRORTitle", mocha.red },
             { "NotifyWARNTitle", mocha.yellow },
-            { "NotifyINFOTitle", mocha.green },
+            { "NotifyINFOTitle", mocha.blue },
             { "NotifyDEBUGTitle", mocha.subtext0 },
             { "NotifyTRACETitle", mocha.mauve },
         }
@@ -34,18 +34,36 @@ return {
 
         -- 让 NotifyBody 继承 Normal
         local body_highlights = { "NotifyERRORBody", "NotifyWARNBody", "NotifyINFOBody", "NotifyDEBUGBody", "NotifyTRACEBody" }
+
         for _, hl in ipairs(body_highlights) do
             vim.api.nvim_set_hl(0, hl, { link = "Normal" })
         end
+
+        -- local icons = {
+        --     [vim.log.levels.ERROR] = "",
+        --     [vim.log.levels.WARN] = "",
+        --     [vim.log.levels.INFO] = "",
+        --     [vim.log.levels.DEBUG] = "",
+        --     [vim.log.levels.TRACE] = "✎",
+        -- }
+        -- local icon = icons[notif.level] or "󰂚"
 
         -- 配置 nvim-notify
         require("notify").setup({
             background_colour = mocha.base,
             fps = 60,
-            render = "minimal",
+            max_width = 80,  -- 最大宽度
+            max_height = 30, -- 最大高度
             stages = "fade_in_slide_out",
             timeout = 3000,
-            top_down = true, -- 让通知从下往上弹出
+            top_down = true,    -- 通知从底部弹出
+            icons = {
+                ERROR = "",
+                WARN = "",
+                INFO = "",
+                DEBUG = "",
+                TRACE = "✎",
+            },
         })
 
         vim.notify = require("notify")
