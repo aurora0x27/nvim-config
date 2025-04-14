@@ -1,3 +1,5 @@
+-- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+
 return {
     'saghen/blink.cmp',
     -- optional: provides snippets for the snippet source

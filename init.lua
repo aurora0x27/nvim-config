@@ -59,13 +59,15 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup({
     -- all the plugins' configure files should be put under `lua/plugins`
     spec = {
-        { import = "default.plugins" }, -- 這會自動加載所有 lua/default/plugins/*.lua 文件
-        -- 其他全局插件...
+        { import = "default.plugins" },
     },
-} --[[@as LazySpec]], {
+-- }, --[[@as LazySpec]] {
     -- Configure any other `lazy.nvim` configuration options here
     install = { colorscheme = { 'catppuccin' } },
-    ui = { backdrop = 100 },
+    ui = {
+        backdrop = 100,
+        border = "rounded",
+    },
     performance = {
         rtp = {
             -- disable some rtp plugins, add more to your liking

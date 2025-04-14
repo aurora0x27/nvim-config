@@ -246,7 +246,6 @@ return {
 
         local WinBar = {
             condition = function()
-                -- 使用预定义的排除列表
                 local exclude_ft = {
                     ["neo-tree"] = true,
                     ["TelescopePrompt"] = true,
@@ -263,12 +262,12 @@ return {
                     and not vim.wo.previewwindow
                     and not vim.wo.diff
             end,
-            update = { "WinEnter", "BufEnter", "FileType" }, -- 动态更新
+            update = { "WinEnter", "BufEnter", "FileType" },
             BufferBlock
         }
 
         require('heirline').setup {
-            winbar = WinBar
+            -- winbar = WinBar
         }
 
         -- set global status line

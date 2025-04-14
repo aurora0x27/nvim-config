@@ -2,7 +2,7 @@
 
 return {
     "folke/noice.nvim",
-    event = "VeryLazy",
+    event = "UIEnter",
     dependencies = {
         "MunifTanjim/nui.nvim",
         "rcarriga/nvim-notify",
@@ -50,7 +50,7 @@ return {
                 command_palette = true,  -- 啟用命令面板
                 long_message_to_split = true,
                 inc_rename = false,
-                lsp_doc_border = false,
+                lsp_doc_border = true,
             },
         })
     end
