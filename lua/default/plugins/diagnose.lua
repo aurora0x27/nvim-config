@@ -1,4 +1,6 @@
--- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+-- Diagnose info
+
+if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
 return {
     "rachartier/tiny-inline-diagnostic.nvim",
@@ -108,6 +110,7 @@ return {
                     -- Number of characters after which to break the line
                     after = 30,
                 },
+
 
                 -- Custom format function for diagnostic messages
                 -- Example:

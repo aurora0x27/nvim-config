@@ -1,9 +1,13 @@
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
+
 return {
     'saghen/blink.cmp',
     -- optional: provides snippets for the snippet source
-    dependencies = { 'rafamadriz/friendly-snippets' },
+    dependencies = {
+        'rafamadriz/friendly-snippets',
+        'catppuccin/nvim',
+    },
 
     -- use a release tag to download pre-built binaries
     version = '1.*',
@@ -85,5 +89,5 @@ return {
         -- See the fuzzy documentation for more information
         fuzzy = { implementation = "prefer_rust_with_warning" }
     },
-    opts_extend = { "sources.default" }
+    opts_extend = { "sources.default" },
 }
