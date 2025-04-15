@@ -4,13 +4,16 @@
 
 return {
     "nvim-neo-tree/neo-tree.nvim",
+
     branch = "v3.x",
+
     dependencies = {
         "nvim-lua/plenary.nvim",
         "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
         "MunifTanjim/nui.nvim",
         -- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
     },
+
     config = function()
         require("neo-tree").setup({
             close_if_last_window = true,
@@ -18,9 +21,41 @@ return {
                 follow_current_file = {enabled = true},
                 hijack_netrw = true,
             },
+            diagnostics = {
+                enable = true,
+                show_on_dirs = true,
+                severity = { min = vim.diagnostic.severity.HINT, max = vim.diagnostic.severity.ERROR },
+                icons = {
+                    hint = " ",
+                    info = " ",
+                    warn = " ",
+                    error = " ",
+                }
+            },
+            symbols = {
+                git = {
+                  added    = " ",
+                  deleted  = " ",
+                  modified = " ",
+                  renamed  = "➜ ",
+                  untracked = "* "
+                },
+                folder = {
+                  arrow_closed = " ",
+                  arrow_open   = " ",
+                  default      = " ",
+                  open         = " ",
+                  empty        = " ",
+                },
+                file = {
+                  default = " ",
+                  symlink = " "
+                }
+            }
+
         })
 
-        vim.keymap.set("n", "<leader>e", ":Neotree toggle<CR>", { desc = "Toggle NeoTree file explorer" })
+        vim.keymap.set("n", "<leader>e", ":Neotree toggle<CR>", { desc = "Toggle NeoTree file explorer", noremap = true, silent = true })
     end,
 }
 

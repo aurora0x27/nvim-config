@@ -33,7 +33,6 @@ function autocmd.apply()
     --     end
     -- })
 
-
     -- set Blink border highlight
     vim.api.nvim_set_hl(0, "BlinkCmpMenuBorder", { fg = mocha.blue })
     vim.api.nvim_set_hl(0, "BlinkCmpDocBorder", { fg = mocha.blue })

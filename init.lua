@@ -64,7 +64,10 @@ require('lazy').setup({
     },
 -- }, --[[@as LazySpec]] {
     -- Configure any other `lazy.nvim` configuration options here
-    install = { colorscheme = { 'catppuccin' } },
+
+    install = { 
+        colorscheme = { 'catppuccin' },
+    },
     ui = {
         backdrop = 100,
         border = "rounded",
