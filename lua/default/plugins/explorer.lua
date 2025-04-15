@@ -4,58 +4,165 @@
 
 return {
     "nvim-neo-tree/neo-tree.nvim",
-
     branch = "v3.x",
 
     dependencies = {
         "nvim-lua/plenary.nvim",
-        "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
+        "nvim-tree/nvim-web-devicons",
         "MunifTanjim/nui.nvim",
-        -- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
     },
 
     config = function()
         require("neo-tree").setup({
             close_if_last_window = true,
-            filesystem = {
-                follow_current_file = {enabled = true},
-                hijack_netrw = true,
-            },
-            diagnostics = {
-                enable = true,
-                show_on_dirs = true,
-                severity = { min = vim.diagnostic.severity.HINT, max = vim.diagnostic.severity.ERROR },
-                icons = {
-                    hint = " ",
-                    info = " ",
-                    warn = " ",
-                    error = " ",
-                }
-            },
-            symbols = {
-                git = {
-                  added    = " ",
-                  deleted  = " ",
-                  modified = " ",
-                  renamed  = "➜ ",
-                  untracked = "* "
-                },
-                folder = {
-                  arrow_closed = " ",
-                  arrow_open   = " ",
-                  default      = " ",
-                  open         = " ",
-                  empty        = " ",
-                },
-                file = {
-                  default = " ",
-                  symlink = " "
-                }
-            }
+            enable_git_status = true,
+            enable_diagnostics = true,
 
+            window = {
+                width = 30,
+            },
+
+            filesystem = {
+                follow_current_file = { enabled = true },
+                hijack_netrw = true,
+                renderers = {
+                    directory = {
+                        { "icon" },
+                        { "name" },
+                    },
+                    file = {
+                        {
+                            "icon",
+                            zindex = 10,
+                        },
+                        {
+
+                            "container",
+                            width = "100%",
+                            content = {
+                                {
+                                    "name",
+                                    zindex = 10,
+                                },
+                                {
+                                    "diagnostics",
+                                    align = "right",
+                                    zindex = 40,
+                                    overlap = true,
+                                },
+                                {
+                                    "git_status",
+                                    align = "right",
+                                    zindex = 40,
+                                    overlap = true,
+                                }
+                            }
+                        },
+                    },
+                },
+            },
+
+            -- git_status = {
+            --     renderers = {
+            --         directory = {
+            --             { "icon" },
+            --             { "name" },
+            --         },
+            --         file = {
+            --             { "icon" },
+            --             {
+            --                 "name",
+            --                 zindex = 10,
+            --             },
+            --             {
+            --                 "diagnostics",
+            --                 align = "right",
+            --                 zindex = 20,
+            --                 right_padding = 0,
+            --             },
+            --             {
+            --                 "git_status",
+            --                 align = "right",
+            --                 zindex = 20,
+            --                 right_padding = 1,
+            --             },
+            --         },
+            --     },
+            -- },
+
+            -- buffers = {
+            --     renderers = {
+            --         directory = {
+            --             { "icon" },
+            --             { "name" },
+            --         },
+            --         file = {
+            --             { "icon" },
+            --             {
+            --                 "name",
+            --                 zindex = 10,
+            --             },
+            --             {
+            --                 "diagnostics",
+            --                 align = "right",
+            --                 zindex = 20,
+            --                 right_padding = 0,
+            --             },
+            --             {
+            --                 "git_status",
+            --                 align = "right",
+            --                 zindex = 20,
+            --                 right_padding = 1,
+            --             },
+            --         },
+            --     },
+            -- },
+
+            default_component_configs = {
+                icon = {
+                    folder_closed = "",
+                    folder_open = "",
+                    folder_empty = "",
+                    default = "",
+                    highlight = "NeoTreeFileIcon",
+                },
+                git_status = {
+                    symbols = {
+                        added     = "",
+                        deleted   = "",
+                        modified  = "",
+                        renamed   = "➜",
+                        untracked = "★",
+                        ignored   = "◌",
+                        unstaged  = "✗",
+                        staged    = "✓",
+                        conflict  = "",
+                    },
+                },
+
+                diagnostics = {
+                    enable = true,
+                    show_on_dirs = true,
+                    severity = {
+                        min = vim.diagnostic.severity.HINT,
+                        max = vim.diagnostic.severity.ERROR,
+                    },
+                    symbols = {
+                        hint = " ",
+                        info = " ",
+                        warn = " ",
+                        error = " ",
+                    },
+                },
+
+            },
         })
 
-        vim.keymap.set("n", "<leader>e", ":Neotree toggle<CR>", { desc = "Toggle NeoTree file explorer", noremap = true, silent = true })
+        vim.keymap.set("n", "<leader>e", ":Neotree toggle<CR>", {
+            desc = "Toggle NeoTree file explorer",
+            noremap = true,
+            silent = true,
+        })
     end,
 }
 
