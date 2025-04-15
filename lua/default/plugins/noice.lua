@@ -10,8 +10,8 @@ return {
     config = function()
         require("noice").setup({
             cmdline = {
-                enabled = true,  -- 啟用浮動命令行
-                view = "cmdline_popup",  -- 使用浮動窗口樣式
+                enabled = true,
+                view = "cmdline_popup",
                 format = {
                     cmdline = { icon = "" },
                     search_down = { icon = " " },
@@ -23,19 +23,19 @@ return {
             },
             messages = {
                 enabled = true,
-                view = "notify",  -- 使用 `nvim-notify` 來顯示消息
+                view = "notify",
             },
             popupmenu = {
                 enabled = true,
-                backend = "nui",  -- 使用 `nui.nvim` 來美化補全菜單
+                backend = "nui",
             },
             lsp = {
                 hover = {
-                    enabled = true,  -- 允許 noice 接管 hover
+                    enabled = true,
                     opts = {
-                        border = { style = "rounded" },  -- 邊框樣式
+                        border = { style = "rounded" },
                         win_options = {
-                            winbar = nil,  -- 明確禁用 Winbar
+                            winbar = nil,
                         },
                     },
                 },
@@ -46,8 +46,8 @@ return {
                 },
             },
             presets = {
-                bottom_search = false,  -- 禁用底部搜索
-                command_palette = true,  -- 啟用命令面板
+                bottom_search = false,
+                command_palette = true,
                 long_message_to_split = true,
                 inc_rename = false,
                 lsp_doc_border = true,
@@ -55,42 +55,3 @@ return {
         })
     end
 }
-
--- ---@diagnostic disable: missing-fields
--- return {
---     'folke/noice.nvim',
---     keys = { ':', '/', '?' }, -- lazy load cmp on more keys along with insert mode
---     config = function()
---         require('noice').setup {
---             presets = {
---                 command_palette = false,
---                 lsp_doc_border = {
---                     views = {
---                         hover = {
---                             border = {
---                                 style = 'single',
---                             },
---                         },
---                     },
---                 },
---             },
---             messages = {
---                 enabled = true,
---             },
---             popupmenu = {
---                 enabled = true,
---             },
---             lsp = {
---                 signature = {
---                     enabled = false,
---                 },
---                 progress = {
---                     enabled = false,
---                 },
---                 hover = {
---                     enabled = false,
---                 },
---             },
---         }
---     end,
--- }

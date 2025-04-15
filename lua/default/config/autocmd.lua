@@ -20,19 +20,6 @@ function autocmd.apply()
     -- Do not display warnings
     vim.deprecate = function() end
 
-    -- -- add border
-    -- vim.api.nvim_create_autocmd("LspAttach", {
-    --     callback = function(args)
-    --         print("Notice callback called")
-    --         vim.keymap.set("n", "K", function()
-    --             vim.lsp.buf.hover({
-    --                 border = "single", -- 强制边框
-    --                 focusable = true
-    --             })
-    --         end, { buffer = args.buf })
-    --     end
-    -- })
-
     -- set Blink border highlight
     vim.api.nvim_set_hl(0, "BlinkCmpMenuBorder", { fg = mocha.blue })
     vim.api.nvim_set_hl(0, "BlinkCmpDocBorder", { fg = mocha.blue })

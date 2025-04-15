@@ -33,7 +33,7 @@ return {
         local lspconfig = require 'lspconfig'
 
         vim.lsp.buf.hover({
-            border = "rounded", -- 强制边框
+            border = "rounded",
             focusable = true
         })
 

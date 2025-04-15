@@ -5,7 +5,7 @@ return {
             layout_config = {
                 prompt_position = "top"
             },
-            sorting_strategy = "ascending", -- 讓結果從上往下排序
+            sorting_strategy = "ascending",
             file_ignore_patterns = {
                 'logs',
                 '%.md',

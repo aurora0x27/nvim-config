@@ -1,12 +1,12 @@
 if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 return {
     "akinsho/bufferline.nvim",
-    dependencies = "nvim-tree/nvim-web-devicons", -- 需要图标支持
+    dependencies = "nvim-tree/nvim-web-devicons",
     config = function()
         require("bufferline").setup({
             highlights = require("catppuccin.groups.integrations.bufferline").get(),
             options = {
-                -- diagnostics = "nvim_lsp", -- 显示 LSP 诊断信息
+                -- diagnostics = "nvim_lsp",
                 offsets = {
                     {
                         filetype = "neo-tree",

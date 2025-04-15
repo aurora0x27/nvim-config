@@ -6,7 +6,6 @@ return {
 
         local mocha = require("catppuccin.palettes").get_palette("mocha") -- 选择 catppuccin mocha 配色
 
-        -- 定义高亮组
         local highlights = {
             { "NotifyERRORBorder", mocha.red },
             { "NotifyWARNBorder", mocha.yellow },
@@ -27,12 +26,10 @@ return {
             { "NotifyTRACETitle", mocha.mauve },
         }
 
-        -- 应用高亮
         for _, hl in ipairs(highlights) do
             vim.api.nvim_set_hl(0, hl[1], { fg = hl[2] })
         end
 
-        -- 让 NotifyBody 继承 Normal
         local body_highlights = { "NotifyERRORBody", "NotifyWARNBody", "NotifyINFOBody", "NotifyDEBUGBody", "NotifyTRACEBody" }
 
         for _, hl in ipairs(body_highlights) do
@@ -52,11 +49,11 @@ return {
         require("notify").setup({
             background_colour = mocha.base,
             fps = 60,
-            max_width = 80,  -- 最大宽度
-            max_height = 30, -- 最大高度
+            max_width = 80,
+            max_height = 30,
             stages = "fade_in_slide_out",
             timeout = 3000,
-            top_down = true,    -- 通知从底部弹出
+            top_down = true,
             icons = {
                 ERROR = "",
                 WARN = "",

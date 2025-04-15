@@ -23,14 +23,6 @@ function options.apply()
     for k, v in pairs(options.opt) do
         vim.o[k] = v
     end
-
-    -- vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
-    --     vim.lsp.handlers.hover, {
-    --         border = "rounded",
-    --         focusable = true
-    --     }
-    -- )
-
 end
 
 return options

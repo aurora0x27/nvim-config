@@ -62,62 +62,6 @@ return {
                 },
             },
 
-            -- git_status = {
-            --     renderers = {
-            --         directory = {
-            --             { "icon" },
-            --             { "name" },
-            --         },
-            --         file = {
-            --             { "icon" },
-            --             {
-            --                 "name",
-            --                 zindex = 10,
-            --             },
-            --             {
-            --                 "diagnostics",
-            --                 align = "right",
-            --                 zindex = 20,
-            --                 right_padding = 0,
-            --             },
-            --             {
-            --                 "git_status",
-            --                 align = "right",
-            --                 zindex = 20,
-            --                 right_padding = 1,
-            --             },
-            --         },
-            --     },
-            -- },
-
-            -- buffers = {
-            --     renderers = {
-            --         directory = {
-            --             { "icon" },
-            --             { "name" },
-            --         },
-            --         file = {
-            --             { "icon" },
-            --             {
-            --                 "name",
-            --                 zindex = 10,
-            --             },
-            --             {
-            --                 "diagnostics",
-            --                 align = "right",
-            --                 zindex = 20,
-            --                 right_padding = 0,
-            --             },
-            --             {
-            --                 "git_status",
-            --                 align = "right",
-            --                 zindex = 20,
-            --                 right_padding = 1,
-            --             },
-            --         },
-            --     },
-            -- },
-
             default_component_configs = {
                 icon = {
                     folder_closed = "",

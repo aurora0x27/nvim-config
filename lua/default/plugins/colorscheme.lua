@@ -10,7 +10,17 @@ return {
         require('catppuccin').setup {
             integrations = {
                 noice = true,
-                notify = true,
+                cmp = true,
+                gitsigns = true,
+                mason = true,
+                nvimtree = true,
+                treesitter = true,
+                notify = false,
+                mini = {
+                    enabled = true,
+                    indentscope_color = '',
+                },
+                -- For more plugins integrations please scroll down (https://github.com/catppuccin/nvim#integrations)
             },
 
             -- flavour = 'macchiato', -- latte, frappe, macchiato, mocha
@@ -52,19 +62,6 @@ return {
             color_overrides = {},
             custom_highlights = {},
             default_integrations = true,
-            integrations = {
-                cmp = true,
-                gitsigns = true,
-                mason = true,
-                nvimtree = true,
-                treesitter = true,
-                notify = false,
-                mini = {
-                    enabled = true,
-                    indentscope_color = '',
-                },
-                -- For more plugins integrations please scroll down (https://github.com/catppuccin/nvim#integrations)
-            },
         }
 
         -- setup must be called before loading

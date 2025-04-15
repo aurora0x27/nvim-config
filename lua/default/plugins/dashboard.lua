@@ -11,8 +11,6 @@ return {
         local alpha = require 'alpha'
         local dashboard = require 'alpha.themes.dashboard'
 
-        math.randomseed(os.time())
-
         local function footer()
             local lazy_stats = require('lazy').stats()
             local plugin_count = lazy_stats.count
