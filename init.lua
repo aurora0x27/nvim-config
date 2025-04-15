@@ -9,25 +9,27 @@
 ###############################################
 --]]
 
--- TODO: set an sepearate environment while debugging
-function set_rtpath()
-    -- local test_path = vim.fn.fnamemodify("./nvim-cache", ":p") -- 轉換為絕對路徑
-    vim.opt.rtp:prepend("/home/aurora/Desktop/projects/debug/nvim-config")
-    -- vim.opt.rtp:prepend(test_path)
-    -- vim.opt.rtp:prepend(vim.fn.fnamemodify(".", ":p")) -- 把當前目錄也加進去
-end
--- TODO: end env settings
-
--- FIXME: Move this when using it
-set_rtpath()
--- END FIXME
+-- -- DEBUG: set an sepearate environment while debugging
+-- function set_rtpath()
+--     -- local test_path = vim.fn.fnamemodify("./nvim-cache", ":p") -- 轉換為絕對路徑
+--     vim.opt.rtp:prepend("/home/aurora/Desktop/projects/debug/nvim-config")
+--     -- vim.opt.rtp:prepend(test_path)
+--     -- vim.opt.rtp:prepend(vim.fn.fnamemodify(".", ":p")) -- 把當前目錄也加進去
+-- end
+-- -- DEBUG: end env settings
+-- 
+-- -- DEBUG: Move this when using it
+-- set_rtpath()
+-- -- DEBUG
 
 -- Load user defined settings after Lazy initialization
 vim.api.nvim_create_autocmd("User", {
     pattern = "LazyVimStarted",
     callback = function()
         vim.schedule(function()
-            set_rtpath()
+            -- -- DEBUG
+            -- set_rtpath()
+            -- -- DEBUG
             require('default.config.keymaps').apply()
             require('default.config.options').apply()
             require('default.config.autocmd').apply()
