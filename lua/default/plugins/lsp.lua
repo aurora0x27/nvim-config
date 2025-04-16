@@ -37,6 +37,15 @@ return {
             focusable = true
         })
 
+        -- -- Why it doesn't work????
+        -- lspconfig.mappings = {
+        --     n = {
+        --         ["gd"] = { "<cmd>lua vim.lsp.buf.definition()<CR>", desc = "Goto Definition" },
+        --     }
+        -- }
+
+        vim.keymap.set("n", "gd", ":lua vim.lsp.buf.definition()<Enter>", {desc = "LSP Goto Definition", noremap = true, silent = true })
+
         -- clangd config
         lspconfig.clangd.setup {
             keys = {
