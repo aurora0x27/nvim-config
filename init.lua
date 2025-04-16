@@ -34,6 +34,7 @@ vim.api.nvim_create_autocmd("User", {
             require('default.config.options').apply()
             require('default.config.autocmd').apply()
             require('default.config.diagnostics').apply()
+            -- require('default.config.comment').apply()
         end)
     end,
 })

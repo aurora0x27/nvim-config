@@ -1,4 +1,5 @@
 -- This file contains keymaps, which is executed after lazy initialization
+
 local keymaps = {};
 
 keymaps.opt = {}
@@ -29,6 +30,8 @@ function keymaps.apply()
     vim.keymap.set("n", "<Leader>bl", ":Telescope buffers<Enter>", { desc = "Buffer list", noremap = true, silent = true })
 
     vim.keymap.set("n", "<Leader>h", ":Alpha<Enter>", {desc = "Open Home Page", noremap = true, silent = true })
+    vim.keymap.set("n", "<Leader>lg", ":Telescope git_commits<Enter>", {desc = "Search Git Commits", noremap = true, silent = true })
+    vim.keymap.set("n", "<Leader>lD", ":Telescope diagnostics<Enter>", {desc = "Search diagnostics", noremap = true, silent = true })
 end
 
 return keymaps

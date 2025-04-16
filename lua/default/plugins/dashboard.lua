@@ -70,7 +70,6 @@ return {
             dashboard.button('SPC f f', '  Find File', ':Telescope find_files<CR>'),
             dashboard.button('SPC f o', '󰈙  Recents', ':Telescope oldfiles<CR>'),
             dashboard.button('SPC f w', '󰈭  Find Word', ':Telescope live_grep<CR>'),
-            -- dashboard.button("SPC f '", '  Bookmarks'),
             dashboard.button("SPC S l", '  Last Session', [[:lua require("persistence").load({ last = true })<CR>]]),
         }
 
