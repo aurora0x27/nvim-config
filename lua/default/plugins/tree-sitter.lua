@@ -1,7 +1,8 @@
 return {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
-    opts = {
+    config = function()
+        require("nvim-treesitter.configs").setup({
         -- A list of parser names, or "all" (the listed parsers MUST always be installed)
         ensure_installed = { "c", "lua", "cpp", "python" },
 
@@ -41,5 +42,6 @@ return {
             -- Instead of true it can also be a list of languages
             additional_vim_regex_highlighting = false,
         },
-    }
+        })
+    end,
 }
