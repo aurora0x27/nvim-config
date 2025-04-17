@@ -13,11 +13,13 @@ return {
 
         local function footer()
             local lazy_stats = require('lazy').stats()
+            local plugin_load = lazy_stats.loaded
             local plugin_count = lazy_stats.count
             local load_time = lazy_stats.startuptime
             local datetime = os.date ' %d-%m-%Y   %H:%M:%S'
 
-            return string.format('⚡ %d plugins loaded in %.2fms  |  %s', plugin_count, load_time, datetime)
+            return string.format('⚡ %d/%d plugins loaded in %.2fms  |  %s', plugin_load, plugin_count, load_time,
+                datetime)
         end
 
         -- Update alpha after loaded

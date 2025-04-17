@@ -1,6 +1,7 @@
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 return {
     'rebelot/heirline.nvim',
+    event = "VeryLazy",
     opts = function(_, opts)
         local conditions = require("heirline.conditions")
         -- local utils = require("heirline.utils")
