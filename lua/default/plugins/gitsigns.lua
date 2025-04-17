@@ -2,12 +2,9 @@
 
 return {
     "lewis6991/gitsigns.nvim",
-
-    event = "VeryLazy",
+    event = { 'BufReadPost', 'BufNewFile' },
 
     config = function()
-        print("gitsigns config function called")
-
         require('gitsigns').setup {
             signs = {
                 add          = { text = '┃' },
@@ -65,7 +62,6 @@ return {
             },
 
             on_attach = function(bufnr)
-                print("gitsigns attach")
                 local gitsigns = require('gitsigns')
 
                 local function map(mode, l, r, opts)

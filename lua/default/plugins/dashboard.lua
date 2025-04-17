@@ -48,7 +48,7 @@ return {
         dashboard.section.header.val = logo
 
         dashboard.section.header.opts = {
-            position = "center", -- 让 logo 居中
+            position = "center",
             hl = "Function",
         }
 
@@ -57,14 +57,6 @@ return {
             relativenumber = false,
         }
 
-        --
-        --    New File                  SPC n
-        --    Find File                 SPC f f
-        --  󰈙  Recents                   SPC f o
-        --  󰈭  Find Word                 SPC f w
-        --    Bookmarks                 SPC f '
-        --
-
         dashboard.section.buttons.val = {
             dashboard.button('SPC n  ', '  New File', ':ene <BAR> startinsert<CR>'),
             dashboard.button('SPC f f', '  Find File', ':Telescope find_files<CR>'),
@@ -72,6 +64,12 @@ return {
             dashboard.button('SPC f w', '󰈭  Find Word', ':Telescope live_grep<CR>'),
             dashboard.button("SPC S l", '  Last Session', [[:lua require("persistence").load({ last = true })<CR>]]),
         }
+
+        for _, button in ipairs(dashboard.section.buttons.val) do
+            button.opts = button.opts or {}
+            button.opts.hl = "DiagnosticOk"
+            button.opts.hl_shortcut = "Special"
+        end
 
         -- dashboard.button("ff", "  Find File", ":Telescope find_files<CR>"),
         -- dashboard.button("fo", "󰈙  Recents", ":Telescope oldfiles<CR>"),

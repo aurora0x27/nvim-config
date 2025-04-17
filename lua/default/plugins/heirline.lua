@@ -3,7 +3,6 @@ return {
     'rebelot/heirline.nvim',
     opts = function(_, opts)
         local conditions = require("heirline.conditions")
-
         -- local utils = require("heirline.utils")
 
         -- import colors from catppuccin

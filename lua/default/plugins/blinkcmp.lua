@@ -9,7 +9,7 @@ return {
         'catppuccin/nvim',
     },
 
-    event = "VeryLazy",
+    event = { 'BufReadPost', 'BufNewFile' },
 
     -- use a release tag to download pre-built binaries
     version = '1.*',

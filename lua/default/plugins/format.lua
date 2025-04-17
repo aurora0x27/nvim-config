@@ -2,9 +2,7 @@
 
 return {
     'stevearc/conform.nvim',
-
-    event = "VeryLazy",
-
+    event = { 'BufReadPost', 'BufNewFile' },
     opts = {},
 
     config = function()

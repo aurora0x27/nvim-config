@@ -9,6 +9,7 @@ return {
     config = function()
         require('catppuccin').setup {
             integrations = {
+                alpha = true,
                 noice = true,
                 cmp = true,
                 gitsigns = true,
