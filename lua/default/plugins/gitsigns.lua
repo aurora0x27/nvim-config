@@ -1,40 +1,40 @@
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
 return {
-    "lewis6991/gitsigns.nvim",
+    'lewis6991/gitsigns.nvim',
     event = { 'BufReadPost', 'BufNewFile' },
 
     config = function()
         require('gitsigns').setup {
             signs = {
-                add          = { text = '┃' },
-                change       = { text = '┃' },
-                delete       = { text = '┃' },
-                topdelete    = { text = '┃' },
+                add = { text = '┃' },
+                change = { text = '┃' },
+                delete = { text = '┃' },
+                topdelete = { text = '┃' },
                 changedelete = { text = '┃' },
-                untracked    = { text = '┃' },
+                untracked = { text = '┃' },
                 -- topdelete    = { text = '‾' },
                 -- changedelete = { text = '~' },
                 -- untracked    = { text = '┆' },
             },
             signs_staged = {
-                add          = { text = '┃' },
-                change       = { text = '┃' },
-                delete       = { text = '┃' },
-                topdelete    = { text = '┃' },
+                add = { text = '┃' },
+                change = { text = '┃' },
+                delete = { text = '┃' },
+                topdelete = { text = '┃' },
                 changedelete = { text = '┃' },
-                untracked    = { text = '┃' },
+                untracked = { text = '┃' },
                 -- topdelete    = { text = '‾' },
                 -- changedelete = { text = '~' },
                 -- untracked    = { text = '┆' },
             },
             signs_staged_enable = true,
-            signcolumn = true,  -- Toggle with `:Gitsigns toggle_signs`
-            numhl      = false, -- Toggle with `:Gitsigns toggle_numhl`
-            linehl     = false, -- Toggle with `:Gitsigns toggle_linehl`
-            word_diff  = false, -- Toggle with `:Gitsigns toggle_word_diff`
+            signcolumn = true, -- Toggle with `:Gitsigns toggle_signs`
+            numhl = false, -- Toggle with `:Gitsigns toggle_numhl`
+            linehl = false, -- Toggle with `:Gitsigns toggle_linehl`
+            word_diff = false, -- Toggle with `:Gitsigns toggle_word_diff`
             watch_gitdir = {
-                follow_files = true
+                follow_files = true,
             },
             auto_attach = true,
             attach_to_untracked = false,
@@ -58,11 +58,11 @@ return {
                 style = 'minimal',
                 relative = 'cursor',
                 row = 0,
-                col = 1
+                col = 1,
             },
 
             on_attach = function(bufnr)
-                local gitsigns = require('gitsigns')
+                local gitsigns = require 'gitsigns'
 
                 local function map(mode, l, r, opts)
                     opts = opts or {}
@@ -73,42 +73,42 @@ return {
                 -- Navigation
                 map('n', ']c', function()
                     if vim.wo.diff then
-                        vim.cmd.normal({']c', bang = true})
+                        vim.cmd.normal { ']c', bang = true }
                     else
-                        gitsigns.nav_hunk('next')
+                        gitsigns.nav_hunk 'next'
                     end
                 end)
 
                 map('n', '[c', function()
                     if vim.wo.diff then
-                        vim.cmd.normal({'[c', bang = true})
+                        vim.cmd.normal { '[c', bang = true }
                     else
-                        gitsigns.nav_hunk('prev')
+                        gitsigns.nav_hunk 'prev'
                     end
                 end)
 
                 -- Actions
-                map('n', '<leader>ghs', gitsigns.stage_hunk, {desc = "Git stage hunk"})
-                map('n', '<leader>ghr', gitsigns.reset_hunk, {desc = "Git reset hunk"})
+                map('n', '<leader>ghs', gitsigns.stage_hunk, { desc = 'Git stage hunk' })
+                map('n', '<leader>ghr', gitsigns.reset_hunk, { desc = 'Git reset hunk' })
 
                 map('v', '<leader>ghs', function()
-                    gitsigns.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') })
-                end, {desc = "Git stage hunk"})
+                    gitsigns.stage_hunk { vim.fn.line '.', vim.fn.line 'v' }
+                end, { desc = 'Git stage hunk' })
 
                 map('v', '<leader>ghr', function()
-                    gitsigns.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') })
-                end, {desc = "Git reset hunk"})
+                    gitsigns.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
+                end, { desc = 'Git reset hunk' })
 
-                map('n', '<leader>ghS', gitsigns.stage_buffer, {desc = "Git stage buffer"})
-                map('n', '<leader>ghR', gitsigns.reset_buffer, {desc = "Git reset buffer"})
-                map('n', '<leader>ghp', gitsigns.preview_hunk, {desc = "Git preview hunk"})
-                map('n', '<leader>ghi', gitsigns.preview_hunk_inline, {desc = "Git preview hunk inline"})
+                map('n', '<leader>ghS', gitsigns.stage_buffer, { desc = 'Git stage buffer' })
+                map('n', '<leader>ghR', gitsigns.reset_buffer, { desc = 'Git reset buffer' })
+                map('n', '<leader>ghp', gitsigns.preview_hunk, { desc = 'Git preview hunk' })
+                map('n', '<leader>ghi', gitsigns.preview_hunk_inline, { desc = 'Git preview hunk inline' })
 
                 map('n', '<leader>ghb', function()
-                    gitsigns.blame_line({ full = true })
-                end, {desc = "Git blame line"})
+                    gitsigns.blame_line { full = true }
+                end, { desc = 'Git blame line' })
 
-                map('n', '<leader>ghd', gitsigns.diffthis, {desc = "Git diff"})
+                map('n', '<leader>ghd', gitsigns.diffthis, { desc = 'Git diff' })
 
                 -- map('n', '<leader>ghD', function()
                 --     gitsigns.diffthis('~')
@@ -118,14 +118,13 @@ return {
                 -- map('n', '<leader>ghq', gitsigns.setqflist)
 
                 -- Toggles
-                map('n', '<leader>gtb', gitsigns.toggle_current_line_blame, {desc = "Git toggle current line blame"})
-                map('n', '<leader>gtd', gitsigns.toggle_deleted, {desc = "Git toggle deleted"})
-                map('n', '<leader>gtw', gitsigns.toggle_word_diff, {desc = "Git toggle word diff"})
+                map('n', '<leader>gtb', gitsigns.toggle_current_line_blame, { desc = 'Git toggle current line blame' })
+                map('n', '<leader>gtd', gitsigns.toggle_deleted, { desc = 'Git toggle deleted' })
+                map('n', '<leader>gtw', gitsigns.toggle_word_diff, { desc = 'Git toggle word diff' })
 
                 -- Text object
                 -- map({'o', 'x'}, 'ih', gitsigns.select_hunk)
-              end
+            end,
         }
-
-    end
+    end,
 }
