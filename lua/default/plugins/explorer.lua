@@ -3,17 +3,17 @@
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
 return {
-    "nvim-neo-tree/neo-tree.nvim",
-    branch = "v3.x",
-    event = "VeryLazy",
+    'nvim-neo-tree/neo-tree.nvim',
+    branch = 'v3.x',
+    event = 'VeryLazy',
     dependencies = {
-        "nvim-lua/plenary.nvim",
-        "nvim-tree/nvim-web-devicons",
-        "MunifTanjim/nui.nvim",
+        'nvim-lua/plenary.nvim',
+        'nvim-tree/nvim-web-devicons',
+        'MunifTanjim/nui.nvim',
     },
 
     config = function()
-        require("neo-tree").setup({
+        require('neo-tree').setup {
             close_if_last_window = true,
             enable_git_status = true,
             enable_diagnostics = true,
@@ -27,36 +27,36 @@ return {
                 hijack_netrw = true,
                 renderers = {
                     directory = {
-                        { "icon" },
-                        { "name" },
+                        { 'icon' },
+                        { 'name' },
                     },
                     file = {
                         {
-                            "icon",
+                            'icon',
                             zindex = 10,
                         },
                         {
 
-                            "container",
-                            width = "100%",
+                            'container',
+                            width = '100%',
                             content = {
                                 {
-                                    "name",
+                                    'name',
                                     zindex = 10,
                                 },
                                 {
-                                    "diagnostics",
-                                    align = "right",
+                                    'diagnostics',
+                                    align = 'right',
                                     zindex = 40,
                                     overlap = true,
                                 },
                                 {
-                                    "git_status",
-                                    align = "right",
+                                    'git_status',
+                                    align = 'right',
                                     zindex = 40,
                                     overlap = true,
-                                }
-                            }
+                                },
+                            },
                         },
                     },
                 },
@@ -64,23 +64,23 @@ return {
 
             default_component_configs = {
                 icon = {
-                    folder_closed = "",
-                    folder_open = "",
-                    folder_empty = "",
-                    default = "",
-                    highlight = "NeoTreeFileIcon",
+                    folder_closed = '',
+                    folder_open = '',
+                    folder_empty = '',
+                    default = '',
+                    highlight = 'NeoTreeFileIcon',
                 },
                 git_status = {
                     symbols = {
-                        added     = "",
-                        deleted   = "",
-                        modified  = "",
-                        renamed   = "➜",
-                        untracked = "★",
-                        ignored   = "◌",
-                        unstaged  = "✗",
-                        staged    = "✓",
-                        conflict  = "",
+                        added = '',
+                        deleted = '',
+                        modified = '',
+                        renamed = '➜',
+                        untracked = '★',
+                        ignored = '◌',
+                        unstaged = '✗',
+                        staged = '✓',
+                        conflict = '',
                     },
                 },
 
@@ -92,18 +92,17 @@ return {
                         max = vim.diagnostic.severity.ERROR,
                     },
                     symbols = {
-                        hint = " ",
-                        info = " ",
-                        warn = " ",
-                        error = " ",
+                        hint = ' ',
+                        info = ' ',
+                        warn = ' ',
+                        error = ' ',
                     },
                 },
-
             },
-        })
+        }
 
-        vim.keymap.set("n", "<leader>e", ":Neotree toggle<CR>", {
-            desc = "Toggle NeoTree file explorer",
+        vim.keymap.set('n', '<leader>e', ':Neotree toggle<CR>', {
+            desc = 'Toggle NeoTree file explorer',
             noremap = true,
             silent = true,
         })

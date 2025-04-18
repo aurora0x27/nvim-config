@@ -1,8 +1,8 @@
 return {
     'mrjones2014/smart-splits.nvim',
-    event = "VeryLazy",
+    event = 'VeryLazy',
     config = function()
-        require('smart-splits').setup({
+        require('smart-splits').setup {
             -- Ignored buffer types (only while resizing)
             ignored_buftypes = {
                 'nofile',
@@ -97,6 +97,6 @@ return {
             kitty_password = nil,
             -- default logging level, one of: 'trace'|'debug'|'info'|'warn'|'error'|'fatal'
             log_level = 'info',
-        })
-    end
+        }
+    end,
 }

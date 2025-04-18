@@ -18,16 +18,15 @@ return {
             local load_time = lazy_stats.startuptime
             local datetime = os.date ' %d-%m-%Y   %H:%M:%S'
 
-            return string.format('⚡ %d/%d plugins loaded in %.2fms  |  %s', plugin_load, plugin_count, load_time,
-                datetime)
+            return string.format('⚡ %d/%d plugins loaded in %.2fms  |  %s', plugin_load, plugin_count, load_time, datetime)
         end
 
         -- Update alpha after loaded
-        vim.api.nvim_create_autocmd("UIEnter", {
+        vim.api.nvim_create_autocmd('UIEnter', {
             callback = function()
                 dashboard.section.footer.val = footer()
                 require('alpha').redraw()
-            end
+            end,
         })
 
         local logo = {
@@ -50,8 +49,8 @@ return {
         dashboard.section.header.val = logo
 
         dashboard.section.header.opts = {
-            position = "center",
-            hl = "Function",
+            position = 'center',
+            hl = 'Function',
         }
 
         dashboard.opts.opts = {
@@ -64,13 +63,13 @@ return {
             dashboard.button('SPC f f', '  Find File', ':Telescope find_files<CR>'),
             dashboard.button('SPC f o', '󰈙  Recents', ':Telescope oldfiles<CR>'),
             dashboard.button('SPC f w', '󰈭  Find Word', ':Telescope live_grep<CR>'),
-            dashboard.button("SPC S l", '  Last Session', [[:lua require("persistence").load({ last = true })<CR>]]),
+            dashboard.button('SPC S l', '  Last Session', [[:lua require("persistence").load({ last = true })<CR>]]),
         }
 
         for _, button in ipairs(dashboard.section.buttons.val) do
             button.opts = button.opts or {}
-            button.opts.hl = "DiagnosticOk"
-            button.opts.hl_shortcut = "Special"
+            button.opts.hl = 'DiagnosticOk'
+            button.opts.hl_shortcut = 'Special'
         end
 
         -- dashboard.button("ff", "  Find File", ":Telescope find_files<CR>"),

@@ -2,28 +2,28 @@
 
 return {
     'rebelot/heirline.nvim',
-    event = "VeryLazy",
+    event = 'VeryLazy',
     opts = function(_, opts)
-        local conditions = require("heirline.conditions")
+        local conditions = require 'heirline.conditions'
         -- local utils = require("heirline.utils")
 
         -- import colors from catppuccin
-        local mocha = require("catppuccin.palettes").get_palette("mocha")
+        local mocha = require('catppuccin.palettes').get_palette 'mocha'
 
         local colors = {
-            normal   = mocha.blue,
-            insert   = mocha.green,
-            visual   = mocha.mauve,
-            replace  = mocha.red,
-            command  = mocha.peach,
-            text_fg  = mocha.text,
-            bg       = mocha.base,
+            normal = mocha.blue,
+            insert = mocha.green,
+            visual = mocha.mauve,
+            replace = mocha.red,
+            command = mocha.peach,
+            text_fg = mocha.text,
+            bg = mocha.base,
         }
 
         local function get_buffers()
             local buffers = {}
             for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-                if vim.api.nvim_buf_get_option(buf, "buflisted") then
+                if vim.api.nvim_buf_get_option(buf, 'buflisted') then
                     table.insert(buffers, buf)
                 end
             end
@@ -38,25 +38,25 @@ return {
             {
                 provider = function(self)
                     local count = self.status.added or 0
-                    return count > 0 and (" "..count .. " ") or ""
+                    return count > 0 and (' ' .. count .. ' ') or ''
                 end,
-                hl = { fg = mocha.green }
+                hl = { fg = mocha.green },
             },
             {
                 provider = function(self)
                     local count = self.status.changed or 0
-                    return count > 0 and (" "..count .. " " ) or ""
+                    return count > 0 and (' ' .. count .. ' ') or ''
                 end,
-                hl = { fg = mocha.yellow }
+                hl = { fg = mocha.yellow },
             },
             {
                 provider = function(self)
                     local count = self.status.removed or 0
-                    return count > 0 and (" "..count .. " ") or ""
+                    return count > 0 and (' ' .. count .. ' ') or ''
                 end,
-                hl = { fg = mocha.red }
+                hl = { fg = mocha.red },
             },
-            hl = { bg = mocha.bg }
+            hl = { bg = mocha.bg },
         }
 
         local Diagnostics = {
@@ -69,23 +69,23 @@ return {
             end,
             {
                 provider = function(self)
-                  return self.errors > 0 and (" " .. self.errors .. " ") or ""
+                    return self.errors > 0 and (' ' .. self.errors .. ' ') or ''
                 end,
-                hl = { fg = mocha.red }
+                hl = { fg = mocha.red },
             },
             {
                 provider = function(self)
-                  return self.warnings > 0 and (" " .. self.warnings .. " ") or ""
+                    return self.warnings > 0 and (' ' .. self.warnings .. ' ') or ''
                 end,
-                hl = { fg = mocha.yellow }
+                hl = { fg = mocha.yellow },
             },
             {
                 provider = function(self)
-                  return self.hints > 0 and (" " .. self.hints .. " ") or ""
+                    return self.hints > 0 and (' ' .. self.hints .. ' ') or ''
                 end,
-                hl = { fg = mocha.green }
+                hl = { fg = mocha.green },
             },
-            hl = { bg = colors.bg }
+            hl = { bg = colors.bg },
         }
 
         -- Mode
@@ -95,14 +95,14 @@ return {
             end,
             provider = function(self)
                 local mode_map = {
-                    n = "NORMAL",
-                    i = "INSERT",
-                    v = "VISUAL",
-                    V = "V-LINE",
-                    c = "COMMAND",
-                    R = "REPLACE",
+                    n = 'NORMAL',
+                    i = 'INSERT',
+                    v = 'VISUAL',
+                    V = 'V-LINE',
+                    c = 'COMMAND',
+                    R = 'REPLACE',
                 }
-                return " " .. (mode_map[self.mode] or "V-BLOCK") .. " "
+                return ' ' .. (mode_map[self.mode] or 'V-BLOCK') .. ' '
             end,
             hl = function(self)
                 local mode_hl = {
@@ -113,25 +113,25 @@ return {
                     c = colors.command,
                     R = colors.replace,
                 }
-                return { fg = "black", bg = mode_hl[self.mode] or colors.visual, bold = true }
+                return { fg = 'black', bg = mode_hl[self.mode] or colors.visual, bold = true }
             end,
             update = {
-                "ModeChanged",
-                pattern = "*:*",
+                'ModeChanged',
+                pattern = '*:*',
                 callback = vim.schedule_wrap(function()
-                    vim.cmd("redrawstatus")
+                    vim.cmd 'redrawstatus'
                 end),
             },
         }
 
         local FileType = {
             provider = function()
-                local filename, extension = vim.fn.expand("%:t"), vim.fn.expand("%:e")
-                local icon, icon_color = require("nvim-web-devicons").get_icon_color(filename, extension, { default = true })
-                return icon and (" " .. icon .. " " .. vim.bo.filetype .. " ") or (" " .. vim.bo.filetype .. " ")
+                local filename, extension = vim.fn.expand '%:t', vim.fn.expand '%:e'
+                local icon, icon_color = require('nvim-web-devicons').get_icon_color(filename, extension, { default = true })
+                return icon and (' ' .. icon .. ' ' .. vim.bo.filetype .. ' ') or (' ' .. vim.bo.filetype .. ' ')
             end,
             hl = function()
-                local _, icon_color = require("nvim-web-devicons").get_icon_color(vim.fn.expand("%:t"), vim.fn.expand("%:e"), { default = true })
+                local _, icon_color = require('nvim-web-devicons').get_icon_color(vim.fn.expand '%:t', vim.fn.expand '%:e', { default = true })
                 return { fg = icon_color, bold = true }
             end,
         }
@@ -139,10 +139,10 @@ return {
         local WorkDir = {
             init = function(self)
                 local cwd = vim.fn.getcwd(0)
-                self.cwd = vim.fn.fnamemodify(cwd, ":~")
+                self.cwd = vim.fn.fnamemodify(cwd, ':~')
             end,
             provider = function(self)
-                return " " .. self.cwd .. " "
+                return ' ' .. self.cwd .. ' '
             end,
             hl = { fg = colors.text_fg, bold = true },
         }
@@ -152,8 +152,10 @@ return {
             condition = conditions.lsp_attached,
             provider = function()
                 local clients = vim.lsp.get_active_clients()
-                if next(clients) == nil then return "" end
-                return " " .. clients[1].name .. " "
+                if next(clients) == nil then
+                    return ''
+                end
+                return ' ' .. clients[1].name .. ' '
             end,
             hl = { fg = colors.normal, bold = true },
         }
@@ -161,7 +163,7 @@ return {
         -- Cursor position
         local CursorPos = {
             provider = function()
-                return string.format(" %d:%d ", vim.fn.line("."), vim.fn.col("."))
+                return string.format(' %d:%d ', vim.fn.line '.', vim.fn.col '.')
             end,
             hl = { fg = colors.text_fg, bold = true },
         }
@@ -172,7 +174,7 @@ return {
             FileType,
             GitStatus,
             WorkDir,
-            { provider = "%=" },
+            { provider = '%=' },
             Diagnostics,
             LSP,
             CursorPos,

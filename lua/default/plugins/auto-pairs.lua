@@ -22,7 +22,7 @@ return {
                 "'",
                 suround = true,
                 cond = function(fn)
-                  return not fn.in_lisp() or fn.in_string()
+                    return not fn.in_lisp() or fn.in_string()
                 end,
                 alpha = true,
                 nft = { 'tex' },
@@ -32,7 +32,7 @@ return {
                 '`',
                 '`',
                 cond = function(fn)
-                  return not fn.in_lisp() or fn.in_string()
+                    return not fn.in_lisp() or fn.in_string()
                 end,
                 nft = { 'tex' },
                 multiline = false,

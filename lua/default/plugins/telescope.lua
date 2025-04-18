@@ -3,9 +3,9 @@ return {
     opts = {
         defaults = {
             layout_config = {
-                prompt_position = "top"
+                prompt_position = 'top',
             },
-            sorting_strategy = "ascending",
+            sorting_strategy = 'ascending',
             file_ignore_patterns = {
                 'logs',
                 '%.md',

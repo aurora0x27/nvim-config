@@ -45,7 +45,7 @@ return { -- Useful plugin to show you pending keybinds.
             -- { '<leader>d', group = '[D]ocument' },
             -- { '<leader>r', group = '[R]ename' },
             { '<leader>f', group = '[F]ind' },
-            { '<leader>e', group = "[E]xplorer" },
+            { '<leader>e', group = '[E]xplorer' },
             -- { '<leader>w', group = '[W]orkspace' },
             -- { '<leader>t', group = '[T]oggle' },
             { '<leader>b', group = '[B]uffer' },

@@ -17,14 +17,14 @@
 --     -- vim.opt.rtp:prepend(vim.fn.fnamemodify(".", ":p")) -- 把當前目錄也加進去
 -- end
 -- -- DEBUG: end env settings
--- 
+--
 -- -- DEBUG: Move this when using it
 -- set_rtpath()
 -- -- DEBUG
 
 -- Load user defined settings after Lazy initialization
-vim.api.nvim_create_autocmd("User", {
-    pattern = "LazyVimStarted",
+vim.api.nvim_create_autocmd('User', {
+    pattern = 'LazyVimStarted',
     callback = function()
         vim.schedule(function()
             -- -- DEBUG
@@ -43,8 +43,8 @@ vim.api.nvim_create_autocmd("User", {
 -- require('default.config.options').apply()
 
 -- set global leader
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
+vim.g.mapleader = ' '
+vim.g.maplocalleader = ' '
 
 require('default.config.preload').apply()
 
@@ -60,20 +60,20 @@ end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
 -- import plugins
-require('lazy').setup({
+require('lazy').setup {
     -- all the plugins' configure files should be put under `lua/plugins`
     spec = {
-        { import = "default.plugins" },
+        { import = 'default.plugins' },
     },
--- }, --[[@as LazySpec]] {
+    -- }, --[[@as LazySpec]] {
     -- Configure any other `lazy.nvim` configuration options here
 
-    install = { 
+    install = {
         colorscheme = { 'catppuccin' },
     },
     ui = {
         backdrop = 100,
-        border = "rounded",
+        border = 'rounded',
     },
     performance = {
         rtp = {
@@ -86,7 +86,7 @@ require('lazy').setup({
         -- must be put here as hook because plugin loading is async
         -- require('default.config.autocmd')
     end,
-} --[[@as LazyConfig]])
+} --[[@as LazyConfig]]
 
 --[[
                                                     

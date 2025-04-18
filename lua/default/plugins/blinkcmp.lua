@@ -1,6 +1,5 @@
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
-
 return {
     'saghen/blink.cmp',
     -- optional: provides snippets for the snippet source
@@ -56,25 +55,25 @@ return {
         appearance = {
             -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
             -- Adjusts spacing to ensure icons are aligned
-            nerd_font_variant = 'mono'
+            nerd_font_variant = 'mono',
         },
 
         -- (Default) Only show the documentation popup when manually triggered
         completion = {
             menu = {
-                border = 'rounded'
+                border = 'rounded',
             },
             documentation = {
                 auto_show = true,
                 window = {
                     border = 'rounded',
-                }
+                },
             },
             list = {
                 selection = {
                     preselect = false,
-                    auto_insert = true
-                }
+                    auto_insert = true,
+                },
             },
         },
 
@@ -89,7 +88,7 @@ return {
         -- when the Rust fuzzy matcher is not available, by using `implementation = "prefer_rust"`
         --
         -- See the fuzzy documentation for more information
-        fuzzy = { implementation = "prefer_rust_with_warning" }
+        fuzzy = { implementation = 'prefer_rust_with_warning' },
     },
-    opts_extend = { "sources.default" },
+    opts_extend = { 'sources.default' },
 }

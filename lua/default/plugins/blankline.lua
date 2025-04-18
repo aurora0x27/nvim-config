@@ -1,8 +1,8 @@
 -- Indent line
 return {
-    "lukas-reineke/indent-blankline.nvim",
+    'lukas-reineke/indent-blankline.nvim',
     event = { 'BufReadPost', 'BufNewFile' },
-    main = "ibl",
+    main = 'ibl',
 
     opts = {
         whitespace = { remove_blankline_trail = false },
@@ -11,5 +11,5 @@ return {
             show_start = false,
             show_end = false,
         },
-    }
+    },
 }

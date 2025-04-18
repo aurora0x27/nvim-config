@@ -4,16 +4,15 @@
 
 return {
     'akinsho/toggleterm.nvim',
-    event = "VeryLazy",
-    version = "*",
+    event = 'VeryLazy',
+    version = '*',
     opts = {
         --[[ things you want to change go here]]
     },
     config = function()
+        local mocha = require('catppuccin.palettes').get_palette 'mocha'
 
-        local mocha = require("catppuccin.palettes").get_palette("mocha")
-
-        require("toggleterm").setup({
+        require('toggleterm').setup {
             -- size can be a number or function which is passed the current terminal
 
             -- size = function(term)
@@ -45,8 +44,8 @@ return {
                 --   link = 'Normal'
                 -- },
                 FloatBorder = {
-                  guifg = mocha.blue,
-                  -- guibg = "<VALUE-HERE>",
+                    guifg = mocha.blue,
+                    -- guibg = "<VALUE-HERE>",
                 },
             },
 
@@ -61,7 +60,7 @@ return {
             direction = 'float',
             close_on_exit = true, -- close the terminal window when the process exits
             clear_env = false, -- use only environmental variables from `env`, passed to jobstart()
-             -- Change the default shell. Can be a string or a function returning a string
+            -- Change the default shell. Can be a string or a function returning a string
             shell = vim.o.shell,
             auto_scroll = true, -- automatically scroll to the bottom on terminal output
             -- This field is only relevant if direction is set to 'float'
@@ -70,7 +69,7 @@ return {
                 -- see :h nvim_open_win for details on borders however
                 -- the 'curved' border is a custom border type
                 -- not natively supported but implemented in this plugin.
-                border = 'rounded' -- other options supported by win open
+                border = 'rounded', -- other options supported by win open
                 -- like `size`, width, height, row, and col can be a number or function which is passed the current terminal
                 -- width = <value>,
                 -- height = <value>,
@@ -84,14 +83,14 @@ return {
                 enabled = false,
                 name_formatter = function(term) --  term: Terminal
                     return term.name
-                end
+                end,
             },
             responsiveness = {
                 -- breakpoint in terms of `vim.o.columns` at which terminals will start to stack on top of each other
                 -- instead of next to each other
                 -- default = 0 which means the feature is turned off
                 horizontal_breakpoint = 135,
-            }
-        })
-   end
+            },
+        }
+    end,
 }
