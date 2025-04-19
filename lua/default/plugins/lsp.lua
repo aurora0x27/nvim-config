@@ -44,7 +44,8 @@ return {
         --     }
         -- }
 
-        vim.keymap.set('n', 'gd', ':lua vim.lsp.buf.definition()<Enter>', { desc = 'LSP Goto Definition', noremap = true, silent = true })
+        vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { desc = 'LSP Goto Definition', noremap = true, silent = true })
+        vim.keymap.set('n', '<leader>lr', vim.lsp.buf.rename, { desc = 'LSP Rename Symbol', noremap = true, silent = true })
 
         -- clangd config
         lspconfig.clangd.setup {
