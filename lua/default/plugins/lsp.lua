@@ -75,7 +75,7 @@ return {
                 '--completion-style=detailed',
                 '--function-arg-placeholders',
                 '-j=4',
-                '--fallback-style=llvm',
+                '--fallback-style="{BasedOnStyle: LLVM, IndentWidth: 4}"',
             },
             init_options = {
                 usePlaceholders = true,
@@ -122,6 +122,40 @@ return {
             end,
             settings = {
                 Lua = {},
+            },
+        }
+
+        lspconfig.rust_analyzer.setup {
+            settings = {
+                ['rust_analyzer'] = {
+                    diagnostics = {
+                        enable = true,
+                        experimental = {
+                            enable = true,
+                        },
+                    },
+                    check = {
+                        command = 'clippy',
+                        extraArgs = { '--all-targets' },
+                        on = 'on_type',
+                    },
+                    cargo = {
+                        buildScripts = {
+                            enable = true,
+                        },
+                    },
+                    proMacro = {
+                        enable = true,
+                    },
+                },
+            },
+            capabilities = {
+                experimental = {
+                    serverStatusNotification = false,
+                },
+            },
+            cmd = {
+                'rust-analyzer',
             },
         }
     end,
