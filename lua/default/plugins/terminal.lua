@@ -23,7 +23,7 @@ return {
             --     end
             -- end,
 
-            open_mapping = {[[<F7>]], [[<Leader>t]]}, -- or { [[<c-\>]], [[<c-¥>]] } if you also use a Japanese keyboard.
+            open_mapping = {"<a-t>", "<F7>"}, -- or { [[<c-\>]], [[<c-¥>]] } if you also use a Japanese keyboard.
             -- on_create = fun(t: Terminal), -- function to run when the terminal is first created
             -- on_open = fun(t: Terminal), -- function to run when the terminal opens
             -- on_close = fun(t: Terminal), -- function to run when the terminal closes
