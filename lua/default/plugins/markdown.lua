@@ -18,6 +18,7 @@ return {
     -- MarkdownPreviewToggle mappings
     keys = {
         { '<F8>', ':MarkdownPreviewToggle<CR>', { desc = 'MarkdownPreviewToggle', noremap = true, silent = true } },
+        { '<Leader>p', ':MarkdownPreviewToggle<CR>', { desc = 'MarkdownPreviewToggle', noremap = true, silent = true } },
     },
 
     init = function()
