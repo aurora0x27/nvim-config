@@ -159,5 +159,7 @@ return {
                 'rust-analyzer',
             },
         }
+
+        lspconfig.pyright.setup {}
     end,
 }

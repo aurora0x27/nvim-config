@@ -28,7 +28,7 @@ function keymaps.apply()
     vim.keymap.set('n', '<Leader>fg', ':Telescope git_status<Enter>', { desc = 'Telescope Find Git Diff', noremap = true, silent = true })
 
     -- buffer releated, prefix is leader-b
-    vim.keymap.set('n', '<Leader>bc', ':bdelete<Enter>', { desc = 'Buffer close current', noremap = true, silent = true })
+    vim.keymap.set('n', '<Leader>bc', ':bp | bd #<Enter>', { desc = 'Buffer close current', noremap = true, silent = true })
     vim.keymap.set('n', '<Leader>bl', ':Telescope buffers<Enter>', { desc = 'Buffer list', noremap = true, silent = true })
 
     vim.keymap.set('n', '<Leader>h', ':Alpha<Enter>', { desc = 'Open Home Page', noremap = true, silent = true })
