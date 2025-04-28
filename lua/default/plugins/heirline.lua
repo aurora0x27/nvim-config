@@ -20,16 +20,6 @@ return {
             bg = mocha.base,
         }
 
-        local function get_buffers()
-            local buffers = {}
-            for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-                if vim.api.nvim_buf_get_option(buf, 'buflisted') then
-                    table.insert(buffers, buf)
-                end
-            end
-            return buffers
-        end
-
         local GitStatus = {
             condition = conditions.is_git_repo,
             init = function(self)
