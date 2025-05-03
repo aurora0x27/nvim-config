@@ -26,6 +26,7 @@ function keymaps.apply()
     vim.keymap.set('n', '<Leader>fb', ':Telescope buffers<Enter>', { desc = 'Telescope Find Buffer', noremap = true, silent = true })
     vim.keymap.set('n', '<Leader>fd', ':Telescope diagnostics<Enter>', { desc = 'Telescope Find Diagnostics', noremap = true, silent = true })
     vim.keymap.set('n', '<Leader>fg', ':Telescope git_status<Enter>', { desc = 'Telescope Find Git Diff', noremap = true, silent = true })
+    vim.keymap.set('n', '<Leader>fm', ':Noice telescope<Enter>', { desc = 'Telescope Filter Noice Msg', noremap = true, silent = true })
 
     -- buffer releated, prefix is leader-b
     vim.keymap.set('n', '<Leader>bc', ':bp | bd #<Enter>', { desc = 'Buffer close current', noremap = true, silent = true })
