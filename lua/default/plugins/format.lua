@@ -21,7 +21,7 @@ return {
                         url = 'https://clang.llvm.org/docs/ClangFormat.html',
                         description = 'Tool to format C/C++/… code according to a set of rules and heuristics.',
                     },
-                    command = '/home/aurora/Applications/apps/opt/llvm-21/bin/clang-format',
+                    command = '/home/aurora/Applications/apps/opt/llvm-20/bin/clang-format',
                     args = { '-assume-filename', '$FILENAME' },
                     range_args = function(self, ctx)
                         local start_offset, end_offset = util.get_offsets_from_range(ctx.buf, ctx.range)
