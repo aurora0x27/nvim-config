@@ -126,6 +126,7 @@ return {
             },
         }
 
+        -- Rust Analyzer Config
         lspconfig.rust_analyzer.setup {
             settings = {
                 ['rust_analyzer'] = {
@@ -160,6 +161,28 @@ return {
             },
         }
 
-        lspconfig.pyright.setup {}
+        lspconfig.pyright.setup {
+            -- -- Problem exists
+            -- cmd = { "pyrignt-langserver", "--stdio" },
+            -- root_markers = {
+            --     "pyproject.toml",
+            --     "setup.py",
+            --     "setup.cfg",
+            --     "requirements.txt",
+            --     "Pipfile",
+            --     "pyrightconfig.json",
+            --     ".git"
+            -- },
+            -- filetypes = { "python" },
+            -- settings = {
+            --     python = {
+            --         analysis = {
+            --             autoSearchPaths = true,
+            --             diagnosticMode = "openFilesOnly",
+            --             useLibraryCodeForTypes = true
+            --         }
+            --     }
+            -- }
+        }
     end,
 }
