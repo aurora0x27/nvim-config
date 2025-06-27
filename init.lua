@@ -45,6 +45,7 @@ vim.api.nvim_create_autocmd('User', {
             require('config.options').apply()
             require('config.autocmd').apply()
             require('config.diagnostics').apply()
+            require('config.lsp').apply()
         end)
     end,
 })
@@ -57,6 +58,7 @@ require('config.preload').apply()
 
 -- set lazy path
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
+---@diagnostic disable: undefined-field
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
     local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
     local out = vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
@@ -92,6 +94,7 @@ require('lazy').setup {
         -- apply options and keymaps
         -- must be put here as hook because plugin loading is async
     end,
+    ---@diagnostic disable: undefined-doc-name
 } --[[@as LazyConfig]]
 
 --[[
