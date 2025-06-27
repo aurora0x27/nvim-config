@@ -1,5 +1,5 @@
 --[[
-###############################################       
+###############################################
 #        ██████╗ ███████╗███████╗██╗          #
 #       ██╔═══██╗██╔════╝╚══███╔╝██║          #
 #       ██║   ██║█████╗    ███╔╝ ██║          #
@@ -9,44 +9,51 @@
 ###############################################
 --]]
 
--- -- DEBUG: set an sepearate environment while debugging
--- function set_rtpath()
---     -- local test_path = vim.fn.fnamemodify("./nvim-cache", ":p") -- 轉換為絕對路徑
---     vim.opt.rtp:prepend("/home/aurora/Desktop/projects/debug/nvim-config")
---     -- vim.opt.rtp:prepend(test_path)
---     -- vim.opt.rtp:prepend(vim.fn.fnamemodify(".", ":p")) -- 把當前目錄也加進去
--- end
--- -- DEBUG: end env settings
---
--- -- DEBUG: Move this when using it
--- set_rtpath()
--- -- DEBUG
+-- DEBUG MODE
+local debug_mode = vim.env.NVIM_CONFIG_DEV
+
+local function set_rtpath()
+    vim.opt.rtp:prepend(vim.env.SCRIPT_DIR)
+end
+
+if debug_mode == '1' then
+    local project_root = vim.env.SCRIPT_DIR
+    ---@diagnostic disable: duplicate-set-field
+    vim.fn.stdpath = function(what)
+        if what == 'config' then
+            return project_root
+        else
+            return vim.fn.call('stdpath', { what })
+        end
+    end
+    set_rtpath()
+end
+-- DEBUG MODE
 
 -- Load user defined settings after Lazy initialization
 vim.api.nvim_create_autocmd('User', {
     pattern = 'LazyVimStarted',
     callback = function()
         vim.schedule(function()
-            -- -- DEBUG
-            -- set_rtpath()
-            -- -- DEBUG
-            require('default.config.keymaps').apply()
-            require('default.config.options').apply()
-            require('default.config.autocmd').apply()
-            require('default.config.diagnostics').apply()
-            -- require('default.config.comment').apply()
+            -- DEBUG MODE
+            if debug_mode == '1' then
+                set_rtpath()
+            end
+            -- DEBUG MODE
+
+            require('config.keymaps').apply()
+            require('config.options').apply()
+            require('config.autocmd').apply()
+            require('config.diagnostics').apply()
         end)
     end,
 })
-
--- require('default.config.keymaps').apply()
--- require('default.config.options').apply()
 
 -- set global leader
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
-require('default.config.preload').apply()
+require('config.preload').apply()
 
 -- set lazy path
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -63,7 +70,7 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup {
     -- all the plugins' configure files should be put under `lua/plugins`
     spec = {
-        { import = 'default.plugins' },
+        { import = 'plugins' },
     },
     -- }, --[[@as LazySpec]] {
     -- Configure any other `lazy.nvim` configuration options here
@@ -84,58 +91,57 @@ require('lazy').setup {
     config = function()
         -- apply options and keymaps
         -- must be put here as hook because plugin loading is async
-        -- require('default.config.autocmd')
     end,
 } --[[@as LazyConfig]]
 
 --[[
-                                                    
-                        .:...:=.                    
-                    :=----:-=*+--                   
-                    =---:--:+*#++-                  
-                   :-:=--::.-*++=-:                 
-                  .+--.------##*---.                
-                  =+===:..===*#:-:::.               
-                 .=+-=+:.  :*+. :::::               
-                 :-*--+-:.:---. .:::::              
-                .:-==...:=---=.  -:::::             
-                :::--..+**--:  . ::::::.            
-               .::::-.:++=+=...: .-:::::.           
-               ::--:-::-=::--..:  --:::::.          
-              ..-=-=+=:+---+==--  .=-:::::          
-              ::+++*+:=*+=-+***=   +=-:::..         
-             ..-++*+.:+-+=-:+#*=   -+=:::. .        
-            . .++*+:.++:--. =##+   .++:... ..       
-            ..+****=-**-=+. =##*    =+=.... .       
-           ..=*====-+=**:== =##*.   :++::... .      
-          .::=:==---*-=-===-+#**-   .=+-:::....     
-          ::+=:++=++=+-:=*+-*#+=*    -*+:::::...    
-         ::-*++###%%+-=--+-+*%+=#.   :++::::::::    
-        .--##+#*#%%%#-::-*###%*=*=   .=+-::::::::   
-        -:*#*#-+#*##*#=*#**=#%*=+*    -*-:::::::-   
-       :::+*#*====****+**--.%%*++*:   :+-:::::::::  
-      .-:=+==-::::=-:-====:-%#*+=#+   .=-:::::::::  
-     .-:-**+++=-:.::  ..:-=*=***++:   .=-::::::::-  
-    .:::+***+##*#*=.   =#***-..:..    .--:::::::::  
-    :::-*#***##***-    .#***+         .-::--::::::. 
-   .:::=*#***##**+:     =#**#.        ::-=---:::::. 
-   :::-=*****##*#+:     .####-        ::=+==-:::::: 
-  .:::-==+***####=:      *###+        --**+=--::::. 
-  .::::-==+**####+-      -####       :-=**+=--::..  
-  ..:::--=***##*#*=       #***:      --+*++=--:. .  
-  ...::--=***%**#=+.      =**#-     :==+++===-:..   
-  :::-:--=*+*%##+:.:       *###.    =++++=====--.   
-  :::----=++#%##:  :.      :###*   :**+*++++++-:    
-  ::-----=++%%%+    .       -%#%+  -+*******+--     
-   --++===**%##:             -%%%: :-=+++***-:      
-   .-++*****%##               =##*  :.+++++-.       
-     =**+++:%#+                *##-  ..=-=.         
-      .==--:%#-                :%#*    ::           
-        .:::%#-                 +#*.   .            
-           .##=                 .#*+                
-           .#+*.                :**+:               
-           .#++-                ++=*-               
-            #*+*:              -*++#:               
-            :+--.              .-=--                
+
+                        .:...:=.
+                    :=----:-=*+--
+                    =---:--:+*#++-
+                   :-:=--::.-*++=-:
+                  .+--.------##*---.
+                  =+===:..===*#:-:::.
+                 .=+-=+:.  :*+. :::::
+                 :-*--+-:.:---. .:::::
+                .:-==...:=---=.  -:::::
+                :::--..+**--:  . ::::::.
+               .::::-.:++=+=...: .-:::::.
+               ::--:-::-=::--..:  --:::::.
+              ..-=-=+=:+---+==--  .=-:::::
+              ::+++*+:=*+=-+***=   +=-:::..
+             ..-++*+.:+-+=-:+#*=   -+=:::. .
+            . .++*+:.++:--. =##+   .++:... ..
+            ..+****=-**-=+. =##*    =+=.... .
+           ..=*====-+=**:== =##*.   :++::... .
+          .::=:==---*-=-===-+#**-   .=+-:::....
+          ::+=:++=++=+-:=*+-*#+=*    -*+:::::...
+         ::-*++###%%+-=--+-+*%+=#.   :++::::::::
+        .--##+#*#%%%#-::-*###%*=*=   .=+-::::::::
+        -:*#*#-+#*##*#=*#**=#%*=+*    -*-:::::::-
+       :::+*#*====****+**--.%%*++*:   :+-:::::::::
+      .-:=+==-::::=-:-====:-%#*+=#+   .=-:::::::::
+     .-:-**+++=-:.::  ..:-=*=***++:   .=-::::::::-
+    .:::+***+##*#*=.   =#***-..:..    .--:::::::::
+    :::-*#***##***-    .#***+         .-::--::::::.
+   .:::=*#***##**+:     =#**#.        ::-=---:::::.
+   :::-=*****##*#+:     .####-        ::=+==-::::::
+  .:::-==+***####=:      *###+        --**+=--::::.
+  .::::-==+**####+-      -####       :-=**+=--::..
+  ..:::--=***##*#*=       #***:      --+*++=--:. .
+  ...::--=***%**#=+.      =**#-     :==+++===-:..
+  :::-:--=*+*%##+:.:       *###.    =++++=====--.
+  :::----=++#%##:  :.      :###*   :**+*++++++-:
+  ::-----=++%%%+    .       -%#%+  -+*******+--
+   --++===**%##:             -%%%: :-=+++***-:
+   .-++*****%##               =##*  :.+++++-.
+     =**+++:%#+                *##-  ..=-=.
+      .==--:%#-                :%#*    ::
+        .:::%#-                 +#*.   .
+           .##=                 .#*+
+           .#+*.                :**+:
+           .#++-                ++=*-
+            #*+*:              -*++#:
+            :+--.              .-=--
 
 --]]

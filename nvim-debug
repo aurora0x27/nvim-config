@@ -1,5 +1,5 @@
 #! /usr/bin/bash
 
-SCRIPT_DIR=$(dirname "$(realpath "$0")")
+export SCRIPT_DIR=$(dirname "$(realpath "$0")")
 
-nvim -u $SCRIPT_DIR/init.lua $@
+NVIM_CONFIG_DEV=1 nvim -u $SCRIPT_DIR/init.lua $@
