@@ -31,7 +31,6 @@ local rust_analyzer = {
     cmd = {
         'rust-analyzer',
     },
-    workspace_required = true,
 }
 
 return rust_analyzer
