@@ -17,6 +17,7 @@ function autocmd.apply()
     })
 
     -- Do not display warnings
+    ---@diagnostic disable: duplicate-set-field
     vim.deprecate = function() end
 
     -- set Blink border highlight

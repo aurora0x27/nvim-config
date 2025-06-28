@@ -12,8 +12,7 @@ return {
             vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = '' })
         end
 
-        vim.opt.signcolumn = 'yes:2'
-
+        vim.opt.signcolumn = 'auto'
         vim.diagnostic.config {
             signs = { priority = 5 },
             virtual_text = false,
