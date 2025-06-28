@@ -2,6 +2,7 @@ return { -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
     opts = {
+        preset = 'helix',
         icons = {
             -- set icon mappings to true if you have a Nerd Font
             mappings = vim.g.have_nerd_font,
@@ -46,8 +47,8 @@ return { -- Useful plugin to show you pending keybinds.
             -- { '<leader>r', group = '[R]ename' },
             { '<leader>f', group = '[F]ind' },
             { '<leader>e', group = '[E]xplorer' },
-            -- { '<leader>w', group = '[W]orkspace' },
-            -- { '<leader>t', group = '[T]oggle' },
+            { '<leader>l', group = '[L]anguageUtils' },
+            { '<leader>p', group = '[P]review' },
             { '<leader>b', group = '[B]uffer' },
             { '<leader>g', group = '[G]it', mode = { 'n', 'v' } },
         },
