@@ -117,7 +117,7 @@ return {
         local FileType = {
             provider = function()
                 local filename, extension = vim.fn.expand '%:t', vim.fn.expand '%:e'
-                local icon, icon_color = require('nvim-web-devicons').get_icon_color(filename, extension, { default = true })
+                local icon, _ = require('nvim-web-devicons').get_icon_color(filename, extension, { default = true })
                 return icon and (' ' .. icon .. ' ' .. vim.bo.filetype .. ' ') or (' ' .. vim.bo.filetype .. ' ')
             end,
             hl = function()
@@ -141,7 +141,7 @@ return {
         local LSP = {
             condition = conditions.lsp_attached,
             provider = function()
-                local clients = vim.lsp.get_active_clients()
+                local clients = vim.lsp.get_clients()
                 if next(clients) == nil then
                     return ''
                 end
