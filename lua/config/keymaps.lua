@@ -2,8 +2,6 @@
 
 local keymaps = {}
 
-keymaps.opt = {}
-
 function keymaps.apply()
     -- resize window
     vim.keymap.set('n', '<C-Left>', ':SmartResizeLeft<Enter>', { noremap = true, silent = true })
