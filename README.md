@@ -18,6 +18,15 @@ A streamlined set of configurations for Nvim which is writen all *by hand*
 
 - Well organized code for beginers to understand
 
+## ⚡Try it now⚡
+
+You can try it immediately without replacing your origin configurations
+
+```bash
+./venv # Launch a virtual env shell, `nvim-debug` will be added to path automaticly
+nvim-debug # Launch neovim on this config, without make changes to your ~/.local/share
+```
+
 ## Basic functionalities
 
 - [x] Auto complition
@@ -42,12 +51,12 @@ A streamlined set of configurations for Nvim which is writen all *by hand*
 
 - [x] Ime auto switch(**Only on linux**)
 
-- [ ] Debugger dapper (Not planned)
+## Maybe wanted features
 
-- [ ] Changeable color scheme
+- Use Render-Markdown instead of Markdown-Preview
 
-- [ ] Lazygit intergration (Not planned)
+- Latex preview
+
+- IME switcher on MacOS -- *No idea how to impl*
 
 ## TODO List
-
-- [ ] Latex preview
