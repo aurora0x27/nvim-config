@@ -1,4 +1,4 @@
-#! /usr/bin/bash
+#! /bin/bash
 
 PROJ_ROOT=`pwd`
 TEST_ENV=$PROJ_ROOT/nvim-cache
