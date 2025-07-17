@@ -1,4 +1,4 @@
-file: '^lua//default(/[^/]+)*/[^/]+\.lua$'
+file: '^lua\/.*[a-zA-Z0-9_]\.lua$'
 repos:
   - repo: https://github.com/JohnnyMorganz/StyLua
     rev: v2.0.2

@@ -60,3 +60,5 @@ nvim-debug # Launch neovim on this config, without make changes to your ~/.local
 - IME switcher on MacOS -- *No idea how to impl*
 
 ## TODO List
+
+- [ ] SSH clipboard support
