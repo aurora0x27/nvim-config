@@ -31,7 +31,7 @@ return {
             },
             lsp = {
                 hover = {
-                    enabled = true,
+                    enabled = false,
                     opts = {
                         border = { style = 'rounded' },
                         win_options = {
