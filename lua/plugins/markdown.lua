@@ -10,7 +10,7 @@
 -- }
 
 -- install with yarn or npm
-return {
+local MarkdownPreview = {
     'iamcco/markdown-preview.nvim',
     cmd = { 'MarkdownPreviewToggle', 'MarkdownPreview', 'MarkdownPreviewStop' },
     build = 'cd app && yarn install',
@@ -134,3 +134,15 @@ return {
 
     ft = { 'markdown' },
 }
+
+local RenderMarkdown = {
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+    ---@module 'render-markdown'
+    ---@diagnostic disable:undefined-doc-name
+    ---@type render.md.UserConfig
+    opts = {},
+    ft = { 'markdown' },
+}
+
+return { MarkdownPreview, RenderMarkdown }
