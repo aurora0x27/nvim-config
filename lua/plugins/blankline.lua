@@ -1,5 +1,8 @@
 -- Indent line
-return {
+
+-- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+
+local IndentLine = {
     'lukas-reineke/indent-blankline.nvim',
     event = { 'BufReadPost', 'BufNewFile' },
     main = 'ibl',
@@ -13,3 +16,5 @@ return {
         },
     },
 }
+
+return IndentLine

@@ -1,6 +1,8 @@
+-- Notifier
+
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
-return {
+local Notifier = {
     'rcarriga/nvim-notify',
     event = 'UIEnter',
     config = function()
@@ -66,3 +68,5 @@ return {
         vim.notify = require 'notify'
     end,
 }
+
+return Notifier

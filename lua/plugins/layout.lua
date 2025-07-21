@@ -1,4 +1,8 @@
-return {
+-- Smarter and more intuitive split pane management
+
+-- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+
+local Layout = {
     'mrjones2014/smart-splits.nvim',
     event = 'VeryLazy',
     config = function()
@@ -100,3 +104,5 @@ return {
         }
     end,
 }
+
+return Layout

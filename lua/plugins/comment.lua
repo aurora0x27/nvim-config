@@ -1,6 +1,8 @@
+-- Render Patterns Comments
+
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
-return {
+local CommentRenderer = {
     'folke/todo-comments.nvim',
 
     dependencies = { 'nvim-lua/plenary.nvim' },
@@ -31,3 +33,5 @@ return {
         },
     },
 }
+
+return CommentRenderer

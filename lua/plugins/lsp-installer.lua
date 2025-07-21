@@ -1,3 +1,5 @@
+-- Mason: lsp installer
+
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
 local pip_args

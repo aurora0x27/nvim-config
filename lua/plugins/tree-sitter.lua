@@ -1,4 +1,8 @@
-return {
+-- Regex highlighter
+
+-- if true then return {} end   -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+
+local TreeSitter = {
     'nvim-treesitter/nvim-treesitter',
 
     build = ':TSUpdate',
@@ -49,3 +53,5 @@ return {
         }
     end,
 }
+
+return TreeSitter

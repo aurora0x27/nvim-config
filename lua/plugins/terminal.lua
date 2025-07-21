@@ -2,7 +2,7 @@
 
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
-return {
+local IntergratedTerminal = {
     'akinsho/toggleterm.nvim',
     event = 'VeryLazy',
     version = '*',
@@ -23,7 +23,7 @@ return {
             --     end
             -- end,
 
-            open_mapping = { '<a-t>', '<F7>' }, -- or { [[<c-\>]], [[<c-¥>]] } if you also use a Japanese keyboard.
+            open_mapping = { '<c-\\>', '<F7>' }, -- or { [[<c-\>]], [[<c-¥>]] } if you also use a Japanese keyboard.
             -- on_create = fun(t: Terminal), -- function to run when the terminal is first created
             -- on_open = fun(t: Terminal), -- function to run when the terminal opens
             -- on_close = fun(t: Terminal), -- function to run when the terminal closes
@@ -94,3 +94,5 @@ return {
         }
     end,
 }
+
+return IntergratedTerminal

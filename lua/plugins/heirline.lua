@@ -1,6 +1,8 @@
+-- Status line
+
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
-return {
+local StatusLine = {
     'rebelot/heirline.nvim',
     event = 'VeryLazy',
     opts = function(_, opts)
@@ -192,3 +194,5 @@ return {
         vim.o.laststatus = 3
     end,
 }
+
+return StatusLine

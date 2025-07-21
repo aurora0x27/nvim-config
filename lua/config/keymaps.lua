@@ -1,8 +1,8 @@
 -- This file contains keymaps, which is executed after lazy initialization
 
-local keymaps = {}
+local KeyMaps = {}
 
-function keymaps.apply()
+function KeyMaps.apply()
     -- resize window
     vim.keymap.set('n', '<C-Left>', ':SmartResizeLeft<Enter>', { noremap = true, silent = true })
     vim.keymap.set('n', '<C-Right>', ':SmartResizeRight<Enter>', { noremap = true, silent = true })
@@ -36,4 +36,4 @@ function keymaps.apply()
     vim.keymap.set('n', '<Leader>lD', ':Telescope diagnostics<Enter>', { desc = 'Search diagnostics', noremap = true, silent = true })
 end
 
-return keymaps
+return KeyMaps

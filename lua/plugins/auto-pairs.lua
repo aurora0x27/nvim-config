@@ -1,4 +1,8 @@
-return {
+-- AutoPairs: automatically complete parens and brackets
+
+-- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+
+local AutoPairs = {
     'altermo/ultimate-autopair.nvim',
     event = { 'InsertEnter' },
     branch = 'v0.6', --recommended as each new version will have breaking changes
@@ -45,3 +49,5 @@ return {
         },
     },
 }
+
+return AutoPairs

@@ -1,6 +1,8 @@
+-- Float window ui
+
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
-return {
+local Noice = {
     'folke/noice.nvim',
     event = 'UIEnter',
     dependencies = {
@@ -55,3 +57,5 @@ return {
         }
     end,
 }
+
+return Noice

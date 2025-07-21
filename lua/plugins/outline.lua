@@ -1,6 +1,8 @@
+-- Outline
+
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
-return {
+local Outline = {
     'Bekaboo/dropbar.nvim',
     -- optional, but required for fuzzy finder support
     event = { 'BufReadPost', 'BufNewFile' },
@@ -15,3 +17,5 @@ return {
         vim.keymap.set('n', '];', dropbar_api.select_next_context, { desc = 'Select next context' })
     end,
 }
+
+return Outline

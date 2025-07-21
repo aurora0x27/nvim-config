@@ -39,6 +39,8 @@ nvim-debug # Launch neovim on this config, without make changes to your ~/.local
 
 - [x] Markdown preview
 
+- [x] Markdown renderer
+
 - [x] Outline
 
 - [x] Intergrated terminal
@@ -52,8 +54,6 @@ nvim-debug # Launch neovim on this config, without make changes to your ~/.local
 - [x] Ime auto switch(**Only on linux**)
 
 ## Maybe wanted features
-
-- Use Render-Markdown instead of Markdown-Preview
 
 - Latex preview
 

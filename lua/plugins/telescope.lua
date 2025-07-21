@@ -1,4 +1,8 @@
-return {
+-- Fuzzy finder
+
+-- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+
+local Telescope = {
     'nvim-telescope/telescope.nvim',
     opts = {
         defaults = {
@@ -27,3 +31,5 @@ return {
         },
     },
 }
+
+return Telescope

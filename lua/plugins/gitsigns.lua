@@ -1,6 +1,8 @@
+-- Git utils collection
+
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
-return {
+local GitUtils = {
     'lewis6991/gitsigns.nvim',
     event = { 'BufReadPost', 'BufNewFile' },
 
@@ -128,3 +130,5 @@ return {
         }
     end,
 }
+
+return GitUtils

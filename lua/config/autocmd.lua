@@ -1,8 +1,8 @@
 -- Define some behaviors
 
-local autocmd = {}
+local AutoCmd = {}
 
-function autocmd.apply()
+function AutoCmd.apply()
     local mocha = require('catppuccin.palettes').get_palette 'mocha'
 
     -- Highlight yanked text
@@ -27,4 +27,4 @@ function autocmd.apply()
     vim.api.nvim_set_hl(0, 'BlinkCmpDocSeparator', { fg = mocha.blue })
 end
 
-return autocmd
+return AutoCmd

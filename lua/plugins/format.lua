@@ -1,6 +1,8 @@
 -- Format code
 
-return {
+-- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+
+local CodeFormatter = {
     'stevearc/conform.nvim',
     event = { 'BufReadPost', 'BufNewFile' },
     opts = {},
@@ -23,3 +25,5 @@ return {
         vim.api.nvim_create_user_command('Format', do_format, { desc = 'Format Current Buffer' })
     end,
 }
+
+return CodeFormatter

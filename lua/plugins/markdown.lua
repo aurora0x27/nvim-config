@@ -1,13 +1,6 @@
 -- Markdown preview
 
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
--- install without yarn or npm
--- return {
---     "iamcco/markdown-preview.nvim",
---     cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
---     ft = { "markdown" },
---     build = function() vim.fn["mkdp#util#install"]() end,
--- }
 
 -- install with yarn or npm
 local MarkdownPreview = {

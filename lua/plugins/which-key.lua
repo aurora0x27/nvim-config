@@ -1,4 +1,8 @@
-return { -- Useful plugin to show you pending keybinds.
+-- Useful plugin to show you pending keybinds.
+
+-- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+
+local KeyMapIntellisense = {
     'folke/which-key.nvim',
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
     opts = {
@@ -54,3 +58,5 @@ return { -- Useful plugin to show you pending keybinds.
         },
     },
 }
+
+return KeyMapIntellisense

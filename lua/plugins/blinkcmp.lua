@@ -1,6 +1,8 @@
+-- CodeCompletion: code completor ui
+
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
-return {
+local CodeCompletion = {
     'saghen/blink.cmp',
     -- optional: provides snippets for the snippet source
     dependencies = {
@@ -93,3 +95,5 @@ return {
     },
     opts_extend = { 'sources.default' },
 }
+
+return CodeCompletion

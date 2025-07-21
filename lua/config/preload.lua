@@ -1,8 +1,8 @@
 -- This file contains settings load before initializing lazy
-local preload = {}
+local Preload = {}
 
-function preload.apply()
+function Preload.apply()
     vim.opt.number = true -- sets vim.opt.number
 end
 
-return preload
+return Preload

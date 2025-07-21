@@ -2,7 +2,7 @@
 
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
-return {
+local NeoTree = {
     'nvim-neo-tree/neo-tree.nvim',
     branch = 'v3.x',
     event = 'VeryLazy',
@@ -153,3 +153,5 @@ return {
 --         vim.g.loaded_netrwPlugin = 1
 --     end,
 -- }
+
+return NeoTree
