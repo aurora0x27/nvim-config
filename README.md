@@ -12,7 +12,7 @@ A streamlined set of configurations for Nvim which is writen all *by hand*
 
 ## Feature
 
-- No more than 30 plugins
+- No more than 35 plugins
 
 - Only with basic but necessary functionality
 
