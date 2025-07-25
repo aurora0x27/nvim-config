@@ -109,6 +109,7 @@ function LspConfig.apply()
         'clangd',
         'rust_analyzer',
         'pyright',
+        'neocmake',
         -- 'clice',
     }
 

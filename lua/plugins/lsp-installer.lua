@@ -12,15 +12,56 @@ end
 
 local ensure_installed = function(list)
     local registry = require 'mason-registry'
-    registry.update(function()
-        for _, lsp in ipairs(list) do
-            if not registry.is_installed(lsp) then
-                registry.get_package(lsp):install()
-                print('Installed lsp: ', lsp)
-            end
+
+    local function install_package(pkg_name)
+        local ok, pkg = pcall(registry.get_package, pkg_name)
+        if not ok then
+            vim.notify(('Package %s not found'):format(pkg_name), vim.log.levels.WARN)
+            return
         end
-    end)
+        if not pkg:is_installed() then
+            vim.notify('Installing LSP: ' .. pkg_name, vim.log.levels.INFO)
+            pkg:install():once('closed', function()
+                if pkg:is_installed() then
+                    vim.schedule(function()
+                        vim.notify('LSP installed: ' .. pkg_name, vim.log.levels.INFO)
+                    end)
+                else
+                    vim.schedule(function()
+                        vim.notify('Failed to install LSP: ' .. pkg_name, vim.log.levels.ERROR)
+                    end)
+                end
+            end)
+        end
+    end
+
+    if not registry.refresh then
+        -- Old Mason version fallback
+        for _, name in ipairs(list) do
+            install_package(name)
+        end
+    else
+        -- Newer Mason: async registry refresh
+        registry.refresh(function()
+            for _, name in ipairs(list) do
+                install_package(name)
+            end
+        end)
+    end
 end
+
+-- local ensure_installed = function(list)
+--     local registry = require 'mason-registry'
+--     registry.update(function()
+--         for _, lsp in ipairs(list) do
+--             if not registry.is_installed(lsp) then
+--                 vim.notify("Installing lsp " .. lsp, vim.log.levels.INFO)
+--                 registry.get_package(lsp):install()
+--                 vim.notify("Installed lsp " .. lsp, vim.log.levels.INFO)
+--             end
+--         end
+--     end)
+-- end
 
 local MasonOpt = {
     pip = {
@@ -49,6 +90,7 @@ local Mason = {
         ensure_installed {
             'lua-language-server',
             'pyright',
+            'neocmakelsp',
         }
     end,
 }
