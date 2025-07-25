@@ -18,8 +18,7 @@ local Dashboard = {
             local load_time = lazy_stats.startuptime
             local datetime = os.date ' %d-%m-%Y   %H:%M:%S'
 
-            return string.format('⚡ %d/%d plugins loaded in %.2fms  |  %s', plugin_load, plugin_count, load_time,
-                datetime)
+            return string.format('⚡ %d/%d plugins loaded in %.2fms  |  %s', plugin_load, plugin_count, load_time, datetime)
         end
 
         -- Update alpha after loaded
@@ -130,7 +129,7 @@ local Dashboard = {
                         return
                     end
                 end
-                vim.notify("No previous file found in v:oldfiles", vim.log.levels.WARN)
+                vim.notify('No previous file found in v:oldfiles', vim.log.levels.WARN)
             end),
         }
 

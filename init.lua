@@ -46,6 +46,7 @@ vim.api.nvim_create_autocmd('User', {
             require('config.autocmd').apply()
             require('config.diagnostics').apply()
             require('config.lsp').apply()
+            require('config.ssh_mode').apply()
         end)
     end,
 })

@@ -55,12 +55,12 @@ nvim-debug # Launch neovim on this config, without make changes to your ~/.local
 
 - [x] Session recover
 
-## Maybe wanted features
+- [x] SSH clipboard support(**Need tmux extra config**)
 
-- Latex preview
+## Maybe wanted features
 
 - IME switcher on MacOS -- *No idea how to impl*
 
 ## TODO List
 
-- [ ] SSH clipboard support
+- [ ] Latex preview

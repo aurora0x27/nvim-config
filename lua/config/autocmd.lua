@@ -26,7 +26,7 @@ function AutoCmd.apply()
     vim.api.nvim_set_hl(0, 'BlinkCmpSignatureHelpBorder', { fg = mocha.blue })
     vim.api.nvim_set_hl(0, 'BlinkCmpDocSeparator', { fg = mocha.blue })
 
-    vim.api.nvim_create_autocmd("BufReadPost", {
+    vim.api.nvim_create_autocmd('BufReadPost', {
         callback = function()
             local mark = vim.api.nvim_buf_get_mark(0, '"')
             local lcount = vim.api.nvim_buf_line_count(0)
@@ -34,7 +34,7 @@ function AutoCmd.apply()
                 vim.api.nvim_win_set_cursor(0, mark)
             end
         end,
-        desc = "Set cursor to the position where it was last left."
+        desc = 'Set cursor to the position where it was last left.',
     })
 end
 
