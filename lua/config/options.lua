@@ -3,9 +3,9 @@ local Options = {}
 
 Options.opt = {
     relativenumber = false, -- sets vim.opt.relativenumber
-    spell = false, -- sets vim.opt.spell
-    signcolumn = 'auto', -- sets vim.opt.signcolumn to auto
-    wrap = false, -- sets vim.opt.wrap
+    spell = false,          -- sets vim.opt.spell
+    signcolumn = 'auto',    -- sets vim.opt.signcolumn to auto
+    wrap = false,           -- sets vim.opt.wrap
     tabstop = 4,
     shiftwidth = 4,
     expandtab = true,
@@ -17,6 +17,8 @@ Options.opt = {
     wildmenu = true,
     ignorecase = true,
     cursorline = true,
+    undofile = true,
+    undodir = vim.fn.stdpath("state") .. "/undo",
 }
 
 function Options.apply()
@@ -39,6 +41,8 @@ function Options.apply()
         vim.g.terminal_color_14 = '#94e2d5'
         vim.g.terminal_color_15 = '#a6adc8'
     end
+
+    vim.fn.mkdir(vim.opt.undodir:get()[1], "p")
 
     for k, v in pairs(Options.opt) do
         vim.o[k] = v

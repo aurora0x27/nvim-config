@@ -18,7 +18,8 @@ local Dashboard = {
             local load_time = lazy_stats.startuptime
             local datetime = os.date ' %d-%m-%Y   %H:%M:%S'
 
-            return string.format('⚡ %d/%d plugins loaded in %.2fms  |  %s', plugin_load, plugin_count, load_time, datetime)
+            return string.format('⚡ %d/%d plugins loaded in %.2fms  |  %s', plugin_load, plugin_count, load_time,
+                datetime)
         end
 
         -- Update alpha after loaded
@@ -121,7 +122,16 @@ local Dashboard = {
             dashboard.button('SPC f f', '  Find File', ':Telescope find_files<CR>'),
             dashboard.button('SPC f o', '󰈙  Recents', ':Telescope oldfiles<CR>'),
             dashboard.button('SPC f w', '󰈭  Find Word', ':Telescope live_grep<CR>'),
-            dashboard.button('SPC S l', '  Last Session', [[:lua require("persistence").load({ last = true })<CR>]]),
+            dashboard.button('SPC S l', '  Last Session', function()
+                local oldfiles = vim.v.oldfiles
+                for _, file in ipairs(oldfiles) do
+                    if vim.fn.filereadable(file) == 1 then
+                        vim.cmd('edit ' .. vim.fn.fnameescape(file))
+                        return
+                    end
+                end
+                vim.notify("No previous file found in v:oldfiles", vim.log.levels.WARN)
+            end),
         }
 
         for _, button in ipairs(dashboard.section.buttons.val) do

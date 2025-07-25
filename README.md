@@ -53,6 +53,8 @@ nvim-debug # Launch neovim on this config, without make changes to your ~/.local
 
 - [x] Ime auto switch(**Only on linux**)
 
+- [x] Session recover
+
 ## Maybe wanted features
 
 - Latex preview
@@ -62,5 +64,3 @@ nvim-debug # Launch neovim on this config, without make changes to your ~/.local
 ## TODO List
 
 - [ ] SSH clipboard support
-
-- [ ] Session recover
