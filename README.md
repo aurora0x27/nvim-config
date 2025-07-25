@@ -62,3 +62,5 @@ nvim-debug # Launch neovim on this config, without make changes to your ~/.local
 ## TODO List
 
 - [ ] SSH clipboard support
+
+- [ ] Session recover
