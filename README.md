@@ -2,6 +2,10 @@
 
 A streamlined set of configurations for Nvim which is writen all *by hand*
 
+> [!Warning]
+>
+> This config is no logger maintained. Please follow branch `main`
+
 ## ⚡Showcase ⚡
 
 ![Dashboard](./doc/img/Dashboard.png)
