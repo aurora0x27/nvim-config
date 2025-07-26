@@ -18,8 +18,25 @@ local NeoTree = {
             enable_git_status = true,
             enable_diagnostics = true,
 
+            sources = { 'filesystem', 'buffers', 'git_status' },
+
+            source_selector = {
+                winbar = true,
+                statusline = false,
+                show_separator_on_edge = true,
+                sources = {
+                    { source = 'filesystem', display_name = ' 󰉓 Files' },
+                    { source = 'buffers', display_name = ' 󰈙 Buf' },
+                    { source = 'git_status', display_name = ' 󰊢 Git' },
+                },
+            },
+
             window = {
                 width = 30,
+                mappings = {
+                    ['<Tab>'] = 'next_source',
+                    ['<S-Tab>'] = 'prev_source',
+                },
             },
 
             filesystem = {
