@@ -12,7 +12,7 @@ local TreeSitter = {
     config = function()
         require('nvim-treesitter.configs').setup {
             -- A list of parser names, or "all" (the listed parsers MUST always be installed)
-            ensure_installed = { 'c', 'lua', 'cpp', 'python' },
+            ensure_installed = { 'c', 'lua', 'cpp', 'python', 'json' },
 
             -- Install parsers synchronously (only applied to `ensure_installed`)
             sync_install = false,
@@ -22,7 +22,7 @@ local TreeSitter = {
             auto_install = true,
 
             -- List of parsers to ignore installing (or "all")
-            ignore_install = { 'javascript' },
+            ignore_install = { 'javascript', 'tmux' },
 
             ---- If you need to change the installation directory of the parsers (see -> Advanced Setup)
             -- parser_install_dir = "/some/path/to/store/parsers", -- Remember to run vim.opt.runtimepath:append("/some/path/to/store/parsers")!
@@ -37,7 +37,24 @@ local TreeSitter = {
                 -- disable = { },
                 -- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
                 disable = function(lang, buf)
+                    local function Set(list)
+                        local set = {}
+                        for _, l in ipairs(list) do
+                            set[l] = true
+                        end
+                        return set
+                    end
+
+                    local disable_langs = Set {
+                        'tmux',
+                    }
+
+                    if disable_langs[lang] then
+                        return true
+                    end
+
                     local max_filesize = 100 * 1024 -- 100 KB
+                    ---@diagnostic disable:undefined-field
                     local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
                     if ok and stats and stats.size > max_filesize then
                         return true
