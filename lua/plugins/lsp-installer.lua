@@ -50,19 +50,6 @@ local ensure_installed = function(list)
     end
 end
 
--- local ensure_installed = function(list)
---     local registry = require 'mason-registry'
---     registry.update(function()
---         for _, lsp in ipairs(list) do
---             if not registry.is_installed(lsp) then
---                 vim.notify("Installing lsp " .. lsp, vim.log.levels.INFO)
---                 registry.get_package(lsp):install()
---                 vim.notify("Installed lsp " .. lsp, vim.log.levels.INFO)
---             end
---         end
---     end)
--- end
-
 local MasonOpt = {
     pip = {
         upgrade_pip = false,
@@ -89,6 +76,7 @@ local Mason = {
         require('mason').setup(MasonOpt)
         ensure_installed {
             'lua-language-server',
+            'stylua',
             'pyright',
             'neocmakelsp',
         }

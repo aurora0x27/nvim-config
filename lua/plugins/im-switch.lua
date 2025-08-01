@@ -42,6 +42,19 @@ local ImSwitchMac = {
             -- Async run `default_command` to switch IM or not
             async_switch_im = true,
         }
+
+        -- DEBUG
+        -- vim.api.nvim_create_autocmd("FocusLost", {
+        --     callback = function()
+        --         vim.notify("FocusLost triggered", vim.log.levels.INFO)
+        --     end,
+        -- })
+        -- vim.api.nvim_create_autocmd("FocusGained", {
+        --     callback = function()
+        --         vim.notify("FocusGained triggered", vim.log.levels.INFO)
+        --     end,
+        -- })
+        -- DEBUG
     end,
 }
 
@@ -51,7 +64,11 @@ local is_linux = vim.fn.has 'unix' == 1 and not is_mac
 
 if is_linux then
     return Fcitx5
-elseif is_mac and vim.fn.executable 'im-select' == 1 then
+elseif is_mac then
+    if vim.fn.executable 'im-select' ~= 1 then
+        vim.notify('`im-select` executable not found', vim.log.levels.WARN)
+        vim.notify('Please install `im-select` by executing\n```bash\nbrew tab brew tap daipeihust/tap\nbrew install im-select\n```', vim.log.levels.INFO)
+    end
     return ImSwitchMac
 else
     vim.notify('No im-switcher is loaded', vim.log.levels.WARN)

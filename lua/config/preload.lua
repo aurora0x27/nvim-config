@@ -2,7 +2,14 @@
 local Preload = {}
 
 function Preload.apply()
-    vim.opt.number = true -- sets vim.opt.number
+    -- set global leader
+    vim.g.mapleader = ' '
+    vim.g.maplocalleader = ' '
+
+    -- sets vim.opt.number
+    -- WARN: put this line here instead of `options.lua`
+    -- prevents line number appear on dashboard, werid.
+    vim.opt.number = true
 end
 
 return Preload

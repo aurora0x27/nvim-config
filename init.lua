@@ -51,10 +51,6 @@ vim.api.nvim_create_autocmd('User', {
     end,
 })
 
--- set global leader
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
-
 require('config.preload').apply()
 
 -- set lazy path
