@@ -51,15 +51,13 @@ nvim-debug # Launch neovim on this config, without make changes to your ~/.local
 
 - [x] Formatter
 
-- [x] Ime auto switch(**Only on linux**)
-
 - [x] Session recover
 
 - [x] SSH clipboard support(**Need tmux extra config**)
 
-## Maybe wanted features
+- [x] Input method auto switch (**On Linux and MacOS**)
 
-- IME switcher on MacOS -- *No idea how to impl*
+## Maybe wanted features
 
 ## TODO List
 
