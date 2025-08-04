@@ -16,7 +16,6 @@ Options.opt = {
     termguicolors = true,
     wildmenu = true,
     ignorecase = true,
-    cursorline = true,
     undofile = true,
     undodir = vim.fn.stdpath 'state' .. '/undo',
 }

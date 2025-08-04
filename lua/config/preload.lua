@@ -6,10 +6,11 @@ function Preload.apply()
     vim.g.mapleader = ' '
     vim.g.maplocalleader = ' '
 
-    -- sets vim.opt.number
     -- WARN: put this line here instead of `options.lua`
-    -- prevents line number appear on dashboard, werid.
+    -- prevents line number and cursor line appear on
+    -- dashboard, so werid.
     vim.opt.number = true
+    vim.opt.cursorline = true
 end
 
 return Preload
