@@ -81,6 +81,7 @@ local StatusLine = {
         }
 
         -- Mode
+        local ctrl_v = string.char(22)
         local ViMode = {
             init = function(self)
                 self.mode = vim.fn.mode()
@@ -93,8 +94,10 @@ local StatusLine = {
                     V = 'V-LINE',
                     c = 'COMMAND',
                     R = 'REPLACE',
+                    [ctrl_v] = 'V-BLOCK',
+                    t = 'TERMINAL',
                 }
-                return ' ' .. (mode_map[self.mode] or 'V-BLOCK') .. ' '
+                return ' ' .. (mode_map[self.mode] or 'UNKNOWN') .. ' '
             end,
             hl = function(self)
                 local mode_hl = {
@@ -102,10 +105,12 @@ local StatusLine = {
                     i = colors.insert,
                     v = colors.visual,
                     V = colors.visual,
+                    [ctrl_v] = colors.visual,
                     c = colors.command,
                     R = colors.replace,
+                    t = colors.terminal or colors.insert,
                 }
-                return { fg = 'black', bg = mode_hl[self.mode] or colors.visual, bold = true }
+                return { fg = 'black', bg = mode_hl[self.mode] or colors.replace, bold = true }
             end,
             update = {
                 'ModeChanged',
