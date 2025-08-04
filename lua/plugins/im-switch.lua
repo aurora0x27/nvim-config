@@ -24,7 +24,7 @@ local ImSwitchMac = {
             -- For Windows/WSL, default: "im-select.exe"
             -- For macOS, default: "macism"
             -- For Linux, default: "fcitx5-remote" or "fcitx-remote" or "ibus"
-            default_command = 'im-select',
+            default_command = '/opt/homebrew/bin/im-select',
 
             -- Restore the default input method state when the following events are triggered
             -- "VimEnter" and "FocusGained" were removed for causing problems, add it by your needs
@@ -64,7 +64,7 @@ local is_linux = vim.fn.has 'unix' == 1 and not is_mac
 
 if is_linux then
     return Fcitx5
-elseif is_mac then
+elseif is_mac and not vim.g.neovide then
     if vim.fn.executable 'im-select' ~= 1 then
         vim.notify('`im-select` executable not found', vim.log.levels.WARN)
         vim.notify('Please install `im-select` by executing\n```bash\nbrew tab brew tap daipeihust/tap\nbrew install im-select\n```', vim.log.levels.INFO)
