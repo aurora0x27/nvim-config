@@ -24,6 +24,12 @@ function KeyMaps.apply()
     vim.keymap.set('n', '<Leader>fb', ':Telescope buffers<Enter>', { desc = 'Telescope Find Buffer', noremap = true, silent = true })
     vim.keymap.set('n', '<Leader>fd', ':Telescope diagnostics<Enter>', { desc = 'Telescope Find Diagnostics', noremap = true, silent = true })
     vim.keymap.set('n', '<Leader>fg', ':Telescope git_status<Enter>', { desc = 'Telescope Find Git Diff', noremap = true, silent = true })
+    vim.keymap.set(
+        'n',
+        '<Leader>fs',
+        ':Telescope lsp_dynamic_workspace_symbols<Enter>',
+        { desc = 'Telescope Find Workspace Symbols', noremap = true, silent = true }
+    )
     vim.keymap.set('n', '<Leader>fm', ':Noice telescope<Enter>', { desc = 'Telescope Filter Noice Msg', noremap = true, silent = true })
     vim.keymap.set('n', '<Leader>ft', ':TodoTelescope<Enter>', { desc = 'Telescope Filter Todo Items', noremap = true, silent = true })
 

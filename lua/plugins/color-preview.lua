@@ -7,7 +7,7 @@ local ColorPreview = {
     event = { 'BufReadPost', 'BufNewFile' },
     config = function()
         require('colorizer').setup({ '*' }, {
-            RGB = true, -- #RGB hex codes `#EAF`
+            RGB = false, -- #RGB hex codes `#EAF`
             RRGGBB = true, -- #RRGGBB hex codes `#39C5BB`, `#66ccff`
             names = false, -- "Name" codes like `Blue`
             RRGGBBAA = true, -- #RRGGBBAA hex codes `#66ccffff`
