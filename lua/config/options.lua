@@ -18,6 +18,8 @@ Options.opt = {
     ignorecase = true,
     undofile = true,
     undodir = vim.fn.stdpath 'state' .. '/undo',
+    scrolloff = 5,
+    virtualedit = 'block',
 }
 
 function Options.apply()
