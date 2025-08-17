@@ -4,7 +4,17 @@
 
 local Layout = {
     'mrjones2014/smart-splits.nvim',
-    event = 'VeryLazy',
+    lazy = true,
+    cmd = {
+        'SmartResizeLeft',
+        'SmartResizeRight',
+        'SmartResizeUp',
+        'SmartResizeDown',
+        'SmartCursorMoveLeft',
+        'SmartCursorMoveDown',
+        'SmartCursorMoveUp',
+        'SmartCursorMoveRight',
+    },
     config = function()
         require('smart-splits').setup {
             -- Ignored buffer types (only while resizing)

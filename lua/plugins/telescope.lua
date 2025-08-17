@@ -18,6 +18,8 @@ end
 
 local Telescope = {
     'nvim-telescope/telescope.nvim',
+    lazy = true,
+    cmd = { 'Telescope' },
     opts = {
         defaults = {
             layout_config = {

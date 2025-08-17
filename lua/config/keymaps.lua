@@ -43,6 +43,13 @@ function KeyMaps.apply()
 
     vim.keymap.set({ 'n', 'v' }, 'j', 'gj', { noremap = true, silent = true })
     vim.keymap.set({ 'n', 'v' }, 'k', 'gk', { noremap = true, silent = true })
+
+    -- File explorer
+    vim.keymap.set('n', '<leader>e', ':Neotree toggle<CR>', {
+        desc = 'Toggle NeoTree file explorer',
+        noremap = true,
+        silent = true,
+    })
 end
 
 return KeyMaps

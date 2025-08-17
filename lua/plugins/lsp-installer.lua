@@ -10,7 +10,7 @@ else
     pip_args = {}
 end
 
-local ensure_installed = function(list)
+local function ensure_installed(list)
     local registry = require 'mason-registry'
 
     local function install_package(pkg_name)
@@ -71,7 +71,7 @@ local MasonOpt = {
 ---@diagnostic disable: unused-local
 local Mason = {
     'williamboman/mason.nvim',
-    event = { 'VimEnter' },
+    event = 'VeryLazy',
     config = function()
         require('mason').setup(MasonOpt)
         ensure_installed {
