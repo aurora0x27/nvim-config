@@ -27,17 +27,13 @@ local Tabline = {
             },
         }
 
-        vim.api.nvim_create_autocmd('FileType', {
-            pattern = 'alpha',
-            callback = function()
-                vim.opt.showtabline = 0
-            end,
-        })
-
-        vim.api.nvim_create_autocmd('BufEnter', {
-            callback = function()
-                if vim.bo.filetype ~= 'alpha' then
-                    vim.opt.showtabline = 2
+        vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter' }, {
+            callback = function(args)
+                local ft = vim.bo[args.buf].filetype
+                if ft == 'alpha' then
+                    vim.o.showtabline = 0
+                else
+                    vim.o.showtabline = 2
                 end
             end,
         })
