@@ -37,6 +37,7 @@ local NeoTree = {
                 mappings = {
                     ['<Tab>'] = 'next_source',
                     ['<S-Tab>'] = 'prev_source',
+                    ['l'] = 'open',
                 },
             },
 

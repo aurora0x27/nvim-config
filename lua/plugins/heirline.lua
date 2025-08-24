@@ -5,7 +5,7 @@
 local StatusLine = {
     'rebelot/heirline.nvim',
     event = 'VeryLazy',
-    opts = function(_, opts)
+    config = function()
         local conditions = require 'heirline.conditions'
         -- local utils = require("heirline.utils")
 
@@ -179,7 +179,7 @@ local StatusLine = {
         }
 
         -- Status line layout
-        opts.statusline = {
+        local StatusLine = {
             ViMode,
             FileType,
             GitStatus,
@@ -192,7 +192,7 @@ local StatusLine = {
         }
 
         require('heirline').setup {
-            -- winbar = WinBar
+            statusline = StatusLine,
         }
 
         -- set global status line
