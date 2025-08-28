@@ -12,7 +12,21 @@ local TreeSitter = {
     config = function()
         require('nvim-treesitter.configs').setup {
             -- A list of parser names, or "all" (the listed parsers MUST always be installed)
-            ensure_installed = { 'c', 'lua', 'cpp', 'python', 'json', 'yaml', 'toml' },
+            ensure_installed = {
+                'c',
+                'lua',
+                'vim',
+                'cpp',
+                'python',
+                'json',
+                'yaml',
+                'toml',
+                'bash',
+                'fish',
+                'awk',
+                'diff',
+                'cmake',
+            },
 
             -- Install parsers synchronously (only applied to `ensure_installed`)
             sync_install = false,
