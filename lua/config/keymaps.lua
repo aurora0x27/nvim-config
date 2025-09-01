@@ -50,6 +50,9 @@ function KeyMaps.apply()
         noremap = true,
         silent = true,
     })
+
+    -- Clean search highlight
+    vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>', { silent = true })
 end
 
 return KeyMaps

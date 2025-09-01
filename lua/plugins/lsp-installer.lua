@@ -57,8 +57,9 @@ local MasonOpt = {
     },
     ui = {
         border = 'rounded',
-        width = 0.7,
-        height = 0.7,
+        width = 0.8,
+        height = 0.8,
+        backdrop = 100,
         icons = {
             package_installed = '✓',
             package_pending = '➜',

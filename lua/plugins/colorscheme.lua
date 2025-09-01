@@ -93,6 +93,14 @@ local ColorScheme = {
             color_overrides = {},
             custom_highlights = {},
             default_integrations = true,
+            highlight_overrides = {
+                mocha = function(mocha)
+                    return {
+                        NormalFloat = { bg = mocha.base },
+                        FloatBorder = { bg = mocha.base },
+                    }
+                end,
+            },
         }
 
         -- setup must be called before loading

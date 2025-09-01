@@ -79,6 +79,8 @@ require('lazy').setup {
     },
     ui = {
         backdrop = 100,
+        width = 0.8,
+        height = 0.8,
         border = 'rounded',
     },
     performance = {
