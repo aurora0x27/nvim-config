@@ -10,4 +10,7 @@ export XDG_CACHE_HOME=$TEST_ENV/cache
 export PATH="$PROJ_ROOT:$PATH"
 export VIRTUAL_ENV=nvim-dev
 
+echo ""
+echo "[Note]: Please run \`nv\` to launch nvim"
+
 zsh
