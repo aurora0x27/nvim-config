@@ -72,7 +72,7 @@ local MasonOpt = {
 ---@diagnostic disable: unused-local
 local Mason = {
     'williamboman/mason.nvim',
-    event = 'VeryLazy',
+    event = 'VimEnter',
     config = function()
         require('mason').setup(MasonOpt)
         ensure_installed {

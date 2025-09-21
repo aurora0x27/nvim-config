@@ -2,6 +2,8 @@ local pyright = {
     filetypes = { 'python' },
     cmd = { 'pyright-langserver', '--stdio' },
     root_markers = {
+        '.venv',
+        'uv.lock',
         'pyproject.toml',
         'setup.py',
         'setup.cfg',
