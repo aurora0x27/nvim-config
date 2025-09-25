@@ -61,4 +61,6 @@ nvim-debug # Launch neovim on this config, without make changes to your ~/.local
 
 ## TODO List
 
+- [ ] Markdown Table Format
+
 - [ ] Latex preview

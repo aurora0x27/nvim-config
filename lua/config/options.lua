@@ -48,6 +48,16 @@ function Options.apply()
     for k, v in pairs(Options.opt) do
         vim.o[k] = v
     end
+
+    vim.filetype.add {
+        extension = {
+            mdx = 'markdown',
+        },
+        pattern = {
+            -- Add patterns
+            -- ['<pattern>'] = '<filetype>',
+        },
+    }
 end
 
 return Options

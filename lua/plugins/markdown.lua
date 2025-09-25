@@ -176,9 +176,16 @@ local RenderMarkdown = {
 
         heading = {
             icons = { ' 󰼏 ', ' 󰎨 ', ' 󰼑 ', ' 󰎲 ', ' 󰼓 ', ' 󰎴 ' },
-            border = true,
+            border = false,
             render_modes = true, -- keep rendering while inserting
+            width = 'block',
             min_width = 120,
+        },
+
+        dash = {
+            enabled = true,
+            render_modes = true,
+            width = 120,
         },
 
         bullet = {
@@ -241,6 +248,10 @@ local RenderMarkdown = {
                 important = { raw = '[!]', rendered = '', highlight = 'RenderMarkdownWarn', scope_highlight = 'RenderMarkdownWarn' },
                 favorite = { raw = '[~]', rendered = '', highlight = 'RenderMarkdownMath', scope_highlight = 'RenderMarkdownMath' },
             },
+        },
+
+        quote = {
+            render_modes = true,
         },
 
         pipe_table = {
