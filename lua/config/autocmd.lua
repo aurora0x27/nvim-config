@@ -36,6 +36,13 @@ function AutoCmd.apply()
         end,
         desc = 'Set cursor to the position where it was last left.',
     })
+
+    vim.api.nvim_create_autocmd("FileType", {
+        pattern = "help",
+        callback = function()
+            vim.cmd("wincmd T")
+        end
+    })
 end
 
 return AutoCmd
