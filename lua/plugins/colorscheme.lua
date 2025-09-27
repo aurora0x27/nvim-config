@@ -32,6 +32,8 @@ local Table = {
     crust = '#11111b',
 }
 
+local transparent_mode = true
+
 local ColorScheme = {
     'catppuccin/nvim',
     name = 'catppuccin',
@@ -62,7 +64,7 @@ local ColorScheme = {
                 dark = 'mocha',
             },
 
-            transparent_background = false, -- disables setting the background color.
+            transparent_background = transparent_mode, -- disables setting the background color.
             show_end_of_buffer = false, -- shows the '~' characters after the end of buffers
             term_colors = false, -- sets terminal colors (e.g. `g:terminal_color_0`)
 
@@ -70,6 +72,10 @@ local ColorScheme = {
                 enabled = false, -- dims the background color of inactive window
                 shade = 'dark',
                 percentage = 0.15, -- percentage of the shade to apply to the inactive window
+            },
+
+            float = {
+                transparent = transparent_mode,
             },
 
             no_italic = false, -- Force no italic
@@ -95,10 +101,20 @@ local ColorScheme = {
             default_integrations = true,
             highlight_overrides = {
                 mocha = function(mocha)
-                    return {
-                        NormalFloat = { bg = mocha.base },
-                        FloatBorder = { bg = mocha.base },
-                    }
+                    if transparent_mode then
+                        vim.opt.cursorline = false
+                        return {
+                            LineNr = { fg = mocha.overlay2 },
+                            NeoTreeTabSeparatorInactive = { fg = mocha.overlay2 },
+                            -- NormalFloat = { bg = mocha.base },
+                            -- FloatBorder = { bg = mocha.base },
+                        }
+                    else
+                        return {
+                            NormalFloat = { bg = mocha.base },
+                            FloatBorder = { bg = mocha.base },
+                        }
+                    end
                 end,
             },
         }

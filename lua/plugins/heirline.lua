@@ -77,7 +77,6 @@ local StatusLine = {
                 end,
                 hl = { fg = mocha.green },
             },
-            hl = { bg = colors.bg },
         }
 
         -- Mode

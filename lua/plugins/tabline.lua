@@ -39,7 +39,7 @@ local Tabline = {
         })
 
         local mocha = require('catppuccin.palettes').get_palette 'mocha'
-        vim.api.nvim_set_hl(0, 'BufferLineIndicatorSelected', { fg = mocha.lavender, bg = mocha.base, bold = true, italic = true })
+        vim.api.nvim_set_hl(0, 'BufferLineIndicatorSelected', { fg = mocha.lavender, bold = true, italic = true })
     end,
 }
 
