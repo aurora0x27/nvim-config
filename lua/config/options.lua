@@ -43,6 +43,10 @@ function Options.apply()
         vim.g.terminal_color_15 = '#a6adc8'
     end
 
+    if vim.g.transparent_mode then
+        vim.api.nvim_set_hl(0, '@variable', vim.tbl_extend('force', vim.api.nvim_get_hl(0, { name = '@variable' }), { italic = true, fg = '#B4BEFF' }))
+    end
+
     vim.fn.mkdir(vim.opt.undodir:get()[1], 'p')
 
     for k, v in pairs(Options.opt) do

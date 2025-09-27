@@ -32,7 +32,7 @@ local Table = {
     crust = '#11111b',
 }
 
-local transparent_mode = true
+local transparent_mode = vim.g.transparent_mode
 
 local ColorScheme = {
     'catppuccin/nvim',
@@ -106,8 +106,7 @@ local ColorScheme = {
                         return {
                             LineNr = { fg = mocha.overlay2 },
                             NeoTreeTabSeparatorInactive = { fg = mocha.overlay2 },
-                            -- NormalFloat = { bg = mocha.base },
-                            -- FloatBorder = { bg = mocha.base },
+                            BufferLineBufferVisible = { fg = mocha.overlay2 },
                         }
                     else
                         return {

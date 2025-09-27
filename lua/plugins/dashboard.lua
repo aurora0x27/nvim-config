@@ -145,7 +145,7 @@ local Dashboard = {
         local lines = vim.o.lines
 
         dashboard.config.layout = {
-            { type = 'padding', val = math.floor(lines / 5) },
+            { type = 'padding', val = math.floor(lines / 4) },
             dashboard.section.header,
             { type = 'padding', val = 2 },
             dashboard.section.buttons,
