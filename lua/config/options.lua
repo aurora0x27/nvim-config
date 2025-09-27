@@ -45,6 +45,7 @@ function Options.apply()
 
     if vim.g.transparent_mode then
         vim.api.nvim_set_hl(0, '@variable', vim.tbl_extend('force', vim.api.nvim_get_hl(0, { name = '@variable' }), { italic = true, fg = '#B4BEFF' }))
+        vim.opt.fillchars:append { eob = ' ' }
     end
 
     vim.fn.mkdir(vim.opt.undodir:get()[1], 'p')
