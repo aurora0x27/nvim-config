@@ -1,5 +1,7 @@
 # YET ANOTHER NVIM CONFIG
 
+English | [中文](./doc/README.zh_CN.md)
+
 A streamlined set of configurations for Nvim which is writen all *by hand*
 
 ## ⚡Showcase ⚡
@@ -7,8 +9,6 @@ A streamlined set of configurations for Nvim which is writen all *by hand*
 ![Dashboard](./doc/img/Dashboard.png)
 
 ![Workspace](./doc/img/Workspace.png)
-
-![Telescope](./doc/img/Telescope.png)
 
 ## Feature
 
@@ -30,37 +30,26 @@ nvim-debug # Launch neovim on this config, without make changes to your ~/.local
 ## Basic functionalities
 
 - [x] Auto complition
-
 - [x] Status line
-
 - [x] Color and comment highlight
-
 - [x] File system explorer
-
 - [x] Markdown preview
-
 - [x] Markdown renderer
-
 - [x] Outline
-
 - [x] Intergrated terminal
-
 - [x] Fuzzy finder
-
 - [x] LSP support
-
 - [x] Formatter
-
 - [x] Session recover
-
 - [x] SSH clipboard support(**Need tmux extra config**)
-
 - [x] Input method auto switch (**On Linux and MacOS**)
 
 ## Maybe wanted features
 
-## TODO List
-
 - [ ] Markdown Table Format
+
+- [ ] Image preview in markdown(Partly support)
+
+## TODO List
 
 - [ ] Latex preview
