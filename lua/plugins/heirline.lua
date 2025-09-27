@@ -124,7 +124,7 @@ local StatusLine = {
             provider = function()
                 local filename, extension = vim.fn.expand '%:t', vim.fn.expand '%:e'
                 local icon, _ = require('nvim-web-devicons').get_icon_color(filename, extension, { default = true })
-                return icon and (' ' .. icon .. ' ' .. vim.bo.filetype .. ' ') or (' ' .. vim.bo.filetype .. ' ')
+                return icon and ('  ' .. icon .. ' ' .. vim.bo.filetype .. '  ') or ('  ' .. vim.bo.filetype .. '  ')
             end,
             hl = function()
                 local _, icon_color = require('nvim-web-devicons').get_icon_color(vim.fn.expand '%:t', vim.fn.expand '%:e', { default = true })
@@ -136,24 +136,39 @@ local StatusLine = {
             init = function(self)
                 local cwd = vim.fn.getcwd(0)
                 self.cwd = vim.fn.fnamemodify(cwd, ':~')
+                self.mode = vim.fn.mode()
             end,
             provider = function(self)
-                return ' ' .. self.cwd .. ' '
+                return '   ' .. self.cwd .. ' '
             end,
-            hl = { fg = colors.text_fg, bold = true },
+            hl = function(self)
+                local mode_hl = {
+                    n = colors.normal,
+                    i = colors.insert,
+                    v = colors.visual,
+                    V = colors.visual,
+                    [ctrl_v] = colors.visual,
+                    c = colors.command,
+                    R = colors.replace,
+                    t = colors.terminal or colors.insert,
+                }
+                return { fg = 'black', bg = mode_hl[self.mode] or colors.replace, bold = true }
+            end,
+            update = true,
         }
 
         -- Lsp status
         local LSP = {
-            condition = conditions.lsp_attached,
             provider = function()
-                local clients = vim.lsp.get_clients()
-                if next(clients) == nil then
-                    return ''
+                if conditions.lsp_attached then
+                    local clients = vim.lsp.get_clients()
+                    if next(clients) ~= nil then
+                        return ' 󰒋 ' .. clients[1].name .. ' '
+                    end
                 end
-                return ' ' .. clients[1].name .. ' '
+                return '󰒏 '
             end,
-            hl = { fg = mocha.rosewater, bold = false },
+            hl = { fg = mocha.rosewater, bold = true },
         }
 
         -- Cursor position
@@ -166,15 +181,88 @@ local StatusLine = {
 
         local ScrollBar = {
             static = {
-                sbar = { '▁', '▂', '▃', '▄', '▅', '▆', '▇', '█' },
+                sbar = { '▁ ', '▂ ', '▃ ', '▄ ', '▅ ', '▆ ', '▇ ', '█ ' },
+                spinner = {
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                },
             },
             provider = function(self)
-                local curr_line = vim.api.nvim_win_get_cursor(0)[1]
-                local lines = vim.api.nvim_buf_line_count(0)
-                local i = math.floor((curr_line - 1) / lines * #self.sbar) + 1
-                return string.rep(self.sbar[i], 2)
+                local chars = setmetatable(self.spinner, {
+                    __index = function()
+                        return ' '
+                    end,
+                })
+                local line_ratio = vim.api.nvim_win_get_cursor(0)[1] / vim.api.nvim_buf_line_count(0)
+                local position = math.floor(line_ratio * 100)
+                local icon = chars[math.floor(line_ratio * #chars)] .. position
+                local limit = 5
+                if position <= limit or vim.api.nvim_win_get_cursor(0)[1] == 1 then
+                    return '↑ TOP'
+                elseif (vim.api.nvim_buf_line_count(0) - vim.api.nvim_win_get_cursor(0)[1]) <= limit then
+                    return '↓ BOT'
+                else
+                    return string.format('%s', icon) .. '%%'
+                end
             end,
-            hl = { fg = mocha.yellow, bg = mocha.base },
+            hl = { fg = mocha.rosewater, bg = mocha.base, bold = true },
+        }
+
+        local FileInfo = {
+            init = function(self)
+                self.mode = vim.fn.mode()
+            end,
+            provider = function()
+                local filename = vim.fn.expand '%:t'
+                local extension = vim.fn.expand '%:e'
+                local present, icons = pcall(require, 'nvim-web-devicons')
+                local icon = present and icons.get_icon(filename, extension) or '[None]'
+                if vim.api.nvim_win_get_width(0) < 140 then
+                    return (vim.bo.modified and '%m' or '') .. icon .. ' '
+                end
+                return (vim.bo.modified and '%m' or '') .. ' ' .. icon .. ' ' .. filename .. ' '
+            end,
+            hl = function(self)
+                local mode_hl = {
+                    n = colors.normal,
+                    i = colors.insert,
+                    v = colors.visual,
+                    V = colors.visual,
+                    [ctrl_v] = colors.visual,
+                    c = colors.command,
+                    R = colors.replace,
+                    t = colors.terminal or colors.insert,
+                }
+                return { fg = mode_hl[self.mode] or colors.replace, bold = true }
+            end,
+            update = true,
         }
 
         -- Status line layout
@@ -182,12 +270,13 @@ local StatusLine = {
             ViMode,
             FileType,
             GitStatus,
-            WorkDir,
+            ScrollBar,
+            CursorPos,
             { provider = '%=' },
             Diagnostics,
             LSP,
-            CursorPos,
-            ScrollBar,
+            FileInfo,
+            WorkDir,
         }
 
         require('heirline').setup {
