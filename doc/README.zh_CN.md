@@ -22,7 +22,7 @@
 
 ```bash
 ./venv        # 启动虚拟环境，自动将 `nvim-debug` 添加到 PATH
-nvim-debug    # 使用本配置启动 Neovim，不会修改你的 ~/.local/share
+nv            # 使用本配置启动 Neovim，不会修改你的 ~/.local/share
 ````
 
 ## 📦 基础功能

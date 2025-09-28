@@ -24,7 +24,7 @@ You can try it immediately without replacing your origin configurations
 
 ```bash
 ./venv # Launch a virtual env shell, `nvim-debug` will be added to path automaticly
-nvim-debug # Launch neovim on this config, without make changes to your ~/.local/share
+nv     # Launch neovim on this config, without make changes to your ~/.local/share
 ```
 
 ## Basic functionalities
