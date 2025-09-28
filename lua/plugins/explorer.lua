@@ -25,10 +25,11 @@ local NeoTree = {
                 winbar = true,
                 statusline = false,
                 show_separator_on_edge = true,
+                separator = { left = ' ', right = '' },
                 sources = {
                     { source = 'filesystem', display_name = ' 󰉓 Files' },
                     { source = 'buffers', display_name = ' 󰈙 Buf' },
-                    { source = 'git_status', display_name = ' 󰊢 Git' },
+                    { source = 'git_status', display_name = '󰊢 Git ' },
                 },
             },
 
