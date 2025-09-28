@@ -37,11 +37,23 @@ function AutoCmd.apply()
         desc = 'Set cursor to the position where it was last left.',
     })
 
-    vim.api.nvim_create_autocmd("FileType", {
-        pattern = "help",
+    vim.api.nvim_create_autocmd('FileType', {
+        pattern = 'help',
         callback = function()
-            vim.cmd("wincmd T")
-        end
+            vim.cmd 'wincmd T'
+        end,
+    })
+
+    -- '*.tmpl' template file in configuration
+    vim.api.nvim_create_autocmd({ 'BufRead', 'BufNewFile' }, {
+        pattern = '*.tmpl',
+        callback = function(args)
+            local fname = vim.fn.fnamemodify(args.file, ':t')
+            local m = fname:match '%.([%w_]+)%.tmpl$'
+            if m then
+                vim.bo[args.buf].filetype = vim.filetype.match { filename = 'dummy.' .. m } or m
+            end
+        end,
     })
 end
 
