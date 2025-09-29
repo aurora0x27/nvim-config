@@ -9,10 +9,7 @@ local MarkdownPreview = {
     build = 'cd app && yarn install',
 
     -- MarkdownPreviewToggle mappings
-    keys = {
-        { '<F8>', ':MarkdownPreviewToggle<CR>', { desc = 'MarkdownPreviewToggle', noremap = true, silent = true } },
-        { '<Leader>p', ':MarkdownPreviewToggle<CR>', { desc = 'MarkdownPreviewToggle', noremap = true, silent = true } },
-    },
+    keys = {},
 
     init = function()
         vim.g.mkdp_filetypes = { 'markdown' }
@@ -123,6 +120,9 @@ local MarkdownPreview = {
         -- auto refetch combine preview contents when change markdown buffer
         -- only when g:mkdp_combine_preview is 1
         vim.g.mkdp_combine_preview_auto_refresh = 1
+
+        vim.keymap.set('n', '<F8>', ':MarkdownPreviewToggle<CR>', { desc = 'MarkdownPreviewToggle', noremap = true, silent = true })
+        vim.keymap.set('n', '<Leader>p', ':MarkdownPreviewToggle<CR>', { desc = 'MarkdownPreviewToggle', noremap = true, silent = true })
     end,
 
     ft = { 'markdown' },
