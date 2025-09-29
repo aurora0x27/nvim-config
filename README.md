@@ -18,7 +18,7 @@ A streamlined set of configurations for Nvim which is writen all *by hand*
 
 - Well organized code for beginers to understand
 
-## ⚡Try it now⚡
+## ⚡Try it now ⚡
 
 You can try it immediately without replacing your origin configurations
 
