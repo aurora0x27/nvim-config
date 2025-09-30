@@ -154,6 +154,7 @@ function LspConfig.apply()
         local servers = info.fargs
         if #servers == 0 then
             local ft = vim.bo.filetype
+            ---@diagnostic disable:invisible
             for name, _ in pairs(vim.lsp.config._configs) do
                 local fts = vim.lsp.config[name].filetypes
                 if fts and vim.tbl_contains(fts, ft) then

@@ -80,6 +80,7 @@ local Mason = {
             'stylua',
             'pyright',
             'neocmakelsp',
+            'prettier',
         }
     end,
 }

@@ -13,6 +13,8 @@ local CodeFormatter = {
                 lua = { 'stylua' },
                 cpp = { 'clang-format' },
                 c = { 'clang-format' },
+                json = { 'prettier' },
+                jsonc = { 'prettier' },
             },
         }
 
