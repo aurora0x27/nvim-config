@@ -7,7 +7,9 @@ function Preload.apply()
     vim.g.maplocalleader = ' '
 
     -- set global transparent_mode
-    vim.g.transparent_mode = true
+    if not vim.g.neovide then
+        vim.g.transparent_mode = true
+    end
 
     -- WARN: put this line here instead of `options.lua`
     -- prevents line number and cursor line appear on
