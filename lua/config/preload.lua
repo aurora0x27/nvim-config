@@ -14,6 +14,12 @@ function Preload.apply()
     -- dashboard, so werid.
     vim.opt.number = true
     vim.opt.cursorline = true
+
+    -- Will be covered by ftplugin
+    vim.opt.tabstop = 4
+    vim.opt.shiftwidth = 4
+    vim.opt.expandtab = true
+    vim.opt.autoindent = true
 end
 
 return Preload
