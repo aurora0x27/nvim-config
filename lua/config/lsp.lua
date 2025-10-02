@@ -124,9 +124,24 @@ function LspConfig.apply()
         callback = function(event)
             ---@diagnostic disable: unused-local
             local client = vim.lsp.get_client_by_id(event.data.client_id)
-            vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { desc = 'LSP Goto Definition', noremap = true, silent = true })
-            vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, { desc = 'LSP Goto Declaration', noremap = true, silent = true })
-            vim.keymap.set('n', '<leader>lr', vim.lsp.buf.rename, { desc = 'LSP Rename Symbol', noremap = true, silent = true })
+            vim.keymap.set(
+                'n',
+                'gd',
+                vim.lsp.buf.definition,
+                { desc = 'LSP Goto Definition', noremap = true, silent = true }
+            )
+            vim.keymap.set(
+                'n',
+                'gD',
+                vim.lsp.buf.declaration,
+                { desc = 'LSP Goto Declaration', noremap = true, silent = true }
+            )
+            vim.keymap.set(
+                'n',
+                '<leader>lr',
+                vim.lsp.buf.rename,
+                { desc = 'LSP Rename Symbol', noremap = true, silent = true }
+            )
         end,
     })
 
@@ -138,7 +153,14 @@ function LspConfig.apply()
         end
 
         for _, client in ipairs(clients) do
-            print(string.format('Client ID: %d | Name: %s | Attached Buffers: %s', client.id, client.name, vim.inspect(client.attached_buffers)))
+            print(
+                string.format(
+                    'Client ID: %d | Name: %s | Attached Buffers: %s',
+                    client.id,
+                    client.name,
+                    vim.inspect(client.attached_buffers)
+                )
+            )
         end
     end, {})
 

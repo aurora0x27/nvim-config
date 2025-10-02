@@ -121,8 +121,18 @@ local MarkdownPreview = {
         -- only when g:mkdp_combine_preview is 1
         vim.g.mkdp_combine_preview_auto_refresh = 1
 
-        vim.keymap.set('n', '<F8>', ':MarkdownPreviewToggle<CR>', { desc = 'MarkdownPreviewToggle', noremap = true, silent = true })
-        vim.keymap.set('n', '<Leader>p', ':MarkdownPreviewToggle<CR>', { desc = 'MarkdownPreviewToggle', noremap = true, silent = true })
+        vim.keymap.set(
+            'n',
+            '<F8>',
+            ':MarkdownPreviewToggle<CR>',
+            { desc = 'MarkdownPreviewToggle', noremap = true, silent = true }
+        )
+        vim.keymap.set(
+            'n',
+            '<Leader>p',
+            ':MarkdownPreviewToggle<CR>',
+            { desc = 'MarkdownPreviewToggle', noremap = true, silent = true }
+        )
     end,
 
     ft = { 'markdown' },
@@ -137,22 +147,72 @@ local RenderMarkdown = {
     opts = {
 
         callout = {
-            abstract = { raw = '[!ABSTRACT]', rendered = '󰯂 Abstract', highlight = 'RenderMarkdownInfo', category = 'obsidian' },
-            summary = { raw = '[!SUMMARY]', rendered = '󰯂 Summary', highlight = 'RenderMarkdownInfo', category = 'obsidian' },
+            abstract = {
+                raw = '[!ABSTRACT]',
+                rendered = '󰯂 Abstract',
+                highlight = 'RenderMarkdownInfo',
+                category = 'obsidian',
+            },
+            summary = {
+                raw = '[!SUMMARY]',
+                rendered = '󰯂 Summary',
+                highlight = 'RenderMarkdownInfo',
+                category = 'obsidian',
+            },
             tldr = { raw = '[!TLDR]', rendered = '󰦩 Tldr', highlight = 'RenderMarkdownInfo', category = 'obsidian' },
-            failure = { raw = '[!FAILURE]', rendered = ' Failure', highlight = 'RenderMarkdownError', category = 'obsidian' },
+            failure = {
+                raw = '[!FAILURE]',
+                rendered = ' Failure',
+                highlight = 'RenderMarkdownError',
+                category = 'obsidian',
+            },
             fail = { raw = '[!FAIL]', rendered = ' Fail', highlight = 'RenderMarkdownError', category = 'obsidian' },
-            missing = { raw = '[!MISSING]', rendered = ' Missing', highlight = 'RenderMarkdownError', category = 'obsidian' },
-            attention = { raw = '[!ATTENTION]', rendered = ' Attention', highlight = 'RenderMarkdownWarn', category = 'obsidian' },
-            warning = { raw = '[!WARNING]', rendered = ' Warning', highlight = 'RenderMarkdownWarn', category = 'github' },
-            danger = { raw = '[!DANGER]', rendered = ' Danger', highlight = 'RenderMarkdownError', category = 'obsidian' },
-            error = { raw = '[!ERROR]', rendered = ' Error', highlight = 'RenderMarkdownError', category = 'obsidian' },
+            missing = {
+                raw = '[!MISSING]',
+                rendered = ' Missing',
+                highlight = 'RenderMarkdownError',
+                category = 'obsidian',
+            },
+            attention = {
+                raw = '[!ATTENTION]',
+                rendered = ' Attention',
+                highlight = 'RenderMarkdownWarn',
+                category = 'obsidian',
+            },
+            warning = {
+                raw = '[!WARNING]',
+                rendered = ' Warning',
+                highlight = 'RenderMarkdownWarn',
+                category = 'github',
+            },
+            danger = {
+                raw = '[!DANGER]',
+                rendered = ' Danger',
+                highlight = 'RenderMarkdownError',
+                category = 'obsidian',
+            },
+            error = {
+                raw = '[!ERROR]',
+                rendered = ' Error',
+                highlight = 'RenderMarkdownError',
+                category = 'obsidian',
+            },
             bug = { raw = '[!BUG]', rendered = ' Bug', highlight = 'RenderMarkdownError', category = 'obsidian' },
-            quote = { raw = '[!QUOTE]', rendered = ' Quote', highlight = 'RenderMarkdownQuote', category = 'obsidian' },
+            quote = {
+                raw = '[!QUOTE]',
+                rendered = ' Quote',
+                highlight = 'RenderMarkdownQuote',
+                category = 'obsidian',
+            },
             cite = { raw = '[!CITE]', rendered = ' Cite', highlight = 'RenderMarkdownQuote', category = 'obsidian' },
             todo = { raw = '[!TODO]', rendered = ' Todo', highlight = 'RenderMarkdownInfo', category = 'obsidian' },
             wip = { raw = '[!WIP]', rendered = '󰦖 WIP', highlight = 'RenderMarkdownHint', category = 'obsidian' },
-            done = { raw = '[!DONE]', rendered = ' Done', highlight = 'RenderMarkdownSuccess', category = 'obsidian' },
+            done = {
+                raw = '[!DONE]',
+                rendered = ' Done',
+                highlight = 'RenderMarkdownSuccess',
+                category = 'obsidian',
+            },
         },
 
         sign = { enabled = false },
@@ -242,11 +302,36 @@ local RenderMarkdown = {
                 scope_highlight = 'RenderMarkdownChecked',
             },
             custom = {
-                question = { raw = '[?]', rendered = '', highlight = 'RenderMarkdownError', scope_highlight = 'RenderMarkdownError' },
-                todo = { raw = '[>]', rendered = '󰦖', highlight = 'RenderMarkdownInfo', scope_highlight = 'RenderMarkdownInfo' },
-                canceled = { raw = '[-]', rendered = '󱋬', highlight = 'RenderMarkdownCodeFallback', scope_highlight = '@text.strike' },
-                important = { raw = '[!]', rendered = '', highlight = 'RenderMarkdownWarn', scope_highlight = 'RenderMarkdownWarn' },
-                favorite = { raw = '[~]', rendered = '', highlight = 'RenderMarkdownMath', scope_highlight = 'RenderMarkdownMath' },
+                question = {
+                    raw = '[?]',
+                    rendered = '',
+                    highlight = 'RenderMarkdownError',
+                    scope_highlight = 'RenderMarkdownError',
+                },
+                todo = {
+                    raw = '[>]',
+                    rendered = '󰦖',
+                    highlight = 'RenderMarkdownInfo',
+                    scope_highlight = 'RenderMarkdownInfo',
+                },
+                canceled = {
+                    raw = '[-]',
+                    rendered = '󱋬',
+                    highlight = 'RenderMarkdownCodeFallback',
+                    scope_highlight = '@text.strike',
+                },
+                important = {
+                    raw = '[!]',
+                    rendered = '',
+                    highlight = 'RenderMarkdownWarn',
+                    scope_highlight = 'RenderMarkdownWarn',
+                },
+                favorite = {
+                    raw = '[~]',
+                    rendered = '',
+                    highlight = 'RenderMarkdownMath',
+                    scope_highlight = 'RenderMarkdownMath',
+                },
             },
         },
 

@@ -67,7 +67,10 @@ if is_linux then
 elseif is_mac and not vim.g.neovide then
     if vim.fn.executable 'im-select' ~= 1 then
         vim.notify('`im-select` executable not found', vim.log.levels.WARN)
-        vim.notify('Please install `im-select` by executing\n```bash\nbrew tab brew tap daipeihust/tap\nbrew install im-select\n```', vim.log.levels.INFO)
+        vim.notify(
+            'Please install `im-select` by executing\n```bash\nbrew tab brew tap daipeihust/tap\nbrew install im-select\n```',
+            vim.log.levels.INFO
+        )
     end
     return ImSwitchMac
 else
