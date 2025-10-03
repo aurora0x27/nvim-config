@@ -4,92 +4,85 @@ local KeyMaps = {}
 
 function KeyMaps.apply()
     -- resize window
-    vim.keymap.set('n', '<C-Left>', ':SmartResizeLeft<Enter>', { noremap = true, silent = true })
-    vim.keymap.set('n', '<C-Right>', ':SmartResizeRight<Enter>', { noremap = true, silent = true })
-    vim.keymap.set('n', '<C-Up>', ':SmartResizeUp<Enter>', { noremap = true, silent = true })
-    vim.keymap.set('n', '<C-Down>', ':SmartResizeDown<Enter>', { noremap = true, silent = true })
+    local smsp = require 'smart-splits'
+    vim.keymap.set('n', '<C-Left>', smsp.resize_left, { noremap = true, silent = true })
+    vim.keymap.set('n', '<C-Right>', smsp.resize_right, { noremap = true, silent = true })
+    vim.keymap.set('n', '<C-Up>', smsp.resize_up, { noremap = true, silent = true })
+    vim.keymap.set('n', '<C-Down>', smsp.resize_down, { noremap = true, silent = true })
 
     -- buffer swich
-    vim.keymap.set(
-        'n',
-        '<C-h>',
-        ':SmartCursorMoveLeft<Enter>',
-        { desc = 'Move to left window', noremap = true, silent = true }
-    )
+    vim.keymap.set('n', '<C-h>', smsp.move_cursor_left, { desc = 'Move to left window', noremap = true, silent = true })
     vim.keymap.set(
         'n',
         '<C-j>',
-        ':SmartCursorMoveDown<Enter>',
+        smsp.move_cursor_down,
         { desc = 'Move to below window', noremap = true, silent = true }
     )
-    vim.keymap.set(
-        'n',
-        '<C-k>',
-        ':SmartCursorMoveUp<Enter>',
-        { desc = 'Move to above window', noremap = true, silent = true }
-    )
+    vim.keymap.set('n', '<C-k>', smsp.move_cursor_up, { desc = 'Move to above window', noremap = true, silent = true })
     vim.keymap.set(
         'n',
         '<C-l>',
-        ':SmartCursorMoveRight<Enter>',
+        smsp.move_cursor_right,
         { desc = 'Move to right window', noremap = true, silent = true }
     )
-    vim.keymap.set('n', 'H', ':bp<Enter>', { noremap = true, silent = true })
-    vim.keymap.set('n', 'L', ':bn<Enter>', { noremap = true, silent = true })
+
+    vim.keymap.set('n', 'H', '<cmd>bp<CR>', { noremap = true, silent = true })
+    vim.keymap.set('n', 'L', '<cmd>bn<CR>', { noremap = true, silent = true })
 
     -- telescope related, prefix is leader-t
+    local builtin = require 'telescope.builtin'
     vim.keymap.set(
         'n',
         '<Leader>ff',
-        ':Telescope find_files<Enter>',
+        builtin.find_files,
         { desc = 'Telescope Find Files', noremap = true, silent = true }
     )
     vim.keymap.set(
         'n',
         '<Leader>fo',
-        ':Telescope oldfiles<Enter>',
+        builtin.oldfiles,
         { desc = 'Telescope Find Recent Files', noremap = true, silent = true }
     )
     vim.keymap.set(
         'n',
         '<Leader>fw',
-        ':Telescope live_grep<Enter>',
+        builtin.live_grep,
         { desc = 'Telescope Find Word', noremap = true, silent = true }
     )
     vim.keymap.set(
         'n',
         '<Leader>fb',
-        ':Telescope buffers<Enter>',
+        builtin.buffers,
         { desc = 'Telescope Find Buffer', noremap = true, silent = true }
     )
     vim.keymap.set(
         'n',
         '<Leader>fd',
-        ':Telescope diagnostics<Enter>',
+        builtin.diagnostics,
         { desc = 'Telescope Find Diagnostics', noremap = true, silent = true }
     )
     vim.keymap.set(
         'n',
         '<Leader>fg',
-        ':Telescope git_status<Enter>',
+        builtin.git_status,
         { desc = 'Telescope Find Git Diff', noremap = true, silent = true }
     )
     vim.keymap.set(
         'n',
         '<Leader>fs',
-        ':Telescope lsp_dynamic_workspace_symbols<Enter>',
+        builtin.lsp_dynamic_workspace_symbols,
         { desc = 'Telescope Find Workspace Symbols', noremap = true, silent = true }
     )
     vim.keymap.set(
         'n',
         '<Leader>fm',
-        ':Noice telescope<Enter>',
+        require('telescope').extensions.noice.noice,
         { desc = 'Telescope Filter Noice Msg', noremap = true, silent = true }
     )
     vim.keymap.set(
         'n',
         '<Leader>ft',
-        ':TodoTelescope<Enter>',
+        '<cmd>TodoTelescope<CR>',
         { desc = 'Telescope Filter Todo Items', noremap = true, silent = true }
     )
 
@@ -100,24 +93,18 @@ function KeyMaps.apply()
         ':bp | bd #<Enter>',
         { desc = 'Buffer close current', noremap = true, silent = true }
     )
-    vim.keymap.set(
-        'n',
-        '<Leader>bl',
-        ':Telescope buffers<Enter>',
-        { desc = 'Buffer list', noremap = true, silent = true }
-    )
 
-    vim.keymap.set('n', '<Leader>h', ':Alpha<Enter>', { desc = 'Open Home Page', noremap = true, silent = true })
+    vim.keymap.set('n', '<Leader>h', '<cmd>Alpha<CR>', { desc = 'Open Home Page', noremap = true, silent = true })
     vim.keymap.set(
         'n',
         '<Leader>lg',
-        ':Telescope git_commits<Enter>',
+        builtin.git_commits,
         { desc = 'Search Git Commits', noremap = true, silent = true }
     )
     vim.keymap.set(
         'n',
         '<Leader>lD',
-        ':Telescope diagnostics<Enter>',
+        builtin.diagnostics,
         { desc = 'Search diagnostics', noremap = true, silent = true }
     )
 
@@ -125,7 +112,7 @@ function KeyMaps.apply()
     vim.keymap.set({ 'n', 'v' }, 'k', 'gk', { noremap = true, silent = true })
 
     -- File explorer
-    vim.keymap.set('n', '<leader>e', ':Neotree toggle<CR>', {
+    vim.keymap.set('n', '<leader>e', '<cmd>Neotree toggle<CR>', {
         desc = 'Toggle NeoTree file explorer',
         noremap = true,
         silent = true,
