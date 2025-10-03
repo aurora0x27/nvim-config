@@ -14,7 +14,7 @@
   "lazy.nvim": { "branch": "main", "commit": "a21b7bf2e7c78e90696d13163e7cae761a414f28" },
   "markdown-preview.nvim": { "branch": "master", "commit": "a923f5fc5ba36a3b17e289dc35dc17f66d0548ee" },
   "mason.nvim": { "branch": "main", "commit": "ad7146aa61dcaeb54fa900144d768f040090bff0" },
-  "neo-tree.nvim": { "branch": "v3.x", "commit": "9130e58424ad95bf2dd8b40afbb8cf04d648638c" },
+  "neo-tree.nvim": { "branch": "v3.x", "commit": "ed057048a281b418d5318dd5153f9486daa517a3" },
   "noice.nvim": { "branch": "main", "commit": "0427460c2d7f673ad60eb02b35f5e9926cf67c59" },
   "nui.nvim": { "branch": "main", "commit": "de740991c12411b663994b2860f1a4fd0937c130" },
   "nvim-colorizer.lua": { "branch": "master", "commit": "a065833f35a3a7cc3ef137ac88b5381da2ba302e" },
