@@ -43,6 +43,7 @@ nv     # Launch neovim on this config, without make changes to your ~/.local/sha
 - [x] Session recover
 - [x] SSH clipboard support(**Need tmux extra config**)
 - [x] Input method auto switch (**On Linux and MacOS**)
+- [x] Workspace patch
 
 ## Maybe wanted features
 
