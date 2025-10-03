@@ -107,6 +107,8 @@ local ColorScheme = {
                             LineNr = { fg = mocha.overlay2 },
                             NeoTreeTabSeparatorInactive = { fg = mocha.overlay2 },
                             BufferLineBufferVisible = { fg = mocha.overlay2 },
+                            BufferLineDuplicateVisible = { fg = mocha.overlay2 },
+                            BufferLineDuplicate = { fg = mocha.overlay2 },
                         }
                     else
                         return {
