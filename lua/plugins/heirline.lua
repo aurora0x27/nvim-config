@@ -265,7 +265,7 @@ local StatusLine = {
                     return string.format('%s', icon) .. '%%'
                 end
             end,
-            hl = { fg = mocha.rosewater, bg = mocha.base, bold = true },
+            hl = { fg = mocha.rosewater, bold = true },
         }
 
         local FileInfo = {
