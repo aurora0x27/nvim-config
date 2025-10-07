@@ -27,6 +27,14 @@ if debug_mode == '1' then
         end
     end
     set_rtpath()
+    vim.api.nvim_create_autocmd('VimEnter', {
+        once = true,
+        callback = function()
+            vim.defer_fn(function()
+                vim.notify('Entered DEBUG mode', vim.log.levels.WARN, { title = 'Config' })
+            end, 200)
+        end,
+    })
 end
 -- DEBUG MODE
 
