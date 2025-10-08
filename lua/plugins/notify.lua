@@ -48,7 +48,6 @@ local Notifier = {
         -- }
         -- local icon = icons[notif.level] or "󰂚"
 
-        -- 配置 nvim-notify
         require('notify').setup {
             background_colour = mocha.base,
             fps = 60,
