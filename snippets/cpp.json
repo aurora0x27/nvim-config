@@ -1,0 +1,111 @@
+{
+  "main template": {
+    "prefix": ["int", "main"],
+    "body": ["int main(int argc, char **argv) {", "\t${0}", "\treturn 0;", "}"],
+    "description": "Main function with normal params"
+  },
+  "main(void) template": {
+    "prefix": ["int", "mainn"],
+    "body": ["int main(void) {", "\t$0", "\treturn 0;", "}"],
+    "description": "Main function with normal params"
+  },
+  "comment inline": {
+    "prefix": "//",
+    "body": ["/* ${0} */"],
+    "description": "inline comment block"
+  },
+  "comment multi-line": {
+    "prefix": "//-",
+    "body": ["/*", " ${0}", "*/"],
+    "description": "multi-line comment block"
+  },
+  "lambda": {
+    "prefix": ["lambda", "auto"],
+    "body": ["auto ${1:name} = [${2:&}](${3}){", "};"],
+    "description": "lambda function"
+  },
+  "class": {
+    "prefix": "class",
+    "body": ["class ${1:name}{", "public:", "private:", "};"],
+    "description": "struct def"
+  },
+  "struct": {
+    "prefix": "struct",
+    "body": ["struct ${1:name}{", "};"],
+    "description": "struct def"
+  },
+  "union": {
+    "prefix": "union",
+    "body": ["union ${1:name}{", "};"],
+    "description": "union def"
+  },
+  "enum": {
+    "prefix": "enum",
+    "body": ["enum ${1:name}{", "};"],
+    "description": "enum def"
+  },
+  "for": {
+    "prefix": "for",
+    "body": ["for (${1:init}; ${2:conf}; ${3:post}) {", "}"],
+    "description": "normal for loop"
+  },
+  "for with range": {
+    "prefix": "forr",
+    "body": ["for (auto &{1:item} : ${2:iterated}) {", "}"],
+    "description": "for loop with range"
+  },
+  "do": {
+    "prefix": "do",
+    "body": ["do {", "} while (${1:0});"],
+    "description": "while loop"
+  },
+  "while": {
+    "prefix": "while",
+    "body": ["while (${0}) {", "}"],
+    "description": "while loop"
+  },
+  "switch": {
+    "prefix": "switch",
+    "body": ["switch (${0}) {", "default: {}", "}"],
+    "description": "for loop"
+  },
+  "#if": {
+    "prefix": "#if",
+    "body": ["#if ${1:0}", "$0", "#endif /* if $1 */"],
+    "description": "#if snippet"
+  },
+  "#ifdef": {
+    "prefix": "#ifdef",
+    "body": ["#ifdef ${1:MACRO}", "$0", "#endif /* ifdef $1 */"],
+    "description": "#ifdef snippet"
+  },
+  "#ifndef": {
+    "prefix": "#ifndef",
+    "body": ["#ifndef ${1:MACRO}", "$0", "#endif /* ifndef $1 */"],
+    "description": "#ifndef snippet"
+  },
+  "include once": {
+    "prefix": "#once",
+    "body": ["#ifndef ${1:FILE}_H", "#define $1_H", "$0", "", "#endif // $1_H"],
+    "description": "Header include guard"
+  },
+  "leetcode": {
+    "prefix": "#lc",
+    "body": [
+      "#include <bits/stdc++.h>",
+      "using namespace std;",
+      "using i64 = long long;",
+      "constexpr i64 INF = 1e18;",
+      "",
+      "class Solution {",
+      "public:",
+      "};",
+      "",
+      "int main(void) {",
+      "\tSolution S;",
+      "\treturn 0;",
+      "}"
+    ],
+    "description": "Leetcode template"
+  }
+}

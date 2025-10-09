@@ -17,7 +17,8 @@ local StatusLine = {
             insert = mocha.green,
             visual = mocha.mauve,
             replace = mocha.red,
-            command = mocha.peach,
+            command = mocha.teal,
+            select = mocha.rosewater,
             text_fg = mocha.text,
             bg = mocha.base,
         }
@@ -81,6 +82,20 @@ local StatusLine = {
 
         -- Mode
         local ctrl_v = string.char(22)
+        local ctrl_s = string.char(19)
+        local mode_hl = {
+            n = colors.normal,
+            i = colors.insert,
+            v = colors.visual,
+            V = colors.visual,
+            [ctrl_v] = colors.visual,
+            s = colors.select,
+            S = colors.select,
+            [ctrl_s] = colors.select,
+            c = colors.command,
+            R = colors.replace,
+            t = colors.terminal or colors.insert,
+        }
         local ViMode = {
             init = function(self)
                 self.mode = vim.fn.mode()
@@ -91,24 +106,17 @@ local StatusLine = {
                     i = 'INSERT',
                     v = 'VISUAL',
                     V = 'V-LINE',
-                    c = 'COMMAND',
-                    R = 'REPLACE',
                     [ctrl_v] = 'V-BLOCK',
+                    c = 'COMMAND',
+                    s = 'SELECT',
+                    S = 'S-LINE',
+                    [ctrl_s] = 'S-BLOCK',
+                    R = 'REPLACE',
                     t = 'TERMINAL',
                 }
                 return ' ' .. (mode_map[self.mode] or 'UNKNOWN') .. ' '
             end,
             hl = function(self)
-                local mode_hl = {
-                    n = colors.normal,
-                    i = colors.insert,
-                    v = colors.visual,
-                    V = colors.visual,
-                    [ctrl_v] = colors.visual,
-                    c = colors.command,
-                    R = colors.replace,
-                    t = colors.terminal or colors.insert,
-                }
                 return { fg = 'black', bg = mode_hl[self.mode] or colors.replace, bold = true }
             end,
             update = {
@@ -170,16 +178,6 @@ local StatusLine = {
                 return '   ' .. shorten_cwd(self.cwd) .. ' '
             end,
             hl = function(self)
-                local mode_hl = {
-                    n = colors.normal,
-                    i = colors.insert,
-                    v = colors.visual,
-                    V = colors.visual,
-                    [ctrl_v] = colors.visual,
-                    c = colors.command,
-                    R = colors.replace,
-                    t = colors.terminal or colors.insert,
-                }
                 return { fg = 'black', bg = mode_hl[self.mode] or colors.replace, bold = true }
             end,
             update = true,

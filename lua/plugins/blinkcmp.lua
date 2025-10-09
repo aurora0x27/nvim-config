@@ -6,7 +6,6 @@ local CodeCompletion = {
     'saghen/blink.cmp',
     -- optional: provides snippets for the snippet source
     dependencies = {
-        'rafamadriz/friendly-snippets',
         'catppuccin/nvim',
     },
 
@@ -39,26 +38,21 @@ local CodeCompletion = {
             preset = 'default',
             ['<C-k>'] = { 'show', 'show_documentation', 'hide_documentation' },
             ['<C-e>'] = { 'hide' },
-            -- ['<Enter>'] = { 'select_and_accept' },
-
-            ['<S-Tab>'] = { 'select_prev', 'fallback' },
+            ['<Up>'] = { 'select_prev', 'fallback' },
+            ['<Down>'] = { 'select_next', 'fallback' },
+            ['<C-p>'] = { 'snippet_backward', 'fallback_to_mappings' },
+            ['<C-n>'] = { 'snippet_forward', 'fallback_to_mappings' },
             ['<Tab>'] = { 'select_next', 'fallback' },
-            -- ['<C-p>'] = { 'select_prev', 'fallback_to_mappings' },
-            -- ['<C-n>'] = { 'select_next', 'fallback_to_mappings' },
-
+            ['<S-Tab>'] = { 'select_prev', 'fallback_to_mappings' },
             ['<C-b>'] = { 'scroll_documentation_up', 'fallback' },
             ['<C-f>'] = { 'scroll_documentation_down', 'fallback' },
-
-            -- ['<Tab>'] = { 'snippet_forward', 'fallback' },
-            -- ['<S-Tab>'] = { 'snippet_backward', 'fallback' },
-
-            -- ['<C-k>'] = { 'show_signature', 'hide_signature', 'fallback' },
+            ['<CR>'] = { 'accept', 'fallback' },
         },
 
         appearance = {
             -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
             -- Adjusts spacing to ensure icons are aligned
-            nerd_font_variant = 'mono',
+            nerd_font_variant = 'normal',
         },
 
         -- (Default) Only show the documentation popup when manually triggered
@@ -83,7 +77,7 @@ local CodeCompletion = {
         -- Default list of enabled providers defined so that you can extend it
         -- elsewhere in your config, without redefining it, due to `opts_extend`
         sources = {
-            default = { 'lsp', 'path', 'buffer' },
+            default = { 'snippets', 'lsp', 'path', 'buffer' },
         },
 
         -- (Default) Rust fuzzy matcher for typo resistance and significantly better performance

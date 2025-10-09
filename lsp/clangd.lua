@@ -4,7 +4,9 @@ local function switch_source_header(bufnr)
     local method_name = 'textDocument/switchSourceHeader'
     local client = vim.lsp.get_clients({ bufnr = bufnr, name = 'clangd' })[1]
     if not client then
-        return vim.notify(('method %s is not supported by any servers active on the current buffer'):format(method_name))
+        return vim.notify(
+            ('method %s is not supported by any servers active on the current buffer'):format(method_name)
+        )
     end
     local params = vim.lsp.util.make_text_document_params(bufnr)
     ---@diagnostic disable-next-line: param-type-mismatch
@@ -61,15 +63,6 @@ local clangd = {
         'configure.ac', -- AutoTools
     },
 
-    capabilities = {
-        textDocument = {
-            completion = {
-                editsNearCursor = true,
-            },
-        },
-        offsetEncoding = { 'utf-8' },
-    },
-
     cmd = {
         'clangd',
         '--background-index',
@@ -81,11 +74,35 @@ local clangd = {
         '--fallback-style="{BasedOnStyle: LLVM, IndentWidth: 4}"',
     },
 
-    init_options = {
-        usePlaceholders = true,
-        completeUnimported = true,
-        clangdFileStatus = true,
+    capabilities = {
+        textDocument = {
+            completion = {
+                editsNearCursor = true,
+                completionItem = { snippetSupport = false },
+            },
+        },
+        offsetEncoding = { 'utf-8', 'utf-16' },
     },
+    reuse_client = function(client, config)
+        return client.name == config.name
+    end,
+    settings = {
+        clangd = {
+            Completion = {
+                CodePatterns = 'NONE',
+            },
+        },
+    },
+
+    ---@class ClangdInitializeResult: lsp.InitializeResult
+    ---@field offsetEncoding? string
+
+    ---@param init_result ClangdInitializeResult
+    on_init = function(client, init_result)
+        if init_result.offsetEncoding then
+            client.offset_encoding = init_result.offsetEncoding
+        end
+    end,
 
     on_attach = function(_, buf)
         vim.api.nvim_buf_create_user_command(buf, 'LspClangdSwitchSourceHeader', function()

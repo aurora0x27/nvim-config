@@ -1,0 +1,92 @@
+{
+  "main template": {
+    "prefix": ["int", "main"],
+    "body": ["int main(int argc, char **argv) {", "\t${0}", "\treturn 0;", "}"],
+    "description": "Main function with normal params"
+  },
+  "main(void) template": {
+    "prefix": ["int", "mainn"],
+    "body": ["int main(void) {", "\t$0", "\treturn 0;", "}"],
+    "description": "Main function with normal params"
+  },
+  "comment inline": {
+    "prefix": "//",
+    "body": ["/* ${0} */"],
+    "description": "inline comment block"
+  },
+  "comment multi-line": {
+    "prefix": "//-",
+    "body": ["/*", " ${0}", "*/"],
+    "description": "multi-line comment block"
+  },
+  "struct": {
+    "prefix": "struct",
+    "body": ["struct ${1:name}{", "};"],
+    "description": "struct def"
+  },
+  "union": {
+    "prefix": "union",
+    "body": ["union ${1:name}{", "};"],
+    "description": "union def"
+  },
+  "enum": {
+    "prefix": "enum",
+    "body": ["enum ${1:name}{", "};"],
+    "description": "enum def"
+  },
+  "typedef struct": {
+    "prefix": "typedefst",
+    "body": ["typedef struct {", "} ${0};"],
+    "description": "struct with typedef"
+  },
+  "typedef enum": {
+    "prefix": "typedefen",
+    "body": ["typedef enum {", "} ${0};"],
+    "description": "enum with typedef"
+  },
+  "typedef union": {
+    "prefix": "typedefun",
+    "body": ["typedef union {", "} ${0};"],
+    "description": "union with typedef"
+  },
+  "for": {
+    "prefix": "for",
+    "body": ["for (${1:init}; ${2:conf}; ${3:post}) {", "}"],
+    "description": "for loop"
+  },
+  "do": {
+    "prefix": "do",
+    "body": ["do {", "\t${0}", "} while (${1:0});"],
+    "description": "while loop"
+  },
+  "while": {
+    "prefix": "while",
+    "body": ["while (${1}) {", "\t${0}", "}"],
+    "description": "while loop"
+  },
+  "switch": {
+    "prefix": "switch",
+    "body": ["switch (${0}) {", "default: {}", "}"],
+    "description": "for loop"
+  },
+  "#if": {
+    "prefix": "#if",
+    "body": ["#if ${1:0}", "$0", "#endif /* if $1 */"],
+    "description": "#if snippet"
+  },
+  "#ifdef": {
+    "prefix": "#ifdef",
+    "body": ["#ifdef ${1:MACRO}", "$0", "#endif /* ifdef $1 */"],
+    "description": "#ifdef snippet"
+  },
+  "#ifndef": {
+    "prefix": "#ifndef",
+    "body": ["#ifndef ${1:MACRO}", "$0", "#endif /* ifndef $1 */"],
+    "description": "#ifndef snippet"
+  },
+  "include once": {
+    "prefix": "#once",
+    "body": ["#ifndef ${1:FILE}_H", "#define $1_H", "$0", "", "#endif // $1_H"],
+    "description": "Header include guard"
+  }
+}

@@ -139,6 +139,10 @@ function KeyMaps.apply()
 
     -- Clean search highlight
     vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>', { silent = true })
+
+    -- Delete j and k in select mode
+    vim.keymap.del('s', 'j')
+    vim.keymap.del('s', 'k')
 end
 
 return KeyMaps
