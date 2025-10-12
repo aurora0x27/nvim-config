@@ -46,8 +46,8 @@
   },
   "for": {
     "prefix": "for",
-    "body": ["for (${1:init}; ${2:conf}; ${3:post}) {", "}"],
-    "description": "normal for loop"
+    "body": ["for (${1:init}; ${2:conf}; ${3:post}) {", "${0}", "}"],
+    "description": "for loop"
   },
   "for with range": {
     "prefix": "forr",
@@ -56,17 +56,17 @@
   },
   "do": {
     "prefix": "do",
-    "body": ["do {", "} while (${1:0});"],
+    "body": ["do {", "\t${0}", "} while (${1:0});"],
     "description": "while loop"
   },
   "while": {
     "prefix": "while",
-    "body": ["while (${0}) {", "}"],
+    "body": ["while (${1:1}) {", "\t${0}", "}"],
     "description": "while loop"
   },
   "switch": {
     "prefix": "switch",
-    "body": ["switch (${0}) {", "default: {}", "}"],
+    "body": ["switch (${1:cond}) {", "${0}", "default: {}", "}"],
     "description": "for loop"
   },
   "#if": {
@@ -85,16 +85,18 @@
     "description": "#ifndef snippet"
   },
   "include once": {
-    "prefix": "#once",
+    "prefix": ["#once", "guard", "#guard"],
     "body": ["#ifndef ${1:FILE}_H", "#define $1_H", "$0", "", "#endif // $1_H"],
     "description": "Header include guard"
   },
   "leetcode": {
-    "prefix": "#lc",
+    "prefix": ["lc", "leetcode"],
     "body": [
       "#include <bits/stdc++.h>",
+      "",
       "using namespace std;",
       "using i64 = long long;",
+      "using u64 = unsigned long long;",
       "constexpr i64 INF = 1e18;",
       "",
       "class Solution {",

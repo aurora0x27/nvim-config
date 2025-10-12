@@ -1,0 +1,12 @@
+{
+  "comment inline": {
+    "prefix": "//",
+    "body": ["/* ${0} */"],
+    "description": "inline comment block"
+  },
+  "comment multi-line": {
+    "prefix": "//-",
+    "body": ["/*", " ${0}", "*/"],
+    "description": "multi-line comment block"
+  }
+}

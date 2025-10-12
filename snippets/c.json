@@ -35,23 +35,23 @@
     "description": "enum def"
   },
   "typedef struct": {
-    "prefix": "typedefst",
-    "body": ["typedef struct {", "} ${0};"],
+    "prefix": ["struct", "typedefst"],
+    "body": ["typedef struct {", "} ${0:name};"],
     "description": "struct with typedef"
   },
   "typedef enum": {
-    "prefix": "typedefen",
-    "body": ["typedef enum {", "} ${0};"],
+    "prefix": ["enum", "typedefen"],
+    "body": ["typedef enum {", "} ${0:name};"],
     "description": "enum with typedef"
   },
   "typedef union": {
-    "prefix": "typedefun",
-    "body": ["typedef union {", "} ${0};"],
+    "prefix": ["union", "typedefun"],
+    "body": ["typedef union {", "} ${0:name};"],
     "description": "union with typedef"
   },
   "for": {
     "prefix": "for",
-    "body": ["for (${1:init}; ${2:conf}; ${3:post}) {", "}"],
+    "body": ["for (${1:init}; ${2:conf}; ${3:post}) {", "${0}", "}"],
     "description": "for loop"
   },
   "do": {
@@ -61,12 +61,12 @@
   },
   "while": {
     "prefix": "while",
-    "body": ["while (${1}) {", "\t${0}", "}"],
+    "body": ["while (${1:1}) {", "\t${0}", "}"],
     "description": "while loop"
   },
   "switch": {
     "prefix": "switch",
-    "body": ["switch (${0}) {", "default: {}", "}"],
+    "body": ["switch (${1:cond}) {", "${0}", "default: {}", "}"],
     "description": "for loop"
   },
   "#if": {

@@ -78,6 +78,21 @@ local CodeCompletion = {
         -- elsewhere in your config, without redefining it, due to `opts_extend`
         sources = {
             default = { 'snippets', 'lsp', 'path', 'buffer' },
+            providers = {
+                snippets = {
+                    opts = {
+                        friendly_snippets = false,
+
+                        -- see the list of frameworks in: https://github.com/rafamadriz/friendly-snippets/tree/main/snippets/frameworks
+                        -- and search for possible languages in: https://github.com/rafamadriz/friendly-snippets/blob/main/package.json
+                        -- the following is just an example, you should only enable the frameworks that you use
+                        extended_filetypes = {
+                            astro = { 'html' },
+                            markdown = { 'blog', 'html' },
+                        },
+                    },
+                },
+            },
         },
 
         -- (Default) Rust fuzzy matcher for typo resistance and significantly better performance

@@ -1,0 +1,53 @@
+{
+  "shebang": {
+    "prefix": "shebang",
+    "body": ["#!/bin/env bash"],
+    "description": "Bash shebang"
+  },
+  "multidef": {
+    "prefix": "multidef",
+    "body": [
+      "${1:name}=\\$(cat << 'EOF'",
+      "${0}",
+      "EOF)"
+    ],
+    "description": "Multiline define raw string"
+  },
+  "multidefv": {
+    "prefix": "multidefv",
+    "body": [
+      "${1:name}=\\$(cat << EOF",
+      "${0}",
+      "EOF)"
+    ],
+    "description": "Multiline define string with variable"
+  },
+  "multicat": {
+    "prefix": "multicat",
+    "body": [
+      "cat ${1} << 'EOF'",
+      "${0}",
+      "EOF"
+    ],
+    "description": "Multiline cat raw"
+  },
+  "multicatv": {
+    "prefix": "multicatv",
+    "body": [
+      "cat ${1} << EOF",
+      "${0}",
+      "EOF"
+    ],
+    "description": "Multiline cat with variable"
+  },
+  "test then": {
+    "prefix": "then",
+    "body": ["[[ ${1:cond} ]] && {", "\t${0}", "}"],
+    "description": "Bash shebang"
+  },
+  "test else": {
+    "prefix": "else",
+    "body": ["[[ ${1:cond} ]] || {", "\t${0}", "}"],
+    "description": "Bash shebang"
+  }
+}
