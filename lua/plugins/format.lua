@@ -15,6 +15,11 @@ local CodeFormatter = {
                 c = { 'clang-format' },
                 json = { 'prettier' },
                 jsonc = { 'prettier' },
+                html = { 'prettier' },
+                css = { 'prettier' },
+                astro = { 'prettier' },
+                typescript = { 'prettier' },
+                javascript = { 'prettier' },
             },
         }
 
