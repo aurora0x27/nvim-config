@@ -101,7 +101,7 @@ local StatusLine = {
                 self.mode = vim.fn.mode()
             end,
             provider = function(self)
-                local mode_map = {
+                local mode_name = {
                     n = 'NORMAL',
                     i = 'INSERT',
                     v = 'VISUAL',
@@ -114,7 +114,7 @@ local StatusLine = {
                     R = 'REPLACE',
                     t = 'TERMINAL',
                 }
-                return ' ' .. (mode_map[self.mode] or 'UNKNOWN') .. ' '
+                return ' ' .. (mode_name[self.mode] or 'UNKNOWN') .. ' '
             end,
             hl = function(self)
                 return { fg = 'black', bg = mode_hl[self.mode] or colors.replace, bold = true }
@@ -275,22 +275,12 @@ local StatusLine = {
                 local extension = vim.fn.expand '%:e'
                 local present, icons = pcall(require, 'nvim-web-devicons')
                 local icon = present and icons.get_icon(filename, extension) or '[None]'
-                if vim.api.nvim_win_get_width(0) < 140 then
+                if vim.api.nvim_win_get_width(0) < 120 then
                     return (vim.bo.modified and '%m' or '') .. icon .. ' '
                 end
                 return (vim.bo.modified and '%m' or '') .. ' ' .. icon .. ' ' .. filename .. ' '
             end,
             hl = function(self)
-                local mode_hl = {
-                    n = colors.normal,
-                    i = colors.insert,
-                    v = colors.visual,
-                    V = colors.visual,
-                    [ctrl_v] = colors.visual,
-                    c = colors.command,
-                    R = colors.replace,
-                    t = colors.terminal or colors.insert,
-                }
                 return { fg = mode_hl[self.mode] or colors.replace, bold = true }
             end,
             update = true,
