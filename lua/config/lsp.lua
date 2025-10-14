@@ -124,6 +124,7 @@ function LspConfig.apply()
         callback = function(event)
             ---@diagnostic disable: unused-local
             local client = vim.lsp.get_client_by_id(event.data.client_id)
+            local bufnr = event.buf
             vim.keymap.set(
                 'n',
                 'gd',
@@ -142,6 +143,9 @@ function LspConfig.apply()
                 vim.lsp.buf.rename,
                 { desc = 'LSP Rename Symbol', noremap = true, silent = true }
             )
+            vim.keymap.set('n', '<leader>lh', function()
+                vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = bufnr }, { bufnr = bufnr })
+            end, { buffer = bufnr, desc = 'Toggle inlay hints' })
         end,
     })
 
