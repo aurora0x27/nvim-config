@@ -89,6 +89,7 @@ local CodeCompletion = {
                         extended_filetypes = {
                             astro = { 'html' },
                             markdown = { 'blog', 'html' },
+                            zsh = { 'sh' },
                         },
                     },
                 },
