@@ -40,9 +40,9 @@ local Tabline = {
 
         local mocha = require('catppuccin.palettes').get_palette 'mocha'
         vim.api.nvim_set_hl(0, 'BufferLineIndicatorSelected', { fg = mocha.lavender, bold = true, italic = true })
-        vim.api.nvim_set_hl(0, 'BufferLineModified', { fg = mocha.lavender, bold = true })
-        vim.api.nvim_set_hl(0, 'BufferLineModifiedVisible', { fg = mocha.lavender, bold = true })
-        vim.api.nvim_set_hl(0, 'BufferLineModifiedSelected', { fg = mocha.lavender, bold = true })
+        vim.api.nvim_set_hl(0, 'BufferLineModified', { fg = mocha.teal, bold = true })
+        vim.api.nvim_set_hl(0, 'BufferLineModifiedVisible', { fg = mocha.teal, bold = true })
+        vim.api.nvim_set_hl(0, 'BufferLineModifiedSelected', { fg = mocha.teal, bold = true })
     end,
 }
 

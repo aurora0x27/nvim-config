@@ -109,6 +109,7 @@ local ColorScheme = {
                             BufferLineBufferVisible = { fg = mocha.overlay2 },
                             BufferLineDuplicateVisible = { fg = mocha.overlay2 },
                             BufferLineDuplicate = { fg = mocha.overlay2 },
+                            NoiceCmdlinePopupBorder = { fg = mocha.teal },
                         }
                     else
                         return {
