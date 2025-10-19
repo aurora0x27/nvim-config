@@ -100,8 +100,8 @@ local StatusLine = {
             init = function(self)
                 self.mode = vim.fn.mode()
             end,
-            provider = function(self)
-                local mode_name = {
+            static = {
+                mode_name = {
                     n = 'NORMAL',
                     i = 'INSERT',
                     v = 'VISUAL',
@@ -114,7 +114,9 @@ local StatusLine = {
                     R = 'REPLACE',
                     t = 'TERMINAL',
                 }
-                return ' ' .. (mode_name[self.mode] or 'UNKNOWN') .. ' '
+            },
+            provider = function(self)
+                return ' ' .. (self.mode_name[self.mode] or 'UNKNOWN') .. ' '
             end,
             hl = function(self)
                 return { fg = 'black', bg = mode_hl[self.mode] or colors.replace, bold = true }
