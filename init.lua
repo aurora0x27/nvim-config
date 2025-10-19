@@ -96,7 +96,14 @@ require('lazy').setup {
     performance = {
         rtp = {
             -- disable some rtp plugins, add more to your liking
-            disabled_plugins = {},
+            disabled_plugins = {
+                'gzip',
+                'tarPlugin',
+                'zipPlugin',
+                'netrwPlugin',
+                'tohtml',
+                'tutor',
+            },
         },
     },
     config = function()

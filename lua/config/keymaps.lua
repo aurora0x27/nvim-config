@@ -143,6 +143,8 @@ function KeyMaps.apply()
     -- Delete j and k in select mode
     vim.keymap.del('s', 'j')
     vim.keymap.del('s', 'k')
+
+    vim.keymap.set('n', '-', '<cmd>Oil<CR>', { desc = 'Open parent directory' })
 end
 
 return KeyMaps
