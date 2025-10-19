@@ -37,14 +37,26 @@ function Options.apply()
         vim.g.terminal_color_15 = '#a6adc8'
     end
 
+    local mocha = require('catppuccin.palettes').get_palette 'mocha'
+
     if vim.g.transparent_mode then
         vim.api.nvim_set_hl(
             0,
             '@variable',
-            vim.tbl_extend('force', vim.api.nvim_get_hl(0, { name = '@variable' }), { italic = true, fg = '#B4BEFF' })
+            vim.tbl_extend(
+                'force',
+                vim.api.nvim_get_hl(0, { name = '@variable' }),
+                { italic = true, fg = mocha.lavender }
+            )
         )
         vim.opt.fillchars:append { eob = ' ' }
     end
+
+    -- set Blink border highlight
+    vim.api.nvim_set_hl(0, 'BlinkCmpMenuBorder', { fg = mocha.blue })
+    vim.api.nvim_set_hl(0, 'BlinkCmpDocBorder', { fg = mocha.blue })
+    vim.api.nvim_set_hl(0, 'BlinkCmpSignatureHelpBorder', { fg = mocha.blue })
+    vim.api.nvim_set_hl(0, 'BlinkCmpDocSeparator', { fg = mocha.blue })
 
     vim.fn.mkdir(vim.opt.undodir:get()[1], 'p')
 
