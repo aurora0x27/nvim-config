@@ -145,6 +145,13 @@ function KeyMaps.apply()
     vim.keymap.del('s', 'k')
 
     vim.keymap.set('n', '-', '<cmd>Oil<CR>', { desc = 'Open parent directory' })
+
+
+    -- Not frequently used
+    -- vim.keymap.set('i', '<C-j>', '<Down>', { noremap = true, silent = true })
+    -- vim.keymap.set('i', '<C-k>', '<Up>', { noremap = true, silent = true })
+    vim.keymap.set('i', '<C-h>', '<Left>', { noremap = true, silent = true })
+    vim.keymap.set('i', '<C-l>', '<Right>', { noremap = true, silent = true })
 end
 
 return KeyMaps

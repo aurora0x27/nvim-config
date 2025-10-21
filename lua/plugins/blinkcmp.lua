@@ -36,6 +36,8 @@ local CodeCompletion = {
         -- See :h blink-cmp-config-keymap for defining your own keymap
         keymap = {
             preset = 'default',
+            -- Conflict with cursor move under insert mode?
+            -- ['<C-g>'] = { 'show', 'show_documentation', 'hide_documentation' },
             ['<C-k>'] = { 'show', 'show_documentation', 'hide_documentation' },
             ['<C-e>'] = { 'hide' },
             ['<Up>'] = { 'select_prev', 'fallback' },

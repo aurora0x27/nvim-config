@@ -113,7 +113,7 @@ local StatusLine = {
                     [ctrl_s] = 'S-BLOCK',
                     R = 'REPLACE',
                     t = 'TERMINAL',
-                }
+                },
             },
             provider = function(self)
                 return ' ' .. (self.mode_name[self.mode] or 'UNKNOWN') .. ' '
