@@ -1,0 +1,28 @@
+{
+  "java test class": {
+    "prefix": "jmain",
+    "body": [
+      "public class ${1:${TM_FILENAME_BASE}} {",
+      "\t/**",
+      "\t * The main method, the entry point for the Java application.",
+      "\t *",
+      "\t * @param args Command line arguments",
+      "\t */",
+      "\tpublic static void main(String[] args) {",
+      "\t\t${0}",
+      "\t}",
+      "}"
+    ],
+    "description": "Public Java class with a main method, class name defaults to filename (PascalCase)."
+  },
+  "comment inline": {
+    "prefix": "//",
+    "body": ["/* ${0} */"],
+    "description": "inline comment block"
+  },
+  "comment multi-line": {
+    "prefix": "//-",
+    "body": ["/*", " ${0}", "*/"],
+    "description": "multi-line comment block"
+  }
+}

@@ -110,6 +110,7 @@ function LspConfig.apply()
         'rust_analyzer',
         'pyright',
         'neocmake',
+        'jdtls',
         -- 'clice',
     }
 
