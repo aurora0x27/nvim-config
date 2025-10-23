@@ -81,6 +81,7 @@ local Mason = {
             'pyright',
             'neocmakelsp',
             'prettier',
+            'gopls',
             'jdtls',
         }
     end,
