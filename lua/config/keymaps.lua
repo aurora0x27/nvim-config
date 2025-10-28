@@ -88,6 +88,12 @@ function KeyMaps.apply()
     )
     vim.keymap.set(
         'n',
+        'fr',
+        select('telescope.builtin', 'lsp_references'),
+        { desc = 'Telescope find symbol references', noremap = true, silent = true }
+    )
+    vim.keymap.set(
+        'n',
         '<Leader>fs',
         select('telescope.builtin', 'lsp_dynamic_workspace_symbols'),
         { desc = 'Telescope Find Workspace Symbols', noremap = true, silent = true }
@@ -145,7 +151,6 @@ function KeyMaps.apply()
     vim.keymap.del('s', 'k')
 
     vim.keymap.set('n', '-', '<cmd>Oil<CR>', { desc = 'Open parent directory' })
-
 
     -- Not frequently used
     -- vim.keymap.set('i', '<C-j>', '<Down>', { noremap = true, silent = true })
