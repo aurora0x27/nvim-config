@@ -61,9 +61,9 @@ local MasonOpt = {
         height = 0.8,
         backdrop = 100,
         icons = {
-            package_installed = '✓',
-            package_pending = '➜',
-            package_uninstalled = '✗',
+            package_installed = '',
+            package_pending = '󰁔',
+            package_uninstalled = '',
         },
     },
 }
@@ -72,7 +72,7 @@ local MasonOpt = {
 ---@diagnostic disable: unused-local
 local Mason = {
     'williamboman/mason.nvim',
-    event = 'VimEnter',
+    event = { 'BufReadPost', 'BufNewFile', 'BufReadPre' },
     config = function()
         require('mason').setup(MasonOpt)
         ensure_installed {
