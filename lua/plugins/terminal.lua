@@ -92,9 +92,6 @@ local IntergratedTerminal = {
                 horizontal_breakpoint = 135,
             },
         }
-
-        -- Use ctrl-/ to goto normal mode, so weird
-        vim.keymap.set('t', '<C-_>', '<cmd>stopinsert<cr>', { noremap = true, silent = true })
     end,
 }
 
