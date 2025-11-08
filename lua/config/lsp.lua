@@ -127,12 +127,9 @@ function LspConfig.apply()
             ---@diagnostic disable: unused-local
             local client = vim.lsp.get_client_by_id(event.data.client_id)
             local bufnr = event.buf
-            vim.keymap.set(
-                'n',
-                'gd',
-                vim.lsp.buf.definition,
-                { desc = 'LSP Goto Definition', noremap = true, silent = true }
-            )
+            vim.keymap.set('n', 'gd', function()
+                require('telescope.builtin').lsp_definitions()
+            end, { desc = 'LSP Goto Definition', noremap = true, silent = true })
             vim.keymap.set(
                 'n',
                 'gD',
