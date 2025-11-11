@@ -159,7 +159,11 @@ function KeyMaps.apply()
     vim.keymap.set('i', '<C-l>', '<Right>', { noremap = true, silent = true })
 
     -- Use ctrl-/ to goto normal mode, so weird
-    vim.keymap.set('t', '<C-/>', '<cmd>stopinsert<cr>', { noremap = true, silent = true })
+    if vim.env.TMUX then
+        vim.keymap.set('t', '<C-_>', '<cmd>stopinsert<cr>', { noremap = true, silent = true })
+    else
+        vim.keymap.set('t', '<C-/>', '<cmd>stopinsert<cr>', { noremap = true, silent = true })
+    end
 end
 
 return KeyMaps
