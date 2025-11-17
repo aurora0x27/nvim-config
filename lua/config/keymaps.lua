@@ -164,6 +164,34 @@ function KeyMaps.apply()
     else
         vim.keymap.set('t', '<C-/>', '<cmd>stopinsert<cr>', { noremap = true, silent = true })
     end
+
+    vim.keymap.set(
+        { 'n' },
+        '<Leader>tt',
+        '<cmd>tabnext<cr>',
+        { noremap = true, silent = true, desc = 'Tab switch next' }
+    )
+    vim.keymap.set({ 'n' }, '<Leader>tn', function()
+        local name = vim.fn.input('File name: ', '', 'file')
+        if name ~= '' then
+            vim.cmd('tabnew ' .. name)
+        else
+            vim.notify('Warn: Filename not assigned, nothing todo', vim.log.levels.WARN)
+        end
+    end, { noremap = true, silent = true, desc = 'Tab New' })
+    vim.keymap.set(
+        { 'n' },
+        '<Leader>tp',
+        '<cmd>tabprevious<cr>',
+        { noremap = true, silent = true, desc = 'Tab previous' }
+    )
+    vim.keymap.set(
+        { 'n' },
+        '<Leader>ta',
+        '<cmd>tabnew %<cr>',
+        { noremap = true, silent = true, desc = 'Tab add with current buffer' }
+    )
+    vim.keymap.set({ 'n' }, '<Leader>tc', '<cmd>tabclose<cr>', { noremap = true, silent = true, desc = 'Tab close' })
 end
 
 return KeyMaps

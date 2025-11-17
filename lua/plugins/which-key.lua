@@ -52,6 +52,7 @@ local KeyMapIntellisense = {
             { '<leader>f', group = '[F]ind' },
             { '<leader>e', group = '[E]xplorer' },
             { '<leader>l', group = '[L]anguageUtils' },
+            { '<leader>t', group = '[T]ab' },
             { '<leader>p', group = '[P]review' },
             { '<leader>b', group = '[B]uffer' },
             { '<leader>g', group = '[G]it', mode = { 'n', 'v' } },
