@@ -120,19 +120,6 @@ local MarkdownPreview = {
         -- auto refetch combine preview contents when change markdown buffer
         -- only when g:mkdp_combine_preview is 1
         vim.g.mkdp_combine_preview_auto_refresh = 1
-
-        vim.keymap.set(
-            'n',
-            '<F8>',
-            '<cmd>MarkdownPreviewToggle<CR>',
-            { desc = 'MarkdownPreviewToggle', noremap = true, silent = true }
-        )
-        vim.keymap.set(
-            'n',
-            '<Leader>p',
-            '<cmd>MarkdownPreviewToggle<CR>',
-            { desc = 'MarkdownPreviewToggle', noremap = true, silent = true }
-        )
     end,
 
     ft = { 'markdown' },
