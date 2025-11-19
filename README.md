@@ -24,7 +24,7 @@ You can try it immediately without replacing your origin configurations
 
 ```bash
 ./venv # Launch a virtual env shell, `nvim-debug` will be added to path automaticly
-nv     # Launch neovim on this config, without make changes to your ~/.local/share
+vi     # Launch neovim on this config, without make changes to your ~/.local/share
 ```
 
 ## Basic functionalities
@@ -44,6 +44,7 @@ nv     # Launch neovim on this config, without make changes to your ~/.local/sha
 - [x] SSH clipboard support(**Need tmux extra config**)
 - [x] Input method auto switch (**On Linux and MacOS**)
 - [x] Workspace patch
+- [x] Typst support
 
 ## Maybe wanted features
 

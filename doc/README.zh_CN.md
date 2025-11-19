@@ -42,6 +42,7 @@ nv            # 使用本配置启动 Neovim，不会修改你的 ~/.local/share
 * [x] SSH 剪贴板支持（**需 tmux 额外配置**）
 * [x] 输入法自动切换（**支持 Linux 与 MacOS**）
 - [x] 工作区补丁
+- [x] Typst预览和语法支持
 
 ## 也许想要的功能
 - [ ] Markdown文档图片预览(部分支持)

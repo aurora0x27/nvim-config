@@ -112,6 +112,7 @@ function LspConfig.apply()
         'neocmake',
         'gopls',
         'jdtls',
+        'tinymist',
         -- 'clice',
     }
 
