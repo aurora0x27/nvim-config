@@ -134,7 +134,7 @@ function KeyMaps.apply()
     vim.keymap.set({ 'n', 'v' }, 'j', 'gj', { noremap = true, silent = true })
     vim.keymap.set({ 'n', 'v' }, 'k', 'gk', { noremap = true, silent = true })
 
-    vim.keymap.set('n', '<Leader>h', '<cmd>Alpha<CR>', { desc = 'Open Home Page', noremap = true, silent = true })
+    vim.keymap.set('n', '<Leader>h', '<cmd>Alpha<CR>', { desc = 'Open [H]ome Page', noremap = true, silent = true })
 
     -- File explorer
     vim.keymap.set('n', '<leader>e', '<cmd>Neotree toggle<CR>', {
@@ -192,6 +192,13 @@ function KeyMaps.apply()
         { noremap = true, silent = true, desc = 'Tab add with current buffer' }
     )
     vim.keymap.set({ 'n' }, '<Leader>tc', '<cmd>tabclose<cr>', { noremap = true, silent = true, desc = 'Tab close' })
+
+    vim.keymap.set(
+        { 'n' },
+        '<Leader>lm',
+        select('mason.ui', 'open'),
+        { noremap = true, silent = true, desc = 'Launch Lsp Manager: Mason' }
+    )
 end
 
 return KeyMaps

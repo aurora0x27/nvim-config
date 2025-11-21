@@ -73,6 +73,7 @@ local MasonOpt = {
 local Mason = {
     'williamboman/mason.nvim',
     event = { 'BufReadPost', 'BufNewFile', 'BufReadPre' },
+    cmd = { 'Mason' },
     config = function()
         require('mason').setup(MasonOpt)
         ensure_installed {

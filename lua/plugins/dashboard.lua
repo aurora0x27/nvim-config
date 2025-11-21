@@ -147,7 +147,12 @@ local Dashboard = {
         }
 
         dashboard.section.buttons.val = {
-            dashboard.button('SPC n  ', '  New File', ':ene <BAR> startinsert<CR>'),
+            dashboard.button(
+                'SPC n  ',
+                '  New File',
+                ':ene <BAR> startinsert<CR>',
+                { noremap = true, silent = true, nowait = true, desc = '[N]ew file' }
+            ),
             dashboard.button('SPC f f', '  Find File', ':Telescope find_files<CR>'),
             dashboard.button('SPC f o', '󰈙  Recents', ':Telescope oldfiles<CR>'),
             dashboard.button('SPC f w', '󰈭  Find Word', ':Telescope live_grep<CR>'),
