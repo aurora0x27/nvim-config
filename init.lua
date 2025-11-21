@@ -49,19 +49,19 @@ vim.api.nvim_create_autocmd('User', {
             end
             -- DEBUG MODE
 
-            require('config.keymaps').apply()
-            require('config.options').apply()
-            require('config.autocmd').apply()
-            require('config.diagnostics').apply()
-            require('config.lsp').apply()
-            require('config.ssh_mode').apply()
-            require('config.pairs').apply()
-            require('config.patch').apply()
+            require('modules.keymaps').apply()
+            require('modules.options').apply()
+            require('modules.autocmd').apply()
+            require('modules.diagnostics').apply()
+            require('modules.lsp').apply()
+            require('modules.ssh_mode').apply()
+            require('modules.pairs').apply()
+            require('modules.patch').apply()
         end)
     end,
 })
 
-require('config.preload').apply()
+require('modules.preload').apply()
 
 -- set lazy path
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'

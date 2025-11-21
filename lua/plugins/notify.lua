@@ -6,7 +6,7 @@ local Notifier = {
     'rcarriga/nvim-notify',
     event = 'VeryLazy',
     config = function()
-        local mocha = require('catppuccin.palettes').get_palette 'mocha' -- 选择 catppuccin mocha 配色
+        local mocha = require('catppuccin.palettes').get_palette 'mocha'
 
         local highlights = {
             { 'NotifyERRORBorder', mocha.red },
