@@ -6,9 +6,21 @@ function Preload.apply()
     vim.g.mapleader = ' '
     vim.g.maplocalleader = ' '
 
+    local alpha = function()
+        return string.format('%x', math.floor(255 * (vim.g.transparency or 0.8)))
+    end
+
     -- set global transparent_mode
-    if not vim.g.neovide then
-        vim.g.transparent_mode = true
+    if vim.env.NVIM_TRANSPARENT_MODE and vim.env.NVIM_TRANSPARENT_MODE == '1' then
+        if vim.g.neovide then
+            vim.g.neovide_window_blurred = true
+            vim.g.neovide_opacity = 0.9
+            vim.g.neovide_normal_opacity = 0.8
+            vim.g.neovide_background_color = '#1e1e2e' .. alpha()
+            vim.g.neovide_floating_corner_radius = 0.3
+        else
+            vim.g.transparent_mode = true
+        end
     end
 
     -- WARN: put this line here instead of `options.lua`
