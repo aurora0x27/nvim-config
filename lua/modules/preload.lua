@@ -29,6 +29,15 @@ function Preload.apply()
     vim.opt.number = true
     vim.opt.cursorline = true
 
+    vim.opt.fillchars = {
+        eob = ' ',
+        diff = '╱',
+        foldopen = '',
+        foldclose = '',
+        foldsep = '▕',
+        fold = ' ',
+    }
+
     -- Will be covered by ftplugin
     vim.opt.tabstop = 4
     vim.opt.shiftwidth = 4

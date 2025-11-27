@@ -49,7 +49,6 @@ function Options.apply()
                 { italic = true, fg = mocha.lavender }
             )
         )
-        vim.opt.fillchars:append { eob = ' ' }
     end
 
     -- set Blink border highlight
@@ -57,6 +56,9 @@ function Options.apply()
     vim.api.nvim_set_hl(0, 'BlinkCmpDocBorder', { fg = mocha.blue })
     vim.api.nvim_set_hl(0, 'BlinkCmpSignatureHelpBorder', { fg = mocha.blue })
     vim.api.nvim_set_hl(0, 'BlinkCmpDocSeparator', { fg = mocha.blue })
+
+    -- Fold text
+    vim.api.nvim_set_hl(0, 'CustomFold', { fg = mocha.teal, bold = true, italic = true })
 
     vim.fn.mkdir(vim.opt.undodir:get()[1], 'p')
 

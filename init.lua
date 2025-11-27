@@ -53,6 +53,7 @@ vim.api.nvim_create_autocmd('User', {
             require('modules.options').apply()
             require('modules.autocmd').apply()
             require('modules.diagnostics').apply()
+            require('modules.fold').apply()
             require('modules.lsp').apply()
             require('modules.ssh_mode').apply()
             require('modules.pairs').apply()
