@@ -58,6 +58,9 @@ function Options.apply()
     vim.api.nvim_set_hl(0, 'BlinkCmpSignatureHelpBorder', { fg = mocha.blue })
     vim.api.nvim_set_hl(0, 'BlinkCmpDocSeparator', { fg = mocha.blue })
 
+    -- Fold text
+    vim.api.nvim_set_hl(0, 'CustomFold', { fg = mocha.teal, bold = true, italic = true })
+
     vim.fn.mkdir(vim.opt.undodir:get()[1], 'p')
 
     for k, v in pairs(Options.opt) do
