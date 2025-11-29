@@ -20,38 +20,65 @@ local Telescope = {
     'nvim-telescope/telescope.nvim',
     lazy = true,
     cmd = { 'Telescope' },
-    opts = {
-        defaults = {
-            layout_config = {
-                prompt_position = 'top',
-            },
-            sorting_strategy = 'ascending',
-            file_ignore_patterns = {
-                'logs',
-                '%.root',
-                '%.gif',
-                '%.pdf',
-                '%.png',
-                '%.jpg',
-                '%.jpeg',
-                '%.vcxproj',
-                '%.vcproj',
-                '%.notes',
-                '%.rst',
-                '%.bat',
-                '%.cmake',
-                'Online.*%.xml',
-            },
-            mappings = {
-                n = {
-                    ['<C-l>'] = focus_preview,
-                },
-                i = {
-                    ['<C-l>'] = focus_preview,
-                },
-            },
-        },
+    dependencies = {
+        'nvim-telescope/telescope-ui-select.nvim',
     },
+    config = function()
+        require('telescope').setup {
+            extensions = {
+                ['ui-select'] = {
+                    require('telescope.themes').get_dropdown {
+                        -- even more opts
+                    },
+
+                    -- pseudo code / specification for writing custom displays, like the one
+                    -- for "codeactions"
+                    -- specific_opts = {
+                    --   [kind] = {
+                    --     make_indexed = function(items) -> indexed_items, width,
+                    --     make_displayer = function(widths) -> displayer
+                    --     make_display = function(displayer) -> function(e)
+                    --     make_ordinal = function(e) -> string
+                    --   },
+                    --   -- for example to disable the custom builtin "codeactions" display
+                    --      do the following
+                    --   codeactions = false,
+                    -- }
+                },
+            },
+            defaults = {
+                layout_config = {
+                    prompt_position = 'top',
+                },
+                sorting_strategy = 'ascending',
+                file_ignore_patterns = {
+                    'logs',
+                    '%.root',
+                    '%.gif',
+                    '%.pdf',
+                    '%.png',
+                    '%.jpg',
+                    '%.jpeg',
+                    '%.vcxproj',
+                    '%.vcproj',
+                    '%.notes',
+                    '%.rst',
+                    '%.bat',
+                    '%.cmake',
+                    'Online.*%.xml',
+                },
+                mappings = {
+                    n = {
+                        ['<C-l>'] = focus_preview,
+                    },
+                    i = {
+                        ['<C-l>'] = focus_preview,
+                    },
+                },
+            },
+        }
+        require('telescope').load_extension 'ui-select'
+    end,
 }
 
 return Telescope

@@ -52,10 +52,11 @@ local KeyMapIntellisense = {
         spec = {
             { '<leader>f', group = '[F]ind' },
             { '<leader>e', group = '[E]xplorer' },
-            { '<leader>l', group = '[L]anguageUtils' },
+            { '<leader>l', group = '[L]anguage Utils' },
             { '<leader>t', group = '[T]ab' },
             { '<leader>p', group = '[P]review' },
             { '<leader>b', group = '[B]uffer' },
+            { '<leader>r', group = '[R]un tasks' },
             { '<leader>g', group = '[G]it', mode = { 'n', 'v' } },
         },
     },

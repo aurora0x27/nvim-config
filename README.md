@@ -12,8 +12,6 @@ A streamlined set of configurations for Nvim which is writen all *by hand*
 
 ## Feature
 
-- No more than 35 plugins
-
 - Only with basic but necessary functionality
 
 - Well organized code for beginers to understand
@@ -40,18 +38,24 @@ vi     # Launch neovim on this config, without make changes to your ~/.local/sha
 - [x] Fuzzy finder
 - [x] LSP support
 - [x] Formatter
-- [x] Session recover
 - [x] SSH clipboard support(**Need tmux extra config**)
 - [x] Input method auto switch (**On Linux and MacOS**)
 - [x] Workspace patch
 - [x] Typst support
+- [x] Task runner infrastructure (**Overseer**)
 
 ## Maybe wanted features
 
-- [ ] Markdown Table Format
+- Markdown Table Format
 
-- [ ] Image preview in markdown(Partly support)
+- Image preview in markdown(Partly support)
+
+- Search enhance
+
+- Fold range highlighting on unfolding
 
 ## TODO List
 
-- [ ] Latex preview
+- Latex preview
+
+- Session recover
