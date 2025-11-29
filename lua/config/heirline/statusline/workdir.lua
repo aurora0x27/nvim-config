@@ -14,9 +14,9 @@ local function shorten_cwd(dir)
         remaining_parts = parts
     end
 
-    if #remaining_parts > 5 then
-        local last4 = { unpack(remaining_parts, #remaining_parts - 3, #remaining_parts) }
-        return prefix .. '/…' .. '/' .. table.concat(last4, '/')
+    if #remaining_parts > 2 then
+        local last2 = { unpack(remaining_parts, #remaining_parts - 1, #remaining_parts) }
+        return prefix .. '/…' .. '/' .. table.concat(last2, '/')
     else
         return dir
     end
