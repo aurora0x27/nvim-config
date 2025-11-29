@@ -5,6 +5,7 @@ function Preload.apply()
     -- set global leader
     vim.g.mapleader = ' '
     vim.g.maplocalleader = ' '
+    vim.g.transparent_mode = false
 
     local alpha = function()
         return string.format('%x', math.floor(255 * (vim.g.transparency or 0.8)))
@@ -27,7 +28,7 @@ function Preload.apply()
     -- prevents line number and cursor line appear on
     -- dashboard, so werid.
     vim.opt.number = true
-    vim.opt.cursorline = true
+    vim.opt.cursorline = not vim.g.transparent_mode
 
     vim.opt.fillchars = {
         eob = ' ',

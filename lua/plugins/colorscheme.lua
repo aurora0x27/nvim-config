@@ -102,7 +102,6 @@ local ColorScheme = {
             highlight_overrides = {
                 mocha = function(mocha)
                     if transparent_mode then
-                        vim.opt.cursorline = false
                         return {
                             LineNr = { fg = mocha.overlay2 },
                             NeoTreeTabSeparatorInactive = { fg = mocha.overlay2 },
