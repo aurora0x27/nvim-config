@@ -32,9 +32,12 @@ function AutoCmd.apply()
     vim.api.nvim_create_autocmd('FileType', {
         pattern = 'help',
         callback = function()
-            vim.schedule(function()
-                vim.cmd 'wincmd T'
-            end)
+            -- Trigger only when real `help` command is typed
+            if vim.bo.buftype == 'help' then
+                vim.schedule(function()
+                    vim.cmd 'wincmd T'
+                end)
+            end
         end,
     })
 end
