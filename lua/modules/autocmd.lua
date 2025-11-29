@@ -32,7 +32,9 @@ function AutoCmd.apply()
     vim.api.nvim_create_autocmd('FileType', {
         pattern = 'help',
         callback = function()
-            vim.cmd 'wincmd T'
+            vim.schedule(function()
+                vim.cmd 'wincmd T'
+            end)
         end,
     })
 end
