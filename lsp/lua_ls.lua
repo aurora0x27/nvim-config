@@ -10,7 +10,14 @@ local lua_ls = {
             ---@diagnostic disable: undefined-field
             if
                 path ~= vim.fn.stdpath 'config'
-                and (vim.loop.fs_stat(path .. '/.luarc.json') or vim.loop.fs_stat(path .. '/.luarc.jsonc'))
+                and not (
+                    vim.fn.filereadable(path .. '/stylua.toml')
+                    or vim.fn.filereadable(path .. '/lazy-lock.json')
+                    or vim.fn.filereadable(path .. '/luarc.json')
+                    or vim.fn.filereadable(path .. '/.luarc.json')
+                    or vim.fn.filereadable(path .. '/.luacheckrc')
+                    or vim.fn.filereadable(path .. '/.stylua.toml')
+                )
             then
                 return
             end
