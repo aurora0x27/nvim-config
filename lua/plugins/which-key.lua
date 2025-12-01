@@ -58,6 +58,8 @@ local KeyMapIntellisense = {
             { '<leader>b', group = '[B]uffer' },
             { '<leader>r', group = '[R]un tasks' },
             { '<leader>g', group = '[G]it', mode = { 'n', 'v' } },
+            { '<leader>gh', group = 'Git [H]unk', mode = { 'n', 'v' } },
+            { '<leader>gt', group = 'Git [T]oggle', mode = { 'n', 'v' } },
         },
     },
 }

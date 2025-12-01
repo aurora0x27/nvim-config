@@ -54,7 +54,7 @@ DiagnosticConfig.apply = function()
     -- Hover diagnostics
     vim.keymap.set('n', '<Leader>ld', function()
         vim.diagnostic.open_float()
-    end, { desc = 'Hover diagnostics' })
+    end, { desc = 'Hover [D]iagnostics' })
 end
 
 return DiagnosticConfig

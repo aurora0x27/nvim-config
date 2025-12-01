@@ -12,9 +12,9 @@ local Outline = {
     },
     config = function()
         local dropbar_api = require 'dropbar.api'
-        vim.keymap.set('n', '<Leader>;', dropbar_api.pick, { desc = 'Pick symbols in dropbar' })
-        vim.keymap.set('n', '[;', dropbar_api.goto_context_start, { desc = 'Go to start of current context' })
-        vim.keymap.set('n', '];', dropbar_api.select_next_context, { desc = 'Select next context' })
+        vim.keymap.set('n', '<Leader>;', dropbar_api.pick, { desc = 'Pick Symbols In Dropbar' })
+        vim.keymap.set('n', '[;', dropbar_api.goto_context_start, { desc = 'Go To Start Of Current Context' })
+        vim.keymap.set('n', '];', dropbar_api.select_next_context, { desc = 'Select Next Context' })
     end,
 }
 

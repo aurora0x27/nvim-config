@@ -141,11 +141,11 @@ function LspConfig.apply()
                 'n',
                 '<leader>lr',
                 vim.lsp.buf.rename,
-                { desc = 'LSP Rename Symbol', noremap = true, silent = true }
+                { desc = 'LSP [R]ename Symbol', noremap = true, silent = true }
             )
             vim.keymap.set('n', '<leader>lh', function()
                 vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = bufnr }, { bufnr = bufnr })
-            end, { buffer = bufnr, desc = 'Toggle inlay hints' })
+            end, { buffer = bufnr, desc = 'Toggle Inlay [H]ints' })
         end,
     })
 

@@ -3,16 +3,7 @@
 local KeyMaps = {}
 
 function KeyMaps.apply()
-    local function select(module, ...)
-        local fields = { ... }
-        return function()
-            local mod = require(module)
-            for i = 1, #fields - 1 do
-                mod = mod[fields[i]]
-            end
-            mod[fields[#fields]]()
-        end
-    end
+    local select = require('utils.loader').select
 
     -- resize window
     vim.keymap.set('n', '<C-Left>', select('smart-splits', 'resize_left'), { noremap = true, silent = true })
@@ -54,61 +45,61 @@ function KeyMaps.apply()
         'n',
         '<Leader>ff',
         select('telescope.builtin', 'find_files'),
-        { desc = 'Telescope Find Files', noremap = true, silent = true }
+        { desc = 'Telescope Find [F]iles', noremap = true, silent = true }
     )
     vim.keymap.set(
         'n',
         '<Leader>fo',
         select('telescope.builtin', 'oldfiles'),
-        { desc = 'Telescope Find Recent Files', noremap = true, silent = true }
+        { desc = 'Telescope Find [O]ld Files', noremap = true, silent = true }
     )
     vim.keymap.set(
         'n',
         '<Leader>fw',
         select('telescope.builtin', 'live_grep'),
-        { desc = 'Telescope Find Word', noremap = true, silent = true }
+        { desc = 'Telescope [W]ildcard Grep', noremap = true, silent = true }
     )
     vim.keymap.set(
         'n',
         '<Leader>fb',
         select('telescope.builtin', 'buffers'),
-        { desc = 'Telescope Find Buffer', noremap = true, silent = true }
+        { desc = 'Telescope Find [B]uffer', noremap = true, silent = true }
     )
     vim.keymap.set(
         'n',
         '<Leader>fd',
         select('telescope.builtin', 'diagnostics'),
-        { desc = 'Telescope Find Diagnostics', noremap = true, silent = true }
+        { desc = 'Telescope Find [D]iagnostics', noremap = true, silent = true }
     )
     vim.keymap.set(
         'n',
         '<Leader>fg',
         select('telescope.builtin', 'git_status'),
-        { desc = 'Telescope Find Git Diff', noremap = true, silent = true }
+        { desc = 'Telescope Find [G]it Diff', noremap = true, silent = true }
     )
     vim.keymap.set(
         'n',
         'fr',
         select('telescope.builtin', 'lsp_references'),
-        { desc = 'Telescope find symbol references', noremap = true, silent = true }
+        { desc = 'Telescope Find Symbol [R]eferences', noremap = true, silent = true }
     )
     vim.keymap.set(
         'n',
         '<Leader>fs',
         select('telescope.builtin', 'lsp_dynamic_workspace_symbols'),
-        { desc = 'Telescope Find Workspace Symbols', noremap = true, silent = true }
+        { desc = 'Telescope Find Workspace [S]ymbols', noremap = true, silent = true }
     )
     vim.keymap.set(
         'n',
         '<Leader>fm',
         select('telescope', 'extensions', 'noice', 'noice'),
-        { desc = 'Telescope Filter Noice Msg', noremap = true, silent = true }
+        { desc = 'Telescope Filter Noice [M]sg', noremap = true, silent = true }
     )
     vim.keymap.set(
         'n',
         '<Leader>ft',
         '<cmd>TodoTelescope<CR>',
-        { desc = 'Telescope Filter Todo Items', noremap = true, silent = true }
+        { desc = 'Telescope Filter [T]odo Items', noremap = true, silent = true }
     )
 
     -- buffer releated, prefix is leader-b
@@ -116,19 +107,13 @@ function KeyMaps.apply()
         'n',
         '<Leader>bc',
         '<cmd>bp | bd #<CR>',
-        { desc = 'Buffer close current', noremap = true, silent = true }
+        { desc = 'Buffer [C]lose Current', noremap = true, silent = true }
     )
     vim.keymap.set(
         'n',
-        '<Leader>lg',
+        '<Leader>fc',
         select('telescope.builtin', 'git_commits'),
-        { desc = 'Search Git Commits', noremap = true, silent = true }
-    )
-    vim.keymap.set(
-        'n',
-        '<Leader>lD',
-        select('telescope.builtin', 'diagnostics'),
-        { desc = 'Search diagnostics', noremap = true, silent = true }
+        { desc = 'Telescope Search Git [C]ommits', noremap = true, silent = true }
     )
 
     vim.keymap.set({ 'n', 'v' }, 'j', 'gj', { noremap = true, silent = true })
@@ -138,7 +123,7 @@ function KeyMaps.apply()
 
     -- File explorer
     vim.keymap.set('n', '<leader>e', '<cmd>Neotree toggle<CR>', {
-        desc = 'Toggle NeoTree file explorer',
+        desc = 'Toggle File [E]xplorer',
         noremap = true,
         silent = true,
     })
@@ -169,7 +154,7 @@ function KeyMaps.apply()
         { 'n' },
         '<Leader>tt',
         '<cmd>tabnext<cr>',
-        { noremap = true, silent = true, desc = 'Tab switch next' }
+        { noremap = true, silent = true, desc = '[T]ab switch next' }
     )
     vim.keymap.set({ 'n' }, '<Leader>tn', function()
         local name = vim.fn.input('File name: ', '', 'file')
@@ -178,26 +163,26 @@ function KeyMaps.apply()
         else
             vim.notify('Warn: Filename not assigned, nothing todo', vim.log.levels.WARN)
         end
-    end, { noremap = true, silent = true, desc = 'Tab New' })
+    end, { noremap = true, silent = true, desc = 'Tab [N]ew' })
     vim.keymap.set(
         { 'n' },
         '<Leader>tp',
         '<cmd>tabprevious<cr>',
-        { noremap = true, silent = true, desc = 'Tab previous' }
+        { noremap = true, silent = true, desc = 'Tab [P]revious' }
     )
     vim.keymap.set(
         { 'n' },
         '<Leader>ta',
         '<cmd>tabnew %<cr>',
-        { noremap = true, silent = true, desc = 'Tab add with current buffer' }
+        { noremap = true, silent = true, desc = 'Tab [A]dd With Current Buffer' }
     )
-    vim.keymap.set({ 'n' }, '<Leader>tc', '<cmd>tabclose<cr>', { noremap = true, silent = true, desc = 'Tab close' })
+    vim.keymap.set({ 'n' }, '<Leader>tc', '<cmd>tabclose<cr>', { noremap = true, silent = true, desc = 'Tab [C]lose' })
 
     vim.keymap.set(
         { 'n' },
         '<Leader>lm',
         select('mason.ui', 'open'),
-        { noremap = true, silent = true, desc = 'Launch Lsp Manager: Mason' }
+        { noremap = true, silent = true, desc = 'Launch Lsp [M]anager' }
     )
 end
 

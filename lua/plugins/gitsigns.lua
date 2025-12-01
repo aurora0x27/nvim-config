@@ -90,34 +90,24 @@ local GitUtils = {
                 end)
 
                 -- Actions
-                map('n', '<leader>ghs', gitsigns.stage_hunk, { desc = 'Git stage hunk' })
-                map('n', '<leader>ghr', gitsigns.reset_hunk, { desc = 'Git reset hunk' })
-
-                map('v', '<leader>ghs', function()
+                map('n', '<leader>ghs', function()
                     gitsigns.stage_hunk { vim.fn.line '.', vim.fn.line 'v' }
-                end, { desc = 'Git stage hunk' })
+                end, { desc = 'Git Hunk [S]tage' })
 
-                map('v', '<leader>ghr', function()
+                map('n', '<leader>ghr', function()
                     gitsigns.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
-                end, { desc = 'Git reset hunk' })
+                end, { desc = 'Git Hunk [R]eset' })
 
-                map('n', '<leader>ghS', gitsigns.stage_buffer, { desc = 'Git stage buffer' })
-                map('n', '<leader>ghR', gitsigns.reset_buffer, { desc = 'Git reset buffer' })
-                map('n', '<leader>ghp', gitsigns.preview_hunk, { desc = 'Git preview hunk' })
-                map('n', '<leader>ghi', gitsigns.preview_hunk_inline, { desc = 'Git preview hunk inline' })
+                map('n', '<leader>ghS', gitsigns.stage_buffer, { desc = 'Git [S]tage Buffer' })
+                map('n', '<leader>ghR', gitsigns.reset_buffer, { desc = 'Git [R]eset Buffer' })
+                map('n', '<leader>ghp', gitsigns.preview_hunk, { desc = 'Git [P]review Hunk' })
+                map('n', '<leader>ghi', gitsigns.preview_hunk_inline, { desc = 'Git Preview Hunk [I]nline' })
 
-                map('n', '<leader>ghb', function()
+                map('n', '<leader>gb', function()
                     gitsigns.blame_line { full = true }
-                end, { desc = 'Git blame line' })
+                end, { desc = 'Git [B]lame Line' })
 
-                map('n', '<leader>ghd', gitsigns.diffthis, { desc = 'Git diff' })
-
-                -- map('n', '<leader>ghD', function()
-                --     gitsigns.diffthis('~')
-                -- end, {desc = "Git diff ~"})
-
-                -- map('n', '<leader>ghQ', function() gitsigns.setqflist('all') end)
-                -- map('n', '<leader>ghq', gitsigns.setqflist)
+                map('n', '<leader>gd', gitsigns.diffthis, { desc = 'Git [D]iff' })
 
                 -- Toggles
                 map('n', '<leader>gtb', gitsigns.toggle_current_line_blame, { desc = 'Git toggle current line blame' })

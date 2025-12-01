@@ -49,14 +49,14 @@ local Dashboard = {
         dashboard.section.buttons.val = {
             dashboard.button(
                 'SPC n  ',
-                '  New File',
+                '  [N]ew File',
                 ':ene <BAR> startinsert<CR>',
                 { noremap = true, silent = true, nowait = true, desc = '[N]ew file' }
             ),
-            dashboard.button('SPC f f', '  Find File', ':Telescope find_files<CR>'),
-            dashboard.button('SPC f o', '󰈙  Recents', ':Telescope oldfiles<CR>'),
-            dashboard.button('SPC f w', '󰈭  Find Word', ':Telescope live_grep<CR>'),
-            dashboard.button('SPC S l', '  Last Session', function()
+            dashboard.button('SPC f f', '  Find [F]ile'),
+            dashboard.button('SPC f o', '󰈙  Recent/[O]ld Files'),
+            dashboard.button('SPC f w', '󰈭  [W]ildcard Grep'),
+            dashboard.button('SPC s l', '  Last [S]ession', function()
                 local oldfiles = vim.v.oldfiles
                 for _, file in ipairs(oldfiles) do
                     if vim.fn.filereadable(file) == 1 then

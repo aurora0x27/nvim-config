@@ -46,4 +46,15 @@ function M.load_module(module_root)
     return concat_table
 end
 
+function M.select(module, ...)
+    local fields = { ... }
+    return function()
+        local mod = require(module)
+        for i = 1, #fields - 1 do
+            mod = mod[fields[i]]
+        end
+        mod[fields[#fields]]()
+    end
+end
+
 return M
