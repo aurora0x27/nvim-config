@@ -9,6 +9,7 @@ Options.opt = {
     clipboard = 'unnamedplus',
     termguicolors = true,
     wildmenu = true,
+    ssop = 'blank,buffers,curdir,folds,help,tabpages,winsize,terminal',
     ignorecase = true,
     undofile = true,
     undodir = vim.fn.stdpath 'state' .. '/undo',

@@ -6,6 +6,11 @@ function Preload.apply()
     vim.g.mapleader = ' '
     vim.g.maplocalleader = ' '
     vim.g.transparent_mode = false
+    vim.g.session_enabled = true
+
+    if vim.env.NVIM_SESSION_DISABLED and vim.env.NVIM_SESSION_DISABLED == '1' then
+        vim.g.session_enabled = false
+    end
 
     local alpha = function()
         return string.format('%x', math.floor(255 * (vim.g.transparency or 0.8)))

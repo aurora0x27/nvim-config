@@ -56,16 +56,7 @@ local Dashboard = {
             dashboard.button('SPC f f', '  Find [F]ile'),
             dashboard.button('SPC f o', '󰈙  Recent/[O]ld Files'),
             dashboard.button('SPC f w', '󰈭  [W]ildcard Grep'),
-            dashboard.button('SPC s l', '  Last [S]ession', function()
-                local oldfiles = vim.v.oldfiles
-                for _, file in ipairs(oldfiles) do
-                    if vim.fn.filereadable(file) == 1 then
-                        vim.cmd('edit ' .. vim.fn.fnameescape(file))
-                        return
-                    end
-                end
-                vim.notify('No previous file found in v:oldfiles', vim.log.levels.WARN)
-            end),
+            dashboard.button('SPC s l', '  Last [S]ession'),
         }
 
         for _, button in ipairs(dashboard.section.buttons.val) do

@@ -184,6 +184,19 @@ function KeyMaps.apply()
         select('mason.ui', 'open'),
         { noremap = true, silent = true, desc = 'Launch Lsp [M]anager' }
     )
+
+    if not vim.g.session_enabled then
+        vim.keymap.set('n', '<leader>sl', function()
+            local oldfiles = vim.v.oldfiles
+            for _, file in ipairs(oldfiles) do
+                if vim.fn.filereadable(file) == 1 then
+                    vim.cmd('edit ' .. vim.fn.fnameescape(file))
+                    return
+                end
+            end
+            vim.notify('No previous file found in v:oldfiles', vim.log.levels.WARN)
+        end, { noremap = true, silent = true, desc = 'Recover [L]ast Buffer' })
+    end
 end
 
 return KeyMaps
