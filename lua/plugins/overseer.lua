@@ -18,7 +18,7 @@ local function overseer_restart_last()
 end
 
 local Overseer = {
-    'aurora0x27/overseer.nvim',
+    'stevearc/overseer.nvim',
     lazy = true,
     ---@module 'overseer'
     dependencies = {
