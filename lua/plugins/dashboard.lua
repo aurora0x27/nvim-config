@@ -16,7 +16,7 @@ local Dashboard = {
             local plugin_load = lazy_stats.loaded
             local plugin_count = lazy_stats.count
             local load_time = lazy_stats.startuptime
-            local datetime = os.date ' %d-%m-%Y   %H:%M:%S'
+            local datetime = os.date ' %Y-%m-%d   %H:%M:%S'
 
             return string.format(
                 '⚡ %d/%d plugins loaded in %.2fms  |  %s',
