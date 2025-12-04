@@ -30,7 +30,6 @@ local Telescope = {
                     require('telescope.themes').get_dropdown {
                         -- even more opts
                     },
-
                     -- pseudo code / specification for writing custom displays, like the one
                     -- for "codeactions"
                     -- specific_opts = {
@@ -76,7 +75,25 @@ local Telescope = {
                     },
                 },
             },
+            pickers = {
+                git_status = {
+                    git_icons = {
+                        added = '',
+                        deleted = '',
+                        changed = '',
+                        copied = '›',
+                        renamed = '→',
+                        unmerged = '',
+                        untracked = '?',
+                    },
+                },
+            },
         }
+        local mocha = require('catppuccin.palettes').get_palette 'mocha'
+        vim.api.nvim_set_hl(0, 'TelescopeResultsDiffAdd', { fg = mocha.green })
+        vim.api.nvim_set_hl(0, 'TelescopeResultsDiffChange', { fg = mocha.yellow })
+        vim.api.nvim_set_hl(0, 'TelescopeResultsDiffDelete', { fg = mocha.red })
+        vim.api.nvim_set_hl(0, 'TelescopeResultsDiffUntracked', { fg = mocha.lavender })
         require('telescope').load_extension 'ui-select'
     end,
 }

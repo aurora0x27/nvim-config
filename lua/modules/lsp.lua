@@ -6,6 +6,18 @@ local util = lsp.util
 local ms = vim.lsp.protocol.Methods
 local hover_ns = api.nvim_create_namespace 'hover'
 
+local lsp_list = {
+    'lua_ls',
+    'clangd',
+    'rust_analyzer',
+    'pyright',
+    'neocmake',
+    'gopls',
+    'jdtls',
+    'tinymist',
+    -- 'clice',
+}
+
 local function make_position_params()
     if vim.fn.has 'nvim-0.11' == 1 then
         return function(client)
@@ -104,18 +116,6 @@ local hover = function(config)
 end
 
 function LspConfig.apply()
-    local lsp_list = {
-        'lua_ls',
-        'clangd',
-        'rust_analyzer',
-        'pyright',
-        'neocmake',
-        'gopls',
-        'jdtls',
-        'tinymist',
-        -- 'clice',
-    }
-
     for _, name in ipairs(lsp_list) do
         vim.lsp.enable(name)
     end
