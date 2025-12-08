@@ -22,6 +22,22 @@ local Telescope = {
     cmd = { 'Telescope' },
     dependencies = {
         'nvim-telescope/telescope-ui-select.nvim',
+        {
+            'jmacadie/telescope-hierarchy.nvim',
+            dependencies = { 'nvim-lua/plenary.nvim' },
+        },
+    },
+    keys = {
+        {
+            '<leader>lsi',
+            '<cmd>Telescope hierarchy incoming_calls<cr>',
+            desc = 'LSP: [S]earch [I]ncoming Calls',
+        },
+        {
+            '<leader>lso',
+            '<cmd>Telescope hierarchy outgoing_calls<cr>',
+            desc = 'LSP: [S]earch [O]utgoing Calls',
+        },
     },
     config = function()
         require('telescope').setup {
@@ -43,6 +59,12 @@ local Telescope = {
                     --      do the following
                     --   codeactions = false,
                     -- }
+                },
+                ['hierarchy'] = {
+                    -- telescope-hierarchy.nvim config, see below
+                    layout_config = {
+                        prompt_position = 'bottom',
+                    },
                 },
             },
             defaults = {
@@ -95,6 +117,7 @@ local Telescope = {
         vim.api.nvim_set_hl(0, 'TelescopeResultsDiffDelete', { fg = mocha.red })
         vim.api.nvim_set_hl(0, 'TelescopeResultsDiffUntracked', { fg = mocha.lavender })
         require('telescope').load_extension 'ui-select'
+        require('telescope').load_extension 'hierarchy'
     end,
 }
 
