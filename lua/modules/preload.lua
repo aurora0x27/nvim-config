@@ -61,14 +61,6 @@ function Preload.apply()
             end
         end,
     })
-
-    -- Treat dae as bash, get highlight
-    vim.api.nvim_create_autocmd({ 'BufRead', 'BufNewFile' }, {
-        pattern = '*.dae',
-        callback = function()
-            vim.bo.filetype = 'sh'
-        end,
-    })
 end
 
 return Preload

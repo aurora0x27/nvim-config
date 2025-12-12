@@ -46,6 +46,7 @@ return {
         vim.opt.foldlevel = 99
         vim.opt.foldmethod = 'expr'
         vim.opt.foldtext = 'v:lua.custom_foldtext()'
+        vim.o.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
         vim.opt.foldcolumn = '1'
     end,
 }
