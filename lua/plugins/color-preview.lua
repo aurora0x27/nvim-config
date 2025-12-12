@@ -11,7 +11,7 @@ local ColorPreview = {
     opts = {
         ---Render style
         ---@usage 'background'|'foreground'|'virtual'
-        render = 'background',
+        render = vim.g.transparent_mode and 'background' or 'virtual',
 
         ---Set virtual symbol (requires render to be set to 'virtual')
         virtual_symbol = '■',
@@ -68,7 +68,7 @@ local ColorPreview = {
         exclude_filetypes = {},
         exclude_buftypes = {},
         -- Exclude buffer from highlighting e.g. 'exclude_buffer = function(bufnr) return vim.fn.getfsize(vim.api.nvim_buf_get_name(bufnr)) > 1000000 end'
-        exclude_buffer = function(bufnr) end,
+        -- exclude_buffer = function(bufnr) end,
     },
     config = function(_, opts)
         require('nvim-highlight-colors').setup(opts)

@@ -5,23 +5,22 @@
 local CodeFormatter = {
     'stevearc/conform.nvim',
     event = { 'BufReadPost', 'BufNewFile' },
-    opts = {},
-
-    config = function()
-        require('conform').setup {
-            formatters_by_ft = {
-                lua = { 'stylua' },
-                cpp = { 'clang-format' },
-                c = { 'clang-format' },
-                json = { 'prettier' },
-                jsonc = { 'prettier' },
-                html = { 'prettier' },
-                css = { 'prettier' },
-                astro = { 'prettier' },
-                typescript = { 'prettier' },
-                javascript = { 'prettier' },
-            },
-        }
+    opts = {
+        formatters_by_ft = {
+            lua = { 'stylua' },
+            cpp = { 'clang-format' },
+            c = { 'clang-format' },
+            json = { 'prettier' },
+            jsonc = { 'prettier' },
+            html = { 'prettier' },
+            css = { 'prettier' },
+            astro = { 'prettier' },
+            typescript = { 'prettier' },
+            javascript = { 'prettier' },
+        },
+    },
+    config = function(_, opts)
+        require('conform').setup(opts)
 
         local do_format = function()
             require('conform').format { async = true, lsp_fallback = true }
