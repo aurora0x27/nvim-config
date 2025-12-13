@@ -42,11 +42,11 @@ end
 
 return {
     apply = function()
-        vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
-        vim.opt.foldlevel = 99
-        vim.opt.foldmethod = 'expr'
-        vim.opt.foldtext = 'v:lua.custom_foldtext()'
+        vim.o.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+        vim.o.foldlevel = 99
+        vim.o.foldmethod = 'expr'
+        vim.o.foldtext = 'v:lua.custom_foldtext()'
         vim.o.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
-        vim.opt.foldcolumn = '1'
+        vim.o.foldcolumn = '1'
     end,
 }
