@@ -32,8 +32,8 @@ function Preload.apply()
     -- WARN: put this line here instead of `options.lua`
     -- prevents line number and cursor line appear on
     -- dashboard, so werid.
-    vim.opt.number = true
-    vim.opt.cursorline = not vim.g.transparent_mode
+    vim.o.number = true
+    vim.o.cursorline = not vim.g.transparent_mode
 
     vim.opt.fillchars = {
         eob = ' ',
@@ -45,10 +45,10 @@ function Preload.apply()
     }
 
     -- Will be covered by ftplugin
-    vim.opt.tabstop = 4
-    vim.opt.shiftwidth = 4
-    vim.opt.expandtab = true
-    vim.opt.autoindent = true
+    vim.o.tabstop = 4
+    vim.o.shiftwidth = 4
+    vim.o.expandtab = true
+    vim.o.autoindent = true
 
     -- '*.tmpl' template file in configuration
     vim.api.nvim_create_autocmd({ 'BufRead', 'BufNewFile' }, {

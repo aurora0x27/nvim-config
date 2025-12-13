@@ -6,7 +6,7 @@ local ColorPreview = {
     'brenoprata10/nvim-highlight-colors',
     event = { 'BufReadPost', 'BufNewFile' },
     init = function()
-        vim.opt.termguicolors = true
+        vim.o.termguicolors = true
     end,
     opts = {
         ---Render style

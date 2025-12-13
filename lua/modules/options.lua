@@ -2,10 +2,10 @@
 local Options = {}
 
 Options.opt = {
-    relativenumber = false, -- sets vim.opt.relativenumber
-    spell = false, -- sets vim.opt.spell
-    signcolumn = 'auto', -- sets vim.opt.signcolumn to auto
-    wrap = false, -- sets vim.opt.wrap
+    relativenumber = false,
+    spell = false,
+    signcolumn = 'auto',
+    wrap = false,
     clipboard = 'unnamedplus',
     termguicolors = true,
     wildmenu = true,
