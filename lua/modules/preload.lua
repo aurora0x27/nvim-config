@@ -29,6 +29,8 @@ function Preload.apply()
         end
     end
 
+    vim.g.use_emmylua_ls = vim.env.NVIM_USE_EMMYLUA_LS and vim.env.NVIM_USE_EMMYLUA_LS == '1' or false
+
     -- WARN: put this line here instead of `options.lua`
     -- prevents line number and cursor line appear on
     -- dashboard, so werid.

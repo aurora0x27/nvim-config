@@ -10,11 +10,22 @@ else
     pip_args = {}
 end
 
+local LspEnsuredList = {
+    vim.g.use_emmylua_ls and 'emmylua_ls' or 'lua-language-server',
+    'stylua',
+    'pyright',
+    'neocmakelsp',
+    'prettier',
+    'gopls',
+    'jdtls',
+}
+
 local function ensure_installed(list)
     local registry = require 'mason-registry'
 
     local function install_package(pkg_name)
         local ok, pkg = pcall(registry.get_package, pkg_name)
+        ---@cast pkg Package
         if not ok then
             vim.notify(('Package %s not found'):format(pkg_name), vim.log.levels.WARN)
             return
@@ -76,15 +87,7 @@ local Mason = {
     cmd = { 'Mason' },
     config = function()
         require('mason').setup(MasonOpt)
-        ensure_installed {
-            'lua-language-server',
-            'stylua',
-            'pyright',
-            'neocmakelsp',
-            'prettier',
-            'gopls',
-            'jdtls',
-        }
+        ensure_installed(LspEnsuredList)
     end,
 }
 

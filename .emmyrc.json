@@ -1,0 +1,5 @@
+{
+  "workspace": {
+    "library": ["lua", "$VIMRUNTIME", "${3rd}/luv/library"]
+  }
+}

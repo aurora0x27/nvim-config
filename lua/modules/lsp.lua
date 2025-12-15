@@ -3,7 +3,7 @@ local LspConfig = {}
 local lsp = vim.lsp
 local api = vim.api
 local util = lsp.util
-local ms = vim.lsp.protocol.Methods
+local methods = lsp.protocol.Methods
 local hover_ns = api.nvim_create_namespace 'hover'
 
 local lsp_list = {
@@ -18,25 +18,16 @@ local lsp_list = {
     -- 'clice',
 }
 
-local function make_position_params()
-    if vim.fn.has 'nvim-0.11' == 1 then
-        return function(client)
-            return vim.lsp.util.make_position_params(nil, client.offset_encoding)
-        end
-    else
-        ---@diagnostic disable-next-line: missing-parameter
-        return vim.lsp.util.make_position_params()
-    end
-end
-
--- override vim.lsp.hover
+-- override lsp.hover
 local hover = function(config)
     config = config or {}
     config.border = config.border or 'rounded'
-    config.focus_id = ms.textDocument_hover
+    config.focus_id = methods.textDocument_hover
 
-    local params = make_position_params()
-    lsp.buf_request_all(0, ms.textDocument_hover, params, function(results, ctx)
+    lsp.buf_request_all(0, methods.textDocument_hover, function(client)
+        ---@diagnostic disable:param-type-mismatch
+        return util.make_position_params(nil, client.offset_encoding)
+    end, function(results, ctx)
         local bufnr = assert(ctx.bufnr)
         if api.nvim_get_current_buf() ~= bufnr then
             return
@@ -117,16 +108,15 @@ end
 
 function LspConfig.apply()
     for _, name in ipairs(lsp_list) do
-        vim.lsp.enable(name)
+        lsp.enable(name)
     end
 
-    vim.lsp.buf.hover = hover
+    lsp.buf.hover = hover
 
-    vim.api.nvim_create_autocmd('LspAttach', {
-        group = vim.api.nvim_create_augroup('lsp-attach', { clear = true }),
+    api.nvim_create_autocmd('LspAttach', {
+        group = api.nvim_create_augroup('lsp-attach', { clear = true }),
         callback = function(event)
             ---@diagnostic disable: unused-local
-            local client = vim.lsp.get_client_by_id(event.data.client_id)
             local bufnr = event.buf
             vim.keymap.set('n', 'gd', function()
                 require('telescope.builtin').lsp_definitions()
@@ -134,23 +124,23 @@ function LspConfig.apply()
             vim.keymap.set(
                 'n',
                 'gD',
-                vim.lsp.buf.declaration,
+                lsp.buf.declaration,
                 { desc = 'LSP Goto Declaration', noremap = true, silent = true }
             )
             vim.keymap.set(
                 'n',
                 '<leader>lr',
-                vim.lsp.buf.rename,
+                lsp.buf.rename,
                 { desc = 'LSP [R]ename Symbol', noremap = true, silent = true }
             )
             vim.keymap.set('n', '<leader>lh', function()
-                vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = bufnr }, { bufnr = bufnr })
+                lsp.inlay_hint.enable(not lsp.inlay_hint.is_enabled { bufnr = bufnr }, { bufnr = bufnr })
             end, { buffer = bufnr, desc = 'Toggle Inlay [H]ints' })
         end,
     })
 
-    vim.api.nvim_create_user_command('LspInfo', function()
-        local clients = vim.lsp.get_clients()
+    api.nvim_create_user_command('LspInfo', function()
+        local clients = lsp.get_clients()
         if #clients == 0 then
             print 'No active LSP clients.'
             return
@@ -168,28 +158,28 @@ function LspConfig.apply()
         end
     end, {})
 
-    vim.api.nvim_create_user_command('LspStatus', ':checkhealth vim.lsp', { desc = 'Alias to checkhealth lsp' })
+    api.nvim_create_user_command('LspStatus', ':checkhealth lsp', { desc = 'Alias to checkhealth lsp' })
 
-    vim.api.nvim_create_user_command('LspLog', function()
-        vim.cmd(string.format('tabnew %s', vim.lsp.get_log_path()))
+    api.nvim_create_user_command('LspLog', function()
+        vim.cmd(string.format('tabnew %s', lsp.get_log_path()))
     end, {
-        desc = 'Opens the Nvim LSP client log.',
+        desc = 'Opens the Nlsp client log.',
     })
 
-    vim.api.nvim_create_user_command('LspStart', function(info)
+    api.nvim_create_user_command('LspStart', function(info)
         local servers = info.fargs
         if #servers == 0 then
             local ft = vim.bo.filetype
-            ---@diagnostic disable:invisible
-            for name, _ in pairs(vim.lsp.config._configs) do
-                local fts = vim.lsp.config[name].filetypes
+            ---@diagnostic disable:undefined-field
+            for name, _ in pairs(lsp.config._configs) do
+                local fts = lsp.config[name].filetypes
                 if fts and vim.tbl_contains(fts, ft) then
                     table.insert(servers, name)
                     print('Started LSP: [' .. name .. ']')
                 end
             end
         end
-        vim.lsp.enable(servers)
+        lsp.enable(servers)
     end, {
         desc = 'Enable and launch a language server',
         nargs = '?',
@@ -198,23 +188,21 @@ function LspConfig.apply()
         end,
     })
 
-    vim.api.nvim_create_user_command('LspStop', function()
-        local bufnr = vim.api.nvim_get_current_buf()
-        for _, client in ipairs(vim.lsp.get_clients { bufnr = bufnr }) do
-            ---@diagnostic disable-next-line: param-type-mismatch
-            client.stop(true)
+    api.nvim_create_user_command('LspStop', function()
+        local bufnr = api.nvim_get_current_buf()
+        for _, client in ipairs(lsp.get_clients { bufnr = bufnr }) do
+            client:stop(true)
             print('Stopped LSP: [' .. client.name .. ']')
         end
     end, {})
 
-    vim.api.nvim_create_user_command('LspRestart', function()
-        local bufnr = vim.api.nvim_get_current_buf()
-        for _, client in ipairs(vim.lsp.get_clients { bufnr = bufnr }) do
+    api.nvim_create_user_command('LspRestart', function()
+        local bufnr = api.nvim_get_current_buf()
+        for _, client in ipairs(lsp.get_clients { bufnr = bufnr }) do
             local config = client.config
-            ---@diagnostic disable-next-line: param-type-mismatch
-            client.stop(true)
+            client:stop(true)
             vim.defer_fn(function()
-                vim.lsp.start(config)
+                lsp.start(config)
                 print('Restarted LSP: [' .. client.name .. ']')
             end, 100)
         end

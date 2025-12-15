@@ -1,5 +1,29 @@
 -- Lua lsp
 
+---@brief
+---
+--- https://github.com/EmmyLuaLs/emmylua-analyzer-rust
+---
+--- Emmylua Analyzer Rust. Language Server for Lua.
+---
+--- `emmylua_ls` can be installed using `cargo` by following the instructions[here]
+--- (https://github.com/EmmyLuaLs/emmylua-analyzer-rust?tab=readme-ov-file#install).
+---
+--- The default `cmd` assumes that the `emmylua_ls` binary can be found in `$PATH`.
+--- It might require you to provide cargo binaries installation path in it.
+---@type vim.lsp.Config
+local emmylua_ls = {
+    cmd = { 'emmylua_ls' },
+    filetypes = { 'lua' },
+    root_markers = {
+        '.luarc.json',
+        '.emmyrc.json',
+        '.luacheckrc',
+        '.git',
+    },
+    workspace_required = false,
+}
+
 local lua_ls = {
     cmd = { 'lua-language-server' },
     filetypes = { 'lua' },
@@ -55,4 +79,8 @@ local lua_ls = {
     },
 }
 
-return lua_ls
+if vim.g.use_emmylua_ls then
+    return emmylua_ls
+else
+    return lua_ls
+end
