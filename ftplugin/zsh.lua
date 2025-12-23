@@ -1,1 +1,1 @@
-vim.api.nvim_set_option_value('filetype', 'sh', { buf = 0 })
+vim.api.nvim_set_option_value('filetype', 'bash', { buf = 0 })
