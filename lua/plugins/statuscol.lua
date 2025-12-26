@@ -10,8 +10,7 @@ local StatusCol = {
             segments = {
                 {
                     sign = {
-                        name = { '.*' },
-                        text = { '.*' },
+                        namespace = { 'gitsigns' },
                         wrap = false,
                         auto = true,
                         colwidth = 1,
@@ -20,6 +19,46 @@ local StatusCol = {
                         function(args)
                             local s = vim.fn.sign_getplaced(args.buf, { group = '*', lnum = args.lnum })[1].signs
                             return #s > 0
+                        end,
+                    },
+                    click = 'v:lua.ScSa',
+                },
+                {
+                    sign = {
+                        namespace = { 'diagnostic/signs' },
+                        wrap = false,
+                        auto = true,
+                        colwidth = 1,
+                    },
+                    text = {
+                        function(args)
+                            local lnum = args.lnum - 1
+                            local diags = vim.diagnostic.get(args.buf, { lnum = lnum })
+                            if #diags == 0 then
+                                return ' '
+                            end
+
+                            table.sort(diags, function(a, b)
+                                return a.severity < b.severity
+                            end)
+
+                            local d = diags[1]
+                            local map = require('utils.assets').DiagnosticIconMap
+                            local icon, hl = unpack(map[d.severity])
+                            return ('%%#%s#%s%%*'):format(hl, icon)
+                        end,
+                    },
+                    condition = {
+                        function(args)
+                            if vim.v.virtnum ~= 0 then
+                                return false
+                            end
+
+                            local diags = vim.diagnostic.get(args.buf, {
+                                lnum = args.lnum - 1,
+                            })
+
+                            return #diags > 0
                         end,
                     },
                     click = 'v:lua.ScSa',

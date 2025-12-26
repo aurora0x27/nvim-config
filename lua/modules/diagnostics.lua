@@ -2,27 +2,14 @@
 
 local DiagnosticConfig = {}
 
+local IconTable = {
+    [vim.diagnostic.severity.ERROR] = ' ',
+    [vim.diagnostic.severity.WARN] = ' ',
+    [vim.diagnostic.severity.INFO] = ' ',
+    [vim.diagnostic.severity.HINT] = ' ',
+}
+
 DiagnosticConfig.apply = function()
-    local mocha = require('catppuccin.palettes').get_palette 'mocha'
-    for type, icon in pairs {
-        Error = ' ',
-        Warn = ' ',
-        Info = ' ',
-        Hint = ' ',
-    } do
-        local hl = 'DiagnosticSign' .. type
-        vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = '' })
-    end
-
-    vim.diagnostic.config {
-        signs = { priority = 5 },
-        virtual_text = false,
-        underline = true,
-    }
-
-    vim.api.nvim_set_hl(0, 'DiagnosticSignError', { fg = mocha.red })
-    vim.api.nvim_set_hl(0, 'DiagnosticSignWarn', { fg = mocha.yellow })
-
     -- diagnostic info
     vim.diagnostic.config {
         virtual_text = false,
@@ -31,16 +18,19 @@ DiagnosticConfig.apply = function()
             -- severity = { min = vim.diagnostic.severity.WARN }
         },
         underline = true,
-        signs = true,
+        signs = {
+            text = IconTable,
+        },
         update_in_insert = false,
         float = {
             border = 'rounded',
             header = '',
             source = true,
-            -- prefix = function(diag)
-            --   local icons = require("core.icons").diagnostics
-            --   return icons[diag.severity] .. " "
-            -- end
+            prefix = function(diag)
+                local map = require('utils.assets').DiagnosticIconMap
+                local icon, hl = unpack(map[diag.severity])
+                return icon .. ' ', hl
+            end,
         },
     }
 
