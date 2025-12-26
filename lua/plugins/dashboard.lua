@@ -16,7 +16,11 @@ local Dashboard = {
             local plugin_load = lazy_stats.loaded
             local plugin_count = lazy_stats.count
             local load_time = lazy_stats.startuptime
-            local datetime = os.date ' %Y-%m-%d   %H:%M:%S'
+
+            -- Windows cannot handle unicode icons :(
+            local date = os.date '%Y-%m-%d'
+            local time = os.date '%H:%M:%S'
+            local datetime = ' ' .. date .. '   ' .. time
 
             return string.format(
                 '⚡ %d/%d plugins loaded in %.2fms  |  %s',

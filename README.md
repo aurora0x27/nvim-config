@@ -43,6 +43,7 @@ vi     # Launch neovim on this config, without make changes to your ~/.local/sha
 - [x] Workspace patch
 - [x] Typst support
 - [x] Task runner infrastructure (**Overseer**)
+- [x] Windows Support
 
 ## Maybe wanted features
 

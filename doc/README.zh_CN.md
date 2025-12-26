@@ -62,6 +62,8 @@ vi # 使用此配置启动 Neovim，无需更改 ~/.local/share
 
 - [x] 任务运行基础设施 (**Overseer**)
 
+- [x] Windows 支持
+
 ## 可能需要的功能
 
 - Markdown 表格格式
