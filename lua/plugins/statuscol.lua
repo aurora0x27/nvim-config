@@ -16,9 +16,12 @@ local StatusCol = {
                         colwidth = 1,
                     },
                     condition = {
-                        function(args)
-                            local s = vim.fn.sign_getplaced(args.buf, { group = '*', lnum = args.lnum })[1].signs
-                            return #s > 0
+                        function()
+                            local status = vim.b.gitsigns_status_dict or {}
+                            local added = status.added or 0
+                            local changed = status.changed or 0
+                            local removed = status.removed or 0
+                            return added > 0 or changed > 0 or removed > 0
                         end,
                     },
                     click = 'v:lua.ScSa',
