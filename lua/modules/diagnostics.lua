@@ -1,6 +1,6 @@
 -- Diagnostics config
 
-local DiagnosticConfig = {}
+local Diagnostic = {}
 
 local IconTable = {
     [vim.diagnostic.severity.ERROR] = ' ',
@@ -9,35 +9,35 @@ local IconTable = {
     [vim.diagnostic.severity.HINT] = ' ',
 }
 
-DiagnosticConfig.apply = function()
+---@type vim.diagnostic.Opts
+local DiagnosticsConfig = {
+    virtual_text = vim.g.diag_inline,
+    virtual_lines = not vim.g.diag_inline,
+    underline = false,
+    signs = {
+        text = IconTable,
+    },
+    update_in_insert = false,
+    float = {
+        border = 'rounded',
+        header = '',
+        source = true,
+        prefix = function(diag)
+            local map = require('utils.assets').DiagnosticIconMap
+            local icon, hl = unpack(map[diag.severity])
+            return icon .. ' ', hl
+        end,
+    },
+}
+
+Diagnostic.apply = function()
     -- diagnostic info
-    vim.diagnostic.config {
-        virtual_text = false,
-        virtual_lines = {
-            only_current_line = true,
-            -- severity = { min = vim.diagnostic.severity.WARN }
-        },
-        underline = true,
-        signs = {
-            text = IconTable,
-        },
-        update_in_insert = false,
-        float = {
-            border = 'rounded',
-            header = '',
-            source = true,
-            prefix = function(diag)
-                local map = require('utils.assets').DiagnosticIconMap
-                local icon, hl = unpack(map[diag.severity])
-                return icon .. ' ', hl
-            end,
-        },
-    }
+    vim.diagnostic.config(DiagnosticsConfig)
 
     -- auto update diagnostic info
     vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
         callback = function()
-            vim.diagnostic.show(nil, 0, nil, { virtual_lines = { only_current_line = true } })
+            vim.diagnostic.show(nil, 0, nil)
         end,
     })
 
@@ -47,4 +47,4 @@ DiagnosticConfig.apply = function()
     end, { desc = 'Hover [D]iagnostics' })
 end
 
-return DiagnosticConfig
+return Diagnostic

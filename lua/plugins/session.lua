@@ -8,13 +8,15 @@ local SessionMgr = {
     init = function()
         -- load the session for the current directory
         vim.keymap.set('n', '<leader>sl', function()
-            local sm = require 'persistence'
-            local cache = sm.current()
-            if vim.fn.filereadable(cache) ~= 0 then
-                sm.load()
-            else
-                vim.notify('No session in ' .. vim.fn.getcwd(), vim.log.levels.WARN)
-            end
+            vim.schedule(function()
+                local sm = require 'persistence'
+                local cache = sm.current()
+                if vim.fn.filereadable(cache) ~= 0 then
+                    sm.load()
+                else
+                    vim.notify('No session in ' .. vim.fn.getcwd(), vim.log.levels.WARN)
+                end
+            end)
         end, { noremap = true, silent = true, desc = '[L]oad Session' })
 
         -- select a session to load

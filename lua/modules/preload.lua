@@ -1,6 +1,12 @@
 -- This file contains settings load before initializing lazy
 local Preload = {}
 
+---@param opt string
+---@return boolean
+local function check_env_opt(opt)
+    return vim.env[opt] and vim.env[opt] == '1'
+end
+
 function Preload.apply()
     -- set global leader
     vim.g.mapleader = ' '
@@ -8,7 +14,7 @@ function Preload.apply()
     vim.g.transparent_mode = false
     vim.g.session_enabled = true
 
-    if vim.env.NVIM_SESSION_DISABLED and vim.env.NVIM_SESSION_DISABLED == '1' then
+    if check_env_opt 'NVIM_SESSION_DISABLED' then
         vim.g.session_enabled = false
     end
 
@@ -17,7 +23,7 @@ function Preload.apply()
     end
 
     -- set global transparent_mode
-    if vim.env.NVIM_TRANSPARENT_MODE and vim.env.NVIM_TRANSPARENT_MODE == '1' then
+    if check_env_opt 'NVIM_TRANSPARENT_MODE' then
         if vim.g.neovide then
             vim.g.neovide_window_blurred = true
             vim.g.neovide_opacity = 0.9
@@ -29,7 +35,10 @@ function Preload.apply()
         end
     end
 
-    vim.g.use_emmylua_ls = vim.env.NVIM_USE_EMMYLUA_LS and vim.env.NVIM_USE_EMMYLUA_LS == '1' or false
+    vim.g.diag_inline = check_env_opt 'NVIM_DIAGNOSTIC_INLINE' or false
+    vim.g.inject_vim_rt = check_env_opt 'NVIM_WORKSPACE_INJECT_VIM_RT' or true
+    vim.g.inject_plugin_path = check_env_opt 'NVIM_WORKSPACE_INJECT_PLUGIN_PATH' or false
+    vim.g.use_emmylua_ls = check_env_opt 'NVIM_USE_EMMYLUA_LS' or false
 
     -- WARN: put this line here instead of `options.lua`
     -- prevents line number and cursor line appear on

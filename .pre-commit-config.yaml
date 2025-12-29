@@ -3,4 +3,4 @@ repos:
     rev: v2.1.0
     hooks:
       - id: stylua # or stylua-system / stylua-github
-        files: '^(lua|ftplugin|lsp)\/.*[a-zA-Z0-9_]\.lua$'
+        files: '^(lua|ftplugin|lsp|\.nvim)\/.*[a-zA-Z0-9_]\.lua$'

@@ -1,5 +1,27 @@
 {
+  "$schema": "https://raw.githubusercontent.com/EmmyLuaLs/emmylua-analyzer-rust/refs/heads/main/crates/emmylua_code_analysis/resources/schema.json",
+  "runtime": {
+    "version": "LuaJIT",
+    "requirePattern": [
+      "lua/?.lua",
+      "lua/?/init.lua",
+      "?/lua/?.lua",
+      "?/lua/?/init.lua"
+    ]
+  },
   "workspace": {
-    "library": ["lua", "$VIMRUNTIME", "${3rd}/luv/library"]
+    "library": [
+      "lua",
+      "$VIMRUNTIME",
+      "${3rd}/luv/library",
+      "${3rd}/busted/library"
+    ]
+  },
+  "codeAction": {
+    "insertSpace": true
+  },
+  "strict": {
+    "typeCall": true,
+    "arrayIndex": true
   }
 }

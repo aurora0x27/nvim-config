@@ -3,7 +3,7 @@
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
 ---@diagnostic disable:unused-local
-local Table = {
+local _Table = {
     rosewater = '#f5e0dc',
     flamingo = '#f2cdcd',
     pink = '#f5c2e7',
@@ -114,6 +114,7 @@ local ColorScheme = {
                         return {
                             NormalFloat = { bg = mocha.base },
                             FloatBorder = { bg = mocha.base },
+                            NoiceCmdlinePopupBorder = { fg = mocha.teal },
                         }
                     end
                 end,

@@ -45,6 +45,24 @@ vi     # Launch neovim on this config, without make changes to your ~/.local/sha
 - [x] Task runner infrastructure (**Overseer**)
 - [x] Windows Support
 
+## Optional features
+
+Some features are optional, controlled by environment variables.
+
+- *NVIM_SESSION_DISABLED* disable session recovery
+
+- *NVIM_TRANSPARENT_MODE* enable transparent mode
+
+- *NVIM_DASHBOARD_ART_NAME* choose an ascii art on dashboard
+
+- *NVIM_DIAGNOSTIC_INLINE* do not use virtual lines to display diagnostic messages
+
+- *NVIM_USE_EMMYLUA_LS* use `emmylua_ls` as lua language server
+
+- *NVIM_WORKSPACE_INJECT_VIM_RT* inject vim runtime to `emmylua_ls` workspace config
+
+- *NVIM_WORKSPACE_INJECT_PLUGIN_PATH* inject plugin path to `emmylua_ls` workspace config
+
 ## Maybe wanted features
 
 - Markdown Table Format
@@ -58,5 +76,3 @@ vi     # Launch neovim on this config, without make changes to your ~/.local/sha
 ## TODO List
 
 - Latex preview
-
-- Session recover

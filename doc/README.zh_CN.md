@@ -64,6 +64,27 @@ vi # 使用此配置启动 Neovim，无需更改 ~/.local/share
 
 - [x] Windows 支持
 
+## 可选特性
+
+配置中有一些可选特性, 它们由环境变量控制.
+
+- *NVIM_SESSION_DISABLED* 禁用会话恢复
+
+- *NVIM_TRANSPARENT_MODE* 启用透明模式
+
+- *NVIM_DASHBOARD_ART_NAME* 更换启动页面的 ascii 艺术
+
+- *NVIM_DIAGNOSTIC_INLINE* 禁用虚拟行显示诊断信息
+
+- *NVIM_USE_EMMYLUA_LS* 使用 `emmylua_ls` 作为 lua 语言服务器
+
+- *NVIM_WORKSPACE_INJECT_VIM_RT* inject vim runtime to `emmylua_ls` workspace config
+
+- *NVIM_WORKSPACE_INJECT_VIM_RT* 在 `emmylua_ls` 的工作区配置中注入 vim 运行时
+
+- *NVIM_WORKSPACE_INJECT_PLUGIN_PATH* 在 `emmylua_ls` 的工作区配置中注入插件路径
+
+
 ## 可能需要的功能
 
 - Markdown 表格格式
@@ -75,7 +96,5 @@ vi # 使用此配置启动 Neovim，无需更改 ~/.local/share
 - 代码折叠范围在展开时高亮
 
 ## 待办事项列表
-
-- 会话恢复
 
 - LaTeX 预览

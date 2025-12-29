@@ -14,10 +14,6 @@ function AutoCmd.apply()
         end,
     })
 
-    -- Do not display warnings
-    ---@diagnostic disable: duplicate-set-field
-    vim.deprecate = function() end
-
     vim.api.nvim_create_autocmd('BufReadPost', {
         callback = function()
             local mark = vim.api.nvim_buf_get_mark(0, '"')

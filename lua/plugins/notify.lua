@@ -65,6 +65,7 @@ local Notifier = {
             },
         }
 
+        ---@diagnostic disable:assign-type-mismatch
         vim.notify = require 'notify'
     end,
 }

@@ -10,15 +10,15 @@
 --]]
 
 -- DEBUG MODE
-local debug_mode = vim.env.NVIM_CONFIG_DEV
+vim.g.debug_mode = vim.env.NVIM_CONFIG_DEV
 
 local function set_rtpath()
     vim.opt.rtp:prepend(vim.env.SCRIPT_DIR)
 end
 
-if debug_mode == '1' then
+if vim.g.debug_mode == '1' then
     local project_root = vim.env.SCRIPT_DIR
-    ---@diagnostic disable: duplicate-set-field
+    ---@diagnostic disable: inject-field, duplicate-set-field
     vim.fn.stdpath = function(what)
         if what == 'config' then
             return project_root
@@ -32,7 +32,7 @@ if debug_mode == '1' then
         callback = function()
             vim.defer_fn(function()
                 vim.notify('Entered DEBUG mode', vim.log.levels.WARN, { title = 'Config' })
-            end, 200)
+            end, 150)
         end,
     })
 end
@@ -44,7 +44,7 @@ vim.api.nvim_create_autocmd('User', {
     callback = function()
         vim.schedule(function()
             -- DEBUG MODE
-            if debug_mode == '1' then
+            if vim.g.debug_mode == '1' then
                 set_rtpath()
             end
             -- DEBUG MODE
@@ -67,7 +67,7 @@ require('modules.preload').apply()
 -- set lazy path
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 ---@diagnostic disable: undefined-field
-if not (vim.uv or vim.loop).fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
     local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
     local out = vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
     if vim.v.shell_error ~= 0 then
