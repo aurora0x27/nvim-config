@@ -38,6 +38,7 @@ function Preload.apply()
     vim.g.diag_inline = check_env_opt 'NVIM_DIAGNOSTIC_INLINE' or false
     vim.g.inject_vim_rt = check_env_opt 'NVIM_WORKSPACE_INJECT_VIM_RT' or true
     vim.g.inject_plugin_path = check_env_opt 'NVIM_WORKSPACE_INJECT_PLUGIN_PATH' or false
+    vim.g.enable_xmake_ls = check_env_opt 'NVIM_ENABLE_XMAKE_LS' or false
     vim.g.use_emmylua_ls = check_env_opt 'NVIM_USE_EMMYLUA_LS' or false
 
     -- WARN: put this line here instead of `options.lua`
@@ -70,6 +71,27 @@ function Preload.apply()
             if m then
                 vim.bo[args.buf].filetype = vim.filetype.match { filename = 'dummy.' .. m } or m
             end
+        end,
+    })
+
+    -- filetype alias
+    vim.filetype.add {
+        extension = {
+            mdx = 'markdown',
+        },
+        pattern = {
+            -- Add patterns
+            -- ['<pattern>'] = '<filetype>',
+            ['xmake.lua'] = 'xmake',
+        },
+    }
+
+    -- register filetype `xmake`
+    vim.treesitter.language.register('lua', 'xmake')
+    vim.api.nvim_create_autocmd({ 'FileType' }, {
+        pattern = 'xmake',
+        callback = function()
+            vim.treesitter.start()
         end,
     })
 end

@@ -82,6 +82,7 @@ local emmylua_ls = {
     on_init = function(client)
         -- FIXME: Always load vim api ?
         local workspace_config = load_workspace_emmyrc_config()
+
         if vim.g.inject_vim_rt then
             local default_data_home = vim.env.HOME .. '/.local/share/nvim/lazy'
             local xdg_data_home = vim.env.XDG_DATA_HOME and (vim.env.XDG_DATA_HOME .. '/nvim/lazy') or default_data_home
@@ -124,12 +125,6 @@ local emmylua_ls = {
             })
         else
             client.config.settings = workspace_config
-        end
-    end,
-    on_attach = function(client)
-        if vim.fn.expand '%:t' == 'xmake.lua' then
-            vim.lsp.stop_client(client.id)
-            return
         end
     end,
     settings = {
@@ -181,12 +176,6 @@ local lua_ls = {
                 -- library = vim.api.nvim_get_runtime_file("", true)
             },
         })
-    end,
-    on_attach = function(client)
-        if vim.fn.expand '%:t' == 'xmake.lua' then
-            vim.lsp.stop_client(client.id)
-            return
-        end
     end,
     settings = {
         Lua = {},

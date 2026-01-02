@@ -63,6 +63,8 @@ Some features are optional, controlled by environment variables.
 
 - *NVIM_WORKSPACE_INJECT_PLUGIN_PATH* inject plugin path to `emmylua_ls` workspace config
 
+- *NVIM_ENABLE_XMAKE_LS* enable `xmake_ls`
+
 ## Maybe wanted features
 
 - Markdown Table Format

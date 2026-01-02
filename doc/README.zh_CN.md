@@ -84,6 +84,7 @@ vi # 使用此配置启动 Neovim，无需更改 ~/.local/share
 
 - *NVIM_WORKSPACE_INJECT_PLUGIN_PATH* 在 `emmylua_ls` 的工作区配置中注入插件路径
 
+- *NVIM_ENABLE_XMAKE_LS* 启用 `xmake_ls`
 
 ## 可能需要的功能
 
