@@ -38,7 +38,7 @@ function Options.apply()
         vim.g.terminal_color_15 = '#a6adc8'
     end
 
-    if vim.fn.has 'win32' == 1 then
+    if require('utils.detect').is_windows() then
         vim.o.shell = 'nu'
         vim.o.shellcmdflag = '-c'
         vim.o.shellquote = ''
