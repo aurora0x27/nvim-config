@@ -117,8 +117,8 @@
     ],
     "description": "Leetcode template"
   },
-  "acm": {
-    "prefix": ["acm"],
+  "acm-cpp17": {
+    "prefix": ["acm-cpp17"],
     "body": [
       "#include <bits/stdc++.h>",
       "",
@@ -156,10 +156,10 @@
       "\treturn 0;",
       "}"
     ],
-    "description": "ACM style template"
+    "description": "ACM style template with cpp17 feature IO"
   },
-  "algorithm": {
-    "prefix": ["algo"],
+  "acm": {
+    "prefix": ["acm"],
     "body": [
       "#include <bits/stdc++.h>",
       "",
@@ -169,6 +169,8 @@
       "using f64 = double;",
       "constexpr i64 INF = 1e18;",
       "constexpr f64 EPS = 1e-6;",
+      "constexpr char eol = '\\n';",
+      "#define float_eq(a, b) (abs((a) - (b)) < EPS)",
       "",
       "int main(void) {",
       "\tios::sync_with_stdio(false);",
@@ -177,6 +179,6 @@
       "\treturn 0;",
       "}"
     ],
-    "description": "Minimal algorithm template"
+    "description": "Minimal ACM style algorithm template"
   }
 }
