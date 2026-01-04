@@ -2,10 +2,10 @@
 
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
+---@type LazyPluginSpec
 local Dashboard = {
     'goolord/alpha-nvim',
     event = { 'VimEnter' },
-    init = false,
     requires = { 'kyazdani42/nvim-web-devicons' },
     config = function()
         local alpha = require 'alpha'

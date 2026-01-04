@@ -1,3 +1,4 @@
+---@type LazyPluginSpec
 local ScopeMgr = {
     'tiagovla/scope.nvim',
     event = { 'BufReadPost', 'BufNewFile', 'BufReadPre' },

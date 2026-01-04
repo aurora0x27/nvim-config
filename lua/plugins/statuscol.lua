@@ -1,3 +1,4 @@
+---@type LazyPluginSpec
 local StatusCol = {
     'luukvbaal/statuscol.nvim',
     event = { 'BufReadPost', 'BufNewFile', 'BufReadPre' },

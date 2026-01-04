@@ -61,6 +61,8 @@ local function ensure_installed(list)
     end
 end
 
+---@module 'mason'
+---@type MasonSettings
 local MasonOpt = {
     pip = {
         upgrade_pip = false,
@@ -80,7 +82,7 @@ local MasonOpt = {
 }
 
 -- Mason config table
----@diagnostic disable: unused-local
+---@type LazyPluginSpec
 local Mason = {
     'williamboman/mason.nvim',
     event = { 'BufReadPost', 'BufNewFile', 'BufReadPre' },

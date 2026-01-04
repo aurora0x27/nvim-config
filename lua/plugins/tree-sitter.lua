@@ -41,6 +41,7 @@ local TSEnsureInstalled = {
     'markdown_inline',
 }
 
+---@type LazyPluginSpec
 local TreeSitter = {
     'nvim-treesitter/nvim-treesitter',
     branch = 'main',

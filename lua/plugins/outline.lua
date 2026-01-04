@@ -2,6 +2,7 @@
 
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
+---@type LazyPluginSpec
 local Outline = {
     'Bekaboo/dropbar.nvim',
     -- optional, but required for fuzzy finder support

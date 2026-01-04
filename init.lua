@@ -112,7 +112,6 @@ require('lazy').setup {
         -- apply options and keymaps
         -- must be put here as hook because plugin loading is async
     end,
-    ---@diagnostic disable: undefined-doc-name
 } --[[@as LazyConfig]]
 
 --[[

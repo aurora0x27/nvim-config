@@ -3,6 +3,7 @@
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
 -- install with yarn or npm
+---@type LazyPluginSpec
 local MarkdownPreview = {
     'iamcco/markdown-preview.nvim',
     cmd = { 'MarkdownPreviewToggle', 'MarkdownPreview', 'MarkdownPreviewStop' },
@@ -125,14 +126,13 @@ local MarkdownPreview = {
     ft = { 'markdown' },
 }
 
+---@type LazyPluginSpec
 local RenderMarkdown = {
     'MeanderingProgrammer/render-markdown.nvim',
     dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
     ---@module 'render-markdown'
-    ---@diagnostic disable:undefined-doc-name
     ---@type render.md.UserConfig
     opts = {
-
         callout = {
             abstract = {
                 raw = '[!ABSTRACT]',

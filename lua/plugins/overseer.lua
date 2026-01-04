@@ -17,6 +17,7 @@ local function overseer_restart_last()
     end
 end
 
+---@type LazyPluginSpec
 local Overseer = {
     'stevearc/overseer.nvim',
     lazy = true,
@@ -62,8 +63,6 @@ local Overseer = {
         templates = {
             'builtin',
         },
-        -- FIX: not work... why?
-        template_dirs = { 'config/overseer/template' },
     },
     config = function(_, opts)
         local overseer = require 'overseer'

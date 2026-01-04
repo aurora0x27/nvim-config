@@ -1,3 +1,4 @@
+---@type LazyPluginSpec
 local SessionMgr = {
     'folke/persistence.nvim',
     enabled = vim.g.session_enabled,
@@ -56,6 +57,7 @@ local SessionMgr = {
             end,
         })
     end,
+    ---@module 'persistence'
     opts = {
         dir = vim.fn.stdpath 'state' .. '/sessions/',
         need = 1,

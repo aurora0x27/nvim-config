@@ -16,6 +16,7 @@ local focus_preview = function(prompt_bufnr)
     -- api.nvim_set_current_win(winid)
 end
 
+---@type LazyPluginSpec
 local Telescope = {
     'nvim-telescope/telescope.nvim',
     lazy = true,
@@ -40,6 +41,7 @@ local Telescope = {
         },
     },
     config = function()
+        ---@module 'telescope'
         require('telescope').setup {
             extensions = {
                 ['ui-select'] = {

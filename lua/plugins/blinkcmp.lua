@@ -2,6 +2,7 @@
 
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
+---@type LazyPluginSpec
 local CodeCompletion = {
     'saghen/blink.cmp',
     -- optional: provides snippets for the snippet source
@@ -78,8 +79,12 @@ local CodeCompletion = {
         -- Default list of enabled providers defined so that you can extend it
         -- elsewhere in your config, without redefining it, due to `opts_extend`
         sources = {
-            default = { 'snippets', 'lsp', 'path', 'buffer' },
+            default = { 'snippets', 'lsp', 'path', 'buffer', 'lazydev' },
             providers = {
+                lazydev = {
+                    name = 'Development',
+                    module = 'lazydev.integrations.blink',
+                },
                 snippets = {
                     opts = {
                         friendly_snippets = false,

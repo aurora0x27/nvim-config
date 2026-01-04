@@ -1,3 +1,4 @@
+---@type LazyPluginSpec
 local FsEditor = {
     'stevearc/oil.nvim',
     ---@module 'oil'

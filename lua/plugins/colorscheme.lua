@@ -34,6 +34,7 @@ local _Table = {
 
 local transparent_mode = vim.g.transparent_mode
 
+---@type LazyPluginSpec
 local ColorScheme = {
     'catppuccin/nvim',
     name = 'catppuccin',

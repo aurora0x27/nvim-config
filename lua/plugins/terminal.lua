@@ -2,6 +2,7 @@
 
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
+---@type LazyPluginSpec
 local IntergratedTerminal = {
     'akinsho/toggleterm.nvim',
     event = 'VeryLazy',
@@ -12,6 +13,7 @@ local IntergratedTerminal = {
     config = function()
         local mocha = require('catppuccin.palettes').get_palette 'mocha'
 
+        ---@module 'toggleterm'
         require('toggleterm').setup {
             -- size can be a number or function which is passed the current terminal
 

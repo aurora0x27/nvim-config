@@ -2,6 +2,7 @@
 
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
+---@type LazyPluginSpec
 local KeyMapIntellisense = {
     'folke/which-key.nvim',
     event = 'VeryLazy',

@@ -1,3 +1,4 @@
+---@type LazyPluginSpec
 local Snipte = {
     'leath-dub/snipe.nvim',
     opts = {

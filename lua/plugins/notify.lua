@@ -2,6 +2,7 @@
 
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
+---@type LazyPluginSpec
 local Notifier = {
     'rcarriga/nvim-notify',
     event = 'VeryLazy',
@@ -49,6 +50,7 @@ local Notifier = {
         -- local icon = icons[notif.level] or "󰂚"
 
         require('notify').setup {
+            merge_duplicates = true,
             background_colour = mocha.base,
             fps = 60,
             max_width = 80,
@@ -65,7 +67,6 @@ local Notifier = {
             },
         }
 
-        ---@diagnostic disable:assign-type-mismatch
         vim.notify = require 'notify'
     end,
 }

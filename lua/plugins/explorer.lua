@@ -2,6 +2,7 @@
 
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
+---@type LazyPluginSpec
 local NeoTree = {
     'nvim-neo-tree/neo-tree.nvim',
     branch = 'v3.x',

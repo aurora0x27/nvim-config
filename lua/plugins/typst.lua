@@ -1,3 +1,4 @@
+---@type LazyPluginSpec
 local TypstPreview = {
     'chomosuke/typst-preview.nvim',
     ft = 'typst',

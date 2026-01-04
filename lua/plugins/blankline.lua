@@ -2,11 +2,11 @@
 
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
+---@type LazyPluginSpec
 local IndentLine = {
     'lukas-reineke/indent-blankline.nvim',
     event = { 'BufReadPost', 'BufNewFile' },
     main = 'ibl',
-
     config = function()
         local mocha = require('catppuccin.palettes').get_palette 'mocha'
         local hooks = require 'ibl.hooks'
