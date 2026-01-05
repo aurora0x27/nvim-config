@@ -10,6 +10,8 @@
 --- `LspTinymistGetDocumentTrace`, `LspTinymistGetWorkspaceLabels`,
 --- `LspTinymistGetDocumentMetrics`, and `LspTinymistPinMain`.
 
+local tools = require 'utils.tools'
+
 ---@param command_name string
 ---@param client vim.lsp.Client
 ---@param bufnr integer
@@ -25,9 +27,9 @@ local function create_tinymist_command(command_name, client, bufnr)
         ---@type lsp.Handler
         local function handler(err, res)
             if err then
-                return vim.notify(err.code .. ': ' .. err.message, vim.log.levels.ERROR)
+                return tools.err(err.code .. ': ' .. err.message, { title = 'Tinymist' })
             end
-            vim.notify(vim.inspect(res), vim.log.levels.INFO)
+            tools.info(vim.inspect(res), { title = 'Tinymist' })
         end
         return client:exec_cmd({
             title = title_str,

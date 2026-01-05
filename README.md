@@ -75,6 +75,12 @@ Some features are optional, controlled by environment variables.
 
 - Fold range highlighting on unfolding
 
+- AsciiMode -- No nerd font
+
 ## TODO List
 
 - Latex preview
+
+- Collect assets and remove some hard coded options
+
+- Refactor type/call hierarchy implementation

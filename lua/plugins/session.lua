@@ -1,3 +1,5 @@
+local tools = require 'utils.tools'
+
 ---@type LazyPluginSpec
 local SessionMgr = {
     'folke/persistence.nvim',
@@ -15,7 +17,7 @@ local SessionMgr = {
                 if vim.fn.filereadable(cache) ~= 0 then
                     sm.load()
                 else
-                    vim.notify('No session in ' .. vim.fn.getcwd(), vim.log.levels.WARN)
+                    tools.warn('No session in ' .. vim.fn.getcwd(), { title = 'Session Manager' })
                 end
             end)
         end, { noremap = true, silent = true, desc = '[L]oad Session' })

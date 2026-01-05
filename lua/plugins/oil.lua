@@ -1,3 +1,5 @@
+local border = require('utils.assets').border
+
 ---@type LazyPluginSpec
 local FsEditor = {
     'stevearc/oil.nvim',
@@ -145,7 +147,7 @@ local FsEditor = {
             -- max_width and max_height can be integers or a float between 0 and 1 (e.g. 0.4 for 40%)
             max_width = 0,
             max_height = 0,
-            border = 'rounded',
+            border = border,
             win_options = {
                 winblend = 0,
             },
@@ -190,7 +192,7 @@ local FsEditor = {
             min_height = { 5, 0.1 },
             -- optionally define an integer/float for the exact height of the preview window
             height = nil,
-            border = nil,
+            border = border,
             win_options = {
                 winblend = 0,
             },

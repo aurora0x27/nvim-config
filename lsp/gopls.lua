@@ -12,6 +12,7 @@
 
 local mod_cache = nil
 local std_lib = nil
+local tools = require 'utils.tools'
 
 ---@param custom_args go_dir_custom_args
 ---@param on_complete fun(dir: string | nil)
@@ -26,12 +27,13 @@ local function identify_go_dir(custom_args, on_complete)
             on_complete(res)
         else
             vim.schedule(function()
-                vim.notify(
+                tools.err(
                     ('[gopls] identify ' .. custom_args.envvar_id .. ' dir cmd failed with code %d: %s\n%s'):format(
                         output.code,
                         vim.inspect(cmd),
                         output.stderr
-                    )
+                    ),
+                    { title = 'LSP Err' }
                 )
             end)
             on_complete(nil)

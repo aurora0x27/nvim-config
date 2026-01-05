@@ -6,11 +6,13 @@ local SSHMode = {
     auto_enable = true,
 }
 
+local log = require 'utils.tools'
+
 local switch_mode = function()
     if SSHMode.on then
         vim.g.clipboard = SSHMode.old_clipboard
         SSHMode.on = false
-        vim.notify('Clipboard ssh mode OFF', vim.log.levels.INFO)
+        log.info('Clipboard ssh mode OFF', { title = 'SSH Mode' })
     else
         vim.g.clipboard = {
             name = 'OSC 52',
@@ -25,7 +27,7 @@ local switch_mode = function()
             cache_enabled = false,
         }
         SSHMode.on = true
-        vim.notify('Clipboard ssh mode ON', vim.log.levels.INFO)
+        log.info('Clipboard ssh mode ON', { title = 'SSH Mode' })
     end
 end
 
@@ -41,7 +43,7 @@ SSHMode.apply = function()
         else
             message = 'Clipboard ssh mode OFF'
         end
-        vim.notify(message, vim.log.levels.INFO)
+        log.info(message, { title = 'SSH Mode' })
     end, { desc = 'Check ssh mode status' })
 
     -- Automatically enable ssh mode

@@ -5,6 +5,7 @@ local api = vim.api
 local util = lsp.util
 local methods = lsp.protocol.Methods
 local hover_ns = api.nvim_create_namespace 'hover'
+local log = require 'utils.tools'
 
 local lsp_list = {
     'lua_ls',
@@ -45,7 +46,7 @@ local hover = function(config)
 
         if vim.tbl_isempty(results1) then
             if config.silent ~= true then
-                vim.notify 'No information available'
+                log.info('No information available', { title = 'Lsp Hover' })
             end
             return
         end
@@ -89,7 +90,7 @@ local hover = function(config)
 
         if vim.tbl_isempty(contents) then
             if config.silent ~= true then
-                vim.notify 'No information available'
+                log.info('No information available', { title = 'Lsp Hover' })
             end
             return
         end
@@ -119,26 +120,73 @@ function LspConfig.apply()
     api.nvim_create_autocmd('LspAttach', {
         group = api.nvim_create_augroup('lsp-attach', { clear = true }),
         callback = function(event)
-            ---@diagnostic disable: unused-local
             local bufnr = event.buf
+            local select = require('utils.loader').select
+
             vim.keymap.set('n', 'gd', function()
                 require('telescope.builtin').lsp_definitions()
-            end, { desc = 'LSP Goto Definition', noremap = true, silent = true })
+            end, { desc = 'LSP Goto Definition', noremap = true, silent = true, buffer = bufnr })
+
             vim.keymap.set(
                 'n',
                 'gD',
                 lsp.buf.declaration,
-                { desc = 'LSP Goto Declaration', noremap = true, silent = true }
+                { desc = 'LSP Goto Declaration', noremap = true, silent = true, buffer = bufnr }
             )
+
             vim.keymap.set(
                 'n',
                 '<leader>lr',
                 lsp.buf.rename,
-                { desc = 'LSP [R]ename Symbol', noremap = true, silent = true }
+                { desc = 'LSP [R]ename Symbol', noremap = true, silent = true, buffer = bufnr }
             )
+
             vim.keymap.set('n', '<leader>lh', function()
                 lsp.inlay_hint.enable(not lsp.inlay_hint.is_enabled { bufnr = bufnr }, { bufnr = bufnr })
             end, { buffer = bufnr, desc = 'Toggle Inlay [H]ints' })
+
+            vim.keymap.set(
+                'n',
+                '<Leader>lso',
+                select('telescope.builtin', 'lsp_outgoing_calls'),
+                { desc = 'Telescope [L]ist [O]utgoing Calls', noremap = true, silent = true, buffer = bufnr }
+            )
+
+            vim.keymap.set(
+                'n',
+                '<Leader>lsi',
+                select('telescope.builtin', 'lsp_incoming_calls'),
+                { desc = 'Telescope [L]ist [I]ncoming Calls', noremap = true, silent = true, buffer = bufnr }
+            )
+
+            -- TODO:
+            -- vim.keymap.set('n', '<Leader>lss', function()
+            --     type_hierarchy 'subtype'
+            -- end, { desc = 'Telescope [L]ist [S]ub Types', noremap = true, silent = true, buffer = bufnr })
+            -- vim.keymap.set('n', '<Leader>lss', function()
+            --     type_hierarchy 'supertype'
+            -- end, { desc = 'Telescope [L]ist [S]uper Types', noremap = true, silent = true, buffer = bufnr })
+
+            vim.keymap.set(
+                'n',
+                '<Leader>fr',
+                select('telescope.builtin', 'lsp_references'),
+                { desc = 'Telescope Find Symbol [R]eferences', noremap = true, silent = true, buffer = bufnr }
+            )
+
+            vim.keymap.set(
+                'n',
+                '<Leader>fs',
+                select('telescope.builtin', 'lsp_document_symbols'),
+                { desc = 'Telescope Find Document [S]ymbols', noremap = true, silent = true, buffer = bufnr }
+            )
+
+            vim.keymap.set(
+                'n',
+                '<Leader>fS',
+                select('telescope.builtin', 'lsp_dynamic_workspace_symbols'),
+                { desc = 'Telescope Find Workspace [S]ymbols', noremap = true, silent = true, buffer = bufnr }
+            )
         end,
     })
 
@@ -174,6 +222,7 @@ function LspConfig.apply()
         if #servers == 0 then
             local ft = vim.bo.filetype
             ---@diagnostic disable:undefined-field
+            ---@diagnostic disable:invisible
             for name, _ in pairs(lsp.config._configs) do
                 local fts = lsp.config[name].filetypes
                 if fts and vim.tbl_contains(fts, ft) then
