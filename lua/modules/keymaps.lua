@@ -2,6 +2,8 @@
 
 local KeyMaps = {}
 
+local log = require 'utils.tools'
+
 function KeyMaps.apply()
     local select = require('utils.loader').select
 
@@ -18,18 +20,21 @@ function KeyMaps.apply()
         select('smart-splits', 'move_cursor_left'),
         { desc = 'Move to left window', noremap = true, silent = true }
     )
+
     vim.keymap.set(
         'n',
         '<C-j>',
         select('smart-splits', 'move_cursor_down'),
         { desc = 'Move to below window', noremap = true, silent = true }
     )
+
     vim.keymap.set(
         'n',
         '<C-k>',
         select('smart-splits', 'move_cursor_up'),
         { desc = 'Move to above window', noremap = true, silent = true }
     )
+
     vim.keymap.set(
         'n',
         '<C-l>',
@@ -47,59 +52,103 @@ function KeyMaps.apply()
         select('telescope.builtin', 'find_files'),
         { desc = 'Telescope Find [F]iles', noremap = true, silent = true }
     )
+
     vim.keymap.set(
         'n',
         '<Leader>fo',
         select('telescope.builtin', 'oldfiles'),
         { desc = 'Telescope Find [O]ld Files', noremap = true, silent = true }
     )
+
+    vim.keymap.set(
+        'n',
+        '<Leader>ft',
+        select('telescope.builtin', 'treesitter'),
+        { desc = 'Telescope Find [T]reesitter Symbols', noremap = true, silent = true }
+    )
+
     vim.keymap.set(
         'n',
         '<Leader>fw',
         select('telescope.builtin', 'live_grep'),
         { desc = 'Telescope [W]ildcard Grep', noremap = true, silent = true }
     )
+
     vim.keymap.set(
         'n',
         '<Leader>fb',
         select('telescope.builtin', 'buffers'),
         { desc = 'Telescope Find [B]uffer', noremap = true, silent = true }
     )
+
     vim.keymap.set(
         'n',
         '<Leader>fd',
         select('telescope.builtin', 'diagnostics'),
         { desc = 'Telescope Find [D]iagnostics', noremap = true, silent = true }
     )
+
     vim.keymap.set(
         'n',
-        '<Leader>fg',
+        '<Leader>fC',
+        select('telescope.builtin', 'highlights'),
+        { desc = 'Telescope Find Highlight [C]olors', noremap = true, silent = true }
+    )
+
+    vim.keymap.set(
+        'n',
+        '<Leader>fgs',
         select('telescope.builtin', 'git_status'),
-        { desc = 'Telescope Find [G]it Diff', noremap = true, silent = true }
+        { desc = 'Telescope Find [G]it [S]tatus', noremap = true, silent = true }
     )
+
     vim.keymap.set(
         'n',
-        'fr',
-        select('telescope.builtin', 'lsp_references'),
-        { desc = 'Telescope Find Symbol [R]eferences', noremap = true, silent = true }
+        '<Leader>fgc',
+        select('telescope.builtin', 'git_commits'),
+        { desc = 'Telescope Find [G]it [C]ommits', noremap = true, silent = true }
     )
+
     vim.keymap.set(
         'n',
-        '<Leader>fs',
-        select('telescope.builtin', 'lsp_dynamic_workspace_symbols'),
-        { desc = 'Telescope Find Workspace [S]ymbols', noremap = true, silent = true }
+        '<Leader>fgbc',
+        select('telescope.builtin', 'git_bcommits'),
+        { desc = 'Telescope Find [G]it [B]uffer [C]ommits', noremap = true, silent = true }
     )
+
+    vim.keymap.set(
+        'n',
+        '<Leader>fgbr',
+        select('telescope.builtin', 'git_branches'),
+        { desc = 'Telescope Find [G]it [BR]anches', noremap = true, silent = true }
+    )
+
     vim.keymap.set(
         'n',
         '<Leader>fm',
         select('telescope', 'extensions', 'noice', 'noice'),
-        { desc = 'Telescope Filter Noice [M]sg', noremap = true, silent = true }
+        { desc = 'Telescope Find Noice [M]sg', noremap = true, silent = true }
     )
+
     vim.keymap.set(
         'n',
-        '<Leader>ft',
+        '<Leader>fT',
         '<cmd>TodoTelescope<CR>',
-        { desc = 'Telescope Filter [T]odo Items', noremap = true, silent = true }
+        { desc = 'Telescope Find [T]odo Items', noremap = true, silent = true }
+    )
+
+    vim.keymap.set(
+        'n',
+        '<Leader>f:',
+        select('telescope.builtin', 'command_history'),
+        { desc = 'Telescope Find Command History', noremap = true, silent = true }
+    )
+
+    vim.keymap.set(
+        'n',
+        '<Leader>fR',
+        select('telescope.builtin', 'registers'),
+        { desc = 'Telescope Find [R]egister', noremap = true, silent = true }
     )
 
     -- buffer releated, prefix is leader-b
@@ -108,12 +157,6 @@ function KeyMaps.apply()
         '<Leader>bc',
         '<cmd>bp | bd #<CR>',
         { desc = 'Buffer [C]lose Current', noremap = true, silent = true }
-    )
-    vim.keymap.set(
-        'n',
-        '<Leader>fc',
-        select('telescope.builtin', 'git_commits'),
-        { desc = 'Telescope Search Git [C]ommits', noremap = true, silent = true }
     )
 
     vim.keymap.set({ 'n', 'v' }, 'j', 'gj', { noremap = true, silent = true })
@@ -135,7 +178,9 @@ function KeyMaps.apply()
     vim.keymap.del('s', 'j')
     vim.keymap.del('s', 'k')
 
-    vim.keymap.set('n', '-', '<cmd>Oil<CR>', { desc = 'Open parent directory' })
+    vim.keymap.set('n', '-', function()
+        return require('oil').open_float(nil, { preview = { horizontal = true } })
+    end, { desc = 'Open parent directory' })
 
     -- Not frequently used
     -- vim.keymap.set('i', '<C-j>', '<Down>', { noremap = true, silent = true })
@@ -161,7 +206,7 @@ function KeyMaps.apply()
         if name ~= '' then
             vim.cmd('tabnew ' .. name)
         else
-            vim.notify('Warn: Filename not assigned, nothing todo', vim.log.levels.WARN)
+            log.warn 'Warn: Filename not assigned, nothing todo'
         end
     end, { noremap = true, silent = true, desc = 'Tab [N]ew' })
     vim.keymap.set(
@@ -194,9 +239,17 @@ function KeyMaps.apply()
                     return
                 end
             end
-            vim.notify('No previous file found in v:oldfiles', vim.log.levels.WARN)
+            log.warn 'No previous file found in v:oldfiles'
         end, { noremap = true, silent = true, desc = 'Recover [L]ast Buffer' })
     end
+
+    local mvblk = require 'utils.mvblk'
+    vim.keymap.set('v', '<c-j>', function()
+        mvblk 'down'
+    end, { noremap = true, silent = true, desc = 'Move Selected Line Downward' })
+    vim.keymap.set('v', '<c-k>', function()
+        mvblk 'up'
+    end, { noremap = true, silent = true, desc = 'Move Selected Line Upward' })
 end
 
 return KeyMaps

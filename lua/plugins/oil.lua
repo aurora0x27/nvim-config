@@ -1,3 +1,5 @@
+local border = require('utils.assets').border
+
 ---@type LazyPluginSpec
 local FsEditor = {
     'stevearc/oil.nvim',
@@ -63,12 +65,12 @@ local FsEditor = {
         -- See :help oil-actions for a list of all available actions
         keymaps = {
             ['g?'] = { 'actions.show_help', mode = 'n' },
-            ['<CR>'] = 'actions.select',
+            ['='] = 'actions.select',
             ['<C-s>'] = { 'actions.select', opts = { vertical = true } },
             ['<C-h>'] = { 'actions.select', opts = { horizontal = true } },
             ['<C-t>'] = { 'actions.select', opts = { tab = true } },
             ['<C-p>'] = 'actions.preview',
-            ['<C-c>'] = { 'actions.close', mode = 'n' },
+            ['q'] = { 'actions.close', mode = 'n' },
             ['<C-l>'] = 'actions.refresh',
             ['<Leader>y'] = { 'actions.yank_entry' },
             ['<Leader>Y'] = { 'actions.yank_entry', opts = { modify = ':.' } },
@@ -91,7 +93,7 @@ local FsEditor = {
             },
         },
         -- Set to false to disable all of the above keymaps
-        use_default_keymaps = true,
+        use_default_keymaps = false,
         view_options = {
             -- Show files and directories that start with "."
             show_hidden = false,
@@ -143,16 +145,16 @@ local FsEditor = {
             -- Padding around the floating window
             padding = 2,
             -- max_width and max_height can be integers or a float between 0 and 1 (e.g. 0.4 for 40%)
-            max_width = 0,
-            max_height = 0,
-            border = 'rounded',
+            max_width = 0.8,
+            max_height = 0.8,
+            border = border,
             win_options = {
                 winblend = 0,
             },
             -- optionally override the oil buffers window title with custom function: fun(winid: integer): string
             get_win_title = nil,
             -- preview_split: Split direction: "auto", "left", "right", "above", "below".
-            preview_split = 'auto',
+            preview_split = 'right',
             -- This is the config that will be passed to nvim_open_win.
             -- Change values here to customize the layout
             override = function(conf)
@@ -190,7 +192,7 @@ local FsEditor = {
             min_height = { 5, 0.1 },
             -- optionally define an integer/float for the exact height of the preview window
             height = nil,
-            border = nil,
+            border = border,
             win_options = {
                 winblend = 0,
             },

@@ -2,12 +2,15 @@
 
 local Diagnostic = {}
 
-local IconTable = {
-    [vim.diagnostic.severity.ERROR] = ' ',
-    [vim.diagnostic.severity.WARN] = ' ',
-    [vim.diagnostic.severity.INFO] = ' ',
-    [vim.diagnostic.severity.HINT] = ' ',
-}
+local RawIconSpec = require('utils.assets').RawDiagnosticSpec
+
+local IconTable = (function()
+    local ret = {}
+    for severity, spec in pairs(RawIconSpec) do
+        ret[severity] = spec.icon
+    end
+    return ret
+end)()
 
 ---@type vim.diagnostic.Opts
 local DiagnosticsConfig = {
@@ -23,9 +26,9 @@ local DiagnosticsConfig = {
         header = '',
         source = true,
         prefix = function(diag)
-            local map = require('utils.assets').DiagnosticIconMap
-            local icon, hl = unpack(map[diag.severity])
-            return icon .. ' ', hl
+            local map = RawIconSpec
+            local spec = map[diag.severity]
+            return spec.icon .. ' ', spec.hl
         end,
     },
 }

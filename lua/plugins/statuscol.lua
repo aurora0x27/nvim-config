@@ -47,9 +47,9 @@ local StatusCol = {
                             end)
 
                             local d = diags[1]
-                            local map = require('utils.assets').DiagnosticIconMap
-                            local icon, hl = unpack(map[d.severity])
-                            return ('%%#%s#%s%%*'):format(hl, icon)
+                            local map = require('utils.assets').RawDiagnosticSpec
+                            local spec = map[d.severity]
+                            return ('%%#%s#%s%%*'):format(spec.hl, spec.icon)
                         end,
                     },
                     condition = {

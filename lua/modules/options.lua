@@ -17,6 +17,8 @@ Options.opt = {
     virtualedit = 'block',
 }
 
+local tools = require 'utils.tools'
+
 function Options.apply()
     -- An ungracefull way to fix neovide terminal color render bug
     if vim.g.neovide then
@@ -43,7 +45,7 @@ function Options.apply()
         vim.o.shellcmdflag = '-c'
         vim.o.shellquote = ''
         vim.o.shellxquote = ''
-        vim.notify 'Run windows clipboard settings'
+        tools.info('Run windows clipboard settings', { title = 'Options' })
         vim.g.clipboard = {
             name = 'win32yank',
             copy = {

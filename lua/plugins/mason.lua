@@ -20,6 +20,8 @@ local LspEnsuredList = {
     'jdtls',
 }
 
+local tools = require 'utils.tools'
+
 local function ensure_installed(list)
     local registry = require 'mason-registry'
 
@@ -27,19 +29,19 @@ local function ensure_installed(list)
         local ok, pkg = pcall(registry.get_package, pkg_name)
         ---@cast pkg Package
         if not ok then
-            vim.notify(('Package %s not found'):format(pkg_name), vim.log.levels.WARN)
+            tools.warn(('Package %s not found'):format(pkg_name), { title = 'Mason' })
             return
         end
         if not pkg:is_installed() then
-            vim.notify('Installing LSP: ' .. pkg_name, vim.log.levels.INFO)
+            tools.info('Installing LSP: ' .. pkg_name, { title = 'Mason' })
             pkg:install():once('closed', function()
                 if pkg:is_installed() then
                     vim.schedule(function()
-                        vim.notify('LSP installed: ' .. pkg_name, vim.log.levels.INFO)
+                        tools.info('LSP installed: ' .. pkg_name, { title = 'Mason' })
                     end)
                 else
                     vim.schedule(function()
-                        vim.notify('Failed to install LSP: ' .. pkg_name, vim.log.levels.ERROR)
+                        tools.err('Failed to install LSP: ' .. pkg_name, { title = 'Mason' })
                     end)
                 end
             end)

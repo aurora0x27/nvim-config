@@ -1,35 +1,35 @@
 -- Lua lsp
 
---- @return string|nil
-local function detect_config_file()
-    if vim.fn.filereadable '.emmyrc.json' == 1 then
-        return '.emmyrc.json'
-    elseif vim.fn.filereadable '.luarc.json' == 1 then
-        return '.luarc.json'
-    end
-    return nil
-end
-
----@return table
-local function load_workspace_emmyrc_config()
-    local ws_cfg = detect_config_file()
-    if ws_cfg ~= nil then
-        local data = ''
-        local lines = vim.fn.readfile(ws_cfg)
-        for _, line in ipairs(lines) do
-            data = data .. line
-        end
-        local ok, ret = pcall(vim.json.decode, data)
-        if not ok or ret == vim.NIL or type(ret) ~= 'table' then
-            vim.defer_fn(function()
-                vim.notify(('Failed to parse %s:\n%s'):format(ws_cfg, ret), vim.log.levels.WARN)
-            end, 100)
-            return {}
-        end
-        return ret
-    end
-    return {}
-end
+--- --- @return string|nil
+--- local function detect_config_file()
+---     if vim.fn.filereadable '.emmyrc.json' == 1 then
+---         return '.emmyrc.json'
+---     elseif vim.fn.filereadable '.luarc.json' == 1 then
+---         return '.luarc.json'
+---     end
+---     return nil
+--- end
+---
+--- ---@return table
+--- local function load_workspace_emmyrc_config()
+---     local ws_cfg = detect_config_file()
+---     if ws_cfg ~= nil then
+---         local data = ''
+---         local lines = vim.fn.readfile(ws_cfg)
+---         for _, line in ipairs(lines) do
+---             data = data .. line
+---         end
+---         local ok, ret = pcall(vim.json.decode, data)
+---         if not ok or ret == vim.NIL or type(ret) ~= 'table' then
+---             vim.defer_fn(function()
+---                 vim.notify(('Failed to parse %s:\n%s'):format(ws_cfg, ret), vim.log.levels.WARN)
+---             end, 100)
+---             return {}
+---         end
+---         return ret
+---     end
+---     return {}
+--- end
 
 ---@brief
 ---

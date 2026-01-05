@@ -52,6 +52,8 @@ local KeyMapIntellisense = {
         -- Document existing key chains
         spec = {
             { '<leader>f', group = '[F]ind' },
+            { '<leader>fg', group = 'Telescope [F]ind [G]it' },
+            { '<leader>fgb', group = 'Telescope [F]ind [G]it B?' },
             { '<leader>e', group = '[E]xplorer' },
             { '<leader>l', group = '[L]anguage Utils' },
             { '<leader>ls', group = '[L]sp [S]earch' },

@@ -24,20 +24,8 @@ local Telescope = {
     dependencies = {
         'nvim-telescope/telescope-ui-select.nvim',
         {
-            'jmacadie/telescope-hierarchy.nvim',
-            dependencies = { 'nvim-lua/plenary.nvim' },
-        },
-    },
-    keys = {
-        {
-            '<leader>lsi',
-            '<cmd>Telescope hierarchy incoming_calls<cr>',
-            desc = 'LSP: [S]earch [I]ncoming Calls',
-        },
-        {
-            '<leader>lso',
-            '<cmd>Telescope hierarchy outgoing_calls<cr>',
-            desc = 'LSP: [S]earch [O]utgoing Calls',
+            'nvim-telescope/telescope-fzf-native.nvim',
+            build = 'make',
         },
     },
     config = function()
@@ -62,11 +50,12 @@ local Telescope = {
                     --   codeactions = false,
                     -- }
                 },
-                ['hierarchy'] = {
-                    -- telescope-hierarchy.nvim config, see below
-                    layout_config = {
-                        prompt_position = 'bottom',
-                    },
+                fzf = {
+                    fuzzy = true, -- false will only do exact matching
+                    override_generic_sorter = true, -- override the generic sorter
+                    override_file_sorter = true, -- override the file sorter
+                    case_mode = 'smart_case', -- or "ignore_case" or "respect_case"
+                    -- the default case_mode is "smart_case"
                 },
             },
             defaults = {
@@ -119,7 +108,7 @@ local Telescope = {
         vim.api.nvim_set_hl(0, 'TelescopeResultsDiffDelete', { fg = mocha.red })
         vim.api.nvim_set_hl(0, 'TelescopeResultsDiffUntracked', { fg = mocha.lavender })
         require('telescope').load_extension 'ui-select'
-        require('telescope').load_extension 'hierarchy'
+        require('telescope').load_extension 'fzf'
     end,
 }
 

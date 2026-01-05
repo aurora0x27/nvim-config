@@ -1,5 +1,7 @@
 local M = {}
 
+local log = require 'utils.tools'
+
 ---Load all template files from the specified module path and concatenate them into a large table.
 ---@param module_root string prefix of module (such as 'user.templates')
 ---@return table concat_table Concatenate arrays of all template tables
@@ -39,7 +41,7 @@ function M.load_module(module_root)
             end
             allTable = true
         else
-            vim.notify('[load_module] Load Failed: ' .. rel_path, vim.log.levels.ERROR)
+            log.err('[load_module] Load Failed: ' .. rel_path)
         end
     end
 

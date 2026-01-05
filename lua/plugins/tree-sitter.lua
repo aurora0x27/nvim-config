@@ -36,8 +36,11 @@ local TSEnsureInstalled = {
     'go',
     'glsl',
     'llvm',
+    'tablegen',
     'ninja',
     'markdown',
+    'scheme',
+    'query',
     'markdown_inline',
 }
 

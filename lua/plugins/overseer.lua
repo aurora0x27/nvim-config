@@ -1,3 +1,5 @@
+local tools = require 'utils.tools'
+
 local function overseer_restart_last()
     local overseer = require 'overseer'
     local task_list = require 'overseer.task_list'
@@ -10,7 +12,7 @@ local function overseer_restart_last()
         sort = task_list.sort_finished_recently,
     }
     if vim.tbl_isempty(tasks) then
-        vim.notify('No tasks found', vim.log.levels.WARN)
+        tools.warn('No tasks found', { title = 'Overseer' })
     else
         local most_recent = tasks[1]
         overseer.run_action(most_recent, 'restart')
