@@ -18,7 +18,7 @@ end
 
 ---@type LazyPluginSpec
 local Telescope = {
-    'nvim-telescope/telescope.nvim',
+    'aurora0x27/telescope.nvim',
     lazy = true,
     cmd = { 'Telescope' },
     dependencies = {

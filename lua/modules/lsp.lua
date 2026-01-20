@@ -159,13 +159,19 @@ function LspConfig.apply()
                 { desc = 'Telescope [L]ist [I]ncoming Calls', noremap = true, silent = true, buffer = bufnr }
             )
 
-            -- TODO:
-            -- vim.keymap.set('n', '<Leader>lss', function()
-            --     type_hierarchy 'subtype'
-            -- end, { desc = 'Telescope [L]ist [S]ub Types', noremap = true, silent = true, buffer = bufnr })
-            -- vim.keymap.set('n', '<Leader>lss', function()
-            --     type_hierarchy 'supertype'
-            -- end, { desc = 'Telescope [L]ist [S]uper Types', noremap = true, silent = true, buffer = bufnr })
+            vim.keymap.set(
+                'n',
+                '<Leader>lss',
+                select('telescope.builtin', 'lsp_sub_types'),
+                { desc = 'Telescope [L]ist [S]ub Types', noremap = true, silent = true, buffer = bufnr }
+            )
+
+            vim.keymap.set(
+                'n',
+                '<Leader>lsS',
+                select('telescope.builtin', 'lsp_super_types'),
+                { desc = 'Telescope [L]ist [S]uper Types', noremap = true, silent = true, buffer = bufnr }
+            )
 
             vim.keymap.set(
                 'n',
