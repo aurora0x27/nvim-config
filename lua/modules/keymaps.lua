@@ -45,110 +45,124 @@ function KeyMaps.apply()
     vim.keymap.set('n', 'H', '<cmd>bp<CR>', { noremap = true, silent = true })
     vim.keymap.set('n', 'L', '<cmd>bn<CR>', { noremap = true, silent = true })
 
-    -- telescope related, prefix is leader-t
+    -- Fzflua related, prefix is leader-t
     vim.keymap.set(
         'n',
         '<Leader>ff',
-        select('telescope.builtin', 'find_files'),
-        { desc = 'Telescope Find [F]iles', noremap = true, silent = true }
+        select('fzf-lua', 'files'),
+        { desc = 'Fzflua Find [F]iles', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>fo',
-        select('telescope.builtin', 'oldfiles'),
-        { desc = 'Telescope Find [O]ld Files', noremap = true, silent = true }
+        select('fzf-lua', 'oldfiles'),
+        { desc = 'Fzflua Find [O]ld Files', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>ft',
-        select('telescope.builtin', 'treesitter'),
-        { desc = 'Telescope Find [T]reesitter Symbols', noremap = true, silent = true }
+        select('fzf-lua', 'treesitter'),
+        { desc = 'Fzflua Find [T]reesitter Symbols', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>fw',
-        select('telescope.builtin', 'live_grep'),
-        { desc = 'Telescope [W]ildcard Grep', noremap = true, silent = true }
+        select('fzf-lua', 'live_grep'),
+        { desc = 'Fzflua [W]ildcard Grep', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>fb',
-        select('telescope.builtin', 'buffers'),
-        { desc = 'Telescope Find [B]uffer', noremap = true, silent = true }
+        select('fzf-lua', 'buffers'),
+        { desc = 'Fzflua Find [B]uffer', noremap = true, silent = true }
+    )
+
+    vim.keymap.set(
+        'n',
+        '<Leader>fB',
+        select('fzf-lua', 'builtin'),
+        { desc = 'Fzflua Find [B]uiltin', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>fd',
-        select('telescope.builtin', 'diagnostics'),
-        { desc = 'Telescope Find [D]iagnostics', noremap = true, silent = true }
+        select('fzf-lua', 'diagnostics_document'),
+        { desc = 'Fzflua Find Document [D]iagnostics', noremap = true, silent = true }
+    )
+
+    vim.keymap.set(
+        'n',
+        '<Leader>fD',
+        select('fzf-lua', 'diagnostics_workspace'),
+        { desc = 'Fzflua Find Workspace [D]iagnostics', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>fC',
-        select('telescope.builtin', 'highlights'),
-        { desc = 'Telescope Find Highlight [C]olors', noremap = true, silent = true }
+        select('fzf-lua', 'highlights'),
+        { desc = 'Fzflua Find Highlight [C]olors', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>fgs',
-        select('telescope.builtin', 'git_status'),
-        { desc = 'Telescope Find [G]it [S]tatus', noremap = true, silent = true }
+        select('fzf-lua', 'git_status'),
+        { desc = 'Fzflua Find [G]it [S]tatus', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>fgc',
-        select('telescope.builtin', 'git_commits'),
-        { desc = 'Telescope Find [G]it [C]ommits', noremap = true, silent = true }
+        select('fzf-lua', 'git_commits'),
+        { desc = 'Fzflua Find [G]it [C]ommits', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>fgbc',
-        select('telescope.builtin', 'git_bcommits'),
-        { desc = 'Telescope Find [G]it [B]uffer [C]ommits', noremap = true, silent = true }
+        select('fzf-lua', 'git_bcommits'),
+        { desc = 'Fzflua Find [G]it [B]uffer [C]ommits', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>fgbr',
-        select('telescope.builtin', 'git_branches'),
-        { desc = 'Telescope Find [G]it [BR]anches', noremap = true, silent = true }
+        select('fzf-lua', 'git_branches'),
+        { desc = 'Fzflua Find [G]it [BR]anches', noremap = true, silent = true }
     )
 
-    vim.keymap.set(
-        'n',
-        '<Leader>fm',
-        select('telescope', 'extensions', 'noice', 'noice'),
-        { desc = 'Telescope Find Noice [M]sg', noremap = true, silent = true }
-    )
+    -- vim.keymap.set(
+    --     'n',
+    --     '<Leader>fm',
+    --     select('Fzflua', 'extensions', 'noice', 'noice'),
+    --     { desc = 'Fzflua Find Noice [M]sg', noremap = true, silent = true }
+    -- )
 
     vim.keymap.set(
         'n',
         '<Leader>fT',
-        '<cmd>TodoTelescope<CR>',
-        { desc = 'Telescope Find [T]odo Items', noremap = true, silent = true }
+        '<cmd>TodoFzfLua<CR>',
+        { desc = 'FzfLua Find [T]odo Items', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>f:',
-        select('telescope.builtin', 'command_history'),
-        { desc = 'Telescope Find Command History', noremap = true, silent = true }
+        select('fzf-lua', 'command_history'),
+        { desc = 'Fzflua Find Command History', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>fR',
-        select('telescope.builtin', 'registers'),
-        { desc = 'Telescope Find [R]egister', noremap = true, silent = true }
+        select('fzf-lua', 'registers'),
+        { desc = 'Fzflua Find [R]egister', noremap = true, silent = true }
     )
 
     -- buffer releated, prefix is leader-b

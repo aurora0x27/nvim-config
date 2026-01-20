@@ -123,9 +123,12 @@ function LspConfig.apply()
             local bufnr = event.buf
             local select = require('utils.loader').select
 
-            vim.keymap.set('n', 'gd', function()
-                require('telescope.builtin').lsp_definitions()
-            end, { desc = 'LSP Goto Definition', noremap = true, silent = true, buffer = bufnr })
+            vim.keymap.set(
+                'n',
+                'gd',
+                select('fzf-lua', 'lsp_definitions'),
+                { desc = 'LSP Goto Definition', noremap = true, silent = true, buffer = bufnr }
+            )
 
             vim.keymap.set(
                 'n',
@@ -148,44 +151,57 @@ function LspConfig.apply()
             vim.keymap.set(
                 'n',
                 '<Leader>lso',
-                select('telescope.builtin', 'lsp_outgoing_calls'),
-                { desc = 'Telescope [L]ist [O]utgoing Calls', noremap = true, silent = true, buffer = bufnr }
+                select('fzf-lua', 'lsp_outgoing_calls'),
+                { desc = 'FzfLua [L]ist [O]utgoing Calls', noremap = true, silent = true, buffer = bufnr }
             )
 
             vim.keymap.set(
                 'n',
                 '<Leader>lsi',
-                select('telescope.builtin', 'lsp_incoming_calls'),
-                { desc = 'Telescope [L]ist [I]ncoming Calls', noremap = true, silent = true, buffer = bufnr }
+                select('fzf-lua', 'lsp_incoming_calls'),
+                { desc = 'FzfLua [L]ist [I]ncoming Calls', noremap = true, silent = true, buffer = bufnr }
             )
 
-            -- TODO:
-            -- vim.keymap.set('n', '<Leader>lss', function()
-            --     type_hierarchy 'subtype'
-            -- end, { desc = 'Telescope [L]ist [S]ub Types', noremap = true, silent = true, buffer = bufnr })
-            -- vim.keymap.set('n', '<Leader>lss', function()
-            --     type_hierarchy 'supertype'
-            -- end, { desc = 'Telescope [L]ist [S]uper Types', noremap = true, silent = true, buffer = bufnr })
+            vim.keymap.set(
+                'n',
+                '<Leader>lsS',
+                select('fzf-lua', 'lsp_type_super'),
+                { desc = 'FzfLua [L]ist [S]uper Types', noremap = true, silent = true, buffer = bufnr }
+            )
+
+            vim.keymap.set(
+                'n',
+                '<Leader>lss',
+                select('fzf-lua', 'lsp_type_sub'),
+                { desc = 'FzfLua [L]ist [S]ub Types', noremap = true, silent = true, buffer = bufnr }
+            )
+
+            vim.keymap.set(
+                'n',
+                '<Leader>la',
+                select('fzf-lua', 'lsp_code_actions'),
+                { desc = 'FzfLua [L]ist Code [A]ctions', noremap = true, silent = true, buffer = bufnr }
+            )
 
             vim.keymap.set(
                 'n',
                 '<Leader>fr',
-                select('telescope.builtin', 'lsp_references'),
-                { desc = 'Telescope Find Symbol [R]eferences', noremap = true, silent = true, buffer = bufnr }
+                select('fzf-lua', 'lsp_references'),
+                { desc = 'FzfLua Find Symbol [R]eferences', noremap = true, silent = true, buffer = bufnr }
             )
 
             vim.keymap.set(
                 'n',
                 '<Leader>fs',
-                select('telescope.builtin', 'lsp_document_symbols'),
-                { desc = 'Telescope Find Document [S]ymbols', noremap = true, silent = true, buffer = bufnr }
+                select('fzf-lua', 'lsp_document_symbols'),
+                { desc = 'FzfLua Find Document [S]ymbols', noremap = true, silent = true, buffer = bufnr }
             )
 
             vim.keymap.set(
                 'n',
                 '<Leader>fS',
-                select('telescope.builtin', 'lsp_dynamic_workspace_symbols'),
-                { desc = 'Telescope Find Workspace [S]ymbols', noremap = true, silent = true, buffer = bufnr }
+                select('fzf-lua', 'lsp_live_workspace_symbols'),
+                { desc = 'FzfLua Find Workspace [S]ymbols', noremap = true, silent = true, buffer = bufnr }
             )
         end,
     })

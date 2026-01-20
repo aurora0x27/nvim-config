@@ -25,7 +25,7 @@ local Overseer = {
     lazy = true,
     ---@module 'overseer'
     dependencies = {
-        'nvim-telescope/telescope.nvim',
+        'ibhagwan/fzf-lua',
     },
     cmd = {
         'OverseerRun',

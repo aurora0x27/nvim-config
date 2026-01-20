@@ -5,7 +5,7 @@ local SessionMgr = {
     'folke/persistence.nvim',
     enabled = vim.g.session_enabled,
     dependencies = {
-        'nvim-telescope/telescope.nvim',
+        'ibhagwan/fzf-lua',
     },
     event = 'BufReadPre', -- this will only start session saving when an actual file was opened
     init = function()
