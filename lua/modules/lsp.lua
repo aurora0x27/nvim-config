@@ -121,6 +121,7 @@ function LspConfig.apply()
         group = api.nvim_create_augroup('lsp-attach', { clear = true }),
         callback = function(event)
             local bufnr = event.buf
+            local tools = require 'utils.tools'
             local select = require('utils.loader').select
 
             vim.keymap.set(
@@ -145,7 +146,9 @@ function LspConfig.apply()
             )
 
             vim.keymap.set('n', '<leader>lh', function()
-                lsp.inlay_hint.enable(not lsp.inlay_hint.is_enabled { bufnr = bufnr }, { bufnr = bufnr })
+                local stat = lsp.inlay_hint.is_enabled { bufnr = bufnr }
+                tools.info('Lsp Inlay Hints ' .. (stat and 'Disabled' or 'Enabled'))
+                lsp.inlay_hint.enable(not stat, { bufnr = bufnr })
             end, { buffer = bufnr, desc = 'Toggle Inlay [H]ints' })
 
             vim.keymap.set(

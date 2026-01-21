@@ -137,12 +137,12 @@ function KeyMaps.apply()
         { desc = 'Fzflua Find [G]it [BR]anches', noremap = true, silent = true }
     )
 
-    -- vim.keymap.set(
-    --     'n',
-    --     '<Leader>fm',
-    --     select('Fzflua', 'extensions', 'noice', 'noice'),
-    --     { desc = 'Fzflua Find Noice [M]sg', noremap = true, silent = true }
-    -- )
+    vim.keymap.set(
+        'n',
+        '<Leader>fm',
+        select('noice.integrations.fzf', 'open'),
+        { desc = 'Fzflua Find Noice [M]sg', noremap = true, silent = true }
+    )
 
     vim.keymap.set(
         'n',
