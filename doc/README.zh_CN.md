@@ -16,6 +16,24 @@
 
 - 代码结构清晰，便于初学者理解
 
+## 依赖项
+
+在运行配置之前，需要安装一些二进制文件。
+
+- `make` 用于 Markdown 预览器
+
+- `yarn` 用于 Markdown 预览器
+
+- `rg` 用于模糊查找器
+
+- `fzf` 用于模糊查找器
+
+- `gcc` 用于 tree-sitter 解析器编译
+
+- `fcitx5-remote`（Linux、MacOS 系统）用于 ime-switcher（输入法切换器）
+
+- `win32yank.exe`（Windows 系统）用于系统剪贴板支持
+
 ## ⚡立即体验⚡
 
 无需替换原始配置即可立即体验
@@ -78,7 +96,7 @@ vi # 使用此配置启动 Neovim，无需更改 ~/.local/share
 
 - *NVIM_USE_EMMYLUA_LS* 使用 `emmylua_ls` 作为 lua 语言服务器
 
-- *NVIM_WORKSPACE_INJECT_VIM_RT* inject vim runtime to `emmylua_ls` workspace config
+- *NVIM_WORKSPACE_INJECT_VIM_RT* 将 vim 运行时注入 `emmylua_ls` 工作区
 
 - *NVIM_WORKSPACE_INJECT_VIM_RT* 在 `emmylua_ls` 的工作区配置中注入 vim 运行时
 
