@@ -16,6 +16,24 @@ A streamlined set of configurations for Nvim which is writen all *by hand*
 
 - Well organized code for beginers to understand
 
+## Dependency
+
+Some binaries should be installed before launch the configuration.
+
+- `make` for markdown previewer
+
+- `yarn` for markdown previewer
+
+- `rg` for fuzzy finder
+
+- `fzf` for fuzzy finder
+
+- `gcc` for tree-sitter parser compilation
+
+- `fcitx5-remote` *Linux,MacOS* for ime-switcher
+
+- `win32yank.exe` *Windows* for system clipboard support
+
 ## ⚡Try it now ⚡
 
 You can try it immediately without replacing your origin configurations
@@ -82,5 +100,3 @@ Some features are optional, controlled by environment variables.
 - Latex preview
 
 - Collect assets and remove some hard coded options
-
-- Refactor type/call hierarchy implementation
