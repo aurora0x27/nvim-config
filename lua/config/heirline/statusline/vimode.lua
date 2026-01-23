@@ -47,13 +47,7 @@ local ViMode = {
     hl = function(self)
         return { fg = 'black', bg = self.mode_hl[self.mode] or 'red', bold = true }
     end,
-    update = {
-        'ModeChanged',
-        pattern = '*:*',
-        callback = vim.schedule_wrap(function()
-            vim.cmd 'redrawstatus'
-        end),
-    },
+    update = true,
 }
 
 return ViMode
