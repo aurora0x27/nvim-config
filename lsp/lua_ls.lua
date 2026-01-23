@@ -1,35 +1,48 @@
 -- Lua lsp
 
---- --- @return string|nil
---- local function detect_config_file()
----     if vim.fn.filereadable '.emmyrc.json' == 1 then
----         return '.emmyrc.json'
----     elseif vim.fn.filereadable '.luarc.json' == 1 then
----         return '.luarc.json'
----     end
----     return nil
---- end
----
---- ---@return table
---- local function load_workspace_emmyrc_config()
----     local ws_cfg = detect_config_file()
----     if ws_cfg ~= nil then
----         local data = ''
----         local lines = vim.fn.readfile(ws_cfg)
----         for _, line in ipairs(lines) do
----             data = data .. line
----         end
----         local ok, ret = pcall(vim.json.decode, data)
----         if not ok or ret == vim.NIL or type(ret) ~= 'table' then
----             vim.defer_fn(function()
----                 vim.notify(('Failed to parse %s:\n%s'):format(ws_cfg, ret), vim.log.levels.WARN)
----             end, 100)
----             return {}
----         end
----         return ret
----     end
----     return {}
---- end
+local lua_ls = {
+    cmd = { 'lua-language-server' },
+    filetypes = { 'lua' },
+    root_markers = { '.git', 'stylua.toml', '.luarc.json' },
+    settings = {
+        Lua = {
+            runtime = {
+                version = 'LuaJIT',
+            },
+        },
+    },
+}
+
+--- @return string|nil
+local function detect_config_file()
+    if vim.fn.filereadable '.emmyrc.json' == 1 then
+        return '.emmyrc.json'
+    elseif vim.fn.filereadable '.luarc.json' == 1 then
+        return '.luarc.json'
+    end
+    return nil
+end
+
+---@return table
+local function load_workspace_emmyrc_config()
+    local ws_cfg = detect_config_file()
+    if ws_cfg ~= nil then
+        local data = ''
+        local lines = vim.fn.readfile(ws_cfg)
+        for _, line in ipairs(lines) do
+            data = data .. line
+        end
+        local ok, ret = pcall(vim.json.decode, data)
+        if not ok or ret == vim.NIL or type(ret) ~= 'table' then
+            vim.defer_fn(function()
+                vim.notify(('Failed to parse %s:\n%s'):format(ws_cfg, ret), vim.log.levels.WARN)
+            end, 100)
+            return {}
+        end
+        return ret
+    end
+    return {}
+end
 
 ---@brief
 ---
@@ -79,111 +92,58 @@ local emmylua_ls = {
     --     "arrayIndex": true
     --   }
     -- }
-    -- on_init = function(client)
-    --     -- FIXME: Always load vim api ?
-    --     local workspace_config = load_workspace_emmyrc_config()
+    on_init = function(client)
+        -- FIXME: Always load vim api ?
+        local workspace_config = load_workspace_emmyrc_config()
 
-    --     if vim.g.inject_vim_rt then
-    --         local default_data_home = vim.env.HOME .. '/.local/share/nvim/lazy'
-    --         local xdg_data_home = vim.env.XDG_DATA_HOME and (vim.env.XDG_DATA_HOME .. '/nvim/lazy') or default_data_home
-    --         local injected_libs = {
-    --             'lua',
-    --             vim.env.VIMRUNTIME,
-    --             '${3rd}/luv/library',
-    --             '${3rd}/busted/library',
-    --         }
-    --         if vim.g.inject_plugin_path then
-    --             table.insert(injected_libs, xdg_data_home)
-    --         end
-    --         client.config.settings.Lua = vim.tbl_deep_extend('force', workspace_config, {
-    --             runtime = {
-    --                 -- Tell the language server which version of Lua you're using
-    --                 -- (most likely LuaJIT in the case of Neovim)
-    --                 version = 'LuaJIT',
-    --                 requirePattern = {
-    --                     'lua/?.lua',
-    --                     'lua/?/init.lua',
-    --                     '?/lua/?.lua',
-    --                     '?/lua/?/init.lua',
-    --                 },
-    --             },
-    --             -- Make the server aware of Neovim runtime files
-    --             workspace = {
-    --                 checkThirdParty = false,
-    --                 library = injected_libs,
-    --                 ignoreGlobs = {
-    --                     '**/*_spec.lua',
-    --                 },
-    --             },
-    --             codeAction = {
-    --                 insertSpace = true,
-    --             },
-    --             strict = {
-    --                 typeCall = true,
-    --                 arrayIndex = true,
-    --             },
-    --         })
-    --     else
-    --         client.config.settings = workspace_config
-    --     end
-    -- end,
-    -- settings = {
-    --     Lua = {},
-    -- },
-    workspace_required = false,
-}
-
-local lua_ls = {
-    cmd = { 'lua-language-server' },
-    filetypes = { 'lua' },
-    root_markers = { '.git', 'stylua.toml', '.luarc.json' },
-    -- on_init = function(client)
-    --     if client.workspace_folders then
-    --         local path = client.workspace_folders[1].name
-    --         ---@diagnostic disable: undefined-field
-    --         if
-    --             path ~= vim.fn.stdpath 'config'
-    --             and not (
-    --                 vim.fn.filereadable(path .. '/stylua.toml')
-    --                 or vim.fn.filereadable(path .. '/lazy-lock.json')
-    --                 or vim.fn.filereadable(path .. '/luarc.json')
-    --                 or vim.fn.filereadable(path .. '/.luarc.json')
-    --                 or vim.fn.filereadable(path .. '/.luacheckrc')
-    --                 or vim.fn.filereadable(path .. '/.stylua.toml')
-    --             )
-    --         then
-    --             return
-    --         end
-    --     end
-
-    --     client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
-    --         runtime = {
-    --             -- Tell the language server which version of Lua you're using
-    --             -- (most likely LuaJIT in the case of Neovim)
-    --             version = 'LuaJIT',
-    --         },
-    --         -- Make the server aware of Neovim runtime files
-    --         workspace = {
-    --             checkThirdParty = false,
-    --             library = {
-    --                 vim.env.VIMRUNTIME,
-    --                 -- Depending on the usage, you might want to add additional paths here.
-    --                 '${3rd}/busted/library',
-    --                 '${3rd}/luv/library',
-    --             },
-    --             -- or pull in all of 'runtimepath'.
-    --             -- NOTE: this is a lot slower and will cause issues when working on your own configuration (see https://github.com/neovim/nvim-lspconfig/issues/3189)
-    --             -- library = vim.api.nvim_get_runtime_file("", true)
-    --         },
-    --     })
-    -- end,
+        if vim.g.inject_vim_rt then
+            local default_data_home = vim.env.HOME .. '/.local/share/nvim/lazy'
+            local xdg_data_home = vim.env.XDG_DATA_HOME and (vim.env.XDG_DATA_HOME .. '/nvim/lazy') or default_data_home
+            local injected_libs = {
+                'lua',
+                vim.env.VIMRUNTIME,
+                '${3rd}/luv/library',
+                '${3rd}/busted/library',
+            }
+            if vim.g.inject_plugin_path then
+                table.insert(injected_libs, xdg_data_home)
+            end
+            client.config.settings.Lua = vim.tbl_deep_extend('force', workspace_config, {
+                runtime = {
+                    -- Tell the language server which version of Lua you're using
+                    -- (most likely LuaJIT in the case of Neovim)
+                    version = 'LuaJIT',
+                    requirePattern = {
+                        'lua/?.lua',
+                        'lua/?/init.lua',
+                        '?/lua/?.lua',
+                        '?/lua/?/init.lua',
+                    },
+                },
+                -- Make the server aware of Neovim runtime files
+                workspace = {
+                    checkThirdParty = false,
+                    library = injected_libs,
+                    ignoreGlobs = {
+                        '**/*_spec.lua',
+                    },
+                },
+                codeAction = {
+                    insertSpace = true,
+                },
+                strict = {
+                    typeCall = true,
+                    arrayIndex = true,
+                },
+            })
+        else
+            client.config.settings = workspace_config
+        end
+    end,
     settings = {
-        Lua = {
-            runtime = {
-                version = 'LuaJIT',
-            },
-        },
+        Lua = {},
     },
+    workspace_required = false,
 }
 
 if vim.g.use_emmylua_ls then
