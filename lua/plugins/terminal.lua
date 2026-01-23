@@ -2,18 +2,21 @@
 
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
+local select = require('utils.loader').select
+
 ---@type LazyPluginSpec
 local IntergratedTerminal = {
     'akinsho/toggleterm.nvim',
-    event = 'VeryLazy',
+    -- event = 'VeryLazy',
+    lazy = true,
     version = '*',
     opts = {
         --[[ things you want to change go here]]
     },
+    ---@module 'toggleterm'
     config = function()
         local mocha = require('catppuccin.palettes').get_palette 'mocha'
 
-        ---@module 'toggleterm'
         require('toggleterm').setup {
             -- size can be a number or function which is passed the current terminal
 
@@ -95,6 +98,10 @@ local IntergratedTerminal = {
             },
         }
     end,
+    keys = {
+        { '<Leader>ts', '<cmd>TermSelect<cr>', desc = '[T]erm [S]elect' },
+        { '<C-\\>', select('toggleterm', 'toggle'), desc = 'Toggle Terminal' },
+    },
 }
 
 return IntergratedTerminal

@@ -58,6 +58,7 @@ vim.api.nvim_create_autocmd('User', {
             require('modules.ssh_mode').apply()
             require('modules.im-switch').apply()
             require('modules.pairs').apply()
+            require('modules.termapp').apply()
             require('modules.patch').apply()
         end)
     end,

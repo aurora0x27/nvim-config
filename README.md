@@ -30,6 +30,10 @@ Some binaries should be installed before launch the configuration.
 
 - `gcc` for tree-sitter parser compilation
 
+- `lazygit` *Optional* for lazygit intergration
+
+- `yazi` *Optional* for enhanced file explorer experience
+
 - `fcitx5-remote` *Linux,MacOS* for ime-switcher
 
 - `win32yank.exe` *Windows* for system clipboard support
