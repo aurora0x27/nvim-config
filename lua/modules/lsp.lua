@@ -24,6 +24,8 @@ local hover = function(config)
     config = config or {}
     config.border = config.border or 'rounded'
     config.focus_id = methods.textDocument_hover
+    config.max_width = config.max_width or 80
+    config.max_height = config.max_height or 20
 
     lsp.buf_request_all(0, methods.textDocument_hover, function(client)
         ---@diagnostic disable:param-type-mismatch
