@@ -124,6 +124,7 @@ function LspConfig.apply()
         callback = function(event)
             local bufnr = event.buf
             local select = require('utils.loader').select
+            local bind = require('utils.loader').bind
 
             vim.keymap.set('n', 'gd', function()
                 require('telescope.builtin').lsp_definitions()
@@ -132,7 +133,7 @@ function LspConfig.apply()
             vim.keymap.set(
                 'n',
                 'gD',
-                lsp.buf.declaration,
+                select('fzf-lua', 'lsp_declarations'),
                 { desc = 'LSP Goto Declaration', noremap = true, silent = true, buffer = bufnr }
             )
 
