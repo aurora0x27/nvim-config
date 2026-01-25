@@ -125,6 +125,7 @@ function LspConfig.apply()
             local bufnr = event.buf
             local tools = require 'utils.tools'
             local select = require('utils.loader').select
+            local bind = require('utils.loader').bind
 
             vim.keymap.set(
                 'n',
@@ -136,7 +137,7 @@ function LspConfig.apply()
             vim.keymap.set(
                 'n',
                 'gD',
-                lsp.buf.declaration,
+                select('fzf-lua', 'lsp_declarations'),
                 { desc = 'LSP Goto Declaration', noremap = true, silent = true, buffer = bufnr }
             )
 
@@ -153,31 +154,33 @@ function LspConfig.apply()
                 lsp.inlay_hint.enable(not stat, { bufnr = bufnr })
             end, { buffer = bufnr, desc = 'Toggle Inlay [H]ints' })
 
+            local FzfLspJmpCfg = { jump1 = false }
+
             vim.keymap.set(
                 'n',
                 '<Leader>lso',
-                select('fzf-lua', 'lsp_outgoing_calls'),
+                bind(select('fzf-lua', 'lsp_outgoing_calls'), FzfLspJmpCfg),
                 { desc = 'FzfLua [L]ist [O]utgoing Calls', noremap = true, silent = true, buffer = bufnr }
             )
 
             vim.keymap.set(
                 'n',
                 '<Leader>lsi',
-                select('fzf-lua', 'lsp_incoming_calls'),
+                bind(select('fzf-lua', 'lsp_incoming_calls'), FzfLspJmpCfg),
                 { desc = 'FzfLua [L]ist [I]ncoming Calls', noremap = true, silent = true, buffer = bufnr }
             )
 
             vim.keymap.set(
                 'n',
                 '<Leader>lsS',
-                select('fzf-lua', 'lsp_type_super'),
+                bind(select('fzf-lua', 'lsp_type_super'), FzfLspJmpCfg),
                 { desc = 'FzfLua [L]ist [S]uper Types', noremap = true, silent = true, buffer = bufnr }
             )
 
             vim.keymap.set(
                 'n',
                 '<Leader>lss',
-                select('fzf-lua', 'lsp_type_sub'),
+                bind(select('fzf-lua', 'lsp_type_sub'), FzfLspJmpCfg),
                 { desc = 'FzfLua [L]ist [S]ub Types', noremap = true, silent = true, buffer = bufnr }
             )
 

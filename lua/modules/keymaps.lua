@@ -6,6 +6,7 @@ local log = require 'utils.tools'
 
 function KeyMaps.apply()
     local select = require('utils.loader').select
+    local bind = require('utils.loader').bind
 
     -- resize window
     vim.keymap.set('n', '<C-Left>', select('smart-splits', 'resize_left'), { noremap = true, silent = true })
@@ -192,9 +193,12 @@ function KeyMaps.apply()
     vim.keymap.del('s', 'j')
     vim.keymap.del('s', 'k')
 
-    vim.keymap.set('n', '-', function()
-        return require('oil').open_float(nil, { preview = { horizontal = true } })
-    end, { desc = 'Open parent directory' })
+    vim.keymap.set(
+        'n',
+        '-',
+        bind(select('oil', 'open_float'), nil, { preview = { horizontal = true } }),
+        { desc = 'Open parent directory' }
+    )
 
     -- Not frequently used
     -- vim.keymap.set('i', '<C-j>', '<Down>', { noremap = true, silent = true })

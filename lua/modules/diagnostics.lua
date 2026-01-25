@@ -4,6 +4,8 @@ local Diagnostic = {}
 
 local RawIconSpec = require('utils.assets').RawDiagnosticSpec
 
+local select = require('utils.loader').select
+
 local IconTable = (function()
     local ret = {}
     for severity, spec in pairs(RawIconSpec) do
@@ -45,9 +47,7 @@ Diagnostic.apply = function()
     })
 
     -- Hover diagnostics
-    vim.keymap.set('n', '<Leader>ld', function()
-        vim.diagnostic.open_float()
-    end, { desc = 'Hover [D]iagnostics' })
+    vim.keymap.set('n', '<Leader>ld', select('vim.diagnostics', 'open_float'), { desc = 'Hover [D]iagnostics' })
 end
 
 return Diagnostic
