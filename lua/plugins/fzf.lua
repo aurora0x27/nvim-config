@@ -77,6 +77,15 @@ local FzfLua = {
             files = {
                 cwd_prompt = false,
             },
+            command_history = {
+                winopts = {
+                    height = 0.4,
+                    width = 0.4,
+                    row = 0.5,
+                    col = 0.5,
+                    border = WinBorder,
+                },
+            },
         }
         local FinalOpt = vim.tbl_extend('force', opts, PickerOpt)
         Fzf.setup(FinalOpt)
@@ -86,7 +95,7 @@ local FzfLua = {
                 width = 0.4,
                 row = 0.5,
                 col = 0.5,
-                border = 'rounded',
+                border = WinBorder,
             },
         }
     end,
