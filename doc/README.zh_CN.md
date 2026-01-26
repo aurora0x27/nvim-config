@@ -30,10 +30,6 @@
 
 - `gcc` 用于 tree-sitter 解析器编译
 
-- `lazygit`（可选）用于集成 lazygit
-
-- `yazi`（可选）用于增强文件浏览体验
-
 - `fcitx5-remote`（Linux、MacOS 系统）用于 ime-switcher（输入法切换器）
 
 - `win32yank.exe`（Windows 系统）用于系统剪贴板支持
