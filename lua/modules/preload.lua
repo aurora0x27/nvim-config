@@ -41,6 +41,8 @@ function Preload.apply()
     vim.g.enable_xmake_ls = check_env_opt 'NVIM_ENABLE_XMAKE_LS' or false
     vim.g.use_emmylua_ls = check_env_opt 'NVIM_USE_EMMYLUA_LS' or false
 
+    vim.g.enable_current_line_blame = check_env_opt 'NVIM_ENABLE_GIT_LINE_BLAME' or false
+
     -- WARN: put this line here instead of `options.lua`
     -- prevents line number and cursor line appear on
     -- dashboard, so werid.

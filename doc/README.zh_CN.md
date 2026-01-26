@@ -108,6 +108,8 @@ vi # 使用此配置启动 Neovim，无需更改 ~/.local/share
 
 - *NVIM_ENABLE_XMAKE_LS* 启用 `xmake_ls`
 
+- *NVIM_ENABLE_GIT_LINE_BLAME* 启用行尾虚拟文本 git blame
+
 ## 可能需要的功能
 
 - Markdown 表格格式

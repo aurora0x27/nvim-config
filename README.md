@@ -87,6 +87,8 @@ Some features are optional, controlled by environment variables.
 
 - *NVIM_ENABLE_XMAKE_LS* enable `xmake_ls`
 
+- *NVIM_ENABLE_GIT_LINE_BLAME* enable virtual text line blame at the end of line
+
 ## Maybe wanted features
 
 - Markdown Table Format

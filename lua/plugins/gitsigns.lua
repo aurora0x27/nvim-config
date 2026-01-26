@@ -41,11 +41,11 @@ local GitUtils = {
             },
             auto_attach = true,
             attach_to_untracked = false,
-            current_line_blame = false, -- Toggle with `:Gitsigns toggle_current_line_blame`
+            current_line_blame = vim.g.enable_current_line_blame or false, -- Toggle with `:Gitsigns toggle_current_line_blame`
             current_line_blame_opts = {
                 virt_text = true,
                 virt_text_pos = 'eol', -- 'eol' | 'overlay' | 'right_align'
-                delay = 1000,
+                delay = 600,
                 ignore_whitespace = false,
                 virt_text_priority = 100,
                 use_focus = true,
@@ -78,6 +78,7 @@ local GitUtils = {
                     if vim.wo.diff then
                         vim.cmd.normal { ']c', bang = true }
                     else
+                        ---@diagnostic disable:param-type-mismatch
                         gitsigns.nav_hunk 'next'
                     end
                 end)
@@ -86,6 +87,7 @@ local GitUtils = {
                     if vim.wo.diff then
                         vim.cmd.normal { '[c', bang = true }
                     else
+                        ---@diagnostic disable:param-type-mismatch
                         gitsigns.nav_hunk 'prev'
                     end
                 end)
@@ -112,7 +114,6 @@ local GitUtils = {
 
                 -- Toggles
                 map('n', '<leader>gtb', gitsigns.toggle_current_line_blame, { desc = 'Git toggle current line blame' })
-                map('n', '<leader>gtd', gitsigns.toggle_deleted, { desc = 'Git toggle deleted' })
                 map('n', '<leader>gtw', gitsigns.toggle_word_diff, { desc = 'Git toggle word diff' })
 
                 -- Text object
