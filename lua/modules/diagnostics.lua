@@ -1,10 +1,10 @@
 -- Diagnostics config
 
-local Diagnostic = {}
+local M = {}
 
 local RawIconSpec = require('utils.assets').RawDiagnosticSpec
 
-local select = require('utils.loader').select
+local thunk = require('utils.loader').thunk
 
 local IconTable = (function()
     local ret = {}
@@ -35,7 +35,7 @@ local DiagnosticsConfig = {
     },
 }
 
-Diagnostic.apply = function()
+function M.setup()
     -- diagnostic info
     vim.diagnostic.config(DiagnosticsConfig)
 
@@ -47,7 +47,7 @@ Diagnostic.apply = function()
     })
 
     -- Hover diagnostics
-    vim.keymap.set('n', '<Leader>ld', select('vim.diagnostic', 'open_float'), { desc = 'Hover [D]iagnostics' })
+    vim.keymap.set('n', '<Leader>ld', thunk('vim.diagnostic', 'open_float'), { desc = 'Hover [D]iagnostics' })
 end
 
-return Diagnostic
+return M

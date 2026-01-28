@@ -40,13 +40,15 @@ function _G.custom_foldtext()
     return result
 end
 
-return {
-    apply = function()
-        vim.o.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
-        vim.o.foldlevel = 99
-        vim.o.foldmethod = 'expr'
-        vim.o.foldtext = 'v:lua.custom_foldtext()'
-        vim.o.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
-        vim.o.foldcolumn = '1'
-    end,
-}
+local M = {}
+
+function M.setup()
+    vim.o.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+    vim.o.foldlevel = 99
+    vim.o.foldmethod = 'expr'
+    vim.o.foldtext = 'v:lua.custom_foldtext()'
+    vim.o.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+    vim.o.foldcolumn = '1'
+end
+
+return M

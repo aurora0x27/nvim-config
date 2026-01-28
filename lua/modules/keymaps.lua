@@ -1,45 +1,45 @@
 -- This file contains keymaps, which is executed after lazy initialization
 
-local KeyMaps = {}
+local M = {}
 
 local log = require 'utils.tools'
 
-function KeyMaps.apply()
-    local select = require('utils.loader').select
+function M.setup()
+    local thunk = require('utils.loader').thunk
     local bind = require('utils.loader').bind
 
     -- resize window
-    vim.keymap.set('n', '<C-Left>', select('smart-splits', 'resize_left'), { noremap = true, silent = true })
-    vim.keymap.set('n', '<C-Right>', select('smart-splits', 'resize_right'), { noremap = true, silent = true })
-    vim.keymap.set('n', '<C-Up>', select('smart-splits', 'resize_up'), { noremap = true, silent = true })
-    vim.keymap.set('n', '<C-Down>', select('smart-splits', 'resize_down'), { noremap = true, silent = true })
+    vim.keymap.set('n', '<C-Left>', thunk('smart-splits', 'resize_left'), { noremap = true, silent = true })
+    vim.keymap.set('n', '<C-Right>', thunk('smart-splits', 'resize_right'), { noremap = true, silent = true })
+    vim.keymap.set('n', '<C-Up>', thunk('smart-splits', 'resize_up'), { noremap = true, silent = true })
+    vim.keymap.set('n', '<C-Down>', thunk('smart-splits', 'resize_down'), { noremap = true, silent = true })
 
     -- buffer swich
     vim.keymap.set(
         'n',
         '<C-h>',
-        select('smart-splits', 'move_cursor_left'),
+        thunk('smart-splits', 'move_cursor_left'),
         { desc = 'Move to left window', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<C-j>',
-        select('smart-splits', 'move_cursor_down'),
+        thunk('smart-splits', 'move_cursor_down'),
         { desc = 'Move to below window', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<C-k>',
-        select('smart-splits', 'move_cursor_up'),
+        thunk('smart-splits', 'move_cursor_up'),
         { desc = 'Move to above window', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<C-l>',
-        select('smart-splits', 'move_cursor_right'),
+        thunk('smart-splits', 'move_cursor_right'),
         { desc = 'Move to right window', noremap = true, silent = true }
     )
 
@@ -50,98 +50,98 @@ function KeyMaps.apply()
     vim.keymap.set(
         'n',
         '<Leader>ff',
-        select('fzf-lua', 'files'),
+        thunk('fzf-lua', 'files'),
         { desc = 'Fzflua Find [F]iles', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>fo',
-        select('fzf-lua', 'oldfiles'),
+        thunk('fzf-lua', 'oldfiles'),
         { desc = 'Fzflua Find [O]ld Files', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>ft',
-        select('fzf-lua', 'treesitter'),
+        thunk('fzf-lua', 'treesitter'),
         { desc = 'Fzflua Find [T]reesitter Symbols', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>fw',
-        select('fzf-lua', 'live_grep'),
+        thunk('fzf-lua', 'live_grep'),
         { desc = 'Fzflua [W]ildcard Grep', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>fb',
-        select('fzf-lua', 'buffers'),
+        thunk('fzf-lua', 'buffers'),
         { desc = 'Fzflua Find [B]uffer', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>fB',
-        select('fzf-lua', 'builtin'),
+        thunk('fzf-lua', 'builtin'),
         { desc = 'Fzflua Find [B]uiltin', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>fd',
-        select('fzf-lua', 'diagnostics_document'),
+        thunk('fzf-lua', 'diagnostics_document'),
         { desc = 'Fzflua Find Document [D]iagnostics', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>fD',
-        select('fzf-lua', 'diagnostics_workspace'),
+        thunk('fzf-lua', 'diagnostics_workspace'),
         { desc = 'Fzflua Find Workspace [D]iagnostics', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>fC',
-        select('fzf-lua', 'highlights'),
+        thunk('fzf-lua', 'highlights'),
         { desc = 'Fzflua Find Highlight [C]olors', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>fgs',
-        select('fzf-lua', 'git_status'),
+        thunk('fzf-lua', 'git_status'),
         { desc = 'Fzflua Find [G]it [S]tatus', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>fgc',
-        select('fzf-lua', 'git_commits'),
+        thunk('fzf-lua', 'git_commits'),
         { desc = 'Fzflua Find [G]it [C]ommits', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>fgbc',
-        select('fzf-lua', 'git_bcommits'),
+        thunk('fzf-lua', 'git_bcommits'),
         { desc = 'Fzflua Find [G]it [B]uffer [C]ommits', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>fgbr',
-        select('fzf-lua', 'git_branches'),
+        thunk('fzf-lua', 'git_branches'),
         { desc = 'Fzflua Find [G]it [BR]anches', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>fm',
-        select('noice.integrations.fzf', 'open'),
+        thunk('noice.integrations.fzf', 'open'),
         { desc = 'Fzflua Find Noice [M]sg', noremap = true, silent = true }
     )
 
@@ -155,14 +155,14 @@ function KeyMaps.apply()
     vim.keymap.set(
         'n',
         '<Leader>f:',
-        select('fzf-lua', 'command_history'),
+        thunk('fzf-lua', 'command_history'),
         { desc = 'Fzflua Find Command History', noremap = true, silent = true }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>fR',
-        select('fzf-lua', 'registers'),
+        thunk('fzf-lua', 'registers'),
         { desc = 'Fzflua Find [R]egister', noremap = true, silent = true }
     )
 
@@ -196,7 +196,7 @@ function KeyMaps.apply()
     vim.keymap.set(
         'n',
         '-',
-        bind(select('oil', 'open_float'), nil, { preview = { horizontal = true } }),
+        bind(thunk('oil', 'open_float'), nil, { preview = { horizontal = true } }),
         { desc = 'Open parent directory' }
     )
 
@@ -244,7 +244,7 @@ function KeyMaps.apply()
     vim.keymap.set(
         { 'n' },
         '<Leader>lm',
-        select('mason.ui', 'open'),
+        thunk('mason.ui', 'open'),
         { noremap = true, silent = true, desc = 'Launch Lsp [M]anager' }
     )
 
@@ -261,13 +261,19 @@ function KeyMaps.apply()
         end, { noremap = true, silent = true, desc = 'Recover [L]ast Buffer' })
     end
 
-    local mvblk = require 'utils.mvblk'
-    vim.keymap.set('v', '<c-j>', function()
-        mvblk 'down'
-    end, { noremap = true, silent = true, desc = 'Move Selected Line Downward' })
-    vim.keymap.set('v', '<c-k>', function()
-        mvblk 'up'
-    end, { noremap = true, silent = true, desc = 'Move Selected Line Upward' })
+    vim.keymap.set(
+        'v',
+        '<c-j>',
+        bind(thunk('utils', 'mvblk'), 'down'),
+        { noremap = true, silent = true, desc = 'Move Selected Line Downward' }
+    )
+
+    vim.keymap.set(
+        'v',
+        '<c-k>',
+        bind(thunk('utils', 'mvblk'), 'up'),
+        { noremap = true, silent = true, desc = 'Move Selected Line Upward' }
+    )
 end
 
-return KeyMaps
+return M

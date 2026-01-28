@@ -1,5 +1,5 @@
 -- This file contains settings load before initializing lazy
-local Preload = {}
+local M = {}
 
 ---@param opt string
 ---@return boolean
@@ -7,7 +7,7 @@ local function check_env_opt(opt)
     return vim.env[opt] and vim.env[opt] == '1'
 end
 
-function Preload.apply()
+function M.setup()
     -- set global leader
     vim.g.mapleader = ' '
     vim.g.maplocalleader = ' '
@@ -98,4 +98,4 @@ function Preload.apply()
     })
 end
 
-return Preload
+return M

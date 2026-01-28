@@ -1,4 +1,4 @@
-local IMSwitch = {}
+local M = {}
 
 local fcitx5_state
 
@@ -24,7 +24,7 @@ local function register_autocmd()
     })
 end
 
-function IMSwitch.apply()
+function M.setup()
     if vim.fn.executable 'fcitx5-remote' == 1 then
         register_autocmd()
     else
@@ -36,4 +36,4 @@ function IMSwitch.apply()
     end
 end
 
-return IMSwitch
+return M

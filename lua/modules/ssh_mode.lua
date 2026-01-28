@@ -1,17 +1,16 @@
 -- Remote clipboard support based on osc52
 
-local SSHMode = {
-    on = false,
-    old_clipboard = vim.g.clipboard,
-    auto_enable = true,
-}
+local M = {}
 
 local log = require 'utils.tools'
+local on = false
+local old_clipboard = vim.g.clipboard
+local auto_enable = true
 
 local switch_mode = function()
-    if SSHMode.on then
-        vim.g.clipboard = SSHMode.old_clipboard
-        SSHMode.on = false
+    if on then
+        vim.g.clipboard = old_clipboard
+        on = false
         log.info('Clipboard ssh mode OFF', { title = 'SSH Mode' })
     else
         vim.g.clipboard = {
@@ -26,19 +25,19 @@ local switch_mode = function()
             },
             cache_enabled = false,
         }
-        SSHMode.on = true
+        on = true
         log.info('Clipboard ssh mode ON', { title = 'SSH Mode' })
     end
 end
 
-SSHMode.apply = function()
+M.setup = function()
     vim.api.nvim_create_user_command('ClipboardSshModeSwitch', function()
         switch_mode()
     end, { desc = 'Enable or disable Clipboard Ssh Mode' })
 
     vim.api.nvim_create_user_command('ClipboardSshModeInfo', function()
         local message = ''
-        if SSHMode.on then
+        if on then
             message = 'Clipboard ssh mode ON'
         else
             message = 'Clipboard ssh mode OFF'
@@ -47,9 +46,9 @@ SSHMode.apply = function()
     end, { desc = 'Check ssh mode status' })
 
     -- Automatically enable ssh mode
-    if SSHMode.auto_enable and SSHMode.on == false and vim.fn.exists '$SSH_TTY' == 1 then
+    if auto_enable and on == false and vim.fn.exists '$SSH_TTY' == 1 then
         switch_mode()
     end
 end
 
-return SSHMode
+return M

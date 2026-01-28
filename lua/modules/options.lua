@@ -1,7 +1,7 @@
 -- This file contains options, which is executed after lazy initialization
-local Options = {}
+local M = {}
 
-Options.opt = {
+M.opt = {
     relativenumber = false,
     spell = false,
     signcolumn = 'auto',
@@ -19,7 +19,7 @@ Options.opt = {
 
 local tools = require 'utils.tools'
 
-function Options.apply()
+function M.setup()
     -- An ungracefull way to fix neovide terminal color render bug
     if vim.g.neovide then
         vim.g.terminal_color_0 = '#45475a'
@@ -85,9 +85,9 @@ function Options.apply()
 
     vim.fn.mkdir(vim.opt.undodir:get()[1], 'p')
 
-    for k, v in pairs(Options.opt) do
+    for k, v in pairs(M.opt) do
         vim.o[k] = v
     end
 end
 
-return Options
+return M

@@ -1,6 +1,6 @@
-local WorkspacePatch = {}
+local M = {}
 
-function WorkspacePatch.apply()
+function M.setup()
     local workspace_nvim = vim.fn.getcwd() .. '/.nvim'
     local secondary = vim.fn.getcwd() .. '/.vscode/nvim'
     if vim.fn.isdirectory(workspace_nvim) ~= 1 then
@@ -24,4 +24,4 @@ function WorkspacePatch.apply()
     end
 end
 
-return WorkspacePatch
+return M

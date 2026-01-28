@@ -2,7 +2,7 @@
 
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
-local select = require('utils.loader').select
+local thunk = require('utils.loader').thunk
 
 ---@type LazyPluginSpec
 local IntergratedTerminal = {
@@ -100,7 +100,7 @@ local IntergratedTerminal = {
     end,
     keys = {
         { '<Leader>ts', '<cmd>TermSelect<cr>', desc = '[T]erm [S]elect' },
-        { '<C-\\>', select('toggleterm', 'toggle'), desc = 'Toggle Terminal' },
+        { '<C-\\>', thunk('toggleterm', 'toggle'), desc = 'Toggle Terminal' },
     },
 }
 

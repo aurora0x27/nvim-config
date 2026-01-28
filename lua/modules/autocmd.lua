@@ -1,8 +1,8 @@
 -- Define some behaviors
 
-local AutoCmd = {}
+local M = {}
 
-function AutoCmd.apply()
+function M.setup()
     -- Highlight yanked text
     vim.api.nvim_create_autocmd('TextYankPost', {
         pattern = '*',
@@ -38,4 +38,4 @@ function AutoCmd.apply()
     })
 end
 
-return AutoCmd
+return M

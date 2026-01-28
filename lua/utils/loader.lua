@@ -62,18 +62,18 @@ end
 ---@usage
 --- ```lua
 --- -- Single field access
---- local lazy_notify = M.select("vim", "notify")
+--- local lazy_notify = M.thunk("vim", "notify")
 --- lazy_notify("Hello", vim.log.levels.INFO)
 ---
 --- -- Nested field access
---- local lazy_map = M.select("nvim-treesitter.ts_utils", "map")
+--- local lazy_map = M.thunk("nvim-treesitter.ts_utils", "map")
 --- -- Equivalent to: require("nvim-treesitter.ts_utils").map(...)
 ---
 --- -- Multi-level nesting
---- local lazy_action = M.select("telescope.actions", "state", "select_default")
+--- local lazy_action = M.thunk("telescope.actions", "state", "select_default")
 --- -- Will call: require("telescope.actions").state.select_default(...)
 --- ```
-function M.select(module, ...)
+function M.thunk(module, ...)
     local fields = { ... }
     local n = #fields
 

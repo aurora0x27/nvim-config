@@ -1,4 +1,4 @@
-local LspConfig = {}
+local M = {}
 
 local lsp = vim.lsp
 local api = vim.api
@@ -109,7 +109,7 @@ local hover = function(config)
     end)
 end
 
-function LspConfig.apply()
+function M.setup()
     if vim.g.enable_xmake_ls then
         table.insert(lsp_list, 'xmake_ls')
     end
@@ -124,20 +124,20 @@ function LspConfig.apply()
         callback = function(event)
             local bufnr = event.buf
             local tools = require 'utils.tools'
-            local select = require('utils.loader').select
+            local thunk = require('utils.loader').thunk
             local bind = require('utils.loader').bind
 
             vim.keymap.set(
                 'n',
                 'gd',
-                select('fzf-lua', 'lsp_definitions'),
+                thunk('fzf-lua', 'lsp_definitions'),
                 { desc = 'LSP Goto Definition', noremap = true, silent = true, buffer = bufnr }
             )
 
             vim.keymap.set(
                 'n',
                 'gD',
-                select('fzf-lua', 'lsp_declarations'),
+                thunk('fzf-lua', 'lsp_declarations'),
                 { desc = 'LSP Goto Declaration', noremap = true, silent = true, buffer = bufnr }
             )
 
@@ -159,56 +159,56 @@ function LspConfig.apply()
             vim.keymap.set(
                 'n',
                 '<Leader>lso',
-                bind(select('fzf-lua', 'lsp_outgoing_calls'), FzfLspJmpCfg),
+                bind(thunk('fzf-lua', 'lsp_outgoing_calls'), FzfLspJmpCfg),
                 { desc = 'FzfLua [L]ist [O]utgoing Calls', noremap = true, silent = true, buffer = bufnr }
             )
 
             vim.keymap.set(
                 'n',
                 '<Leader>lsi',
-                bind(select('fzf-lua', 'lsp_incoming_calls'), FzfLspJmpCfg),
+                bind(thunk('fzf-lua', 'lsp_incoming_calls'), FzfLspJmpCfg),
                 { desc = 'FzfLua [L]ist [I]ncoming Calls', noremap = true, silent = true, buffer = bufnr }
             )
 
             vim.keymap.set(
                 'n',
                 '<Leader>lsS',
-                bind(select('fzf-lua', 'lsp_type_super'), FzfLspJmpCfg),
+                bind(thunk('fzf-lua', 'lsp_type_super'), FzfLspJmpCfg),
                 { desc = 'FzfLua [L]ist [S]uper Types', noremap = true, silent = true, buffer = bufnr }
             )
 
             vim.keymap.set(
                 'n',
                 '<Leader>lss',
-                bind(select('fzf-lua', 'lsp_type_sub'), FzfLspJmpCfg),
+                bind(thunk('fzf-lua', 'lsp_type_sub'), FzfLspJmpCfg),
                 { desc = 'FzfLua [L]ist [S]ub Types', noremap = true, silent = true, buffer = bufnr }
             )
 
             vim.keymap.set(
                 'n',
                 '<Leader>la',
-                select('fzf-lua', 'lsp_code_actions'),
+                thunk('fzf-lua', 'lsp_code_actions'),
                 { desc = 'FzfLua [L]ist Code [A]ctions', noremap = true, silent = true, buffer = bufnr }
             )
 
             vim.keymap.set(
                 'n',
                 '<Leader>fr',
-                select('fzf-lua', 'lsp_references'),
+                thunk('fzf-lua', 'lsp_references'),
                 { desc = 'FzfLua Find Symbol [R]eferences', noremap = true, silent = true, buffer = bufnr }
             )
 
             vim.keymap.set(
                 'n',
                 '<Leader>fs',
-                select('fzf-lua', 'lsp_document_symbols'),
+                thunk('fzf-lua', 'lsp_document_symbols'),
                 { desc = 'FzfLua Find Document [S]ymbols', noremap = true, silent = true, buffer = bufnr }
             )
 
             vim.keymap.set(
                 'n',
                 '<Leader>fS',
-                select('fzf-lua', 'lsp_live_workspace_symbols'),
+                thunk('fzf-lua', 'lsp_live_workspace_symbols'),
                 { desc = 'FzfLua Find Workspace [S]ymbols', noremap = true, silent = true, buffer = bufnr }
             )
         end,
@@ -285,4 +285,4 @@ function LspConfig.apply()
     end, {})
 end
 
-return LspConfig
+return M

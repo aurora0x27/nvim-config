@@ -1,3 +1,5 @@
+local M = {}
+
 -- Key configuration for autopair functionality
 -- Each key defines whether it's an opening symbol and its paired character
 local keys = {
@@ -185,13 +187,11 @@ end
 
 ---Apply autopair functionality by setting up autocmds
 ---This delays the keymap setup until first use for better startup performance
-local function apply()
+function M.setup()
     vim.api.nvim_create_autocmd({ 'InsertEnter', 'CmdlineEnter' }, {
         once = true,
         callback = exec,
     })
 end
 
-local AutoPairs = { apply = apply }
-
-return AutoPairs
+return M
