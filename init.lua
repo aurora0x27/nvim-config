@@ -43,12 +43,6 @@ vim.api.nvim_create_autocmd('User', {
     pattern = 'LazyVimStarted',
     callback = function()
         vim.schedule(function()
-            -- DEBUG MODE
-            if vim.g.debug_mode == '1' then
-                set_rtpath()
-            end
-            -- DEBUG MODE
-
             require('modules.keymaps').setup()
             require('modules.options').setup()
             require('modules.autocmd').setup()
