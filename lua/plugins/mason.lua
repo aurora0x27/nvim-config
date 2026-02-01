@@ -16,8 +16,8 @@ local LspEnsuredList = {
     'pyright',
     'neocmakelsp',
     'prettier',
-    'gopls',
-    'jdtls',
+    vim.g.enable_gopls and 'gopls' or nil,
+    vim.g.enable_java_ls and 'jdtls' or nil,
 }
 
 local tools = require 'utils.tools'

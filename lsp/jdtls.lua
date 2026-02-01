@@ -71,7 +71,7 @@ local root_markers2 = {
 }
 
 ---@type vim.lsp.Config
-return {
+local Jdtls = {
     ---@param dispatchers? vim.lsp.rpc.Dispatchers
     ---@param config vim.lsp.ClientConfig
     cmd = function(dispatchers, config)
@@ -100,3 +100,5 @@ return {
         or vim.list_extend(root_markers1, root_markers2),
     init_options = {},
 }
+
+return Jdtls

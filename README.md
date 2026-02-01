@@ -85,6 +85,12 @@ Some features are optional, controlled by environment variables.
 
 - *NVIM_ENABLE_GIT_LINE_BLAME* enable virtual text line blame at the end of line
 
+- *NVIM_ENABLE_JAVA_LS* enable java lsp `jdtls`
+
+- *NVIM_ENABLE_GOPLS* enable golang lsp `gopls`
+
+- *NVIM_DISABLE_IM_SWITCH* disable auto im switcher
+
 ## Maybe wanted features
 
 - Markdown Table Format

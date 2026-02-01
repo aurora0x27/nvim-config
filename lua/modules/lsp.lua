@@ -13,8 +13,8 @@ local lsp_list = {
     'rust_analyzer',
     'pyright',
     'neocmake',
-    'gopls',
-    'jdtls',
+    vim.g.enable_gopls and 'gopls' or nil,
+    vim.g.enable_jdtls and 'jdtls' or nil,
     'tinymist',
     -- 'clice',
 }
