@@ -91,6 +91,8 @@ Some features are optional, controlled by environment variables.
 
 - *NVIM_DISABLE_IM_SWITCH* disable auto im switcher
 
+- *NVIM_ENABLE_LSP* enable lsp **Disable LSP if nvim version <= 0.11**
+
 ## Maybe wanted features
 
 - Markdown Table Format

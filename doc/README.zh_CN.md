@@ -112,6 +112,8 @@ vi # 使用此配置启动 Neovim，无需更改 ~/.local/share
 
 - *NVIM_DISABLE_IM_SWITCH* 禁用自动输入法切换
 
+- *NVIM_ENABLE_LSP* 允许使用 LSP **nvim 版本 <= 0.11 时自动禁用 LSP**
+
 ## 可能需要的功能
 
 - Markdown 表格格式

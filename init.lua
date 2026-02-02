@@ -48,7 +48,9 @@ vim.api.nvim_create_autocmd('User', {
             require('modules.autocmd').setup()
             require('modules.diagnostics').setup()
             require('modules.fold').setup()
-            require('modules.lsp').setup()
+            if vim.g.enable_lsp then
+                require('modules.lsp').setup()
+            end
             require('modules.ssh_mode').setup()
             if not vim.g.disable_im_switch then
                 require('modules.im-switch').setup()
