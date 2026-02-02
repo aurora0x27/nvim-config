@@ -2,6 +2,7 @@
 
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
+---@module 'nvim-highlight-colors'
 ---@type LazyPluginSpec
 local ColorPreview = {
     'brenoprata10/nvim-highlight-colors',
@@ -71,9 +72,6 @@ local ColorPreview = {
         -- Exclude buffer from highlighting e.g. 'exclude_buffer = function(bufnr) return vim.fn.getfsize(vim.api.nvim_buf_get_name(bufnr)) > 1000000 end'
         -- exclude_buffer = function(bufnr) end,
     },
-    config = function(_, opts)
-        require('nvim-highlight-colors').setup(opts)
-    end,
 }
 
 return ColorPreview

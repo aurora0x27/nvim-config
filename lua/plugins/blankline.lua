@@ -7,7 +7,25 @@ local IndentLine = {
     'lukas-reineke/indent-blankline.nvim',
     event = { 'BufReadPost', 'BufNewFile' },
     main = 'ibl',
-    config = function()
+    ---@module 'ibl'
+    ---@type ibl.config
+    opts = {
+        indent = {
+            highlight = {
+                'IndentLineNotSelected',
+            },
+            char = '│',
+        },
+        scope = {
+            highlight = {
+                'IndentLineSelected',
+            },
+            enabled = true,
+            show_start = false,
+            show_end = false,
+        },
+    },
+    config = function(_, opts)
         local mocha = require('catppuccin.palettes').get_palette 'mocha'
         local hooks = require 'ibl.hooks'
         -- create the highlight groups in the highlight setup hook, so they are reset
@@ -19,19 +37,7 @@ local IndentLine = {
 
         hooks.register(hooks.type.SCOPE_HIGHLIGHT, hooks.builtin.scope_highlight_from_extmark)
 
-        require('ibl').setup {
-            indent = { highlight = {
-                'IndentLineNotSelected',
-            }, char = '│' },
-            scope = {
-                highlight = {
-                    'IndentLineSelected',
-                },
-                enabled = true,
-                show_start = false,
-                show_end = false,
-            },
-        }
+        require('ibl').setup(opts)
     end,
 }
 

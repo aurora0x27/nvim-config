@@ -115,9 +115,6 @@ local Layout = {
         -- default logging level, one of: 'trace'|'debug'|'info'|'warn'|'error'|'fatal'
         log_level = 'info',
     },
-    config = function(_, opts)
-        require('smart-splits').setup(opts)
-    end,
 }
 
 return Layout

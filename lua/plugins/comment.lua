@@ -5,11 +5,8 @@
 ---@type LazyPluginSpec
 local CommentRenderer = {
     'folke/todo-comments.nvim',
-
     dependencies = { 'nvim-lua/plenary.nvim' },
-
     event = { 'BufReadPost', 'BufNewFile' },
-
     opts = {
         signs = true, -- show icons in the signs column
         sign_priority = 4, -- sign priority

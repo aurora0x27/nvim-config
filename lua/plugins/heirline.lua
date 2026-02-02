@@ -4,13 +4,11 @@
 local Heirline = {
     'rebelot/heirline.nvim',
     event = 'VeryLazy',
+    ---@module 'heirline'
     config = function()
-        local StatusLine = require 'config.heirline.statusline'
-        local Colors = require 'config.heirline.common.colors'
-
         require('heirline').setup {
-            statusline = StatusLine,
-            opts = { colors = Colors },
+            statusline = require 'config.heirline.statusline',
+            opts = { colors = require 'config.heirline.common.colors' },
         }
 
         -- set global status line

@@ -2,6 +2,9 @@
 
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
+local bind = require('utils.loader').bind
+local thunk = require('utils.loader').thunk
+
 ---@type LazyPluginSpec
 local CodeFormatter = {
     'stevearc/conform.nvim',
@@ -23,9 +26,7 @@ local CodeFormatter = {
     config = function(_, opts)
         require('conform').setup(opts)
 
-        local do_format = function()
-            require('conform').format { async = true, lsp_fallback = true }
-        end
+        local do_format = bind(thunk('conform', 'format'), { async = true, lsp_fallback = true })
 
         vim.keymap.set(
             'n',
