@@ -1,4 +1,6 @@
 local tools = require 'utils.tools'
+local bind = require('utils.loader').bind
+local thunk = require('utils.loader').thunk
 
 ---@type LazyPluginSpec
 local SessionMgr = {
@@ -64,6 +66,13 @@ local SessionMgr = {
         dir = vim.fn.stdpath 'state' .. '/sessions/',
         need = 1,
     },
+    config = function(_, opts)
+        require('persistence').setup(opts)
+        vim.api.nvim_create_autocmd('User', {
+            pattern = 'PersistenceSavePre',
+            callback = bind(thunk('neo-tree.command', 'execute'), { action = 'close' }),
+        })
+    end,
 }
 
 return SessionMgr
