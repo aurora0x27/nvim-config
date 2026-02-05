@@ -180,11 +180,27 @@ function M.setup()
     vim.keymap.set('n', '<Leader>h', '<cmd>Alpha<CR>', { desc = 'Open [H]ome Page', noremap = true, silent = true })
 
     -- File explorer
-    vim.keymap.set('n', '<leader>e', '<cmd>Neotree toggle<CR>', {
-        desc = 'Toggle File [E]xplorer',
-        noremap = true,
-        silent = true,
-    })
+    vim.keymap.set(
+        'n',
+        '<leader>e',
+        bind(thunk('neo-tree.command', 'execute'), { action = 'show', source = 'filesystem', toggle = true }),
+        {
+            desc = 'Toggle File [E]xplorer',
+            noremap = true,
+            silent = true,
+        }
+    )
+
+    vim.keymap.set(
+        'n',
+        '<leader>o',
+        bind(thunk('neo-tree.command', 'execute'), { action = 'show', source = 'document_symbols', toggle = true }),
+        {
+            desc = 'Toggle [O]utline',
+            noremap = true,
+            silent = true,
+        }
+    )
 
     -- Clean search highlight
     vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>', { silent = true })
