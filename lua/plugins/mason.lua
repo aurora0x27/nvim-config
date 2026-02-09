@@ -16,6 +16,7 @@ local LspEnsuredList = {
     'pyright',
     'neocmakelsp',
     'prettier',
+    'nginx-config-formatter',
     vim.g.enable_gopls and 'gopls' or nil,
     vim.g.enable_java_ls and 'jdtls' or nil,
 }

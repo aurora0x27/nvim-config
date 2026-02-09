@@ -38,6 +38,7 @@ local TSEnsureInstalled = {
     'llvm',
     'tablegen',
     'ninja',
+    'nginx',
     'markdown',
     'scheme',
     'query',
