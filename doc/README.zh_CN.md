@@ -114,6 +114,8 @@ vi # 使用此配置启动 Neovim，无需更改 ~/.local/share
 
 - *NVIM_ENABLE_LSP* 允许使用 LSP **nvim 版本 <= 0.11 时自动禁用 LSP**
 
+- *NVIM_BLINK_USE_BINARY* 使用预构建的 blink 二进制
+
 ## 可能需要的功能
 
 - Markdown 表格格式

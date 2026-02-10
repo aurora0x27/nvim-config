@@ -147,6 +147,13 @@ function M.setup()
 
     vim.keymap.set(
         'n',
+        '<Leader>fH',
+        thunk('fzf-lua', 'helptags'),
+        { desc = 'Fzflua Find [H]elp Tags', noremap = true, silent = true }
+    )
+
+    vim.keymap.set(
+        'n',
         '<Leader>fT',
         '<cmd>TodoFzfLua<CR>',
         { desc = 'FzfLua Find [T]odo Items', noremap = true, silent = true }

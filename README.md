@@ -93,6 +93,8 @@ Some features are optional, controlled by environment variables.
 
 - *NVIM_ENABLE_LSP* enable lsp **Disable LSP if nvim version <= 0.11**
 
+- *NVIM_BLINK_USE_BINARY* use prebuild binary instead of building
+
 ## Maybe wanted features
 
 - Markdown Table Format

@@ -15,7 +15,7 @@ local CodeCompletion = {
     -- use a release tag to download pre-built binaries
     version = '1.*',
     -- AND/OR build from source, requires nightly: https://rust-lang.github.io/rustup/concepts/channels.html#working-with-nightly-rust
-    -- build = 'cargo build --release',
+    build = vim.g.blink_use_binary and nil or 'cargo build --release',
     -- If you use nix, you can build from source using latest nightly rust with:
     -- build = 'nix run .#build-plugin',
 
@@ -61,6 +61,20 @@ local CodeCompletion = {
         completion = {
             menu = {
                 border = 'rounded',
+                draw = {
+                    columns = {
+                        { 'kind_icon' },
+                        { 'label', 'label_description', gap = 1 },
+                        { 'provider' },
+                    },
+                    components = {
+                        provider = {
+                            text = function(ctx)
+                                return '[' .. ctx.item.source_name:sub(1, 3):upper() .. ']'
+                            end,
+                        },
+                    },
+                },
             },
             documentation = {
                 auto_show = true,

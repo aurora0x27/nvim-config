@@ -43,8 +43,9 @@ function M.setup()
     vim.g.enable_java_ls = check_env_opt 'NVIM_ENABLE_JAVA_LS' or false
     vim.g.enable_gopls = check_env_opt 'NVIM_ENABLE_GOPLS' or false
     vim.g.disable_im_switch = check_env_opt 'NVIM_DISABLE_IM_SWITCH' or false
-    vim.g.enable_lsp = check_env_opt 'NVIM_ENABLE_LSP' or vim.fn.has('nvim-0.11') == 1
+    vim.g.enable_lsp = check_env_opt 'NVIM_ENABLE_LSP' or vim.fn.has 'nvim-0.11' == 1
     vim.g.enable_current_line_blame = check_env_opt 'NVIM_ENABLE_GIT_LINE_BLAME' or false
+    vim.g.blink_use_binary = check_env_opt 'NVIM_BLINK_USE_BINARY' or false
 
     -- WARN: put this line here instead of `options.lua`
     -- prevents line number and cursor line appear on
