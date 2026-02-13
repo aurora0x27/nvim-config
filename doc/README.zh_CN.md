@@ -106,7 +106,7 @@ vi # 使用此配置启动 Neovim，无需更改 ~/.local/share
 
 - *NVIM_ENABLE_GIT_LINE_BLAME* 启用行尾虚拟文本 git blame
 
-- *NVIM_ENABLE_JAVA_LS* 启用 java 语言服务器 `jdtls`
+- *NVIM_ENABLE_JDTLS* 启用 java 语言服务器 `jdtls`
 
 - *NVIM_ENABLE_GOPLS* 启用 golang 语言服务器 `gopls`
 

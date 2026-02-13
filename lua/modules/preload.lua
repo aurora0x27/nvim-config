@@ -40,7 +40,7 @@ function M.setup()
     vim.g.inject_plugin_path = check_env_opt 'NVIM_WORKSPACE_INJECT_PLUGIN_PATH' or false
     vim.g.enable_xmake_ls = check_env_opt 'NVIM_ENABLE_XMAKE_LS' or false
     vim.g.use_emmylua_ls = check_env_opt 'NVIM_USE_EMMYLUA_LS' or false
-    vim.g.enable_java_ls = check_env_opt 'NVIM_ENABLE_JAVA_LS' or false
+    vim.g.enable_jdtls = check_env_opt 'NVIM_ENABLE_JDTLS' or false
     vim.g.enable_gopls = check_env_opt 'NVIM_ENABLE_GOPLS' or false
     vim.g.disable_im_switch = check_env_opt 'NVIM_DISABLE_IM_SWITCH' or false
     vim.g.enable_lsp = check_env_opt 'NVIM_ENABLE_LSP' or vim.fn.has 'nvim-0.11' == 1
