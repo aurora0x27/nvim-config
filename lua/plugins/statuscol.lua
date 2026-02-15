@@ -1,13 +1,13 @@
 ---@type LazyPluginSpec
 local StatusCol = {
     'luukvbaal/statuscol.nvim',
-    event = { 'BufReadPost', 'BufNewFile', 'BufReadPre' },
-    opts = function()
+    event = 'VeryLazy',
+    config = function()
         local builtin = require 'statuscol.builtin'
 
-        return {
-            bt_ignore = { 'nofile', 'terminal' },
-            ft_ignore = { 'NeogitStatus' },
+        require('statuscol').setup {
+            bt_ignore = { 'nofile', 'terminal', 'help' },
+            ft_ignore = { 'NeogitStatus', 'help' },
             segments = {
                 {
                     sign = {
