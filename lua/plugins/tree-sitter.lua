@@ -50,7 +50,7 @@ local TreeSitter = {
     'nvim-treesitter/nvim-treesitter',
     branch = 'main',
     build = ':TSUpdate',
-    event = { 'BufReadPost', 'BufNewFile' },
+    event = { 'VeryLazy' },
     opts = {
         install_dir = vim.fn.stdpath 'data' .. '/site',
     },

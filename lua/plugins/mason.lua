@@ -88,7 +88,7 @@ local MasonOpt = {
 ---@type LazyPluginSpec
 local Mason = {
     'williamboman/mason.nvim',
-    event = { 'BufReadPost', 'BufNewFile', 'BufReadPre' },
+    event = 'VeryLazy',
     cmd = { 'Mason' },
     config = function()
         require('mason').setup(MasonOpt)

@@ -1,7 +1,7 @@
 ---@type LazyPluginSpec
 local StatusCol = {
     'luukvbaal/statuscol.nvim',
-    event = 'VeryLazy',
+    event = 'UIEnter',
     config = function()
         local builtin = require 'statuscol.builtin'
 
