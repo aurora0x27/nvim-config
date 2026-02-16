@@ -15,7 +15,7 @@ local CodeCompletion = {
     -- use a release tag to download pre-built binaries
     version = '1.*',
     -- AND/OR build from source, requires nightly: https://rust-lang.github.io/rustup/concepts/channels.html#working-with-nightly-rust
-    build = vim.g.blink_use_binary and nil or 'cargo build --release',
+    build = not vim.g.blink_use_binary and 'cargo build --release' or nil,
     -- If you use nix, you can build from source using latest nightly rust with:
     -- build = 'nix run .#build-plugin',
 
