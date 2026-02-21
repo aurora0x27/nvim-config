@@ -59,7 +59,9 @@ vim.api.nvim_create_autocmd('User', {
             require('modules.patch').setup()
 
             -- emit diagnostics info of lang module after noice initialized
-            require('modules.lang').emit_err()
+            if vim.g.silent_lang_diag then
+                vim.defer_fn(require('modules.lang').emit_diagnostics, 1000)
+            end
         end)
     end,
 })

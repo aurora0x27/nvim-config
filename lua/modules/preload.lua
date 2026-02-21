@@ -38,6 +38,7 @@ local function parse_env_opts()
     vim.g.enable_lsp = check_env_opt 'NVIM_ENABLE_LSP' or vim.fn.has 'nvim-0.11' == 1
     vim.g.enable_current_line_blame = check_env_opt 'NVIM_ENABLE_GIT_LINE_BLAME' or false
     vim.g.blink_use_binary = check_env_opt 'NVIM_BLINK_USE_BINARY' or false
+    vim.g.silent_lang_diag = check_env_opt 'NVIM_SILENT_LANG_DIAG' or false
 
     require('modules.lang').setup {
         blacklist = vim.env.NVIM_DISABLE_LANGS or '',

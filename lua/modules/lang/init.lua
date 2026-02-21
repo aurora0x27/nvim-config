@@ -102,9 +102,9 @@ local function parse_level(tbl, str)
                     elseif feat_item == 'none' then
                         tbl[lang] = { lsp = false, fmt = false, ts = false }
                     else
-                        local feat_name = first_char == '+' or first_char == '-' and feat_item:sub(2) or feat_item
+                        local feat_name = (first_char == '+' or first_char == '-') and feat_item:sub(2) or feat_item
                         if type(LANG_FEAT_TBL_DEFAULT[feat_name]) == 'nil' then
-                            err(string.format('Unknown feature: %s', feat_name))
+                            err(string.format('[%s]: Unknown feature: %s', lang, feat_name))
                         else
                             if first_char == '+' then
                                 tbl[lang][feat_name] = true
@@ -222,10 +222,17 @@ function M.setup(opt)
     local bl_s = opt.blacklist or ''
     local wl_s = opt.whitelist or ''
     local lvl_s = opt.levels or ''
-    local bl = parse_to_list(bl_s)
-    local wl = parse_to_list(wl_s)
+    local bl
+    local wl
     if #wl_s == 0 then
         wl = vim.tbl_keys(CAPABILITY)
+    else
+        wl = parse_to_list(wl_s)
+    end
+    if bl_s == 'all' then
+        return
+    else
+        bl = parse_to_list(bl_s)
     end
     local enabled_langs = vim.tbl_filter(function(lang_name)
         return not vim.tbl_contains(bl, lang_name)
