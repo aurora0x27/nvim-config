@@ -98,24 +98,21 @@ local function parse_level(tbl, str)
                     feat_item = vim.trim(feat_item)
                     local first_char = feat_item:sub(1, 1)
                     if feat_item == 'full' then
-                        tbl[lang] = {
-                            lsp = true,
-                            fmt = true,
-                            ts = true,
-                        }
+                        tbl[lang] = { lsp = true, fmt = true, ts = true }
                     elseif feat_item == 'none' then
-                        tbl[lang] = {
-                            lsp = false,
-                            fmt = false,
-                            ts = false,
-                        }
+                        tbl[lang] = { lsp = false, fmt = false, ts = false }
                     else
-                        if first_char == '+' then
-                            tbl[lang][feat_item:sub(2)] = true
-                        elseif first_char == '-' then
-                            tbl[lang][feat_item:sub(2)] = false
+                        local feat_name = first_char == '+' or first_char == '-' and feat_item:sub(2) or feat_item
+                        if type(LANG_FEAT_TBL_DEFAULT[feat_name]) == 'nil' then
+                            err(string.format('Unknown feature: %s', feat_name))
                         else
-                            tbl[lang][feat_item] = true
+                            if first_char == '+' then
+                                tbl[lang][feat_name] = true
+                            elseif first_char == '-' then
+                                tbl[lang][feat_name] = false
+                            else
+                                tbl[lang][feat_name] = true
+                            end
                         end
                     end
                 end
@@ -141,49 +138,81 @@ local TSInstallList = {}
 ---@type LazySpec[]
 local LazySpecs = {}
 
----@param lang string
----@param spec LangSpec
----@param feat LangFeatTbl
-local function process_spec(lang, spec, feat)
-    if spec.plugins then
-        if type(spec.plugins) == 'table' then
-            table.insert(LazySpecs, spec.plugins)
-        else
-            err(string.format('%s.plugins is %s, expected table', lang, type(spec.plugins)))
-        end
-    end
-    if feat.lsp and spec.lsp then
-        table.insert(LspEnableList, spec.lsp.name)
-        if spec.lsp.source ~= 'sys' then
-            table.insert(MasonInstallList, spec.lsp.packname or spec.lsp.name)
-        end
-    end
-    if feat.fmt and spec.formatter then
-        if spec.formatter.source ~= 'sys' then
-            table.insert(MasonInstallList, spec.formatter.packname or spec.formatter.name)
-        end
-    end
-
-    if feat.ts and spec.treesitter then
-        local ty = type(spec.treesitter)
-        if ty == 'boolean' and spec.treesitter then
-            table.insert(TSInstallList, lang)
-        elseif ty == 'string' then
-            table.insert(TSInstallList, spec.treesitter)
-        elseif ty == 'table' then
-            ---@diagnostic disable:param-type-mismatch
-            vim.list_extend(TSInstallList, spec.treesitter)
-        end
-    end
-end
-
 local function generate_lists()
+    local mason_set = {}
+    local ts_set = {}
+    local lsp_set = {}
+
+    ---@param lang string
+    ---@param spec LangSpec
+    ---@param feat LangFeatTbl
+    local function process_spec(lang, spec, feat)
+        if spec.plugins then
+            if type(spec.plugins) == 'table' then
+                table.insert(LazySpecs, spec.plugins)
+            else
+                err(string.format('%s.plugins is %s, expected table', lang, type(spec.plugins)))
+            end
+        end
+
+        if feat.lsp and spec.lsp then
+            local name = spec.lsp.name
+            local install_name = spec.lsp.packname or spec.lsp.name
+            if not lsp_set[name] then
+                table.insert(LspEnableList, name)
+                lsp_set[name] = true
+            end
+            if spec.lsp.source ~= 'sys' then
+                if not mason_set[install_name] then
+                    table.insert(MasonInstallList, install_name)
+                    mason_set[install_name] = true
+                end
+            end
+        end
+
+        if feat.fmt and spec.formatter then
+            if spec.formatter.source ~= 'sys' then
+                local install_name = spec.formatter.packname or spec.formatter.name
+                if not mason_set[install_name] then
+                    table.insert(MasonInstallList, install_name)
+                    mason_set[install_name] = true
+                end
+            end
+        end
+
+        local handle_ts = function(name)
+            if type(name) ~= 'string' then
+                err(string.format('Unknown treesitter decl type: `%s`, expected string', type(name)))
+                return
+            end
+            if not ts_set[name] then
+                table.insert(TSInstallList, name)
+            end
+        end
+
+        if feat.ts and spec.treesitter then
+            local ty = type(spec.treesitter)
+            if ty == 'table' then
+                ---@diagnostic disable:param-type-mismatch
+                for _, name in ipairs(spec.treesitter) do
+                    handle_ts(name)
+                end
+            elseif ty == 'boolean' and spec.treesitter then
+                handle_ts(lang)
+            elseif ty == 'string' then
+                handle_ts(spec.treesitter)
+            else
+                err(string.format('Unknown treesitter spec type: `%s`, expected string|boolean|string[]', ty))
+            end
+        end
+    end
+
     for lang, feat in pairs(EnabledLangs) do
         local spec = CAPABILITY[lang]
         if spec then
             process_spec(lang, spec, feat)
         else
-            err(string.format 'Language `%s` is not in CAPABILITY')
+            err(string.format('Language `%s` is not in CAPABILITY', lang))
         end
     end
 end
@@ -250,39 +279,16 @@ function M.get_lsp_enable_list()
     return LspEnableList
 end
 
-function M.debug_dump()
-    local out_buf = ''
-    local putline = function(line)
-        out_buf = out_buf .. '\n' .. line
-    end
-    putline 'EnabledLangs:'
-    for lang, feat in pairs(EnabledLangs) do
-        putline('  ' .. lang)
-        putline('    fmt: ' .. (feat['fmt'] and 'true' or 'false'))
-        putline('    lsp: ' .. (feat['lsp'] and 'true' or 'false'))
-        putline('    ts :' .. (feat['ts'] and 'true' or 'false'))
-    end
-    putline 'LazySpecs:'
-    for _, item in ipairs(LazySpecs) do
-        putline('  ' .. (item[1] or item.dir))
-    end
-    putline 'LspEnableList:'
-    for _, item in ipairs(LspEnableList) do
-        putline('  ' .. item)
-    end
-    putline 'MasonInstallList:'
-    for _, item in ipairs(MasonInstallList) do
-        putline('  ' .. item)
-    end
-    putline 'TSInstallList:'
-    for _, item in ipairs(TSInstallList) do
-        putline('  ' .. item)
-    end
-    putline 'Diagnostics:'
-    for _, errmsg in ipairs(errors) do
-        putline('  ' .. errmsg)
-    end
-    print(out_buf)
+function M.get_errors()
+    return errors
+end
+
+function M.get_enabled_langs()
+    return EnabledLangs
+end
+
+function M.get_capabilities()
+    return CAPABILITY
 end
 
 function M.emit_err()
