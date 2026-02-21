@@ -106,15 +106,18 @@ vi # 使用此配置启动 Neovim，无需更改 ~/.local/share
 
 - *NVIM_ENABLE_GIT_LINE_BLAME* 启用行尾虚拟文本 git blame
 
-- *NVIM_ENABLE_JDTLS* 启用 java 语言服务器 `jdtls`
-
-- *NVIM_ENABLE_GOPLS* 启用 golang 语言服务器 `gopls`
-
 - *NVIM_DISABLE_IM_SWITCH* 禁用自动输入法切换
 
 - *NVIM_ENABLE_LSP* 允许使用 LSP **nvim 版本 <= 0.11 时自动禁用 LSP**
 
 - *NVIM_BLINK_USE_BINARY* 使用预构建的 blink 二进制
+
+- *NVIM_DISABLE_LANGS* 禁用语言配置，默认禁用，以逗号分隔
+
+- *NVIM_ENABLE_LANGS* 启用语言配置，默认启用全部，以逗号分隔
+
+- *NVIM_LANG_LEVELS* 语言特性配置，语法：`c:full;cpp:none;rust:lsp,+ts,-fmt` 表示启用 C 语言的全部特性，禁用 Cpp 的所有特性，
+对 Rust 启用 Treesitter 和 LSP，禁用格式化程序
 
 ## 可能需要的功能
 

@@ -7,17 +7,7 @@ local methods = lsp.protocol.Methods
 local hover_ns = api.nvim_create_namespace 'hover'
 local log = require 'utils.tools'
 
-local lsp_list = {
-    'lua_ls',
-    'clangd',
-    'rust_analyzer',
-    'pyright',
-    'neocmake',
-    vim.g.enable_gopls and 'gopls' or nil,
-    vim.g.enable_jdtls and 'jdtls' or nil,
-    'tinymist',
-    -- 'clice',
-}
+local lsp_list = require('modules.lang').get_lsp_enable_list()
 
 -- override lsp.hover
 local hover = function(config)

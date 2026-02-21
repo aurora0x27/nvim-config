@@ -10,16 +10,7 @@ else
     pip_args = {}
 end
 
-local LspEnsuredList = {
-    vim.g.use_emmylua_ls and 'emmylua_ls' or 'lua-language-server',
-    'stylua',
-    'pyright',
-    'neocmakelsp',
-    'prettier',
-    'nginx-config-formatter',
-    vim.g.enable_gopls and 'gopls' or nil,
-    vim.g.enable_jdtls and 'jdtls' or nil,
-}
+local LspEnsuredList = require('modules.lang').get_mason_install_list()
 
 local tools = require 'utils.tools'
 

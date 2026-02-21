@@ -7,13 +7,7 @@ local function check_env_opt(opt)
     return vim.env[opt] and vim.env[opt] == '1'
 end
 
-function M.setup()
-    -- set global leader
-    vim.g.mapleader = ' '
-    vim.g.maplocalleader = ' '
-    vim.g.transparent_mode = false
-    vim.g.session_enabled = true
-
+local function parse_env_opts()
     if check_env_opt 'NVIM_SESSION_DISABLED' then
         vim.g.session_enabled = false
     end
@@ -40,12 +34,26 @@ function M.setup()
     vim.g.inject_plugin_path = check_env_opt 'NVIM_WORKSPACE_INJECT_PLUGIN_PATH' or false
     vim.g.enable_xmake_ls = check_env_opt 'NVIM_ENABLE_XMAKE_LS' or false
     vim.g.use_emmylua_ls = check_env_opt 'NVIM_USE_EMMYLUA_LS' or false
-    vim.g.enable_jdtls = check_env_opt 'NVIM_ENABLE_JDTLS' or false
-    vim.g.enable_gopls = check_env_opt 'NVIM_ENABLE_GOPLS' or false
     vim.g.disable_im_switch = check_env_opt 'NVIM_DISABLE_IM_SWITCH' or false
     vim.g.enable_lsp = check_env_opt 'NVIM_ENABLE_LSP' or vim.fn.has 'nvim-0.11' == 1
     vim.g.enable_current_line_blame = check_env_opt 'NVIM_ENABLE_GIT_LINE_BLAME' or false
     vim.g.blink_use_binary = check_env_opt 'NVIM_BLINK_USE_BINARY' or false
+
+    require('modules.lang').setup {
+        blacklist = vim.env.NVIM_DISABLE_LANGS or '',
+        whitelist = vim.env.NVIM_ENABLE_LANGS or '',
+        levels = vim.env.NVIM_LANG_LEVELS or '',
+    }
+end
+
+function M.setup()
+    -- set global leader
+    vim.g.mapleader = ' '
+    vim.g.maplocalleader = ' '
+    vim.g.transparent_mode = false
+    vim.g.session_enabled = true
+
+    parse_env_opts()
 
     -- WARN: put this line here instead of `options.lua`
     -- prevents line number and cursor line appear on

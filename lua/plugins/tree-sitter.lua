@@ -2,48 +2,7 @@
 
 -- if true then return {} end   -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
-local TSEnsureInstalled = {
-    'c',
-    'lua',
-    'luadoc',
-    'asm',
-    'vim',
-    'cpp',
-    'rust',
-    'python',
-    'json',
-    'yaml',
-    'toml',
-    'bash',
-    'fish',
-    'awk',
-    'kdl',
-    'dosini',
-    'diff',
-    'cmake',
-    'git_config',
-    'gitignore',
-    'gitcommit',
-    'git_rebase',
-    'gitattributes',
-    'astro',
-    'html',
-    'css',
-    'vim',
-    'vimdoc',
-    'typst',
-    'latex',
-    'go',
-    'glsl',
-    'llvm',
-    'tablegen',
-    'ninja',
-    'nginx',
-    'markdown',
-    'scheme',
-    'query',
-    'markdown_inline',
-}
+local TSEnsureInstalled = require('modules.lang').get_ts_install_list()
 
 ---@type LazyPluginSpec
 local TreeSitter = {

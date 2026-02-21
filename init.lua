@@ -57,6 +57,9 @@ vim.api.nvim_create_autocmd('User', {
             end
             require('modules.pairs').setup()
             require('modules.patch').setup()
+
+            -- emit diagnostics info of lang module after noice initialized
+            require('modules.lang').emit_err()
         end)
     end,
 })
@@ -80,6 +83,7 @@ require('lazy').setup {
     -- all the plugins' configure files should be put under `lua/plugins`
     spec = {
         { import = 'plugins' },
+        require('modules.lang').get_lazy_install_list(),
     },
     -- }, --[[@as LazySpec]] {
     -- Configure any other `lazy.nvim` configuration options here

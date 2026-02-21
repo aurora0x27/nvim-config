@@ -1,7 +1,9 @@
 -- This file contains options, which is executed after lazy initialization
 local M = {}
 
-M.opt = {
+local detect = require 'utils.detect'
+
+local Opt = {
     relativenumber = false,
     spell = false,
     signcolumn = 'auto',
@@ -40,24 +42,28 @@ function M.setup()
         vim.g.terminal_color_15 = '#a6adc8'
     end
 
-    if require('utils.detect').is_windows() then
-        vim.o.shell = 'nu'
-        vim.o.shellcmdflag = '-c'
-        vim.o.shellquote = ''
-        vim.o.shellxquote = ''
-        tools.info('Run windows clipboard settings', { title = 'Options' })
-        vim.g.clipboard = {
-            name = 'win32yank',
-            copy = {
-                ['+'] = 'win32yank.exe -i --crlf',
-                ['*'] = 'win32yank.exe -i --crlf',
-            },
-            paste = {
-                ['+'] = 'win32yank.exe -o --lf',
-                ['*'] = 'win32yank.exe -o --lf',
-            },
-            cache_enabled = 0,
-        }
+    if detect.is_windows() then
+        if detect.is_executable 'win32yank.exe' then
+            vim.o.shell = 'nu'
+            vim.o.shellcmdflag = '-c'
+            vim.o.shellquote = ''
+            vim.o.shellxquote = ''
+            tools.info('Run windows clipboard settings', { title = 'Options' })
+            vim.g.clipboard = {
+                name = 'win32yank',
+                copy = {
+                    ['+'] = 'win32yank.exe -i --crlf',
+                    ['*'] = 'win32yank.exe -i --crlf',
+                },
+                paste = {
+                    ['+'] = 'win32yank.exe -o --lf',
+                    ['*'] = 'win32yank.exe -o --lf',
+                },
+                cache_enabled = 0,
+            }
+        else
+            tools.warn('Under windows cannot find win32yank.exe, please install', { title = 'Clipboard' })
+        end
     end
 
     local mocha = require('catppuccin.palettes').get_palette 'mocha'
@@ -85,7 +91,7 @@ function M.setup()
 
     vim.fn.mkdir(vim.opt.undodir:get()[1], 'p')
 
-    for k, v in pairs(M.opt) do
+    for k, v in pairs(Opt) do
         vim.o[k] = v
     end
 end
