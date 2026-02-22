@@ -30,7 +30,7 @@ function M.setup()
     else
         if require('utils.detect').is_unix() then
             vim.schedule(function()
-                require('utils.tools').warn('Cannot find `fcitx5-remote`', { title = 'IM Switch' })
+                require('utils.misc').warn('Cannot find `fcitx5-remote`', { title = 'IM Switch' })
             end)
         end
     end

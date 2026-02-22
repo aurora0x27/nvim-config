@@ -1,8 +1,13 @@
 local border = require('utils.assets').border
+local thunk = require('utils.loader').thunk
 
 ---@type LazyPluginSpec
 local FsEditor = {
     'stevearc/oil.nvim',
+
+    -- if dry startup, don't load it in early stage
+    lazy = vim.fn.argc(-1) == 0,
+
     ---@module 'oil'
     opts = {
         -- Oil will take over directory buffers (e.g. `vim .` or `:e src/`)
@@ -222,11 +227,18 @@ local FsEditor = {
         },
     },
 
+    cmd = { 'Oil' },
+
+    keys = {
+        {
+            '-',
+            thunk('oil', 'toggle_float'),
+            desc = 'Oil',
+        },
+    },
+
     -- Optional dependencies
     dependencies = { { 'nvim-tree/nvim-web-devicons', opts = {} } },
-    -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
-    -- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
-    lazy = false,
 }
 
 return FsEditor

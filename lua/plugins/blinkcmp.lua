@@ -10,7 +10,7 @@ local CodeCompletion = {
         'catppuccin/nvim',
     },
 
-    event = { 'BufReadPost', 'BufNewFile' },
+    event = { 'CmdlineEnter', 'BufReadPre', 'BufNewFile' },
 
     -- use a release tag to download pre-built binaries
     version = '1.*',

@@ -1,12 +1,12 @@
 -- Clangd for c/cpp dev
 
-local tools = require 'utils.tools'
+local misc = require 'utils.misc'
 
 local function switch_source_header(bufnr)
     local method_name = 'textDocument/switchSourceHeader'
     local client = vim.lsp.get_clients({ bufnr = bufnr, name = 'clangd' })[1]
     if not client then
-        return tools.info(
+        return misc.info(
             ('method %s is not supported by any servers active on the current buffer'):format(method_name),
             { title = 'Lsp Clangd' }
         )
@@ -18,7 +18,7 @@ local function switch_source_header(bufnr)
             error(tostring(err))
         end
         if not result then
-            tools.info('corresponding file cannot be determined', { title = 'Lsp Clangd' })
+            misc.info('corresponding file cannot be determined', { title = 'Lsp Clangd' })
             return
         end
         vim.cmd.edit(vim.uri_to_fname(result))
@@ -30,7 +30,7 @@ local function symbol_info()
     local clangd_client = vim.lsp.get_clients({ bufnr = bufnr, name = 'clangd' })[1]
     ---@diagnostic disable-next-line: param-type-mismatch, missing-parameter
     if not clangd_client or not clangd_client.supports_method 'textDocument/symbolInfo' then
-        return tools.err('Clangd client not found', { title = 'Lsp Clangd' })
+        return misc.err('Clangd client not found', { title = 'Lsp Clangd' })
     end
     local win = vim.api.nvim_get_current_win()
     local params = vim.lsp.util.make_position_params(win, clangd_client.offset_encoding)

@@ -1,4 +1,4 @@
-local tools = require 'utils.tools'
+local misc = require 'utils.misc'
 
 ---Move selected block up or down
 ---@param direction "up"|"down"
@@ -14,13 +14,13 @@ return function(direction)
 
     if direction == 'down' then
         if end_line == vim.api.nvim_buf_line_count(0) then
-            tools.info('This is the last line of buf', { title = 'Move down' })
+            misc.info('This is the last line of buf', { title = 'Move down' })
             return
         end
         vim.cmd(start_line .. ',' .. end_line .. 'move ' .. end_line .. '+1')
     elseif direction == 'up' then
         if start_line == 1 then
-            tools.info('This is the first line of buf', { title = 'Move up' })
+            misc.info('This is the first line of buf', { title = 'Move up' })
             return
         end
         vim.cmd(start_line .. ',' .. end_line .. 'move' .. start_line .. '-2')

@@ -1,4 +1,4 @@
-local tools = require 'utils.tools'
+local misc = require 'utils.misc'
 local bind = require('utils.loader').bind
 local thunk = require('utils.loader').thunk
 
@@ -19,7 +19,7 @@ local SessionMgr = {
                 if vim.fn.filereadable(cache) ~= 0 then
                     sm.load()
                 else
-                    tools.warn('No session in ' .. vim.fn.getcwd(), { title = 'Session Manager' })
+                    misc.warn('No session in ' .. vim.fn.getcwd(), { title = 'Session Manager' })
                 end
             end)
         end, { noremap = true, silent = true, desc = '[L]oad Session' })

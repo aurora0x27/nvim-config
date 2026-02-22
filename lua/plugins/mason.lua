@@ -12,7 +12,7 @@ end
 
 local LspEnsuredList = require('modules.lang').get_mason_install_list()
 
-local tools = require 'utils.tools'
+local misc = require 'utils.misc'
 
 local function ensure_installed(list)
     local registry = require 'mason-registry'
@@ -21,19 +21,19 @@ local function ensure_installed(list)
         local ok, pkg = pcall(registry.get_package, pkg_name)
         ---@cast pkg Package
         if not ok then
-            tools.warn(('Package %s not found'):format(pkg_name), { title = 'Mason' })
+            misc.warn(('Package %s not found'):format(pkg_name), { title = 'Mason' })
             return
         end
         if not pkg:is_installed() then
-            tools.info('Installing LSP: ' .. pkg_name, { title = 'Mason' })
+            misc.info('Installing LSP: ' .. pkg_name, { title = 'Mason' })
             pkg:install():once('closed', function()
                 if pkg:is_installed() then
                     vim.schedule(function()
-                        tools.info('LSP installed: ' .. pkg_name, { title = 'Mason' })
+                        misc.info('LSP installed: ' .. pkg_name, { title = 'Mason' })
                     end)
                 else
                     vim.schedule(function()
-                        tools.err('Failed to install LSP: ' .. pkg_name, { title = 'Mason' })
+                        misc.err('Failed to install LSP: ' .. pkg_name, { title = 'Mason' })
                     end)
                 end
             end)
@@ -83,7 +83,7 @@ local Mason = {
     cmd = { 'Mason' },
     config = function()
         require('mason').setup(MasonOpt)
-        ensure_installed(LspEnsuredList)
+        vim.schedule(require('utils.loader').bind(ensure_installed, LspEnsuredList))
     end,
 }
 

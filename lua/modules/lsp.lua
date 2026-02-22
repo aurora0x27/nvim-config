@@ -5,7 +5,7 @@ local api = vim.api
 local util = lsp.util
 local methods = lsp.protocol.Methods
 local hover_ns = api.nvim_create_namespace 'hover'
-local log = require 'utils.tools'
+local misc = require 'utils.misc'
 
 local lsp_list = require('modules.lang').get_lsp_enable_list()
 
@@ -38,7 +38,7 @@ local hover = function(config)
 
         if vim.tbl_isempty(results1) then
             if config.silent ~= true then
-                log.info('No information available', { title = 'Lsp Hover' })
+                misc.info('No information available', { title = 'Lsp Hover' })
             end
             return
         end
@@ -82,7 +82,7 @@ local hover = function(config)
 
         if vim.tbl_isempty(contents) then
             if config.silent ~= true then
-                log.info('No information available', { title = 'Lsp Hover' })
+                misc.info('No information available', { title = 'Lsp Hover' })
             end
             return
         end
@@ -113,7 +113,6 @@ function M.setup()
         group = api.nvim_create_augroup('lsp-attach', { clear = true }),
         callback = function(event)
             local bufnr = event.buf
-            local tools = require 'utils.tools'
             local thunk = require('utils.loader').thunk
             local bind = require('utils.loader').bind
 
@@ -140,7 +139,7 @@ function M.setup()
 
             vim.keymap.set('n', '<leader>lh', function()
                 local stat = lsp.inlay_hint.is_enabled { bufnr = bufnr }
-                tools.info('Lsp Inlay Hints ' .. (stat and 'Disabled' or 'Enabled'))
+                misc.info('Lsp Inlay Hints ' .. (stat and 'Disabled' or 'Enabled'))
                 lsp.inlay_hint.enable(not stat, { bufnr = bufnr })
             end, { buffer = bufnr, desc = 'Toggle Inlay [H]ints' })
 

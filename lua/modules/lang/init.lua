@@ -299,9 +299,9 @@ function M.get_capabilities()
 end
 
 function M.emit_err()
-    local tools = require 'utils.tools'
+    local misc = require 'utils.misc'
     for _, errmsg in ipairs(errors) do
-        tools.err(errmsg, { title = 'LangLoader' })
+        misc.err(errmsg, { title = 'LangLoader' })
     end
 end
 

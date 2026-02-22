@@ -2,7 +2,7 @@
 
 local M = {}
 
-local log = require 'utils.tools'
+local misc = require 'utils.misc'
 
 function M.setup()
     local thunk = require('utils.loader').thunk
@@ -247,7 +247,7 @@ function M.setup()
         if name ~= '' then
             vim.cmd('tabnew ' .. name)
         else
-            log.warn 'Warn: Filename not assigned, nothing todo'
+            misc.warn 'Warn: Filename not assigned, nothing todo'
         end
     end, { noremap = true, silent = true, desc = 'Tab [N]ew' })
     vim.keymap.set(
@@ -280,7 +280,7 @@ function M.setup()
                     return
                 end
             end
-            log.warn 'No previous file found in v:oldfiles'
+            misc.warn 'No previous file found in v:oldfiles'
         end, { noremap = true, silent = true, desc = 'Recover [L]ast Buffer' })
     end
 

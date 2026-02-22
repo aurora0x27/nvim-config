@@ -19,7 +19,7 @@ local Opt = {
     virtualedit = 'block',
 }
 
-local tools = require 'utils.tools'
+local misc = require 'utils.misc'
 
 function M.setup()
     -- An ungracefull way to fix neovide terminal color render bug
@@ -48,7 +48,7 @@ function M.setup()
             vim.o.shellcmdflag = '-c'
             vim.o.shellquote = ''
             vim.o.shellxquote = ''
-            tools.info('Run windows clipboard settings', { title = 'Options' })
+            misc.info('Run windows clipboard settings', { title = 'Options' })
             vim.g.clipboard = {
                 name = 'win32yank',
                 copy = {
@@ -62,7 +62,7 @@ function M.setup()
                 cache_enabled = 0,
             }
         else
-            tools.warn('Under windows cannot find win32yank.exe, please install', { title = 'Clipboard' })
+            misc.warn('Under windows cannot find win32yank.exe, please install', { title = 'Clipboard' })
         end
     end
 

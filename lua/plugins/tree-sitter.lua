@@ -7,7 +7,7 @@ local TSEnsureInstalled = require('modules.lang').get_ts_install_list()
 local function safe_ts_start(buf)
     local ft = vim.bo[buf].filetype
     if ft == '' then
-        require('utils.tools').err 'Cannot start parser, ft not assigned'
+        require('utils.misc').err 'Cannot start parser, ft not assigned'
         return
     end
 
@@ -18,7 +18,7 @@ local function safe_ts_start(buf)
 
     local ok1 = pcall(vim.treesitter.start, buf, lang)
     if not ok1 then
-        require('utils.tools').err(string.format('Cannot start parser for `%s`', lang))
+        require('utils.misc').err(string.format('Cannot start parser for `%s`', lang))
     end
 end
 
@@ -32,12 +32,15 @@ local TreeSitter = {
         install_dir = vim.fn.stdpath 'data' .. '/site',
     },
     init = function()
-        vim.api.nvim_create_autocmd({ 'FileType' }, {
-            pattern = vim.tbl_keys(require('modules.lang').get_enabled_langs()),
-            callback = function(args)
-                safe_ts_start(args.buf)
-            end,
-        })
+        local langs = vim.tbl_keys(require('modules.lang').get_enabled_langs())
+        if #langs ~= 0 then
+            vim.api.nvim_create_autocmd({ 'FileType' }, {
+                pattern = langs,
+                callback = function(args)
+                    safe_ts_start(args.buf)
+                end,
+            })
+        end
     end,
     config = function(_, opts)
         local TS = require 'nvim-treesitter'

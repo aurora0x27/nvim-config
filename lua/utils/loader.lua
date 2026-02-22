@@ -1,6 +1,6 @@
 local M = {}
 
-local log = require 'utils.tools'
+local misc = require 'utils.misc'
 
 ---Load all template files from the specified module path and concatenate them into a large table.
 ---@param module_root string prefix of module (such as 'user.templates')
@@ -41,7 +41,7 @@ function M.load_module(module_root)
             end
             allTable = true
         else
-            log.err('[load_module] Load Failed: ' .. rel_path)
+            misc.err('[load_module] Load Failed: ' .. rel_path)
         end
     end
 

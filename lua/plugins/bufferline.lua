@@ -7,7 +7,7 @@ local Tabline = {
     'akinsho/bufferline.nvim',
     version = '*',
     dependencies = 'nvim-tree/nvim-web-devicons',
-    event = { 'BufReadPost', 'BufNewFile' },
+    event = { 'TabEnter', 'BufReadPre', 'BufNewFile' },
     config = function()
         require('bufferline').setup {
             highlights = require('catppuccin.special.bufferline').get_theme(),
