@@ -32,7 +32,7 @@ local TreeSitter = {
         install_dir = vim.fn.stdpath 'data' .. '/site',
     },
     init = function()
-        local langs = vim.tbl_keys(require('modules.lang').get_enabled_langs())
+        local langs = require('modules.lang').get_ts_enable_langs()
         if #langs ~= 0 then
             vim.api.nvim_create_autocmd({ 'FileType' }, {
                 pattern = langs,

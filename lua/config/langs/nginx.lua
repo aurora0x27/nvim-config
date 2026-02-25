@@ -1,5 +1,5 @@
 ---@type LangSpec
 return {
     treesitter = true,
-    formatter = { name = 'nginx-config-formatter' },
+    formatter = { name = 'nginxfmt', packname = 'nginx-config-formatter' },
 }

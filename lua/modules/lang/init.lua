@@ -9,7 +9,7 @@ local M = {}
 ---@class LangSpec
 ---@field lsp? ToolSpec
 ---@field formatter? ToolSpec
----@field treesitter string|string[]|true
+---@field treesitter string|string[]|boolean
 ---@field plugins? LazyPluginSpec|LazyPluginSpec[]
 
 ---@class LangOpt
@@ -135,6 +135,9 @@ local LspEnableList = {}
 ---@type string[]
 local TSInstallList = {}
 
+---@type string[]
+local TSEnableLangs = {}
+
 ---@type LazySpec[]
 local LazySpecs = {}
 
@@ -194,19 +197,24 @@ local function generate_lists()
             end
         end
 
-        if feat.ts and spec.treesitter then
+        if feat.ts and type(spec.treesitter) ~= 'nil' then
             local ty = type(spec.treesitter)
             if ty == 'table' then
+                table.insert(TSEnableLangs, lang)
                 ---@diagnostic disable:param-type-mismatch
                 for _, name in ipairs(spec.treesitter) do
                     handle_ts(name)
                 end
-            elseif ty == 'boolean' and spec.treesitter then
-                handle_ts(lang)
+            elseif ty == 'boolean' then
+                if spec.treesitter then
+                    table.insert(TSEnableLangs, lang)
+                    handle_ts(lang)
+                end
             elseif ty == 'string' then
+                table.insert(TSEnableLangs, lang)
                 handle_ts(spec.treesitter)
             else
-                err(string.format('Unknown treesitter spec type: `%s`, expected string|boolean|string[]', ty))
+                err(string.format('Unknown treesitter spec type: `%s`, expected string or boolean or string[]', ty))
             end
         end
     end
@@ -283,6 +291,11 @@ end
 ---@return string[]
 function M.get_ts_install_list()
     return TSInstallList
+end
+
+---@return string[]
+function M.get_ts_enable_langs()
+    return TSEnableLangs
 end
 
 ---@return string[]

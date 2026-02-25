@@ -10,18 +10,7 @@ local CodeFormatter = {
     'stevearc/conform.nvim',
     event = { 'BufReadPost', 'BufNewFile' },
     opts = {
-        formatters_by_ft = {
-            lua = { 'stylua' },
-            cpp = { 'clang-format' },
-            c = { 'clang-format' },
-            json = { 'prettier' },
-            jsonc = { 'prettier' },
-            html = { 'prettier' },
-            css = { 'prettier' },
-            astro = { 'prettier' },
-            typescript = { 'prettier' },
-            javascript = { 'prettier' },
-        },
+        formatters_by_ft = require('modules.lang').get_formatter_map(),
     },
     config = function(_, opts)
         require('conform').setup(opts)
