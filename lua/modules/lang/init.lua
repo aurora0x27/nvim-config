@@ -138,6 +138,9 @@ local TSInstallList = {}
 ---@type LazySpec[]
 local LazySpecs = {}
 
+---@type table<string,string[]>
+local FormatterMap = {}
+
 local function generate_lists()
     local mason_set = {}
     local ts_set = {}
@@ -173,6 +176,7 @@ local function generate_lists()
         if feat.fmt and spec.formatter then
             if spec.formatter.source ~= 'sys' then
                 local install_name = spec.formatter.packname or spec.formatter.name
+                FormatterMap[lang] = { spec.formatter.name }
                 if not mason_set[install_name] then
                     table.insert(MasonInstallList, install_name)
                     mason_set[install_name] = true
@@ -284,6 +288,11 @@ end
 ---@return string[]
 function M.get_lsp_enable_list()
     return LspEnableList
+end
+
+---@return table<string,string[]>
+function M.get_formatter_map()
+    return FormatterMap
 end
 
 function M.get_errors()

@@ -58,6 +58,10 @@ function M.check()
         { name = 'LSP Enabled', data = lang_mod.get_lsp_enable_list() },
     }
 
+    local maps = {
+        { name = 'Formatter Map', data = lang_mod.get_formatter_map() },
+    }
+
     for _, list in ipairs(lists) do
         if #list.data > 0 then
             vim.health.start(list.name .. ':')
@@ -66,6 +70,17 @@ function M.check()
             end
         else
             vim.health.start(list.name .. ': (Empty)')
+        end
+    end
+
+    for _, map in ipairs(maps) do
+        vim.health.start(map.name .. ':')
+        for key, val in pairs(map.data) do
+            if type(val) ~= 'string' then
+                vim.health.info(key .. ' : ' .. vim.inspect(val))
+            else
+                vim.health.info(key .. ' : ' .. val)
+            end
         end
     end
 
