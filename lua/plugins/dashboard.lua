@@ -33,12 +33,9 @@ local Dashboard = {
 
         local logos = require 'config.alpha.logo'
 
-        -- NOTE: lua index from `1`, not `0`
-        if vim.env.NVIM_DASHBOARD_ART_NAME then
-            dashboard.section.header.val = logos[vim.env.NVIM_DASHBOARD_ART_NAME]
-        else
-            dashboard.section.header.val = logos['Ayanami Rei']
-        end
+        local art = logos[require('modules.profile').dashboard_art_name]
+
+        dashboard.section.header.val = art or logos['Ayanami Rei']
 
         dashboard.section.header.opts = {
             position = 'center',

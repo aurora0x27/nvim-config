@@ -43,30 +43,30 @@ vim.api.nvim_create_autocmd('User', {
     pattern = 'LazyVimStarted',
     callback = function()
         vim.schedule(function()
+            local profile = require 'modules.profile'
             require('modules.keymaps').setup()
             require('modules.options').setup()
             require('modules.autocmd').setup()
             require('modules.diagnostics').setup()
             require('modules.fold').setup()
-            if vim.g.enable_lsp then
+            if profile.enable_lsp then
                 require('modules.lsp').setup()
             end
             require('modules.ssh_mode').setup()
-            if not vim.g.disable_im_switch then
+            if not profile.disable_im_switch then
                 require('modules.im-switch').setup()
             end
             require('modules.pairs').setup()
             require('modules.patch').setup()
 
             -- emit diagnostics info of lang module after noice initialized
-            if not vim.g.silent_lang_diag then
+            if not profile.silent_lang_diag then
                 vim.defer_fn(require('modules.lang').emit_err, 100)
             end
         end)
     end,
 })
 
-require('modules.profile').setup()
 require('modules.preload').setup()
 
 -- set lazy path

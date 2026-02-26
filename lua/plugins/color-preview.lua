@@ -13,7 +13,7 @@ local ColorPreview = {
     opts = {
         ---Render style
         ---@usage 'background'|'foreground'|'virtual'
-        render = vim.g.transparent_mode and 'background' or 'virtual',
+        render = require('modules.profile').transparent_mode and 'background' or 'virtual',
 
         ---Set virtual symbol (requires render to be set to 'virtual')
         virtual_symbol = '■',

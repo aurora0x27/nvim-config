@@ -100,9 +100,9 @@ local hover = function(config)
 end
 
 function M.setup()
-    if vim.g.enable_xmake_ls then
-        table.insert(lsp_list, 'xmake_ls')
-    end
+    -- if require('modules.profile').enable_xmake_ls then
+    --     table.insert(lsp_list, 'xmake_ls')
+    -- end
     for _, name in ipairs(lsp_list) do
         lsp.enable(name)
     end

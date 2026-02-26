@@ -2,6 +2,7 @@
 local M = {}
 
 local detect = require 'utils.detect'
+local profile = require 'modules.profile'
 
 local Opt = {
     relativenumber = false,
@@ -68,7 +69,7 @@ function M.setup()
 
     local mocha = require('catppuccin.palettes').get_palette 'mocha'
 
-    if vim.g.transparent_mode then
+    if profile.transparent_mode then
         vim.api.nvim_set_hl(
             0,
             '@variable',

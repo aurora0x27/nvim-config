@@ -32,7 +32,7 @@ local _Table = {
     crust = '#11111b',
 }
 
-local transparent_mode = vim.g.transparent_mode
+local transparent_mode = require('modules.profile').transparent_mode
 
 ---@type LazyPluginSpec
 local ColorScheme = {

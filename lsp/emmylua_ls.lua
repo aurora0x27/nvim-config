@@ -81,7 +81,7 @@ local emmylua_ls = {
         -- FIXME: Always load vim api ?
         local workspace_config = load_workspace_emmyrc_config()
 
-        if vim.g.inject_vim_rt then
+        if require('modules.profile').inject_vim_rt then
             local default_data_home = vim.env.HOME .. '/.local/share/nvim/lazy'
             local xdg_data_home = vim.env.XDG_DATA_HOME and (vim.env.XDG_DATA_HOME .. '/nvim/lazy') or default_data_home
             local injected_libs = {
@@ -90,7 +90,7 @@ local emmylua_ls = {
                 '${3rd}/luv/library',
                 '${3rd}/busted/library',
             }
-            if vim.g.inject_plugin_path then
+            if require('modules.profile').inject_plugin_path then
                 table.insert(injected_libs, xdg_data_home)
             end
             client.config.settings.Lua = vim.tbl_deep_extend('force', workspace_config, {

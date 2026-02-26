@@ -102,8 +102,6 @@ vi # 使用此配置启动 Neovim，无需更改 ~/.local/share
 
 - *NVIM_WORKSPACE_INJECT_PLUGIN_PATH* 在 `emmylua_ls` 的工作区配置中注入插件路径
 
-- *NVIM_ENABLE_XMAKE_LS* 启用 `xmake_ls`
-
 - *NVIM_ENABLE_GIT_LINE_BLAME* 启用行尾虚拟文本 git blame
 
 - *NVIM_DISABLE_IM_SWITCH* 禁用自动输入法切换
@@ -112,9 +110,9 @@ vi # 使用此配置启动 Neovim，无需更改 ~/.local/share
 
 - *NVIM_BLINK_USE_BINARY* 使用预构建的 blink 二进制
 
-- *NVIM_DISABLE_LANGS* 禁用语言配置，默认禁用，以逗号分隔
+- *NVIM_LANG_BLACKLIST* 禁用语言配置，默认禁用，以逗号分隔
 
-- *NVIM_ENABLE_LANGS* 启用语言配置，默认启用全部，以逗号分隔
+- *NVIM_LANG_WHITELIST* 启用语言配置，默认启用全部，以逗号分隔
 
 - *NVIM_LANG_LEVELS* 语言特性配置，语法：`c:full;cpp:none;rust:lsp,+ts,-fmt` 表示启用 C 语言的全部特性，禁用 Cpp 的所有特性，
 对 Rust 启用 Treesitter 和 LSP，禁用格式化程序

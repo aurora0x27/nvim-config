@@ -5,7 +5,7 @@ local thunk = require('utils.loader').thunk
 ---@type LazyPluginSpec
 local SessionMgr = {
     'folke/persistence.nvim',
-    enabled = vim.g.session_enabled,
+    enabled = require('modules.profile').session_enabled,
     dependencies = {
         'ibhagwan/fzf-lua',
     },

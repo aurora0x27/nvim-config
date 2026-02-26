@@ -81,8 +81,6 @@ Some features are optional, controlled by environment variables.
 
 - *NVIM_WORKSPACE_INJECT_PLUGIN_PATH* inject plugin path to `emmylua_ls` workspace config
 
-- *NVIM_ENABLE_XMAKE_LS* enable `xmake_ls`
-
 - *NVIM_ENABLE_GIT_LINE_BLAME* enable virtual text line blame at the end of line
 
 - *NVIM_DISABLE_IM_SWITCH* disable auto im switcher
@@ -91,9 +89,9 @@ Some features are optional, controlled by environment variables.
 
 - *NVIM_BLINK_USE_BINARY* use prebuild binary instead of building
 
-- *NVIM_DISABLE_LANGS* disabled lang configs, default none, split by ','
+- *NVIM_LANG_BLACKLIST* disabled lang configs, default none, split by ','
 
-- *NVIM_ENABLE_LANGS* enabled lang configs, default all, split by ','
+- *NVIM_LANG_WHITELIST* enabled lang configs, default all, split by ','
 
 - *NVIM_LANG_LEVELS* lang feature config, syntax: `c:full;cpp:none;rust:lsp,+ts,-fmt` means enable full feature for c,
 disable all features for cpp, enable tree-sitter and lsp, disable formatter for rust
