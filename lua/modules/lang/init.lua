@@ -245,7 +245,7 @@ function M.setup(opt)
     local lvl_s = opt.levels or ''
     local bl
     local wl
-    if #wl_s == 0 then
+    if #wl_s == 0 or wl_s == 'all' then
         wl = vim.tbl_keys(CAPABILITY)
     else
         wl = parse_to_list(wl_s)

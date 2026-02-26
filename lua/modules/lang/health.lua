@@ -1,9 +1,7 @@
 local M = {}
 local lang_mod = require 'modules.lang'
 
-local function pad(s, width)
-    return s .. string.rep(' ', width - #s)
-end
+local pad = require('utils.misc').pad
 
 function M.check()
     local enabled = lang_mod.get_enabled_langs()

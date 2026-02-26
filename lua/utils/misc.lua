@@ -91,4 +91,8 @@ function M.flush_log_queue(queue)
     end)
 end
 
+function M.pad(s, width)
+    return s .. string.rep(' ', width - #s)
+end
+
 return M

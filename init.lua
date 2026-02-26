@@ -66,6 +66,7 @@ vim.api.nvim_create_autocmd('User', {
     end,
 })
 
+require('modules.profile').setup()
 require('modules.preload').setup()
 
 -- set lazy path
