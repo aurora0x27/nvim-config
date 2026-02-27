@@ -186,9 +186,9 @@ local function generate_lists()
         end
 
         if feat.fmt and spec.formatter then
+            Data.FormatterMap[lang] = { spec.formatter.name }
             if spec.formatter.source ~= 'sys' then
                 local install_name = spec.formatter.packname or spec.formatter.name
-                Data.FormatterMap[lang] = { spec.formatter.name }
                 if not mason_set[install_name] then
                     table.insert(Data.MasonInstallList, install_name)
                     mason_set[install_name] = true

@@ -44,18 +44,19 @@ vim.api.nvim_create_autocmd('User', {
     callback = function()
         vim.schedule(function()
             local profile = require 'modules.profile'
+
+            if profile.enable_lsp then
+                require('modules.lsp').setup()
+            end
+            if not profile.disable_im_switch then
+                require('modules.im-switch').setup()
+            end
             require('modules.keymaps').setup()
             require('modules.options').setup()
             require('modules.autocmd').setup()
             require('modules.diagnostics').setup()
             require('modules.fold').setup()
-            if profile.enable_lsp then
-                require('modules.lsp').setup()
-            end
             require('modules.ssh_mode').setup()
-            if not profile.disable_im_switch then
-                require('modules.im-switch').setup()
-            end
             require('modules.pairs').setup()
             require('modules.patch').setup()
 
@@ -113,10 +114,6 @@ require('lazy').setup {
             },
         },
     },
-    config = function()
-        -- apply options and keymaps
-        -- must be put here as hook because plugin loading is async
-    end,
 } --[[@as LazyConfig]]
 
 --[[

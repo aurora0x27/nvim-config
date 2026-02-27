@@ -1,6 +1,7 @@
 local pyright = {
     filetypes = { 'python' },
     cmd = { 'pyright-langserver', '--stdio' },
+    workspace_required = false,
     root_markers = {
         '.venv',
         'uv.lock',

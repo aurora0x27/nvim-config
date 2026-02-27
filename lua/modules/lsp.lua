@@ -99,6 +99,97 @@ local hover = function(config)
     end)
 end
 
+local function lsp_buf_setup(event)
+    local bufnr = event.buf
+    local thunk = require('utils.loader').thunk
+    local bind = require('utils.loader').bind
+
+    vim.keymap.set(
+        'n',
+        'gd',
+        thunk('fzf-lua', 'lsp_definitions'),
+        { desc = 'LSP Goto Definition', noremap = true, silent = true, buffer = bufnr }
+    )
+
+    vim.keymap.set(
+        'n',
+        'gD',
+        thunk('fzf-lua', 'lsp_declarations'),
+        { desc = 'LSP Goto Declaration', noremap = true, silent = true, buffer = bufnr }
+    )
+
+    vim.keymap.set(
+        'n',
+        '<leader>lr',
+        lsp.buf.rename,
+        { desc = 'LSP [R]ename Symbol', noremap = true, silent = true, buffer = bufnr }
+    )
+
+    vim.keymap.set('n', '<leader>lh', function()
+        local stat = lsp.inlay_hint.is_enabled { bufnr = bufnr }
+        misc.info('Lsp Inlay Hints ' .. (stat and 'Disabled' or 'Enabled'))
+        lsp.inlay_hint.enable(not stat, { bufnr = bufnr })
+    end, { buffer = bufnr, desc = 'Toggle Inlay [H]ints' })
+
+    local FzfLspJmpCfg = { jump1 = false }
+
+    vim.keymap.set(
+        'n',
+        '<Leader>lso',
+        bind(thunk('fzf-lua', 'lsp_outgoing_calls'), FzfLspJmpCfg),
+        { desc = 'FzfLua [L]ist [O]utgoing Calls', noremap = true, silent = true, buffer = bufnr }
+    )
+
+    vim.keymap.set(
+        'n',
+        '<Leader>lsi',
+        bind(thunk('fzf-lua', 'lsp_incoming_calls'), FzfLspJmpCfg),
+        { desc = 'FzfLua [L]ist [I]ncoming Calls', noremap = true, silent = true, buffer = bufnr }
+    )
+
+    vim.keymap.set(
+        'n',
+        '<Leader>lsS',
+        bind(thunk('fzf-lua', 'lsp_type_super'), FzfLspJmpCfg),
+        { desc = 'FzfLua [L]ist [S]uper Types', noremap = true, silent = true, buffer = bufnr }
+    )
+
+    vim.keymap.set(
+        'n',
+        '<Leader>lss',
+        bind(thunk('fzf-lua', 'lsp_type_sub'), FzfLspJmpCfg),
+        { desc = 'FzfLua [L]ist [S]ub Types', noremap = true, silent = true, buffer = bufnr }
+    )
+
+    vim.keymap.set(
+        'n',
+        '<Leader>la',
+        thunk('fzf-lua', 'lsp_code_actions'),
+        { desc = 'FzfLua [L]ist Code [A]ctions', noremap = true, silent = true, buffer = bufnr }
+    )
+
+    vim.keymap.set(
+        'n',
+        '<Leader>fr',
+        thunk('fzf-lua', 'lsp_references'),
+        { desc = 'FzfLua Find Symbol [R]eferences', noremap = true, silent = true, buffer = bufnr }
+    )
+
+    vim.keymap.set(
+        'n',
+        '<Leader>fs',
+        thunk('fzf-lua', 'lsp_document_symbols'),
+        { desc = 'FzfLua Find Document [S]ymbols', noremap = true, silent = true, buffer = bufnr }
+    )
+
+    vim.keymap.set(
+        'n',
+        '<Leader>fS',
+        thunk('fzf-lua', 'lsp_live_workspace_symbols'),
+        { desc = 'FzfLua Find Workspace [S]ymbols', noremap = true, silent = true, buffer = bufnr }
+    )
+end
+
 function M.setup()
     -- if require('modules.profile').enable_xmake_ls then
     --     table.insert(lsp_list, 'xmake_ls')
@@ -111,96 +202,7 @@ function M.setup()
 
     api.nvim_create_autocmd('LspAttach', {
         group = api.nvim_create_augroup('lsp-attach', { clear = true }),
-        callback = function(event)
-            local bufnr = event.buf
-            local thunk = require('utils.loader').thunk
-            local bind = require('utils.loader').bind
-
-            vim.keymap.set(
-                'n',
-                'gd',
-                thunk('fzf-lua', 'lsp_definitions'),
-                { desc = 'LSP Goto Definition', noremap = true, silent = true, buffer = bufnr }
-            )
-
-            vim.keymap.set(
-                'n',
-                'gD',
-                thunk('fzf-lua', 'lsp_declarations'),
-                { desc = 'LSP Goto Declaration', noremap = true, silent = true, buffer = bufnr }
-            )
-
-            vim.keymap.set(
-                'n',
-                '<leader>lr',
-                lsp.buf.rename,
-                { desc = 'LSP [R]ename Symbol', noremap = true, silent = true, buffer = bufnr }
-            )
-
-            vim.keymap.set('n', '<leader>lh', function()
-                local stat = lsp.inlay_hint.is_enabled { bufnr = bufnr }
-                misc.info('Lsp Inlay Hints ' .. (stat and 'Disabled' or 'Enabled'))
-                lsp.inlay_hint.enable(not stat, { bufnr = bufnr })
-            end, { buffer = bufnr, desc = 'Toggle Inlay [H]ints' })
-
-            local FzfLspJmpCfg = { jump1 = false }
-
-            vim.keymap.set(
-                'n',
-                '<Leader>lso',
-                bind(thunk('fzf-lua', 'lsp_outgoing_calls'), FzfLspJmpCfg),
-                { desc = 'FzfLua [L]ist [O]utgoing Calls', noremap = true, silent = true, buffer = bufnr }
-            )
-
-            vim.keymap.set(
-                'n',
-                '<Leader>lsi',
-                bind(thunk('fzf-lua', 'lsp_incoming_calls'), FzfLspJmpCfg),
-                { desc = 'FzfLua [L]ist [I]ncoming Calls', noremap = true, silent = true, buffer = bufnr }
-            )
-
-            vim.keymap.set(
-                'n',
-                '<Leader>lsS',
-                bind(thunk('fzf-lua', 'lsp_type_super'), FzfLspJmpCfg),
-                { desc = 'FzfLua [L]ist [S]uper Types', noremap = true, silent = true, buffer = bufnr }
-            )
-
-            vim.keymap.set(
-                'n',
-                '<Leader>lss',
-                bind(thunk('fzf-lua', 'lsp_type_sub'), FzfLspJmpCfg),
-                { desc = 'FzfLua [L]ist [S]ub Types', noremap = true, silent = true, buffer = bufnr }
-            )
-
-            vim.keymap.set(
-                'n',
-                '<Leader>la',
-                thunk('fzf-lua', 'lsp_code_actions'),
-                { desc = 'FzfLua [L]ist Code [A]ctions', noremap = true, silent = true, buffer = bufnr }
-            )
-
-            vim.keymap.set(
-                'n',
-                '<Leader>fr',
-                thunk('fzf-lua', 'lsp_references'),
-                { desc = 'FzfLua Find Symbol [R]eferences', noremap = true, silent = true, buffer = bufnr }
-            )
-
-            vim.keymap.set(
-                'n',
-                '<Leader>fs',
-                thunk('fzf-lua', 'lsp_document_symbols'),
-                { desc = 'FzfLua Find Document [S]ymbols', noremap = true, silent = true, buffer = bufnr }
-            )
-
-            vim.keymap.set(
-                'n',
-                '<Leader>fS',
-                thunk('fzf-lua', 'lsp_live_workspace_symbols'),
-                { desc = 'FzfLua Find Workspace [S]ymbols', noremap = true, silent = true, buffer = bufnr }
-            )
-        end,
+        callback = lsp_buf_setup,
     })
 
     api.nvim_create_user_command('LspInfo', function()
@@ -222,7 +224,7 @@ function M.setup()
         end
     end, {})
 
-    api.nvim_create_user_command('LspStatus', ':checkhealth lsp', { desc = 'Alias to checkhealth lsp' })
+    api.nvim_create_user_command('LspStatus', '<cmd>checkhealth lsp<CR>', { desc = 'Alias to checkhealth lsp' })
 
     api.nvim_create_user_command('LspLog', function()
         vim.cmd(string.format('tabnew %s', lsp.get_log_path()))
@@ -233,16 +235,8 @@ function M.setup()
     api.nvim_create_user_command('LspStart', function(info)
         local servers = info.fargs
         if #servers == 0 then
-            local ft = vim.bo.filetype
-            ---@diagnostic disable:undefined-field
-            ---@diagnostic disable:invisible
-            for name, _ in pairs(lsp.config._configs) do
-                local fts = lsp.config[name].filetypes
-                if fts and vim.tbl_contains(fts, ft) then
-                    table.insert(servers, name)
-                    print('Started LSP: [' .. name .. ']')
-                end
-            end
+            local bufnr = vim.api.nvim_get_current_buf()
+            require('utils.misc').lsp_buf_startup(bufnr)
         end
         lsp.enable(servers)
     end, {
@@ -253,13 +247,33 @@ function M.setup()
         end,
     })
 
-    api.nvim_create_user_command('LspStop', function()
-        local bufnr = api.nvim_get_current_buf()
-        for _, client in ipairs(lsp.get_clients { bufnr = bufnr }) do
-            client:stop(true)
-            print('Stopped LSP: [' .. client.name .. ']')
+    api.nvim_create_user_command('LspStop', function(info)
+        local clients = lsp.get_clients()
+        local clients_to_stop = info.fargs
+        if #clients_to_stop == 0 then
+            for _, client in ipairs(clients) do
+                client:stop()
+                print('Stopped LSP: [' .. client.name .. ']')
+            end
+        else
+            for _, client in ipairs(clients) do
+                if vim.tbl_contains(clients_to_stop, client.name) then
+                    client:stop(true)
+                    print('Stopped LSP: [' .. client.name .. ']')
+                end
+            end
         end
-    end, {})
+    end, {
+        desc = 'Disable active language servers',
+        nargs = '*',
+        complete = function()
+            local names = {}
+            for _, client in ipairs(lsp.get_clients()) do
+                table.insert(names, client.name)
+            end
+            return names
+        end,
+    })
 
     api.nvim_create_user_command('LspRestart', function()
         local bufnr = api.nvim_get_current_buf()

@@ -288,14 +288,14 @@ function M.setup()
     vim.keymap.set(
         'v',
         '<c-j>',
-        bind(thunk('utils', 'mvblk'), 'down'),
+        bind(require 'utils.mvblk', 'down'),
         { noremap = true, silent = true, desc = 'Move Selected Line Downward' }
     )
 
     vim.keymap.set(
         'v',
         '<c-k>',
-        bind(thunk('utils', 'mvblk'), 'up'),
+        bind(require 'utils.mvblk', 'up'),
         { noremap = true, silent = true, desc = 'Move Selected Line Upward' }
     )
 end

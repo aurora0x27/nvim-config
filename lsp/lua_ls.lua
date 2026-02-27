@@ -4,6 +4,7 @@ local lua_ls = {
     cmd = { 'lua-language-server' },
     filetypes = { 'lua' },
     root_markers = { '.git', 'stylua.toml', '.luarc.json' },
+    workspace_required = false,
     on_init = function(client)
         if client.workspace_folders then
             local path = client.workspace_folders[1].name
