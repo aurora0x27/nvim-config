@@ -56,6 +56,7 @@ function M.check()
         { name = 'Mason Install', data = lang_mod.get_mason_install_list() },
         { name = 'Treesitter Install', data = lang_mod.get_ts_install_list() },
         { name = 'LSP Enabled', data = lang_mod.get_lsp_enable_list() },
+        { name = 'LazySpecs', data = lang_mod.get_lazy_install_list() },
     }
 
     local maps = {
@@ -66,7 +67,7 @@ function M.check()
         if #list.data > 0 then
             vim.health.start(list.name .. ':')
             for _, item in ipairs(list.data) do
-                vim.health.info(item)
+                vim.health.info(tostring(item))
             end
         else
             vim.health.start(list.name .. ': (Empty)')

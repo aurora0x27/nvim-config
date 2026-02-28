@@ -10,7 +10,7 @@ local M = {}
 ---@field lsp? ToolSpec
 ---@field formatter? ToolSpec
 ---@field treesitter string|string[]|boolean
----@field plugins? LazyPluginSpec|LazyPluginSpec[]
+---@field plugins? string|string[]
 
 ---@class LangOpt
 ---@field blacklist string
@@ -157,16 +157,44 @@ local function generate_lists()
     local mason_set = {}
     local ts_set = {}
     local lsp_set = {}
+    local lazy_set = {}
 
     ---@param lang string
     ---@param spec LangSpec
     ---@param feat LangFeatTbl
     local function process_spec(lang, spec, feat)
-        if spec.plugins then
-            if type(spec.plugins) == 'table' then
-                table.insert(Data.LazySpecs, spec.plugins)
+        local function process_lazyspec(name)
+            if type(name) ~= 'string' then
+                err('Expected string, but found ' .. type(name))
+                return
+            end
+            if lazy_set[name] then
+                return
+            end
+            local ok, ret = pcall(require, 'config.plugins.' .. name)
+            if not ok then
+                err(string.format('Cannot find plugin spec file `lua/config/plugins/%s.lua`: %s', name, ret))
             else
-                err(string.format('%s.plugins is %s, expected table', lang, type(spec.plugins)))
+                -- Add debug info with metatable
+                setmetatable(ret, {
+                    __tostring = function()
+                        return '[Plugin Spec: ' .. name .. ']'
+                    end,
+                })
+                table.insert(Data.LazySpecs, ret)
+                lazy_set[name] = true
+            end
+        end
+        if spec.plugins then
+            if type(spec.plugins) == 'string' then
+                process_lazyspec(spec.plugins)
+            elseif type(spec.plugins == 'table') then
+                ---@diagnostic disable:param-type-mismatch
+                for _, i in ipairs(spec.plugins) do
+                    process_lazyspec(i)
+                end
+            else
+                err(string.format('%s.plugins is %s, expected string', lang, type(spec.plugins)))
             end
         end
 
