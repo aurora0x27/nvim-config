@@ -14,7 +14,6 @@ local CodeCompletion = {
 
     -- use a release tag to download pre-built binaries
     version = '1.*',
-    -- AND/OR build from source, requires nightly: https://rust-lang.github.io/rustup/concepts/channels.html#working-with-nightly-rust
     build = not require('modules.profile').blink_use_binary and 'cargo build --release' or nil,
     -- If you use nix, you can build from source using latest nightly rust with:
     -- build = 'nix run .#build-plugin',
@@ -102,10 +101,6 @@ local CodeCompletion = {
                 snippets = {
                     opts = {
                         friendly_snippets = false,
-
-                        -- see the list of frameworks in: https://github.com/rafamadriz/friendly-snippets/tree/main/snippets/frameworks
-                        -- and search for possible languages in: https://github.com/rafamadriz/friendly-snippets/blob/main/package.json
-                        -- the following is just an example, you should only enable the frameworks that you use
                         extended_filetypes = {
                             astro = { 'html' },
                             markdown = { 'blog', 'html' },
@@ -117,8 +112,9 @@ local CodeCompletion = {
         },
 
         -- (Default) Rust fuzzy matcher for typo resistance and significantly better performance
-        -- You may use a lua implementation instead by using `implementation = "lua"` or fallback to the lua implementation,
-        -- when the Rust fuzzy matcher is not available, by using `implementation = "prefer_rust"`
+        -- You may use a lua implementation instead by using `implementation = "lua"`
+        -- or fallback to the lua implementation, when the Rust fuzzy matcher is not available, by using
+        -- `implementation = "prefer_rust"`
         --
         -- See the fuzzy documentation for more information
         fuzzy = { implementation = 'prefer_rust_with_warning' },

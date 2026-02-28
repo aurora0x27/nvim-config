@@ -13,7 +13,6 @@ local function fold_virt_text(result, s, lnum, coloff)
             if new_hl ~= hl then
                 table.insert(result, { text, hl })
                 text = ''
-                hl = nil
             end
             text = text .. char
             hl = new_hl

@@ -17,7 +17,7 @@ local function OverseerTasksForStatus(status)
             return string.format('%s%d', self.symbols[status], #self.tasks[status])
         end,
         --- @diagnostic disable:unused-local
-        hl = function(self)
+        hl = function(_self)
             return {
                 fg = utils.get_highlight(string.format('Overseer%s', status)).fg,
             }

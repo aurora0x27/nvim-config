@@ -50,33 +50,6 @@ local emmylua_ls = {
         '.luacheckrc',
         '.git',
     },
-    -- -- JSON CONFIG EMBEDDED IN LUA
-    -- {
-    --   "$schema": "https://raw.githubusercontent.com/EmmyLuaLs/emmylua-analyzer-rust/refs/heads/main/crates/emmylua_code_analysis/resources/schema.json",
-    --   "runtime": {
-    --     "version": "LuaJIT",
-    --     "requirePattern": [
-    --       "lua/?.lua",
-    --       "lua/?/init.lua",
-    --       "?/lua/?.lua",
-    --       "?/lua/?/init.lua"
-    --     ]
-    --   },
-    --   "workspace": {
-    --     "library": [
-    --       "$VIMRUNTIME",
-    --       "$LLS_Addons/luvit",
-    --     ],
-    --     "ignoreGlobs": ["**/*_spec.lua"]
-    --   },
-    --   "codeAction": {
-    --     "insertSpace": true
-    --   },
-    --   "strict": {
-    --     "typeCall": true,
-    --     "arrayIndex": true
-    --   }
-    -- }
     on_init = function(client)
         -- FIXME: Always load vim api ?
         local workspace_config = load_workspace_emmyrc_config()

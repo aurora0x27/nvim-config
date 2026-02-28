@@ -36,12 +36,7 @@ M.setup = function()
     end, { desc = 'Enable or disable Clipboard Ssh Mode' })
 
     vim.api.nvim_create_user_command('ClipboardSshModeInfo', function()
-        local message = ''
-        if on then
-            message = 'Clipboard ssh mode ON'
-        else
-            message = 'Clipboard ssh mode OFF'
-        end
+        local message = 'Clipboard ssh mode ' .. (on and 'ON' or 'OFF')
         misc.info(message, { title = 'SSH Mode' })
     end, { desc = 'Check ssh mode status' })
 

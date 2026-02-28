@@ -39,7 +39,6 @@ function M.load_module(module_root)
             else
                 table.insert(concat_table, mod)
             end
-            allTable = true
         else
             misc.err('[load_module] Load Failed: ' .. rel_path)
         end

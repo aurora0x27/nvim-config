@@ -5,8 +5,8 @@
 --- Language server for Java.
 ---
 --- IMPORTANT: If you want all the features jdtls has to offer, [nvim-jdtls](https://github.com/mfussenegger/nvim-jdtls)
---- is highly recommended. If all you need is diagnostics, completion, imports, gotos and formatting and some code actions
---- you can keep reading here.
+--- is highly recommended. If all you need is diagnostics, completion, imports, gotos
+--- and formatting and some code actions you can keep reading here.
 ---
 --- For manual installation you can download precompiled binaries from the
 --- [official downloads site](http://download.eclipse.org/jdtls/snapshots/?d)
@@ -17,9 +17,9 @@
 ---   vim.lsp.enable('jdtls')
 --- ```
 ---
---- You can also pass extra custom jvm arguments with the JDTLS_JVM_ARGS environment variable as a space separated list of arguments,
---- that will be converted to multiple --jvm-arg=<param> args when passed to the jdtls script. This will allow for example tweaking
---- the jvm arguments or integration with external tools like lombok:
+--- You can also pass extra custom jvm arguments with the JDTLS_JVM_ARGS environment variable as a space separated
+--- list of arguments, that will be converted to multiple --jvm-arg=<param> args when passed to the jdtls script.
+--- This will allow for example tweaking the jvm arguments or integration with external tools like lombok:
 ---
 --- ```sh
 --- export JDTLS_JVM_ARGS="-javaagent:$HOME/.local/share/java/lombok.jar"

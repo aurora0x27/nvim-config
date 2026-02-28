@@ -173,7 +173,7 @@ function M.lsp_buf_startup(bufnr)
     for name in vim.spairs(lsp._enabled_configs) do
         local config = lsp.config[name]
         if config and can_start(bufnr, config, true) then
-            M.debug('Started LSP: [' .. name .. ']', { title = 'Info' })
+            M.info('Started LSP: [' .. name .. ']', { title = 'Info' })
 
             -- Deepcopy config so changes done in the client
             -- do not propagate back to the enabled configs.

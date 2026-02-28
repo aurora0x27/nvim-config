@@ -105,13 +105,13 @@ local FsEditor = {
             show_hidden = false,
             -- This function defines what is considered a "hidden" file
             ---@diagnostic disable unused-local
-            is_hidden_file = function(name, bufnr)
+            is_hidden_file = function(name, _bufnr)
                 local m = name:match '^%.'
                 return m ~= nil
             end,
             -- This function defines what will never be shown, even when `show_hidden` is set
             ---@diagnostic disable unused-local
-            is_always_hidden = function(name, bufnr)
+            is_always_hidden = function(_name, _bufnr)
                 return false
             end,
             -- Sort file names with numbers in a more intuitive order for humans.
@@ -127,7 +127,7 @@ local FsEditor = {
             },
             -- Customize the highlight group for the file name
             ---@diagnostic disable unused-local
-            highlight_filename = function(entry, is_hidden, is_link_target, is_link_orphan)
+            highlight_filename = function(_entry, _is_hidden, _is_link_target, _is_link_orphan)
                 return nil
             end,
         },
@@ -136,13 +136,13 @@ local FsEditor = {
         -- EXPERIMENTAL support for performing file operations with git
         git = {
             -- Return true to automatically git add/mv/rm files
-            add = function(path)
+            add = function(_path)
                 return false
             end,
-            mv = function(src_path, dest_path)
+            mv = function(_src_path, _dest_path)
                 return false
             end,
-            rm = function(path)
+            rm = function(_path)
                 return false
             end,
         },
@@ -174,7 +174,7 @@ local FsEditor = {
             -- How to open the preview window "load"|"scratch"|"fast_scratch"
             preview_method = 'fast_scratch',
             -- A function that returns true to disable preview on a file e.g. to avoid lag
-            disable_preview = function(filename)
+            disable_preview = function(_filename)
                 return false
             end,
             -- Window-local options to use for preview window buffers

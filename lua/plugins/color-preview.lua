@@ -28,7 +28,8 @@ local ColorPreview = {
         ---@usage 'inline'|'eol'|'eow'
         ---inline mimics VS Code style
         ---eol stands for `end of column` - Recommended to set `virtual_symbol_suffix = ''` when used.
-        ---eow stands for `end of word` - Recommended to set `virtual_symbol_prefix = ' ' and virtual_symbol_suffix = ''` when used.
+        ---eow stands for `end of word` -
+        --- Recommended to set `virtual_symbol_prefix = ' ' and virtual_symbol_suffix = ''` when used.
         virtual_symbol_position = 'inline',
 
         ---Highlight hex colors, e.g. '#FFFFFF'
@@ -69,7 +70,10 @@ local ColorPreview = {
         -- Exclude filetypes or buftypes from highlighting e.g. 'exclude_buftypes = {'text'}'
         exclude_filetypes = {},
         exclude_buftypes = {},
-        -- Exclude buffer from highlighting e.g. 'exclude_buffer = function(bufnr) return vim.fn.getfsize(vim.api.nvim_buf_get_name(bufnr)) > 1000000 end'
+        -- Exclude buffer from highlighting
+        -- e.g. 'exclude_buffer = function(bufnr)
+        --      return vim.fn.getfsize(vim.api.nvim_buf_get_name(bufnr)) > 1000000
+        -- end'
         -- exclude_buffer = function(bufnr) end,
     },
 }

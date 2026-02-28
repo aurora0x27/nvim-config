@@ -39,7 +39,7 @@ local GitUtils = {
         },
         auto_attach = true,
         attach_to_untracked = false,
-        current_line_blame = require('modules.profile').enable_current_line_blame or false, -- Toggle with `:Gitsigns toggle_current_line_blame`
+        current_line_blame = require('modules.profile').enable_current_line_blame or false,
         current_line_blame_opts = {
             virt_text = true,
             virt_text_pos = 'eol', -- 'eol' | 'overlay' | 'right_align'

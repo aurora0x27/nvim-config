@@ -46,7 +46,9 @@ function M.check()
         end
     end
 
+    -- luacheck: push ignore 631
     vim.health.start 'Legend: [L]SP, [F]ormatter, [T]reesitter, [P]lugins | ``: Active, `x`: Mapped but Disabled, `.`: No Capacity'
+    -- luacheck: pop
 
     vim.health.start 'Resource Lists (Final Output)'
 

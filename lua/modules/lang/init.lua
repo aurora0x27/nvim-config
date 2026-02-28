@@ -94,7 +94,7 @@ local CAPABILITY = load_specs 'config.langs'
 ---@field lsp boolean
 ---@field fmt boolean
 ---@field ts boolean
-LANG_FEAT_TBL_DEFAULT = { fmt = true, lsp = true, ts = true }
+local LANG_FEAT_TBL_DEFAULT = { fmt = true, lsp = true, ts = true }
 
 local function parse_to_list(str)
     if not str or str == '' then
