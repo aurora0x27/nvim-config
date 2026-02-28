@@ -89,9 +89,6 @@ require('lazy').setup {
         { import = 'plugins' },
         require('modules.lang').get_lazy_install_list(),
     },
-    -- }, --[[@as LazySpec]] {
-    -- Configure any other `lazy.nvim` configuration options here
-
     install = {
         colorscheme = { 'default' },
     },

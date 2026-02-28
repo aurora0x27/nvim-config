@@ -105,6 +105,8 @@ local CodeCompletion = {
                             astro = { 'html' },
                             markdown = { 'blog', 'html' },
                             zsh = { 'sh' },
+                            plaintex = { 'latex' },
+                            tex = { 'latex' },
                         },
                     },
                 },
