@@ -81,6 +81,37 @@ local function write_json(path, data)
 end
 
 local SCHEMA = require('utils.assets').ProfileSchema
+local RAW_LAZY_SPECS = require('utils.loader').load_data_dir_as_set('config.plugins', function(k, v)
+    v.enabled = false
+    return k, v
+end)
+
+function M.create_lazy_spec_mask_builder()
+    local current_set = vim.deepcopy(RAW_LAZY_SPECS or {})
+    local builder = {}
+
+    --- use callback to process each element
+    ---@param cb fun(name: string, spec: table)
+    function builder:pipe(cb)
+        for name, spec in pairs(current_set) do
+            cb(name, spec)
+        end
+        return self
+    end
+
+    -- Output flattened lazy spec table
+    function builder.unpack()
+        local result = {}
+        for _, spec in pairs(current_set) do
+            if spec then
+                table.insert(result, spec)
+            end
+        end
+        return result
+    end
+
+    return builder
+end
 
 ---@return table
 local function try_load_nvimrc(config_path)
@@ -138,6 +169,10 @@ end
 
 function M.get_logs()
     return log_queue
+end
+
+function M.emit_err()
+    misc.flush_log_queue(log_queue)
 end
 
 function M.get_raw_tbl()

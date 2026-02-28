@@ -17,8 +17,6 @@ local M = {}
 ---@field whitelist string
 ---@field levels string
 
-local uv = vim.uv or vim.loop
-
 local misc = require 'utils.misc'
 
 local log_queue = misc.make_log_queue 'Lang Module'
@@ -49,44 +47,14 @@ local Data = {
     ---@type string[]
     TSEnableLangs = {},
 
-    ---@type LazySpec[]
-    LazySpecs = {},
+    ---@type string[]
+    LazyEnablePlugins = {},
 
     ---@type table<string,string[]>
     FormatterMap = {},
 }
 
----@param module_root string
----@return table<string, LangSpec>
-local function load_specs(module_root)
-    local capabilities = {}
-    local lua_root = vim.fn.stdpath 'config' .. '/lua/'
-    local base_dir = lua_root .. module_root:gsub('%.', '/')
-
-    local fd = uv.fs_scandir(base_dir)
-    if not fd then
-        return capabilities
-    end
-
-    while true do
-        local name, ty = uv.fs_scandir_next(fd)
-        if not name then
-            break
-        end
-
-        if ty == 'file' and name:match '%.lua$' then
-            local lang_name = name:sub(1, -5)
-            local mod_path = module_root .. '.' .. lang_name
-
-            local ok, mod = pcall(require, mod_path)
-            if ok and type(mod) == 'table' then
-                capabilities[lang_name] = mod
-            end
-        end
-    end
-
-    return capabilities
-end
+local load_specs = require('utils.loader').load_data_dir_as_set
 
 local CAPABILITY = load_specs 'config.langs'
 
@@ -94,7 +62,9 @@ local CAPABILITY = load_specs 'config.langs'
 ---@field lsp boolean
 ---@field fmt boolean
 ---@field ts boolean
-local LANG_FEAT_TBL_DEFAULT = { fmt = true, lsp = true, ts = true }
+---@field plg boolean
+
+local LANG_FEAT_TBL_DEFAULT = { fmt = true, lsp = true, ts = true, plg = true }
 
 local function parse_to_list(str)
     if not str or str == '' then
@@ -120,31 +90,52 @@ local function parse_level(tbl, str)
     for block in string.gmatch(str, '([^;]+)') do
         local lang, feats_str = block:match '([^:]+):(.+)'
 
-        if lang and feats_str then
-            lang = vim.trim(lang)
-            if tbl[lang] then
-                -- 2. split feat "ts,+lsp,-fmt" -> "ts", "+lsp", "-fmt"
-                for feat_item in string.gmatch(feats_str, '([^,]+)') do
-                    feat_item = vim.trim(feat_item)
-                    local first_char = feat_item:sub(1, 1)
-                    if feat_item == 'full' then
-                        tbl[lang] = { lsp = true, fmt = true, ts = true }
-                    elseif feat_item == 'none' then
-                        tbl[lang] = { lsp = false, fmt = false, ts = false }
+        -- 2. split feat "ts,+lsp,-fmt" -> "ts", "+lsp", "-fmt"
+        local function process_feat_mask(s)
+            local mask = {}
+            for feat_item in string.gmatch(s, '([^,]+)') do
+                feat_item = vim.trim(feat_item)
+                local first_char = feat_item:sub(1, 1)
+                if feat_item == 'full' then
+                    for k, v in pairs(LANG_FEAT_TBL_DEFAULT) do
+                        mask[k] = v
+                    end
+                    return mask
+                elseif feat_item == 'none' then
+                    for k, v in pairs(LANG_FEAT_TBL_DEFAULT) do
+                        mask[k] = not v
+                    end
+                    return mask
+                else
+                    local feat_name = (first_char == '+' or first_char == '-') and feat_item:sub(2) or feat_item
+                    if type(LANG_FEAT_TBL_DEFAULT[feat_name]) == 'nil' then
+                        warn(string.format('[%s]: Unknown feature: %s', lang, feat_name))
                     else
-                        local feat_name = (first_char == '+' or first_char == '-') and feat_item:sub(2) or feat_item
-                        if type(LANG_FEAT_TBL_DEFAULT[feat_name]) == 'nil' then
-                            warn(string.format('[%s]: Unknown feature: %s', lang, feat_name))
+                        if first_char == '+' then
+                            mask[feat_name] = true
+                        elseif first_char == '-' then
+                            mask[feat_name] = false
                         else
-                            if first_char == '+' then
-                                tbl[lang][feat_name] = true
-                            elseif first_char == '-' then
-                                tbl[lang][feat_name] = false
-                            else
-                                tbl[lang][feat_name] = true
-                            end
+                            mask[feat_name] = true
                         end
                     end
+                end
+            end
+            return mask
+        end
+
+        if lang and feats_str then
+            lang = vim.trim(lang)
+            local mask = process_feat_mask(feats_str)
+            if lang == 'all' then
+                for _, feat in pairs(tbl) do
+                    for k, v in pairs(mask) do
+                        feat[k] = v
+                    end
+                end
+            elseif tbl[lang] then
+                for k, v in pairs(mask) do
+                    tbl[lang][k] = v
                 end
             else
                 warn('Language `' .. lang .. '` is not enabled')
@@ -157,41 +148,18 @@ local function generate_lists()
     local mason_set = {}
     local ts_set = {}
     local lsp_set = {}
-    local lazy_set = {}
 
     ---@param lang string
     ---@param spec LangSpec
     ---@param feat LangFeatTbl
     local function process_spec(lang, spec, feat)
-        local function process_lazyspec(name)
-            if type(name) ~= 'string' then
-                err('Expected string, but found ' .. type(name))
-                return
-            end
-            if lazy_set[name] then
-                return
-            end
-            local ok, ret = pcall(require, 'config.plugins.' .. name)
-            if not ok then
-                err(string.format('Cannot find plugin spec file `lua/config/plugins/%s.lua`: %s', name, ret))
-            else
-                -- Add debug info with metatable
-                setmetatable(ret, {
-                    __tostring = function()
-                        return '[Plugin Spec: ' .. name .. ']'
-                    end,
-                })
-                table.insert(Data.LazySpecs, ret)
-                lazy_set[name] = true
-            end
-        end
-        if spec.plugins then
+        if feat.plg and spec.plugins then
             if type(spec.plugins) == 'string' then
-                process_lazyspec(spec.plugins)
+                table.insert(Data.LazyEnablePlugins, spec.plugins)
             elseif type(spec.plugins == 'table') then
                 ---@diagnostic disable:param-type-mismatch
                 for _, i in ipairs(spec.plugins) do
-                    process_lazyspec(i)
+                    table.insert(Data.LazyEnablePlugins, i)
                 end
             else
                 err(string.format('%s.plugins is %s, expected string', lang, type(spec.plugins)))
@@ -315,9 +283,16 @@ function M.has_capacity(lang, feat)
     end
 end
 
----@return LazySpec[]
-function M.get_lazy_install_list()
-    return Data.LazySpecs
+---@param name string
+---@param spec LazySpec
+function M.mask_lazy_spec(name, spec)
+    if vim.tbl_contains(Data.LazyEnablePlugins, name) then
+        spec.enabled = true
+    end
+end
+
+function M.get_lazy_enable_lists()
+    return Data.LazyEnablePlugins
 end
 
 ---@return string[]

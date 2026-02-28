@@ -60,6 +60,11 @@ vim.api.nvim_create_autocmd('User', {
             require('modules.pairs').setup()
             require('modules.patch').setup()
 
+            -- emit diagnostics info of profile module after noice initialized
+            if not profile.silent_profile_diag then
+                vim.defer_fn(require('modules.profile').emit_err, 100)
+            end
+
             -- emit diagnostics info of lang module after noice initialized
             if not profile.silent_lang_diag then
                 vim.defer_fn(require('modules.lang').emit_err, 100)
@@ -87,7 +92,10 @@ require('lazy').setup {
     -- all the plugins' configure files should be put under `lua/plugins`
     spec = {
         { import = 'plugins' },
-        require('modules.lang').get_lazy_install_list(),
+        require('modules.profile')
+            .create_lazy_spec_mask_builder()
+            :pipe(require('modules.lang').mask_lazy_spec)
+            .unpack(),
     },
     install = {
         colorscheme = { 'default' },

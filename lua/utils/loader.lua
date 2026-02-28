@@ -2,49 +2,121 @@ local M = {}
 
 local misc = require 'utils.misc'
 
+local uv = vim.uv or vim.loop
+
 ---Load all template files from the specified module path and concatenate them into a large table.
 ---@param module_root string prefix of module (such as 'user.templates')
+---@param cb? function
 ---@return table concat_table Concatenate arrays of all template tables
-function M.load_module(module_root)
-    local scan = require 'plenary.scandir'
+function M.load_data_dir_as_list(module_root, cb)
     local concat_table = {}
-
     local lua_root = vim.fn.stdpath 'config' .. '/lua/'
     local base_dir = lua_root .. module_root:gsub('%.', '/')
+    cb = cb or function(tbl)
+        return tbl
+    end
 
-    local files = scan.scan_dir(base_dir, {
-        depth = math.huge,
-        add_dirs = false,
-        search_pattern = '%.lua$',
-    })
-
-    for _, filepath in ipairs(files) do
-        local rel_path = filepath:sub(#lua_root + 1):gsub('%.lua$', ''):gsub('[/\\]', '.')
-
-        local ok, mod = pcall(require, rel_path)
-        if ok and type(mod) == 'table' then
-            local allTable = true
-
-            for _, entry in pairs(mod) do
-                if type(entry) ~= 'table' then
-                    allTable = false
-                    break
+    ---@param dir string
+    local function scan_dir(dir)
+        local handle = uv.fs_scandir(dir)
+        if not handle then
+            return
+        end
+        while true do
+            local name, ty = uv.fs_scandir_next(handle)
+            if not name then
+                break
+            end
+            local fullpath = dir .. '/' .. name
+            if ty == 'directory' then
+                scan_dir(fullpath)
+            elseif ty == 'file' and name:sub(-4) == '.lua' then
+                local rel_path = fullpath:sub(#lua_root + 1):gsub('%.lua$', ''):gsub('[/\\]', '.')
+                local ok, mod = pcall(require, rel_path)
+                if ok and type(mod) == 'table' then
+                    local allTable = true
+                    for _, entry in pairs(mod) do
+                        if type(entry) ~= 'table' then
+                            allTable = false
+                            break
+                        end
+                    end
+                    if allTable then
+                        for _, entry in pairs(mod) do
+                            local res = cb(entry)
+                            if res ~= nil then
+                                table.insert(concat_table, res)
+                            end
+                        end
+                    else
+                        local res = cb(mod)
+                        if res ~= nil then
+                            table.insert(concat_table, res)
+                        end
+                    end
+                else
+                    misc.err('[load_module] Load Failed: ' .. rel_path)
                 end
             end
-
-            if allTable then
-                for _, entry in pairs(mod) do
-                    table.insert(concat_table, entry)
-                end
-            else
-                table.insert(concat_table, mod)
-            end
-        else
-            misc.err('[load_module] Load Failed: ' .. rel_path)
         end
     end
 
+    scan_dir(base_dir)
+
     return concat_table
+end
+
+---@param module_root string
+---@param cb? function
+---@return table<string, table>
+function M.load_data_dir_as_set(module_root, cb)
+    local capabilities = {}
+    cb = cb or function(k, v)
+        return k, v
+    end
+    local lua_root = vim.fn.stdpath 'config' .. '/lua/'
+    local base_dir = lua_root .. module_root:gsub('%.', '/')
+
+    ---@param dir string
+    ---@param relative string
+    local function scan_dir(dir, relative)
+        local fd = uv.fs_scandir(dir)
+        if not fd then
+            return
+        end
+
+        while true do
+            local name, ty = uv.fs_scandir_next(fd)
+            if not name then
+                break
+            end
+
+            local fullpath = dir .. '/' .. name
+            local rel_path = relative ~= '' and (relative .. '/' .. name) or name
+
+            if ty == 'directory' then
+                scan_dir(fullpath, rel_path)
+            elseif ty == 'file' and name:sub(-4) == '.lua' then
+                local key = rel_path:sub(1, -5):gsub('[/\\]', '.')
+
+                local mod_path = module_root .. '.' .. key
+
+                local ok, mod = pcall(require, mod_path)
+                if ok and type(mod) == 'table' then
+                    local k, v = cb(key, mod)
+                    if k ~= nil then
+                        capabilities[k] = v
+                    end
+                else
+                    misc.err('[load_data_dir_as_set] Load Failed: ' .. mod_path)
+                end
+            end
+        end
+    end
+
+    scan_dir(base_dir, '')
+
+    return capabilities
 end
 
 ---@brief Select a function from a module with lazy loading

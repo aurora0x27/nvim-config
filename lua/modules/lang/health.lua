@@ -56,7 +56,7 @@ function M.check()
         { name = 'Mason Install', data = lang_mod.get_mason_install_list() },
         { name = 'Treesitter Install', data = lang_mod.get_ts_install_list() },
         { name = 'LSP Enabled', data = lang_mod.get_lsp_enable_list() },
-        { name = 'LazySpecs', data = lang_mod.get_lazy_install_list() },
+        { name = 'LazySpecs', data = lang_mod.get_lazy_enable_lists() },
     }
 
     local maps = {

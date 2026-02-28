@@ -69,8 +69,7 @@ local Overseer = {
     config = function(_, opts)
         local overseer = require 'overseer'
         overseer.setup(opts)
-        local tbl_loader = require 'utils.loader'
-        local templates = tbl_loader.load_module 'config/overseer/template'
+        local templates = require('utils.loader').load_data_dir_as_list 'config/overseer/template'
         for _, template in ipairs(templates) do
             overseer.register_template(template)
         end
