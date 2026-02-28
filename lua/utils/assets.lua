@@ -40,6 +40,7 @@ M.ProfileSchema = {
     lang_blacklist = '',
     lang_whitelist = '',
     lang_levels = '',
+    statline_scrollbar_style = 'moon',
 }
 
 return M
