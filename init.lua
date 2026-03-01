@@ -91,7 +91,7 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup {
     -- all the plugins' configure files should be put under `lua/plugins`
     spec = {
-        { import = 'plugins' },
+        { import = 'plugins.core' },
         require('modules.profile')
             .create_lazy_spec_mask_builder()
             :pipe(require('modules.lang').mask_lazy_spec)
