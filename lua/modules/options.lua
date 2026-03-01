@@ -17,6 +17,7 @@ local Opt = {
     ignorecase = true,
     undofile = sandbox.undo,
     swapfile = sandbox.swap,
+    shada = sandbox.shada and [[!,'100,<50,s10,h]] or '',
     writebackup = sandbox.wb,
     undodir = vim.fn.stdpath 'state' .. '/undo',
     scrolloff = 5,

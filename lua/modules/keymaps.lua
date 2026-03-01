@@ -272,7 +272,44 @@ function M.setup()
     )
 
     local sandbox = require 'modules.sandbox'.get_mask()
-    if not sandbox.session then
+    if sandbox.session then
+        -- load the session for the current directory
+        vim.keymap.set('n', '<leader>sl', function()
+            vim.schedule(function()
+                local sm = require 'persistence'
+                local cache = sm.current()
+                if vim.fn.filereadable(cache) ~= 0 then
+                    sm.load()
+                else
+                    misc.warn('No session in ' .. vim.fn.getcwd(), { title = 'Session Manager' })
+                end
+            end)
+        end, { noremap = true, silent = true, desc = '[L]oad Session' })
+
+        -- select a session to load
+        vim.keymap.set(
+            'n',
+            '<leader>ss',
+            thunk('persistence', 'select'),
+            { noremap = true, silent = true, desc = '[S]elect Session' }
+        )
+
+        -- -- load the last session
+        -- vim.keymap.set(
+        --     'n',
+        --     '<leader>sl',
+        --     bind(thunk('persistence', 'load'), { last = true }),
+        --     { noremap = true, silent = true, desc = '[L]oad Last Session' }
+        -- )
+
+        -- stop Persistence => session won't be saved on exit
+        vim.keymap.set(
+            'n',
+            '<leader>sd',
+            thunk('persistence', 'stop'),
+            { noremap = true, silent = true, desc = "[D]on't Save On Exit" }
+        )
+    else
         vim.keymap.set('n', '<leader>sl', function()
             local oldfiles = vim.v.oldfiles
             for _, file in ipairs(oldfiles) do

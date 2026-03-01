@@ -24,7 +24,7 @@ M.RawDiagnosticSpec = {
 M.border = 'rounded'
 
 M.ProfileSchema = {
-    sandbox_mode = 'full',
+    sandbox_mode = 'none', -- experimental sandbox mode
     transparent_mode = false,
     diagnose_inline = false,
     dashboard_art_name = 'Ayanami Rei',
