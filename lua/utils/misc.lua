@@ -194,4 +194,42 @@ function M.lsp_buf_startup(bufnr)
     end
 end
 
+--- Feat parser
+---@param feat_s string
+---@param defaults table
+---@param on_error? fun(msg: string)
+function M.process_feat_mask(feat_s, defaults, on_error)
+    local mask = {}
+    on_error = on_error or function(_) end
+    for feat_item in string.gmatch(feat_s, '([^,]+)') do
+        feat_item = vim.trim(feat_item)
+        local first_char = feat_item:sub(1, 1)
+        if feat_item == 'full' then
+            for k, v in pairs(defaults) do
+                mask[k] = v
+            end
+            return mask
+        elseif feat_item == 'none' then
+            for k, v in pairs(defaults) do
+                mask[k] = not v
+            end
+            return mask
+        else
+            local feat_name = (first_char == '+' or first_char == '-') and feat_item:sub(2) or feat_item
+            if type(defaults[feat_name]) == 'nil' then
+                on_error(string.format('Unknown feature: %s', feat_name))
+            else
+                if first_char == '+' then
+                    mask[feat_name] = true
+                elseif first_char == '-' then
+                    mask[feat_name] = false
+                else
+                    mask[feat_name] = true
+                end
+            end
+        end
+    end
+    return mask
+end
+
 return M

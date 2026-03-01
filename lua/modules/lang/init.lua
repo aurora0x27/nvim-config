@@ -91,42 +91,11 @@ local function parse_level(tbl, str)
         local lang, feats_str = block:match '([^:]+):(.+)'
 
         -- 2. split feat "ts,+lsp,-fmt" -> "ts", "+lsp", "-fmt"
-        local function process_feat_mask(s)
-            local mask = {}
-            for feat_item in string.gmatch(s, '([^,]+)') do
-                feat_item = vim.trim(feat_item)
-                local first_char = feat_item:sub(1, 1)
-                if feat_item == 'full' then
-                    for k, v in pairs(LANG_FEAT_TBL_DEFAULT) do
-                        mask[k] = v
-                    end
-                    return mask
-                elseif feat_item == 'none' then
-                    for k, v in pairs(LANG_FEAT_TBL_DEFAULT) do
-                        mask[k] = not v
-                    end
-                    return mask
-                else
-                    local feat_name = (first_char == '+' or first_char == '-') and feat_item:sub(2) or feat_item
-                    if type(LANG_FEAT_TBL_DEFAULT[feat_name]) == 'nil' then
-                        warn(string.format('[%s]: Unknown feature: %s', lang, feat_name))
-                    else
-                        if first_char == '+' then
-                            mask[feat_name] = true
-                        elseif first_char == '-' then
-                            mask[feat_name] = false
-                        else
-                            mask[feat_name] = true
-                        end
-                    end
-                end
-            end
-            return mask
-        end
-
         if lang and feats_str then
             lang = vim.trim(lang)
-            local mask = process_feat_mask(feats_str)
+            local mask = require('utils.misc').process_feat_mask(feats_str, LANG_FEAT_TBL_DEFAULT, function(msg)
+                warn(string.format('[%s]: %s', lang, msg))
+            end)
             if lang == 'all' then
                 for _, feat in pairs(tbl) do
                     for k, v in pairs(mask) do

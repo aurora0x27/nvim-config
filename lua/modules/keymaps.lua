@@ -3,7 +3,6 @@
 local M = {}
 
 local misc = require 'utils.misc'
-local profile = require 'modules.profile'
 
 function M.setup()
     local thunk = require('utils.loader').thunk
@@ -272,7 +271,8 @@ function M.setup()
         { noremap = true, silent = true, desc = 'Launch Lsp [M]anager' }
     )
 
-    if not profile.session_enabled then
+    local sandbox = require 'modules.sandbox'.get_mask()
+    if not sandbox.session then
         vim.keymap.set('n', '<leader>sl', function()
             local oldfiles = vim.v.oldfiles
             for _, file in ipairs(oldfiles) do

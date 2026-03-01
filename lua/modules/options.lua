@@ -3,6 +3,7 @@ local M = {}
 
 local detect = require 'utils.detect'
 local profile = require 'modules.profile'
+local sandbox = require 'modules.sandbox'.get_mask()
 
 local Opt = {
     relativenumber = false,
@@ -14,7 +15,9 @@ local Opt = {
     wildmenu = true,
     ssop = 'blank,buffers,curdir,folds,help,tabpages,winsize,terminal',
     ignorecase = true,
-    undofile = true,
+    undofile = sandbox.undo,
+    swapfile = sandbox.swap,
+    writebackup = sandbox.wb,
     undodir = vim.fn.stdpath 'state' .. '/undo',
     scrolloff = 5,
     virtualedit = 'block',

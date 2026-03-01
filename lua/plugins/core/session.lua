@@ -1,11 +1,12 @@
 local misc = require 'utils.misc'
 local bind = require('utils.loader').bind
 local thunk = require('utils.loader').thunk
+local sandbox = require 'modules.sandbox'.get_mask()
 
 ---@type LazyPluginSpec
 local SessionMgr = {
     'folke/persistence.nvim',
-    enabled = require('modules.profile').session_enabled,
+    enabled = sandbox.session,
     dependencies = {
         'ibhagwan/fzf-lua',
     },
