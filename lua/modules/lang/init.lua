@@ -231,7 +231,7 @@ function M.setup(opt)
 end
 
 ---@param lang string
----@param feat "lsp"|"fmt"|"ts"
+---@param feat "lsp"|"fmt"|"ts"|"plg"
 ---@return boolean
 function M.is_supported(lang, feat)
     local l = Data.EnabledLangs[lang]

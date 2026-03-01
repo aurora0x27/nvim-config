@@ -11,6 +11,14 @@ local CodeFormatter = {
     event = { 'BufReadPost', 'BufNewFile' },
     opts = {
         formatters_by_ft = require('modules.lang').get_formatter_map(),
+        formatters = {
+            prettier = {
+                prepend_args = {
+                    '--ignore-path',
+                    require 'utils.detect'.is_unix() and '/dev/null' or 'NUL',
+                },
+            },
+        },
     },
     config = function(_, opts)
         require('conform').setup(opts)

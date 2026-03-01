@@ -2,6 +2,8 @@
 
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
+local lazydev_enabled = require 'modules.lang'.is_supported('lua', 'plg')
+
 ---@type LazyPluginSpec
 local CodeCompletion = {
     'saghen/blink.cmp',
@@ -92,11 +94,20 @@ local CodeCompletion = {
         -- Default list of enabled providers defined so that you can extend it
         -- elsewhere in your config, without redefining it, due to `opts_extend`
         sources = {
-            default = { 'snippets', 'lsp', 'path', 'buffer', 'lazydev' },
+            default = vim.tbl_filter(function(v)
+                return v ~= nil
+            end, {
+                'snippets',
+                'lsp',
+                'path',
+                'buffer',
+                lazydev_enabled and 'lazydev' or nil,
+            }),
             providers = {
                 lazydev = {
                     name = 'Development',
                     module = 'lazydev.integrations.blink',
+                    enabled = lazydev_enabled,
                 },
                 snippets = {
                     opts = {
