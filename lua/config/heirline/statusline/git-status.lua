@@ -26,7 +26,6 @@ local GitStatus = {
         end,
         hl = { fg = 'red' },
     },
-    hl = { bg = 'bg' },
 }
 
 return GitStatus
