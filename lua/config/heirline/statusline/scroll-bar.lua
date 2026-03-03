@@ -1,61 +1,54 @@
 local Styles = {
-    sbar = {
-        list = { '▁▁ ', '▂▂ ', '▃▃ ', '▄▄ ', '▅▅ ', '▆▆ ', '▇▇ ', '██ ' },
-        mchar = '▁▁ ',
-    },
+    sbar = { '▁▁ ', '▂▂ ', '▃▃ ', '▄▄ ', '▅▅ ', '▆▆ ', '▇▇ ', '██ ' },
     moon = {
-        list = {
-            ' ',
-            ' ',
-            ' ',
-            ' ',
-            ' ',
-            ' ',
-            ' ',
-            ' ',
-            ' ',
-            ' ',
-            ' ',
-            ' ',
-            ' ',
-            ' ',
-            ' ',
-            ' ',
-            ' ',
-            ' ',
-            ' ',
-            ' ',
-            ' ',
-            ' ',
-            ' ',
-            ' ',
-            ' ',
-            ' ',
-            ' ',
-            ' ',
-            ' ',
-        },
-        mchar = ' ',
+        ' ',
+        ' ',
+        ' ',
+        ' ',
+        ' ',
+        ' ',
+        ' ',
+        ' ',
+        ' ',
+        ' ',
+        ' ',
+        ' ',
+        ' ',
+        ' ',
+        ' ',
+        ' ',
+        ' ',
+        ' ',
+        ' ',
+        ' ',
+        ' ',
+        ' ',
+        ' ',
+        ' ',
+        ' ',
+        ' ',
+        ' ',
+        ' ',
+        ' ',
     },
     circle = {
-        list = {
-            ' ',
-            '󰪞 ',
-            '󰪞 ',
-            '󰪟 ',
-            '󰪟 ',
-            '󰪠 ',
-            '󰪠 ',
-            '󰪡 ',
-            '󰪡 ',
-            '󰪢 ',
-            '󰪣 ',
-            '󰪣 ',
-            '󰪤 ',
-            '󰪤 ',
-            '󰪥 ',
-        },
-        mchar = ' ',
+        ' ',
+        ' ',
+        '󰪞 ',
+        '󰪞 ',
+        '󰪟 ',
+        '󰪟 ',
+        '󰪠 ',
+        '󰪠 ',
+        '󰪡 ',
+        '󰪡 ',
+        '󰪢 ',
+        '󰪣 ',
+        '󰪣 ',
+        '󰪤 ',
+        '󰪤 ',
+        '󰪥 ',
+        '󰪥 ',
     },
 }
 
@@ -69,16 +62,14 @@ local function get_style()
 end
 
 local ScrollBar = {
-    static = get_style(),
+    static = {
+        chars = get_style(),
+    },
     provider = function(self)
-        local chars = setmetatable(self.list, {
-            __index = function()
-                return self.mchar
-            end,
-        })
+        local chars = self.chars
         local line_ratio = vim.api.nvim_win_get_cursor(0)[1] / vim.api.nvim_buf_line_count(0)
         local position = math.floor(line_ratio * 100)
-        local icon = chars[math.floor(line_ratio * #chars)] .. position
+        local icon = chars[math.floor(line_ratio * (#chars - 1)) + 1] .. position
         local limit = 2
         if position <= limit or vim.api.nvim_win_get_cursor(0)[1] == 1 then
             return '↑ TOP'
