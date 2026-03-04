@@ -6,15 +6,17 @@ local uv = vim.uv or vim.loop
 
 ---Load all template files from the specified module path and concatenate them into a large table.
 ---@param module_root string prefix of module (such as 'user.templates')
----@param cb? function
+---@param cb? fun(tbl: table):table|nil
+---@param on_error? fun(msg: string)
 ---@return table concat_table Concatenate arrays of all template tables
-function M.load_data_dir_as_list(module_root, cb)
+function M.load_data_dir_as_list(module_root, cb, on_error)
     local concat_table = {}
     local lua_root = vim.fn.stdpath 'config' .. '/lua/'
     local base_dir = lua_root .. module_root:gsub('%.', '/')
     cb = cb or function(tbl)
         return tbl
     end
+    on_error = on_error or misc.err
 
     ---@param dir string
     local function scan_dir(dir)
@@ -55,7 +57,7 @@ function M.load_data_dir_as_list(module_root, cb)
                         end
                     end
                 else
-                    misc.err('[load_module] Load Failed: ' .. rel_path)
+                    on_error('[load_module] Load Failed: ' .. rel_path)
                 end
             end
         end
@@ -67,15 +69,19 @@ function M.load_data_dir_as_list(module_root, cb)
 end
 
 ---@param module_root string
----@param cb? function
+---@param on_error? fun(msg: string)
+---@param cb? fun(set: table<string,table>, k: string[], v: table)
 ---@return table<string, table>
-function M.load_data_dir_as_set(module_root, cb)
-    local capabilities = {}
-    cb = cb or function(k, v)
-        return k, v
+function M.load_data_dir_as_set(module_root, on_error, cb)
+    local set = {}
+    cb = cb or function(s, k, v)
+        s[table.concat(k, '.')] = v
     end
+    on_error = on_error or misc.err
+
     local lua_root = vim.fn.stdpath 'config' .. '/lua/'
     local base_dir = lua_root .. module_root:gsub('%.', '/')
+    local path_stack = {}
 
     ---@param dir string
     ---@param relative string
@@ -95,28 +101,27 @@ function M.load_data_dir_as_set(module_root, cb)
             local rel_path = relative ~= '' and (relative .. '/' .. name) or name
 
             if ty == 'directory' then
+                path_stack[#path_stack + 1] = name
                 scan_dir(fullpath, rel_path)
+                path_stack[#path_stack] = nil
             elseif ty == 'file' and name:sub(-4) == '.lua' then
                 local key = rel_path:sub(1, -5):gsub('[/\\]', '.')
-
+                path_stack[#path_stack + 1] = name:sub(1, -5)
                 local mod_path = module_root .. '.' .. key
-
                 local ok, mod = pcall(require, mod_path)
                 if ok and type(mod) == 'table' then
-                    local k, v = cb(key, mod)
-                    if k ~= nil then
-                        capabilities[k] = v
-                    end
+                    cb(set, path_stack, mod)
                 else
-                    misc.err('[load_data_dir_as_set] Load Failed: ' .. mod_path)
+                    on_error('[load_data_dir_as_set] Load Failed: ' .. mod_path)
                 end
+                path_stack[#path_stack] = nil
             end
         end
     end
 
     scan_dir(base_dir, '')
 
-    return capabilities
+    return set
 end
 
 ---@brief Select a function from a module with lazy loading

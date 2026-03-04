@@ -2,7 +2,24 @@
 
 local M = {}
 
-local RawIconSpec = require('utils.assets').RawDiagnosticSpec
+local RawIconSpec = {
+    [vim.diagnostic.severity.ERROR] = {
+        icon = '󰅚 ',
+        hl = 'DiagnosticError',
+    },
+    [vim.diagnostic.severity.WARN] = {
+        icon = '󰀪 ',
+        hl = 'DiagnosticWarn',
+    },
+    [vim.diagnostic.severity.INFO] = {
+        icon = '󰋽 ',
+        hl = 'DiagnosticInfo',
+    },
+    [vim.diagnostic.severity.HINT] = {
+        icon = '󰌶 ',
+        hl = 'DiagnosticHint',
+    },
+}
 
 local thunk = require('utils.loader').thunk
 
@@ -50,6 +67,10 @@ function M.setup()
 
     -- Hover diagnostics
     vim.keymap.set('n', '<Leader>ld', thunk('vim.diagnostic', 'open_float'), { desc = 'Hover [D]iagnostics' })
+end
+
+function M.get_icon_map()
+    return RawIconSpec
 end
 
 return M

@@ -7,6 +7,7 @@ local M = {}
 ---@field packname? string
 
 ---@class LangSpec
+---@field ft? string
 ---@field lsp? ToolSpec
 ---@field formatter? ToolSpec
 ---@field treesitter string|string[]|boolean
@@ -54,9 +55,29 @@ local Data = {
     FormatterMap = {},
 }
 
-local load_specs = require('utils.loader').load_data_dir_as_set
-
-local CAPABILITY = load_specs 'config.langs'
+local CAPABILITY = require('utils.loader').load_data_dir_as_set('config.langs', log_queue.error, function(set, k, v)
+    if vim.islist(v) then
+        for i, subtbl in ipairs(v) do
+            local ft = subtbl.ft
+            if ft then
+                if set[ft] then
+                    log_queue.warn(
+                        string.format('[Lang]: CAPABILITY[%s] is filled before, origin value is over written', ft)
+                    )
+                end
+                set[ft] = subtbl
+            else
+                log_queue.error(string.format('[Lang]: given array in a file but item %d does not has field `ft`', i))
+            end
+        end
+    else
+        local key = v.ft or k[#k]
+        if set[key] then
+            log_queue.warn(string.format('[Lang]: CAPABILITY[%s] is filled before, origin value is over written', key))
+        end
+        set[key] = v
+    end
+end)
 
 ---@class LangFeatTbl
 ---@field lsp boolean
@@ -244,7 +265,7 @@ end
 ---@param lang string
 ---@param feat "lsp"|"fmt"|"ts"
 ---@return boolean
-function M.has_capacity(lang, feat)
+function M.has_capability(lang, feat)
     if CAPABILITY[lang] then
         return CAPABILITY[lang][feat] and true or false
     else

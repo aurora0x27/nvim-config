@@ -9,6 +9,10 @@
 ###############################################
 --]]
 
+if vim.loader then
+    vim.loader.enable()
+end
+
 -- DEBUG MODE
 vim.g.debug_mode = vim.env.NVIM_CONFIG_DEV
 

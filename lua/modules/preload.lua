@@ -50,22 +50,18 @@ function M.setup()
     vim.o.expandtab = true
     vim.o.autoindent = true
 
-    -- '*.tmpl' template file in configuration
-    vim.api.nvim_create_autocmd({ 'BufRead', 'BufNewFile' }, {
-        pattern = '*.tmpl',
-        callback = function(args)
-            local fname = vim.fn.fnamemodify(args.file, ':t')
-            local m = fname:match '%.([%w_]+)%.tmpl$'
-            if m then
-                vim.bo[args.buf].filetype = vim.filetype.match { filename = 'dummy.' .. m } or m
-            end
-        end,
-    })
-
     -- filetype alias
     vim.filetype.add {
         extension = {
             mdx = 'markdown',
+            -- '*.tmpl' template file in configuration
+            tmpl = function(path, _)
+                local new_ft = path:match('%.([%w_]+)%.tmpl$')
+                if new_ft then
+                    return new_ft
+                end
+                return 'template' -- fallback
+            end,
         },
         pattern = {
             -- Add patterns
@@ -76,12 +72,6 @@ function M.setup()
 
     -- register filetype `xmake`
     vim.treesitter.language.register('lua', 'xmake')
-    vim.api.nvim_create_autocmd({ 'FileType' }, {
-        pattern = 'xmake',
-        callback = function()
-            vim.treesitter.start()
-        end,
-    })
 end
 
 return M
