@@ -136,6 +136,14 @@ local nvimrc_path
 ---@class ProfileOpt
 ---@field config_path string
 
+local function safe_replace(str, placeholder, repl)
+    local s, e = str:find(placeholder, 1, true)
+    if not s then
+        return str
+    end
+    return str:sub(1, s - 1) .. repl .. str:sub(e + 1)
+end
+
 ---@param opts? ProfileOpt
 function M.setup(opts)
     opts = opts or {}
@@ -147,6 +155,7 @@ function M.setup(opts)
     -- environment mask
     for k, v in pairs(nvimrc) do
         local env_name = 'NVIM_' .. k:upper()
+        ---@type string|nil
         local env_val = vim.env[env_name]
         if env_val then
             local ty = type(v)
@@ -160,8 +169,10 @@ function M.setup(opts)
                 else
                     warn(string.format('Env %s is not a valid number', env_name))
                 end
-            else
-                nvimrc[k] = env_val
+            elseif ty == 'string' then
+                -- `$@` is replaced with current value of the option
+                local val = safe_replace(env_val, '$@', nvimrc[k])
+                nvimrc[k] = val
             end
         end
     end

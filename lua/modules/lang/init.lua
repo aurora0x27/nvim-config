@@ -62,18 +62,22 @@ local CAPABILITY = require('utils.loader').load_data_dir_as_set('config.langs', 
             if ft then
                 if set[ft] then
                     log_queue.warn(
-                        string.format('[Lang]: CAPABILITY[%s] is filled before, origin value is over written', ft)
+                        string.format('[Lang]: CAPABILITY[%s] is filled before, origin value will be over written', ft)
                     )
                 end
                 set[ft] = subtbl
             else
-                log_queue.error(string.format('[Lang]: given array in a file but item %d does not has field `ft`', i))
+                log_queue.error(
+                    string.format('[Lang]: Item %d in file `%s` does not have field `ft`', table.concat(k, '/'), i)
+                )
             end
         end
     else
         local key = v.ft or k[#k]
         if set[key] then
-            log_queue.warn(string.format('[Lang]: CAPABILITY[%s] is filled before, origin value is over written', key))
+            log_queue.warn(
+                string.format('[Lang]: CAPABILITY[%s] is filled before, origin value will be over written', key)
+            )
         end
         set[key] = v
     end
@@ -86,21 +90,6 @@ end)
 ---@field plg boolean
 
 local LANG_FEAT_TBL_DEFAULT = { fmt = true, lsp = true, ts = true, plg = true }
-
-local function parse_to_list(str)
-    if not str or str == '' then
-        return {}
-    end
-    local t = {}
-    for item in string.gmatch(str, '([^,]+)') do
-        if not CAPABILITY[item] then
-            warn('Language `' .. item .. '` is not in CAPABILITY')
-        else
-            table.insert(t, vim.trim(item))
-        end
-    end
-    return t
-end
 
 local function parse_level(tbl, str)
     if not str or str == '' then
@@ -224,28 +213,44 @@ local function generate_lists()
     end
 end
 
+---@param s string
+---@return table<string, boolean>
+local function parse_to_set(s)
+    local res = {}
+    if s == '' or s == nil then
+        return res
+    end
+    for item in string.gmatch(s, '([^,]+)') do
+        local name = vim.trim(item)
+        if name ~= 'all' and CAPABILITY[name] == nil then
+            warn(string.format('Item `%s` is not in CAPABILITY', name))
+        end
+        res[name] = true
+    end
+    return res
+end
+
 ---@param opt LangOpt
 function M.setup(opt)
     local bl_s = opt.blacklist or ''
     local wl_s = opt.whitelist or ''
     local lvl_s = opt.levels or ''
-    local bl
-    local wl
-    if #wl_s == 0 or wl_s == 'all' then
-        wl = vim.tbl_keys(CAPABILITY)
-    else
-        wl = parse_to_list(wl_s)
-    end
-    if bl_s == 'all' then
-        return
-    else
-        bl = parse_to_list(bl_s)
-    end
-    local enabled_langs = vim.tbl_filter(function(lang_name)
-        return not vim.tbl_contains(bl, lang_name)
-    end, wl)
-    for _, name in ipairs(enabled_langs) do
-        Data.EnabledLangs[name] = vim.deepcopy(LANG_FEAT_TBL_DEFAULT)
+    local all_lang_keys = vim.tbl_keys(CAPABILITY)
+    local wl_set = parse_to_set(wl_s)
+    local bl_set = parse_to_set(bl_s)
+    local has_whitelist = #wl_s > 0 and wl_s ~= 'all'
+    for _, name in ipairs(all_lang_keys) do
+        local is_enabled = true
+        if has_whitelist then
+            is_enabled = wl_set[name] == true
+        end
+        -- `name` is declared in blacklist but enabled in whitelist, enable it
+        if (bl_set['all'] or bl_set[name]) and not (has_whitelist and wl_set[name]) then
+            is_enabled = false
+        end
+        if is_enabled then
+            Data.EnabledLangs[name] = vim.deepcopy(LANG_FEAT_TBL_DEFAULT)
+        end
     end
     parse_level(Data.EnabledLangs, lvl_s)
     generate_lists()
