@@ -1,4 +1,4 @@
-local border = require('utils.assets').border
+local border = require('config.assets.misc').border
 local thunk = require('utils.loader').thunk
 
 ---@type LazyPluginSpec

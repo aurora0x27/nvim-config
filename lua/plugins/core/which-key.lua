@@ -52,12 +52,12 @@ local KeyMapIntellisense = {
         -- Document existing key chains
         spec = {
             { '<leader>f', group = '[F]ind' },
-            { '<leader>fg', group = 'Fzflua [F]ind [G]it' },
-            { '<leader>fgb', group = 'FzfLua [F]ind [G]it B?' },
+            { '<leader>fg', group = '[F]ind [G]it' },
+            { '<leader>fgb', group = '[F]ind [G]it B?' },
             { '<leader>e', group = '[E]xplorer' },
             { '<leader>l', group = '[L]anguage Utils' },
             { '<leader>ls', group = '[L]sp [S]earch' },
-            { '<leader>t', group = '[T]ab/[T]oggle/[T]erminal' },
+            { '<leader>t', group = '[T]ab/[T]oggle/[T]erm' },
             { '<leader>p', group = '[P]review' },
             { '<leader>b', group = '[B]uffer' },
             { '<leader>r', group = '[R]un tasks' },

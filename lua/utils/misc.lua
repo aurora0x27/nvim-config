@@ -232,4 +232,20 @@ function M.process_feat_mask(feat_s, defaults, on_error)
     return mask
 end
 
+---Sets a global highlight group.
+---@param name string @Highlight group name, e.g. "ErrorMsg"
+---@param foreground? string @The foreground color
+---@param background? string @The background color
+---@param bold? boolean
+---@param italic? boolean
+function M.set_global_hl(name, foreground, background, bold, italic)
+    vim.api.nvim_set_hl(0, name, {
+        fg = foreground,
+        bg = background,
+        italic = italic == true,
+        bold = bold == true,
+        default = not vim.g.colors_name:find('catppuccin'),
+    })
+end
+
 return M

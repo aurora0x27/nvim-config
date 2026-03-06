@@ -1,4 +1,4 @@
-local WinBorder = require('utils.assets').border
+local WinBorder = require('config.assets.misc').border
 
 local FzfLua = {
     'ibhagwan/fzf-lua',

@@ -80,7 +80,7 @@ local function write_json(path, data)
     return true
 end
 
-local SCHEMA = require('utils.assets').ProfileSchema
+local SCHEMA = require('config.assets.misc').ProfileSchema
 local RAW_LAZY_SPECS = require('utils.loader').load_data_dir_as_set('plugins.opt', log_queue.error, function(set, k, v)
     v.enabled = false
     set[table.concat(k, '.')] = v

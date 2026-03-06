@@ -9,6 +9,11 @@
 ###############################################
 --]]
 
+if vim.g.vscode then
+    vim.notify('Cannot apply this configuration to vscode, Nothing is loaded', vim.log.levels.WARN)
+    return
+end
+
 if vim.loader then
     vim.loader.enable()
 end
@@ -66,12 +71,12 @@ vim.api.nvim_create_autocmd('User', {
 
             -- emit diagnostics info of profile module after noice initialized
             if not profile.silent_profile_diag then
-                vim.defer_fn(require('modules.profile').emit_err, 100)
+                vim.defer_fn(require('modules.profile').emit_err, 1000)
             end
 
             -- emit diagnostics info of lang module after noice initialized
             if not profile.silent_lang_diag then
-                vim.defer_fn(require('modules.lang').emit_err, 100)
+                vim.defer_fn(require('modules.lang').emit_err, 1200)
             end
         end)
     end,
@@ -91,6 +96,14 @@ if not vim.uv.fs_stat(lazypath) then
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
+local icons = {
+    kind = require('config.assets.icons').get('kind'),
+    documents = require('config.assets.icons').get('documents'),
+    ui = require('config.assets.icons').get('ui'),
+    ui_sep = require('config.assets.icons').get('ui', true),
+    misc = require('config.assets.icons').get('misc'),
+}
+
 -- import plugins
 require('lazy').setup {
     -- all the plugins' configure files should be put under `lua/plugins`
@@ -109,6 +122,27 @@ require('lazy').setup {
         width = 0.8,
         height = 0.8,
         border = 'rounded',
+        icons = {
+            cmd = icons.misc.Code,
+            config = icons.ui.Gear,
+            event = icons.kind.Event,
+            ft = icons.documents.Files,
+            init = icons.misc.Gear,
+            import = icons.documents.Import,
+            keys = icons.ui.Keyboard,
+            loaded = icons.ui.Check,
+            not_loaded = icons.ui.Circle,
+            plugin = icons.ui.Package,
+            runtime = icons.misc.Vim,
+            source = icons.kind.StaticMethod,
+            start = icons.ui.Play,
+            list = {
+                icons.ui_sep.Dot,
+                icons.ui_sep.Circle,
+                icons.ui_sep.Right,
+                icons.ui_sep.ArrowRight,
+            },
+        },
     },
     performance = {
         rtp = {

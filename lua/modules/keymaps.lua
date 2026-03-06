@@ -3,191 +3,146 @@
 local M = {}
 
 local misc = require 'utils.misc'
+local thunk = require('utils.loader').thunk
+local bind = require('utils.loader').bind
+local map = vim.keymap.set
 
 function M.setup()
-    local thunk = require('utils.loader').thunk
-    local bind = require('utils.loader').bind
-
     -- resize window
-    vim.keymap.set('n', '<C-Left>', thunk('smart-splits', 'resize_left'), { noremap = true, silent = true })
-    vim.keymap.set('n', '<C-Right>', thunk('smart-splits', 'resize_right'), { noremap = true, silent = true })
-    vim.keymap.set('n', '<C-Up>', thunk('smart-splits', 'resize_up'), { noremap = true, silent = true })
-    vim.keymap.set('n', '<C-Down>', thunk('smart-splits', 'resize_down'), { noremap = true, silent = true })
+    map('n', '<C-Left>', thunk('smart-splits', 'resize_left'), { noremap = true, silent = true })
+    map('n', '<C-Right>', thunk('smart-splits', 'resize_right'), { noremap = true, silent = true })
+    map('n', '<C-Up>', thunk('smart-splits', 'resize_up'), { noremap = true, silent = true })
+    map('n', '<C-Down>', thunk('smart-splits', 'resize_down'), { noremap = true, silent = true })
 
     -- buffer swich
-    vim.keymap.set(
+    map(
         'n',
         '<C-h>',
         thunk('smart-splits', 'move_cursor_left'),
         { desc = 'Move to left window', noremap = true, silent = true }
     )
 
-    vim.keymap.set(
+    map(
         'n',
         '<C-j>',
         thunk('smart-splits', 'move_cursor_down'),
         { desc = 'Move to below window', noremap = true, silent = true }
     )
 
-    vim.keymap.set(
+    map(
         'n',
         '<C-k>',
         thunk('smart-splits', 'move_cursor_up'),
         { desc = 'Move to above window', noremap = true, silent = true }
     )
 
-    vim.keymap.set(
+    map(
         'n',
         '<C-l>',
         thunk('smart-splits', 'move_cursor_right'),
         { desc = 'Move to right window', noremap = true, silent = true }
     )
 
-    vim.keymap.set('n', 'H', '<cmd>bp<CR>', { noremap = true, silent = true })
-    vim.keymap.set('n', 'L', '<cmd>bn<CR>', { noremap = true, silent = true })
+    map('n', 'H', '<cmd>bp<CR>', { noremap = true, silent = true })
+    map('n', 'L', '<cmd>bn<CR>', { noremap = true, silent = true })
 
     -- Fzflua related, prefix is leader-t
-    vim.keymap.set(
-        'n',
-        '<Leader>ff',
-        thunk('fzf-lua', 'files'),
-        { desc = 'Fzflua Find [F]iles', noremap = true, silent = true }
-    )
+    map('n', '<Leader>ff', thunk('fzf-lua', 'files'), { desc = 'Find [F]iles', noremap = true, silent = true })
 
-    vim.keymap.set(
-        'n',
-        '<Leader>fo',
-        thunk('fzf-lua', 'oldfiles'),
-        { desc = 'Fzflua Find [O]ld Files', noremap = true, silent = true }
-    )
+    map('n', '<Leader>fo', thunk('fzf-lua', 'oldfiles'), { desc = 'Find [O]ld Files', noremap = true, silent = true })
 
-    vim.keymap.set(
+    map(
         'n',
         '<Leader>ft',
         thunk('fzf-lua', 'treesitter'),
-        { desc = 'Fzflua Find [T]reesitter Symbols', noremap = true, silent = true }
+        { desc = 'Find [T]reesitter Symbols', noremap = true, silent = true }
     )
 
-    vim.keymap.set(
-        'n',
-        '<Leader>fw',
-        thunk('fzf-lua', 'live_grep'),
-        { desc = 'Fzflua [W]ildcard Grep', noremap = true, silent = true }
-    )
+    map('n', '<Leader>fw', thunk('fzf-lua', 'live_grep'), { desc = '[W]ildcard Grep', noremap = true, silent = true })
 
-    vim.keymap.set(
-        'n',
-        '<Leader>fb',
-        thunk('fzf-lua', 'buffers'),
-        { desc = 'Fzflua Find [B]uffer', noremap = true, silent = true }
-    )
+    map('n', '<Leader>fb', thunk('fzf-lua', 'buffers'), { desc = 'Find [B]uffer', noremap = true, silent = true })
 
-    vim.keymap.set(
-        'n',
-        '<Leader>fB',
-        thunk('fzf-lua', 'builtin'),
-        { desc = 'Fzflua Find [B]uiltin', noremap = true, silent = true }
-    )
+    map('n', '<Leader>fB', thunk('fzf-lua', 'builtin'), { desc = 'Find [B]uiltin', noremap = true, silent = true })
 
-    vim.keymap.set(
+    map(
         'n',
         '<Leader>fd',
         thunk('fzf-lua', 'diagnostics_document'),
-        { desc = 'Fzflua Find Document [D]iagnostics', noremap = true, silent = true }
+        { desc = 'Find Document [D]iagnostics', noremap = true, silent = true }
     )
 
-    vim.keymap.set(
+    map(
         'n',
         '<Leader>fD',
         thunk('fzf-lua', 'diagnostics_workspace'),
-        { desc = 'Fzflua Find Workspace [D]iagnostics', noremap = true, silent = true }
+        { desc = 'Find Workspace [D]iagnostics', noremap = true, silent = true }
     )
 
-    vim.keymap.set(
+    map(
         'n',
         '<Leader>fC',
         thunk('fzf-lua', 'highlights'),
-        { desc = 'Fzflua Find Highlight [C]olors', noremap = true, silent = true }
+        { desc = 'Find Highlight [C]olors', noremap = true, silent = true }
     )
 
-    vim.keymap.set(
+    map(
         'n',
         '<Leader>fgs',
         thunk('fzf-lua', 'git_status'),
-        { desc = 'Fzflua Find [G]it [S]tatus', noremap = true, silent = true }
+        { desc = 'Find [G]it [S]tatus', noremap = true, silent = true }
     )
 
-    vim.keymap.set(
+    map(
         'n',
         '<Leader>fgc',
         thunk('fzf-lua', 'git_commits'),
-        { desc = 'Fzflua Find [G]it [C]ommits', noremap = true, silent = true }
+        { desc = 'Find [G]it [C]ommits', noremap = true, silent = true }
     )
 
-    vim.keymap.set(
+    map(
         'n',
         '<Leader>fgbc',
         thunk('fzf-lua', 'git_bcommits'),
-        { desc = 'Fzflua Find [G]it [B]uffer [C]ommits', noremap = true, silent = true }
+        { desc = 'Find [G]it [B]uffer [C]ommits', noremap = true, silent = true }
     )
 
-    vim.keymap.set(
+    map(
         'n',
         '<Leader>fgbr',
         thunk('fzf-lua', 'git_branches'),
-        { desc = 'Fzflua Find [G]it [BR]anches', noremap = true, silent = true }
+        { desc = 'Find [G]it [BR]anches', noremap = true, silent = true }
     )
 
-    vim.keymap.set(
+    map(
         'n',
         '<Leader>fm',
         thunk('noice.integrations.fzf', 'open'),
-        { desc = 'Fzflua Find Noice [M]sg', noremap = true, silent = true }
+        { desc = 'Find Noice [M]sg', noremap = true, silent = true }
     )
 
-    vim.keymap.set(
-        'n',
-        '<Leader>fH',
-        thunk('fzf-lua', 'helptags'),
-        { desc = 'Fzflua Find [H]elp Tags', noremap = true, silent = true }
-    )
+    map('n', '<Leader>fH', thunk('fzf-lua', 'helptags'), { desc = 'Find [H]elp Tags', noremap = true, silent = true })
 
-    vim.keymap.set(
-        'n',
-        '<Leader>fT',
-        '<cmd>TodoFzfLua<CR>',
-        { desc = 'FzfLua Find [T]odo Items', noremap = true, silent = true }
-    )
+    map('n', '<Leader>fT', '<cmd>TodoFzfLua<CR>', { desc = 'Find [T]odo Items', noremap = true, silent = true })
 
-    vim.keymap.set(
+    map(
         'n',
         '<Leader>f:',
         thunk('fzf-lua', 'command_history'),
-        { desc = 'Fzflua Find Command History', noremap = true, silent = true }
+        { desc = 'Find Command History', noremap = true, silent = true }
     )
 
-    vim.keymap.set(
-        'n',
-        '<Leader>fR',
-        thunk('fzf-lua', 'registers'),
-        { desc = 'Fzflua Find [R]egister', noremap = true, silent = true }
-    )
+    map('n', '<Leader>fR', thunk('fzf-lua', 'registers'), { desc = 'Find [R]egister', noremap = true, silent = true })
 
     -- buffer releated, prefix is leader-b
-    vim.keymap.set(
-        'n',
-        '<Leader>bc',
-        '<cmd>bp | bd #<CR>',
-        { desc = 'Buffer [C]lose Current', noremap = true, silent = true }
-    )
+    map('n', '<Leader>bc', '<cmd>bp | bd #<CR>', { desc = 'Buffer [C]lose Current', noremap = true, silent = true })
 
-    vim.keymap.set({ 'n', 'v' }, 'j', 'gj', { noremap = true, silent = true })
-    vim.keymap.set({ 'n', 'v' }, 'k', 'gk', { noremap = true, silent = true })
+    map({ 'n', 'v' }, 'j', 'gj', { noremap = true, silent = true })
+    map({ 'n', 'v' }, 'k', 'gk', { noremap = true, silent = true })
 
-    vim.keymap.set('n', '<Leader>h', '<cmd>Alpha<CR>', { desc = 'Open [H]ome Page', noremap = true, silent = true })
+    map('n', '<Leader>h', '<cmd>Alpha<CR>', { desc = 'Open [H]ome Page', noremap = true, silent = true })
 
     -- File explorer
-    vim.keymap.set(
+    map(
         'n',
         '<leader>e',
         bind(thunk('neo-tree.command', 'execute'), { action = 'show', source = 'filesystem', toggle = true }),
@@ -198,7 +153,7 @@ function M.setup()
         }
     )
 
-    vim.keymap.set(
+    map(
         'n',
         '<leader>o',
         bind(thunk('neo-tree.command', 'execute'), { action = 'show', source = 'document_symbols', toggle = true }),
@@ -210,39 +165,35 @@ function M.setup()
     )
 
     -- Clean search highlight
-    vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>', { silent = true })
+    map('n', '<Esc>', '<cmd>nohlsearch<CR>', { silent = true })
 
     -- Delete j and k in select mode
     vim.keymap.del('s', 'j')
     vim.keymap.del('s', 'k')
 
-    vim.keymap.set(
+    map(
         'n',
         '-',
         bind(thunk('oil', 'open_float'), nil, { preview = { horizontal = true } }),
         { desc = 'Open parent directory' }
     )
 
-    -- Not frequently used
-    -- vim.keymap.set('i', '<C-j>', '<Down>', { noremap = true, silent = true })
-    -- vim.keymap.set('i', '<C-k>', '<Up>', { noremap = true, silent = true })
-    vim.keymap.set('i', '<C-h>', '<Left>', { noremap = true, silent = true })
-    vim.keymap.set('i', '<C-l>', '<Right>', { noremap = true, silent = true })
+    -- -- insert mode move cursor
+    -- map('i', '<C-j>', '<Down>', { noremap = true, silent = true })
+    -- map('i', '<C-k>', '<Up>', { noremap = true, silent = true })
+    -- map('i', '<C-h>', '<Left>', { noremap = true, silent = true })
+    -- map('i', '<C-l>', '<Right>', { noremap = true, silent = true })
 
     -- Use ctrl-/ to goto normal mode, so weird
     if vim.env.TMUX then
-        vim.keymap.set('t', '<C-_>', '<cmd>stopinsert<cr>', { noremap = true, silent = true })
+        map('t', '<C-_>', '<cmd>stopinsert<cr>', { noremap = true, silent = true })
     else
-        vim.keymap.set('t', '<C-/>', '<cmd>stopinsert<cr>', { noremap = true, silent = true })
+        map('t', '<C-/>', '<cmd>stopinsert<cr>', { noremap = true, silent = true })
     end
 
-    vim.keymap.set(
-        { 'n' },
-        '<Leader>tt',
-        '<cmd>tabnext<cr>',
-        { noremap = true, silent = true, desc = '[T]ab switch next' }
-    )
-    vim.keymap.set({ 'n' }, '<Leader>tn', function()
+    -- Tab related
+    map({ 'n' }, '<Leader>tt', '<cmd>tabnext<cr>', { noremap = true, silent = true, desc = '[T]ab switch next' })
+    map({ 'n' }, '<Leader>tn', function()
         local name = vim.fn.input('File name: ', '', 'file')
         if name ~= '' then
             vim.cmd('tabnew ' .. name)
@@ -250,21 +201,16 @@ function M.setup()
             misc.warn 'Warn: Filename not assigned, nothing todo'
         end
     end, { noremap = true, silent = true, desc = 'Tab [N]ew' })
-    vim.keymap.set(
-        { 'n' },
-        '<Leader>tp',
-        '<cmd>tabprevious<cr>',
-        { noremap = true, silent = true, desc = 'Tab [P]revious' }
-    )
-    vim.keymap.set(
+    map({ 'n' }, '<Leader>tp', '<cmd>tabprevious<cr>', { noremap = true, silent = true, desc = 'Tab [P]revious' })
+    map(
         { 'n' },
         '<Leader>ta',
         '<cmd>tabnew %<cr>',
         { noremap = true, silent = true, desc = 'Tab [A]dd With Current Buffer' }
     )
-    vim.keymap.set({ 'n' }, '<Leader>tc', '<cmd>tabclose<cr>', { noremap = true, silent = true, desc = 'Tab [C]lose' })
+    map({ 'n' }, '<Leader>tc', '<cmd>tabclose<cr>', { noremap = true, silent = true, desc = 'Tab [C]lose' })
 
-    vim.keymap.set(
+    map(
         { 'n' },
         '<Leader>lm',
         thunk('mason.ui', 'open'),
@@ -274,7 +220,7 @@ function M.setup()
     local sandbox = require 'modules.sandbox'.get_mask()
     if sandbox.session then
         -- load the session for the current directory
-        vim.keymap.set('n', '<leader>sl', function()
+        map('n', '<leader>sl', function()
             vim.schedule(function()
                 local sm = require 'persistence'
                 local cache = sm.current()
@@ -284,33 +230,33 @@ function M.setup()
                     misc.warn('No session in ' .. vim.fn.getcwd(), { title = 'Session Manager' })
                 end
             end)
-        end, { noremap = true, silent = true, desc = '[L]oad Session' })
+        end, { noremap = true, silent = true, desc = '[L]oad Last Session Of Current Workspace' })
 
         -- select a session to load
-        vim.keymap.set(
+        map(
             'n',
             '<leader>ss',
             thunk('persistence', 'select'),
             { noremap = true, silent = true, desc = '[S]elect Session' }
         )
 
-        -- -- load the last session
-        -- vim.keymap.set(
-        --     'n',
-        --     '<leader>sl',
-        --     bind(thunk('persistence', 'load'), { last = true }),
-        --     { noremap = true, silent = true, desc = '[L]oad Last Session' }
-        -- )
+        -- load the last session
+        map(
+            'n',
+            '<leader>sL',
+            bind(thunk('persistence', 'load'), { last = true }),
+            { noremap = true, silent = true, desc = '[L]oad Last Session' }
+        )
 
         -- stop Persistence => session won't be saved on exit
-        vim.keymap.set(
+        map(
             'n',
             '<leader>sd',
             thunk('persistence', 'stop'),
             { noremap = true, silent = true, desc = "[D]on't Save On Exit" }
         )
     else
-        vim.keymap.set('n', '<leader>sl', function()
+        map('n', '<leader>sl', function()
             local oldfiles = vim.v.oldfiles
             for _, file in ipairs(oldfiles) do
                 if vim.fn.filereadable(file) == 1 then
@@ -322,14 +268,14 @@ function M.setup()
         end, { noremap = true, silent = true, desc = 'Recover [L]ast Buffer' })
     end
 
-    vim.keymap.set(
+    map(
         'v',
         '<c-j>',
         bind(require 'utils.mvblk', 'down'),
         { noremap = true, silent = true, desc = 'Move Selected Line Downward' }
     )
 
-    vim.keymap.set(
+    map(
         'v',
         '<c-k>',
         bind(require 'utils.mvblk', 'up'),
