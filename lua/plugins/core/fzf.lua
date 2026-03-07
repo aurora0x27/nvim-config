@@ -9,6 +9,17 @@ local FzfLua = {
     ---@module "fzf-lua"
     ---@type fzf-lua.Config|{}
     opts = {
+        fzf_colors = true,
+
+        winopts = {
+            row = 0.50,
+            col = 0.50,
+            ---@diagnostic disable:missing-fields
+            preview = {
+                scrollbar = 'float',
+            },
+        },
+
         keymap = {
             -- Below are the default binds, setting any value in these tables will override
             -- the defaults, to inherit from the defaults change [1] from `false` to `true`
