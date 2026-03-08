@@ -33,7 +33,10 @@ function M.load_data_dir_as_list(module_root, cb, on_error)
             if ty == 'directory' then
                 scan_dir(fullpath)
             elseif ty == 'file' and name:sub(-4) == '.lua' then
-                local rel_path = fullpath:sub(#lua_root + 1):gsub('%.lua$', ''):gsub('[/\\]', '.')
+                local rel_path = fullpath
+                    :sub(#lua_root + 1)
+                    :gsub('%.lua$', '')
+                    :gsub('[/\\]', '.')
                 local ok, mod = pcall(require, rel_path)
                 if ok and type(mod) == 'table' then
                     local allTable = true
@@ -98,7 +101,8 @@ function M.load_data_dir_as_set(module_root, on_error, cb)
             end
 
             local fullpath = dir .. '/' .. name
-            local rel_path = relative ~= '' and (relative .. '/' .. name) or name
+            local rel_path = relative ~= '' and (relative .. '/' .. name)
+                or name
 
             if ty == 'directory' then
                 path_stack[#path_stack + 1] = name

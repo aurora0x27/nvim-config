@@ -1,6 +1,6 @@
+--------------------------------------------------------------------------------
 -- CodeCompletion: code completor ui
-
--- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+--------------------------------------------------------------------------------
 
 local lazydev_enabled = require 'modules.lang'.is_supported('lua', 'plg')
 
@@ -16,7 +16,9 @@ local CodeCompletion = {
 
     -- use a release tag to download pre-built binaries
     version = '1.*',
-    build = not require('modules.profile').blink_use_binary and 'cargo build --release' or nil,
+    build = not require('modules.profile').blink_use_binary
+            and 'cargo build --release'
+        or nil,
     -- If you use nix, you can build from source using latest nightly rust with:
     -- build = 'nix run .#build-plugin',
 
@@ -70,7 +72,9 @@ local CodeCompletion = {
                     components = {
                         provider = {
                             text = function(ctx)
-                                return '[' .. ctx.item.source_name:sub(1, 3):upper() .. ']'
+                                return '['
+                                    .. ctx.item.source_name:sub(1, 3):upper()
+                                    .. ']'
                             end,
                         },
                     },

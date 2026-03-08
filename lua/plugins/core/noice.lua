@@ -1,6 +1,6 @@
--- Float window ui
-
--- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+--------------------------------------------------------------------------------
+-- Float window ui, command line popup
+--------------------------------------------------------------------------------
 
 ---@type LazyPluginSpec
 local Noice = {

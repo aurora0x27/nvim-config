@@ -107,7 +107,12 @@ end
 
 --- @param config vim.lsp.Config
 local function validate_config(config)
-    vim.validate('cmd', config.cmd, validate_cmd, 'expected function or table with executable command')
+    vim.validate(
+        'cmd',
+        config.cmd,
+        validate_cmd,
+        'expected function or table with executable command'
+    )
     vim.validate('reuse_client', config.reuse_client, 'function', true)
     vim.validate('filetypes', config.filetypes, 'table', true)
 end
@@ -122,7 +127,10 @@ end
 --- @param logging boolean
 local function can_start(bufnr, config, logging)
     assert(config)
-    if type(config.filetypes) == 'table' and not vim.tbl_contains(config.filetypes, vim.bo[bufnr].filetype) then
+    if
+        type(config.filetypes) == 'table'
+        and not vim.tbl_contains(config.filetypes, vim.bo[bufnr].filetype)
+    then
         return false
     end
 
@@ -194,10 +202,16 @@ function M.lsp_buf_startup(bufnr)
     end
 end
 
---- Feat parser
----@param feat_s string
----@param defaults table
+--- Feat string parser
+---
+--- String: `+foo,-bar,baz` means enable foo,baz and disable bar
+--- keyword `full` means use full default options, `none` means
+--- use the *not* of default options.
+---
+---@param feat_s string feat string
+---@param defaults table<string, boolean> schema table
 ---@param on_error? fun(msg: string)
+---@return table masked result
 function M.process_feat_mask(feat_s, defaults, on_error)
     local mask = {}
     on_error = on_error or function(_) end
@@ -215,7 +229,9 @@ function M.process_feat_mask(feat_s, defaults, on_error)
             end
             return mask
         else
-            local feat_name = (first_char == '+' or first_char == '-') and feat_item:sub(2) or feat_item
+            local feat_name = (first_char == '+' or first_char == '-')
+                    and feat_item:sub(2)
+                or feat_item
             if type(defaults[feat_name]) == 'nil' then
                 on_error(string.format('Unknown feature: %s', feat_name))
             else

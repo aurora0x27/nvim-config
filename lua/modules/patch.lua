@@ -1,3 +1,9 @@
+--------------------------------------------------------------------------------
+-- Workspace Patch
+--
+-- Read workspace settings from `.nvim` or `.vscode/nvim`. Propose for the
+-- secondary directory is that most projects have `.vscode/` in their gitignores
+--------------------------------------------------------------------------------
 local M = {}
 
 function M.setup()

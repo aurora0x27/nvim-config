@@ -21,14 +21,21 @@ local function identify_go_dir(custom_args, on_complete)
     vim.system(cmd, { text = true }, function(output)
         local res = vim.trim(output.stdout or '')
         if output.code == 0 and res ~= '' then
-            if custom_args.custom_subdir and custom_args.custom_subdir ~= '' then
+            if
+                custom_args.custom_subdir
+                and custom_args.custom_subdir ~= ''
+            then
                 res = res .. custom_args.custom_subdir
             end
             on_complete(res)
         else
             vim.schedule(function()
                 misc.err(
-                    ('[gopls] identify ' .. custom_args.envvar_id .. ' dir cmd failed with code %d: %s\n%s'):format(
+                    (
+                        '[gopls] identify '
+                        .. custom_args.envvar_id
+                        .. ' dir cmd failed with code %d: %s\n%s'
+                    ):format(
                         output.code,
                         vim.inspect(cmd),
                         output.stderr
@@ -47,11 +54,14 @@ local function get_std_lib_dir()
         return std_lib
     end
 
-    identify_go_dir({ envvar_id = 'GOROOT', custom_subdir = '/src' }, function(dir)
-        if dir then
-            std_lib = dir
+    identify_go_dir(
+        { envvar_id = 'GOROOT', custom_subdir = '/src' },
+        function(dir)
+            if dir then
+                std_lib = dir
+            end
         end
-    end)
+    )
     return std_lib
 end
 
@@ -84,7 +94,9 @@ local function get_root_dir(fname)
             return clients[#clients].config.root_dir
         end
     end
-    return vim.fs.root(fname, 'go.work') or vim.fs.root(fname, 'go.mod') or vim.fs.root(fname, '.git')
+    return vim.fs.root(fname, 'go.work')
+        or vim.fs.root(fname, 'go.mod')
+        or vim.fs.root(fname, '.git')
 end
 
 return {

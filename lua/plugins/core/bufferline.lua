@@ -1,6 +1,6 @@
--- Tabline
-
--- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+--------------------------------------------------------------------------------
+-- BufferLine/Tabline
+--------------------------------------------------------------------------------
 
 ---@type LazyPluginSpec
 local Tabline = {
@@ -40,10 +40,26 @@ local Tabline = {
         })
 
         local mocha = require('catppuccin.palettes').get_palette 'mocha'
-        vim.api.nvim_set_hl(0, 'BufferLineIndicatorSelected', { fg = mocha.lavender, bold = true, italic = true })
-        vim.api.nvim_set_hl(0, 'BufferLineModified', { fg = mocha.teal, bold = true })
-        vim.api.nvim_set_hl(0, 'BufferLineModifiedVisible', { fg = mocha.teal, bold = true })
-        vim.api.nvim_set_hl(0, 'BufferLineModifiedSelected', { fg = mocha.teal, bold = true })
+        vim.api.nvim_set_hl(
+            0,
+            'BufferLineIndicatorSelected',
+            { fg = mocha.lavender, bold = true, italic = true }
+        )
+        vim.api.nvim_set_hl(
+            0,
+            'BufferLineModified',
+            { fg = mocha.teal, bold = true }
+        )
+        vim.api.nvim_set_hl(
+            0,
+            'BufferLineModifiedVisible',
+            { fg = mocha.teal, bold = true }
+        )
+        vim.api.nvim_set_hl(
+            0,
+            'BufferLineModifiedSelected',
+            { fg = mocha.teal, bold = true }
+        )
     end,
 }
 

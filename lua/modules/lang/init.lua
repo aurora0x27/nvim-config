@@ -1,3 +1,16 @@
+--------------------------------------------------------------------------------
+-- Language module
+--
+-- Orchestrates the parsing of LangSpecs and Environment-driven options.
+--
+-- Designed as a functional data pipeline: each transformation
+-- (aggregate/project) generates a new view of the underlying Schema without
+-- mutating the original source. This ensures a predictable, idempotent
+-- configuration state.
+--
+-- Initialization options are all strings, which makes them very easy to
+-- concatenate and interface with environment variables.
+--------------------------------------------------------------------------------
 local M = {}
 
 ---@class ToolSpec
@@ -55,33 +68,47 @@ local Data = {
     FormatterMap = {},
 }
 
-local CAPABILITY = require('utils.loader').load_data_dir_as_set('config.langs', log_queue.error, function(set, k, v)
-    if vim.islist(v) then
-        for i, subtbl in ipairs(v) do
-            local ft = subtbl.ft
-            if ft then
-                if set[ft] then
-                    log_queue.warn(
-                        string.format('[Lang]: CAPABILITY[%s] is filled before, origin value will be over written', ft)
+local CAPABILITY = require('utils.loader').load_data_dir_as_set(
+    'config.langs',
+    log_queue.error,
+    function(set, k, v)
+        if vim.islist(v) then
+            for i, subtbl in ipairs(v) do
+                local ft = subtbl.ft
+                if ft then
+                    if set[ft] then
+                        log_queue.warn(
+                            string.format(
+                                '[Lang]: CAPABILITY[%s] is filled before, origin value will be over written',
+                                ft
+                            )
+                        )
+                    end
+                    set[ft] = subtbl
+                else
+                    log_queue.error(
+                        string.format(
+                            '[Lang]: Item %d in file `%s` does not have field `ft`',
+                            table.concat(k, '/'),
+                            i
+                        )
                     )
                 end
-                set[ft] = subtbl
-            else
-                log_queue.error(
-                    string.format('[Lang]: Item %d in file `%s` does not have field `ft`', table.concat(k, '/'), i)
+            end
+        else
+            local key = v.ft or k[#k]
+            if set[key] then
+                log_queue.warn(
+                    string.format(
+                        '[Lang]: CAPABILITY[%s] is filled before, origin value will be over written',
+                        key
+                    )
                 )
             end
+            set[key] = v
         end
-    else
-        local key = v.ft or k[#k]
-        if set[key] then
-            log_queue.warn(
-                string.format('[Lang]: CAPABILITY[%s] is filled before, origin value will be over written', key)
-            )
-        end
-        set[key] = v
     end
-end)
+)
 
 ---@class LangFeatTbl
 ---@field lsp boolean
@@ -103,9 +130,13 @@ local function parse_level(tbl, str)
         -- 2. split feat "ts,+lsp,-fmt" -> "ts", "+lsp", "-fmt"
         if lang and feats_str then
             lang = vim.trim(lang)
-            local mask = require('utils.misc').process_feat_mask(feats_str, LANG_FEAT_TBL_DEFAULT, function(msg)
-                warn(string.format('[%s]: %s', lang, msg))
-            end)
+            local mask = require('utils.misc').process_feat_mask(
+                feats_str,
+                LANG_FEAT_TBL_DEFAULT,
+                function(msg)
+                    warn(string.format('[%s]: %s', lang, msg))
+                end
+            )
             if lang == 'all' then
                 for _, feat in pairs(tbl) do
                     for k, v in pairs(mask) do
@@ -141,7 +172,13 @@ local function generate_lists()
                     table.insert(Data.LazyEnablePlugins, i)
                 end
             else
-                err(string.format('%s.plugins is %s, expected string', lang, type(spec.plugins)))
+                err(
+                    string.format(
+                        '%s.plugins is %s, expected string',
+                        lang,
+                        type(spec.plugins)
+                    )
+                )
             end
         end
 
@@ -163,7 +200,8 @@ local function generate_lists()
         if feat.fmt and spec.formatter then
             Data.FormatterMap[lang] = { spec.formatter.name }
             if spec.formatter.source ~= 'sys' then
-                local install_name = spec.formatter.packname or spec.formatter.name
+                local install_name = spec.formatter.packname
+                    or spec.formatter.name
                 if not mason_set[install_name] then
                     table.insert(Data.MasonInstallList, install_name)
                     mason_set[install_name] = true
@@ -173,7 +211,12 @@ local function generate_lists()
 
         local handle_ts = function(name)
             if type(name) ~= 'string' then
-                err(string.format('Unknown treesitter decl type: `%s`, expected string', type(name)))
+                err(
+                    string.format(
+                        'Unknown treesitter decl type: `%s`, expected string',
+                        type(name)
+                    )
+                )
                 return
             end
             if not ts_set[name] then
@@ -198,7 +241,12 @@ local function generate_lists()
                 table.insert(Data.TSEnableLangs, lang)
                 handle_ts(spec.treesitter)
             else
-                err(string.format('Unknown treesitter spec type: `%s`, expected string or boolean or string[]', ty))
+                err(
+                    string.format(
+                        'Unknown treesitter spec type: `%s`, expected string or boolean or string[]',
+                        ty
+                    )
+                )
             end
         end
     end
@@ -245,7 +293,10 @@ function M.setup(opt)
             is_enabled = wl_set[name] == true
         end
         -- `name` is declared in blacklist but enabled in whitelist, enable it
-        if (bl_set['all'] or bl_set[name]) and not (has_whitelist and wl_set[name]) then
+        if
+            (bl_set['all'] or bl_set[name])
+            and not (has_whitelist and wl_set[name])
+        then
             is_enabled = false
         end
         if is_enabled then

@@ -1,6 +1,6 @@
+--------------------------------------------------------------------------------
 -- Git utils collection
-
--- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+--------------------------------------------------------------------------------
 
 ---@type LazyPluginSpec
 local GitUtils = {
@@ -39,7 +39,8 @@ local GitUtils = {
         },
         auto_attach = true,
         attach_to_untracked = false,
-        current_line_blame = require('modules.profile').enable_current_line_blame or false,
+        current_line_blame = require('modules.profile').enable_current_line_blame
+            or false,
         current_line_blame_opts = {
             virt_text = true,
             virt_text_pos = 'eol', -- 'eol' | 'overlay' | 'right_align'
@@ -99,10 +100,30 @@ local GitUtils = {
                 gitsigns.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
             end, { desc = 'Git Hunk [R]eset' })
 
-            map('n', '<leader>ghS', gitsigns.stage_buffer, { desc = 'Git [S]tage Buffer' })
-            map('n', '<leader>ghR', gitsigns.reset_buffer, { desc = 'Git [R]eset Buffer' })
-            map('n', '<leader>ghp', gitsigns.preview_hunk, { desc = 'Git [P]review Hunk' })
-            map('n', '<leader>ghi', gitsigns.preview_hunk_inline, { desc = 'Git Preview Hunk [I]nline' })
+            map(
+                'n',
+                '<leader>ghS',
+                gitsigns.stage_buffer,
+                { desc = 'Git [S]tage Buffer' }
+            )
+            map(
+                'n',
+                '<leader>ghR',
+                gitsigns.reset_buffer,
+                { desc = 'Git [R]eset Buffer' }
+            )
+            map(
+                'n',
+                '<leader>ghp',
+                gitsigns.preview_hunk,
+                { desc = 'Git [P]review Hunk' }
+            )
+            map(
+                'n',
+                '<leader>ghi',
+                gitsigns.preview_hunk_inline,
+                { desc = 'Git Preview Hunk [I]nline' }
+            )
 
             map('n', '<leader>gb', function()
                 gitsigns.blame_line { full = true }
@@ -111,11 +132,21 @@ local GitUtils = {
             map('n', '<leader>gd', gitsigns.diffthis, { desc = 'Git [D]iff' })
 
             -- Toggles
-            map('n', '<leader>gtb', gitsigns.toggle_current_line_blame, { desc = 'Git toggle current line blame' })
-            map('n', '<leader>gtw', gitsigns.toggle_word_diff, { desc = 'Git toggle word diff' })
+            map(
+                'n',
+                '<leader>gtb',
+                gitsigns.toggle_current_line_blame,
+                { desc = 'Git toggle current line blame' }
+            )
+            map(
+                'n',
+                '<leader>gtw',
+                gitsigns.toggle_word_diff,
+                { desc = 'Git toggle word diff' }
+            )
 
             -- Text object
-            map({'o', 'x'}, 'ih', gitsigns.select_hunk)
+            map({ 'o', 'x' }, 'ih', gitsigns.select_hunk)
         end,
     },
 }

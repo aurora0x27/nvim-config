@@ -1,3 +1,13 @@
+--------------------------------------------------------------------------------
+-- Sandbox options
+--
+-- Options:
+--   * session  persistance.nvim
+--   * undo     undofile
+--   * shada    shared data, ShaDa file
+--   * swap     create swapfile for current buffer
+--   * wb       writeback mode
+--------------------------------------------------------------------------------
 local M = {}
 
 local SANDBOX_MODE_DEFAULT = {
@@ -10,9 +20,20 @@ local SANDBOX_MODE_DEFAULT = {
 
 local misc = require 'utils.misc'
 
-local Mask = misc.process_feat_mask(require('modules.profile').sandbox_mode, SANDBOX_MODE_DEFAULT, function(msg)
-    vim.defer_fn(require('utils.loader').bind(misc.err, msg, { title = 'Sandbox option' }), 100)
-end)
+local Mask = misc.process_feat_mask(
+    require('modules.profile').sandbox_mode,
+    SANDBOX_MODE_DEFAULT,
+    function(msg)
+        vim.defer_fn(
+            require('utils.loader').bind(
+                misc.err,
+                msg,
+                { title = 'Sandbox option' }
+            ),
+            1000
+        )
+    end
+)
 
 function M.get_mask()
     return Mask

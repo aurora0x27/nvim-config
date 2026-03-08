@@ -45,7 +45,11 @@ local ViMode = {
         return ' ' .. (self.mode_name[self.mode] or 'UNKNOWN') .. ' '
     end,
     hl = function(self)
-        return { fg = 'black', bg = self.mode_hl[self.mode] or 'red', bold = true }
+        return {
+            fg = 'black',
+            bg = self.mode_hl[self.mode] or 'red',
+            bold = true,
+        }
     end,
     update = true,
 }

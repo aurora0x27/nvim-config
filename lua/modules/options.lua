@@ -67,7 +67,10 @@ function M.setup()
                 cache_enabled = 0,
             }
         else
-            misc.warn('Under windows cannot find win32yank.exe, please install', { title = 'Clipboard' })
+            misc.warn(
+                'Under windows cannot find win32yank.exe, please install',
+                { title = 'Clipboard' }
+            )
         end
     end
 
@@ -92,7 +95,11 @@ function M.setup()
     vim.api.nvim_set_hl(0, 'BlinkCmpDocSeparator', { fg = mocha.blue })
 
     -- Fold text
-    vim.api.nvim_set_hl(0, 'CustomFold', { fg = mocha.teal, bold = true, italic = true })
+    vim.api.nvim_set_hl(
+        0,
+        'CustomFold',
+        { fg = mocha.teal, bold = true, italic = true }
+    )
 
     vim.fn.mkdir(vim.opt.undodir:get()[1], 'p')
 

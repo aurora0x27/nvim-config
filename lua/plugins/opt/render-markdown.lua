@@ -1,7 +1,10 @@
 ---@type LazyPluginSpec
 local RenderMarkdown = {
     'MeanderingProgrammer/render-markdown.nvim',
-    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' },
+    dependencies = {
+        'nvim-treesitter/nvim-treesitter',
+        'nvim-tree/nvim-web-devicons',
+    },
     ---@module 'render-markdown'
     ---@type render.md.UserConfig
     opts = {
@@ -18,14 +21,24 @@ local RenderMarkdown = {
                 highlight = 'RenderMarkdownInfo',
                 category = 'obsidian',
             },
-            tldr = { raw = '[!TLDR]', rendered = '󰦩 Tldr', highlight = 'RenderMarkdownInfo', category = 'obsidian' },
+            tldr = {
+                raw = '[!TLDR]',
+                rendered = '󰦩 Tldr',
+                highlight = 'RenderMarkdownInfo',
+                category = 'obsidian',
+            },
             failure = {
                 raw = '[!FAILURE]',
                 rendered = ' Failure',
                 highlight = 'RenderMarkdownError',
                 category = 'obsidian',
             },
-            fail = { raw = '[!FAIL]', rendered = ' Fail', highlight = 'RenderMarkdownError', category = 'obsidian' },
+            fail = {
+                raw = '[!FAIL]',
+                rendered = ' Fail',
+                highlight = 'RenderMarkdownError',
+                category = 'obsidian',
+            },
             missing = {
                 raw = '[!MISSING]',
                 rendered = ' Missing',
@@ -56,16 +69,36 @@ local RenderMarkdown = {
                 highlight = 'RenderMarkdownError',
                 category = 'obsidian',
             },
-            bug = { raw = '[!BUG]', rendered = ' Bug', highlight = 'RenderMarkdownError', category = 'obsidian' },
+            bug = {
+                raw = '[!BUG]',
+                rendered = ' Bug',
+                highlight = 'RenderMarkdownError',
+                category = 'obsidian',
+            },
             quote = {
                 raw = '[!QUOTE]',
                 rendered = ' Quote',
                 highlight = 'RenderMarkdownQuote',
                 category = 'obsidian',
             },
-            cite = { raw = '[!CITE]', rendered = ' Cite', highlight = 'RenderMarkdownQuote', category = 'obsidian' },
-            todo = { raw = '[!TODO]', rendered = ' Todo', highlight = 'RenderMarkdownInfo', category = 'obsidian' },
-            wip = { raw = '[!WIP]', rendered = '󰦖 WIP', highlight = 'RenderMarkdownHint', category = 'obsidian' },
+            cite = {
+                raw = '[!CITE]',
+                rendered = ' Cite',
+                highlight = 'RenderMarkdownQuote',
+                category = 'obsidian',
+            },
+            todo = {
+                raw = '[!TODO]',
+                rendered = ' Todo',
+                highlight = 'RenderMarkdownInfo',
+                category = 'obsidian',
+            },
+            wip = {
+                raw = '[!WIP]',
+                rendered = '󰦖 WIP',
+                highlight = 'RenderMarkdownHint',
+                category = 'obsidian',
+            },
             done = {
                 raw = '[!DONE]',
                 rendered = ' Done',
@@ -94,7 +127,14 @@ local RenderMarkdown = {
         },
 
         heading = {
-            icons = { ' 󰼏 ', ' 󰎨 ', ' 󰼑 ', ' 󰎲 ', ' 󰼓 ', ' 󰎴 ' },
+            icons = {
+                ' 󰼏 ',
+                ' 󰎨 ',
+                ' 󰼑 ',
+                ' 󰎲 ',
+                ' 󰼓 ',
+                ' 󰎴 ',
+            },
             border = false,
             render_modes = true, -- keep rendering while inserting
             width = 'block',
@@ -200,11 +240,27 @@ local RenderMarkdown = {
 
         pipe_table = {
             alignment_indicator = '─',
-            border = { '╭', '┬', '╮', '├', '┼', '┤', '╰', '┴', '╯', '│', '─' },
+            border = {
+                '╭',
+                '┬',
+                '╮',
+                '├',
+                '┼',
+                '┤',
+                '╰',
+                '┴',
+                '╯',
+                '│',
+                '─',
+            },
         },
 
         link = {
-            wiki = { icon = ' ', highlight = 'RenderMarkdownWikiLink', scope_highlight = 'RenderMarkdownWikiLink' },
+            wiki = {
+                icon = ' ',
+                highlight = 'RenderMarkdownWikiLink',
+                scope_highlight = 'RenderMarkdownWikiLink',
+            },
             image = ' ',
             custom = {
                 github = { pattern = 'github', icon = ' ' },

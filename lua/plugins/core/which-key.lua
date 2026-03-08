@@ -1,6 +1,6 @@
+--------------------------------------------------------------------------------
 -- Useful plugin to show you pending keybinds.
-
--- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+--------------------------------------------------------------------------------
 
 ---@type LazyPluginSpec
 local KeyMapIntellisense = {

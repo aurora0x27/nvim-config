@@ -1,6 +1,6 @@
+--------------------------------------------------------------------------------
 -- Float window terminal
-
--- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+--------------------------------------------------------------------------------
 
 local thunk = require('utils.loader').thunk
 local mocha = require('catppuccin.palettes').get_palette 'mocha'

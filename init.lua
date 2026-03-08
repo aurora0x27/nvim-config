@@ -10,15 +10,21 @@
 --]]
 
 if vim.g.vscode then
-    vim.notify('Cannot apply this configuration to vscode, Nothing is loaded', vim.log.levels.WARN)
+    vim.notify(
+        'Cannot apply this configuration to vscode, Nothing is loaded',
+        vim.log.levels.WARN
+    )
     return
 end
 
+-- Enable aot bytecode
 if vim.loader then
     vim.loader.enable()
 end
 
--- DEBUG MODE
+--------------------------------------------------------------------------------
+-- Phase 0: DEBUG MODE
+--------------------------------------------------------------------------------
 vim.g.debug_mode = vim.env.NVIM_CONFIG_DEV
 
 local function set_rtpath()
@@ -40,14 +46,22 @@ if vim.g.debug_mode == '1' then
         once = true,
         callback = function()
             vim.defer_fn(function()
-                vim.notify('Entered DEBUG mode', vim.log.levels.WARN, { title = 'Config' })
+                vim.notify(
+                    'Entered DEBUG mode',
+                    vim.log.levels.WARN,
+                    { title = 'Config' }
+                )
             end, 150)
         end,
     })
 end
--- DEBUG MODE
+--------------------------------------------------------------------------------
+-- END DEBUG MODE
+--------------------------------------------------------------------------------
 
--- Load user defined settings after Lazy initialization
+--------------------------------------------------------------------------------
+-- Phase 3: Load user defined settings after Lazy initialization
+--------------------------------------------------------------------------------
 vim.api.nvim_create_autocmd('User', {
     pattern = 'LazyVimStarted',
     callback = function()
@@ -82,14 +96,26 @@ vim.api.nvim_create_autocmd('User', {
     end,
 })
 
+--------------------------------------------------------------------------------
+-- Phase 1: Load preload module
+--------------------------------------------------------------------------------
 require('modules.preload').setup()
 
--- set lazy path
+--------------------------------------------------------------------------------
+-- Phase 2: Bootstrap and load lazy
+--------------------------------------------------------------------------------
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 ---@diagnostic disable: undefined-field
 if not vim.uv.fs_stat(lazypath) then
     local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
-    local out = vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
+    local out = vim.fn.system {
+        'git',
+        'clone',
+        '--filter=blob:none',
+        '--branch=stable',
+        lazyrepo,
+        lazypath,
+    }
     if vim.v.shell_error ~= 0 then
         error('Error cloning lazy.nvim:\n' .. out)
     end

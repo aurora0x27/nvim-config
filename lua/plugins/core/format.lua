@@ -1,6 +1,6 @@
--- Format code
-
--- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+--------------------------------------------------------------------------------
+-- Formatter
+--------------------------------------------------------------------------------
 
 local bind = require('utils.loader').bind
 local thunk = require('utils.loader').thunk
@@ -23,7 +23,10 @@ local CodeFormatter = {
     config = function(_, opts)
         require('conform').setup(opts)
 
-        local do_format = bind(thunk('conform', 'format'), { async = true, lsp_fallback = true })
+        local do_format = bind(
+            thunk('conform', 'format'),
+            { async = true, lsp_fallback = true }
+        )
 
         vim.keymap.set(
             'n',
@@ -32,7 +35,11 @@ local CodeFormatter = {
             { desc = '[F]ormat Current Buffer', noremap = true, silent = true }
         )
 
-        vim.api.nvim_create_user_command('Format', do_format, { desc = 'Format Current Buffer' })
+        vim.api.nvim_create_user_command(
+            'Format',
+            do_format,
+            { desc = 'Format Current Buffer' }
+        )
     end,
 }
 

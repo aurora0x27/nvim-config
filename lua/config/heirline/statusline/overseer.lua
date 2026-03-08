@@ -14,7 +14,11 @@ local function OverseerTasksForStatus(status)
             return self.tasks[status]
         end,
         provider = function(self)
-            return string.format('%s%d', self.symbols[status], #self.tasks[status])
+            return string.format(
+                '%s%d',
+                self.symbols[status],
+                #self.tasks[status]
+            )
         end,
         --- @diagnostic disable:unused-local
         hl = function(_self)
@@ -30,8 +34,12 @@ local Overseer = {
         return package.loaded.overseer
     end,
     init = function(self)
-        local tasks = require('overseer.task_list').list_tasks { unique = true, include_ephemeral = true }
-        local tasks_by_status = require('overseer.util').tbl_group_by(tasks, 'status')
+        local tasks = require('overseer.task_list').list_tasks {
+            unique = true,
+            include_ephemeral = true,
+        }
+        local tasks_by_status =
+            require('overseer.util').tbl_group_by(tasks, 'status')
         self.tasks = tasks_by_status
     end,
     static = {

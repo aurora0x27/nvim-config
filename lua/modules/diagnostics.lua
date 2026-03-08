@@ -66,7 +66,12 @@ function M.setup()
     })
 
     -- Hover diagnostics
-    vim.keymap.set('n', '<Leader>ld', thunk('vim.diagnostic', 'open_float'), { desc = 'Hover [D]iagnostics' })
+    vim.keymap.set(
+        'n',
+        '<Leader>ld',
+        thunk('vim.diagnostic', 'open_float'),
+        { desc = 'Hover [D]iagnostics' }
+    )
 end
 
 function M.get_icon_map()

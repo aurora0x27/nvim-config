@@ -30,8 +30,16 @@ return function(direction)
     vim.api.nvim_feedkeys('\27', '!', true)
 
     if direction == 'down' then
-        vim.api.nvim_feedkeys(start_line + 1 .. 'GV' .. end_line + 1 .. 'G', '!', true)
+        vim.api.nvim_feedkeys(
+            start_line + 1 .. 'GV' .. end_line + 1 .. 'G',
+            '!',
+            true
+        )
     elseif direction == 'up' then
-        vim.api.nvim_feedkeys(start_line - 1 .. 'GV' .. end_line - 1 .. 'G', '!', true)
+        vim.api.nvim_feedkeys(
+            start_line - 1 .. 'GV' .. end_line - 1 .. 'G',
+            '!',
+            true
+        )
     end
 end

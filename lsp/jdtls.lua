@@ -79,7 +79,9 @@ local Jdtls = {
         local data_dir = workspace_dir
 
         if config.root_dir then
-            data_dir = data_dir .. '/' .. vim.fn.fnamemodify(config.root_dir, ':p:h:t')
+            data_dir = data_dir
+                .. '/'
+                .. vim.fn.fnamemodify(config.root_dir, ':p:h:t')
         end
 
         local config_cmd = {
@@ -96,7 +98,8 @@ local Jdtls = {
         })
     end,
     filetypes = { 'java' },
-    root_markers = vim.fn.has 'nvim-0.11.3' == 1 and { root_markers1, root_markers2 }
+    root_markers = vim.fn.has 'nvim-0.11.3' == 1
+            and { root_markers1, root_markers2 }
         or vim.list_extend(root_markers1, root_markers2),
     init_options = {},
 }

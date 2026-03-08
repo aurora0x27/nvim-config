@@ -1,6 +1,6 @@
+--------------------------------------------------------------------------------
 -- Preview colors in comments
-
--- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+--------------------------------------------------------------------------------
 
 ---@module 'nvim-highlight-colors'
 ---@type LazyPluginSpec
@@ -13,7 +13,8 @@ local ColorPreview = {
     opts = {
         ---Render style
         ---@usage 'background'|'foreground'|'virtual'
-        render = require('modules.profile').transparent_mode and 'background' or 'virtual',
+        render = require('modules.profile').transparent_mode and 'background'
+            or 'virtual',
 
         ---Set virtual symbol (requires render to be set to 'virtual')
         virtual_symbol = '■',

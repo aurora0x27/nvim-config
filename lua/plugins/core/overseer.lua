@@ -1,3 +1,6 @@
+--------------------------------------------------------------------------------
+-- Task runner
+--------------------------------------------------------------------------------
 local misc = require 'utils.misc'
 
 local function overseer_restart_last()
@@ -69,17 +72,26 @@ local Overseer = {
     config = function(_, opts)
         local overseer = require 'overseer'
         overseer.setup(opts)
-        local templates = require('utils.loader').load_data_dir_as_list 'config/overseer/template'
+        local templates =
+            require('utils.loader').load_data_dir_as_list 'config/overseer/template'
         for _, template in ipairs(templates) do
             overseer.register_template(template)
         end
-        vim.api.nvim_create_user_command('OverseerRestartLast', overseer_restart_last, {})
+        vim.api.nvim_create_user_command(
+            'OverseerRestartLast',
+            overseer_restart_last,
+            {}
+        )
     end,
     keys = {
         { '<leader>rr', '<cmd>OverseerRun<cr>', desc = 'Overseer [R]un' },
         { '<leader>rc', '<cmd>OverseerClose<cr>', desc = 'Overseer [C]lose' },
         { '<leader>rl', '<cmd>OverseerToggle<cr>', desc = 'Overseer [L]ist' },
-        { '<leader>rt', overseer_restart_last, desc = 'Overseer Res[T]art Last' },
+        {
+            '<leader>rt',
+            overseer_restart_last,
+            desc = 'Overseer Res[T]art Last',
+        },
         {
             '<leader>rs',
             function()
@@ -88,7 +100,11 @@ local Overseer = {
             end,
             desc = 'Overseer [S]hell',
         },
-        { '<leader>ra', '<cmd>OverseerTaskAction<cr>', desc = 'Overseer [A]ction' },
+        {
+            '<leader>ra',
+            '<cmd>OverseerTaskAction<cr>',
+            desc = 'Overseer [A]ction',
+        },
     },
 }
 

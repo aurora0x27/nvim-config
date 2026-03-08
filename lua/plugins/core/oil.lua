@@ -1,3 +1,6 @@
+--------------------------------------------------------------------------------
+-- Filesystem editor
+--------------------------------------------------------------------------------
 local border = require('config.assets.misc').border
 local thunk = require('utils.loader').thunk
 
@@ -93,7 +96,9 @@ local FsEditor = {
                 callback = function()
                     vim.b.detail = not vim.b.detail
                     require('oil').set_columns(
-                        vim.b.detail and { 'permissions', 'size', 'mtime', 'icon' } or { 'icon' }
+                        vim.b.detail
+                                and { 'permissions', 'size', 'mtime', 'icon' }
+                            or { 'icon' }
                     )
                 end,
             },
@@ -127,7 +132,12 @@ local FsEditor = {
             },
             -- Customize the highlight group for the file name
             ---@diagnostic disable unused-local
-            highlight_filename = function(_entry, _is_hidden, _is_link_target, _is_link_orphan)
+            highlight_filename = function(
+                _entry,
+                _is_hidden,
+                _is_link_target,
+                _is_link_orphan
+            )
                 return nil
             end,
         },

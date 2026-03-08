@@ -1,3 +1,6 @@
+--------------------------------------------------------------------------------
+-- Lsp module
+--------------------------------------------------------------------------------
 local M = {}
 
 local lsp = vim.lsp
@@ -53,27 +56,59 @@ local hover = function(config)
                 contents[#contents + 1] = string.format('# %s', client.name)
             end
 
-            if type(result.contents) == 'table' and result.contents.kind == 'plaintext' then
+            if
+                type(result.contents) == 'table'
+                and result.contents.kind == 'plaintext'
+            then
                 if #results1 == 1 then
                     format = 'plaintext'
-                    contents = vim.split(result.contents.value or '', '\n', { trimempty = true })
+                    contents = vim.split(
+                        result.contents.value or '',
+                        '\n',
+                        { trimempty = true }
+                    )
                 else
                     contents[#contents + 1] = '```'
-                    vim.list_extend(contents, vim.split(result.contents.value or '', '\n', { trimempty = true }))
+                    vim.list_extend(
+                        contents,
+                        vim.split(
+                            result.contents.value or '',
+                            '\n',
+                            { trimempty = true }
+                        )
+                    )
                     contents[#contents + 1] = '```'
                 end
             else
-                vim.list_extend(contents, util.convert_input_to_markdown_lines(result.contents))
+                vim.list_extend(
+                    contents,
+                    util.convert_input_to_markdown_lines(result.contents)
+                )
             end
 
             if result.range then
                 local start = result.range.start
                 local end_ = result.range['end']
-                local start_idx = util._get_line_byte_from_position(bufnr, start, client.offset_encoding)
-                local end_idx = util._get_line_byte_from_position(bufnr, end_, client.offset_encoding)
-                vim.hl.range(bufnr, hover_ns, 'LspReferenceTarget', { start.line, start_idx }, { end_.line, end_idx }, {
-                    priority = vim.hl.priorities.user,
-                })
+                local start_idx = util._get_line_byte_from_position(
+                    bufnr,
+                    start,
+                    client.offset_encoding
+                )
+                local end_idx = util._get_line_byte_from_position(
+                    bufnr,
+                    end_,
+                    client.offset_encoding
+                )
+                vim.hl.range(
+                    bufnr,
+                    hover_ns,
+                    'LspReferenceTarget',
+                    { start.line, start_idx },
+                    { end_.line, end_idx },
+                    {
+                        priority = vim.hl.priorities.user,
+                    }
+                )
             end
 
             contents[#contents + 1] = '---'
@@ -104,26 +139,26 @@ local function lsp_buf_setup(event)
     local thunk = require('utils.loader').thunk
     local bind = require('utils.loader').bind
 
-    vim.keymap.set(
-        'n',
-        'gd',
-        thunk('fzf-lua', 'lsp_definitions'),
-        { desc = 'LSP Goto Definition', noremap = true, silent = true, buffer = bufnr }
-    )
+    vim.keymap.set('n', 'gd', thunk('fzf-lua', 'lsp_definitions'), {
+        desc = 'LSP Goto Definition',
+        noremap = true,
+        silent = true,
+        buffer = bufnr,
+    })
 
-    vim.keymap.set(
-        'n',
-        'gD',
-        thunk('fzf-lua', 'lsp_declarations'),
-        { desc = 'LSP Goto Declaration', noremap = true, silent = true, buffer = bufnr }
-    )
+    vim.keymap.set('n', 'gD', thunk('fzf-lua', 'lsp_declarations'), {
+        desc = 'LSP Goto Declaration',
+        noremap = true,
+        silent = true,
+        buffer = bufnr,
+    })
 
-    vim.keymap.set(
-        'n',
-        '<leader>lr',
-        lsp.buf.rename,
-        { desc = 'LSP [R]ename Symbol', noremap = true, silent = true, buffer = bufnr }
-    )
+    vim.keymap.set('n', '<leader>lr', lsp.buf.rename, {
+        desc = 'LSP [R]ename Symbol',
+        noremap = true,
+        silent = true,
+        buffer = bufnr,
+    })
 
     vim.keymap.set('n', '<leader>lh', function()
         local stat = lsp.inlay_hint.is_enabled { bufnr = bufnr }
@@ -137,56 +172,86 @@ local function lsp_buf_setup(event)
         'n',
         '<Leader>lso',
         bind(thunk('fzf-lua', 'lsp_outgoing_calls'), FzfLspJmpCfg),
-        { desc = 'FzfLua [L]ist [O]utgoing Calls', noremap = true, silent = true, buffer = bufnr }
+        {
+            desc = 'FzfLua [L]ist [O]utgoing Calls',
+            noremap = true,
+            silent = true,
+            buffer = bufnr,
+        }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>lsi',
         bind(thunk('fzf-lua', 'lsp_incoming_calls'), FzfLspJmpCfg),
-        { desc = 'FzfLua [L]ist [I]ncoming Calls', noremap = true, silent = true, buffer = bufnr }
+        {
+            desc = 'FzfLua [L]ist [I]ncoming Calls',
+            noremap = true,
+            silent = true,
+            buffer = bufnr,
+        }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>lsS',
         bind(thunk('fzf-lua', 'lsp_type_super'), FzfLspJmpCfg),
-        { desc = 'FzfLua [L]ist [S]uper Types', noremap = true, silent = true, buffer = bufnr }
+        {
+            desc = 'FzfLua [L]ist [S]uper Types',
+            noremap = true,
+            silent = true,
+            buffer = bufnr,
+        }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>lss',
         bind(thunk('fzf-lua', 'lsp_type_sub'), FzfLspJmpCfg),
-        { desc = 'FzfLua [L]ist [S]ub Types', noremap = true, silent = true, buffer = bufnr }
+        {
+            desc = 'FzfLua [L]ist [S]ub Types',
+            noremap = true,
+            silent = true,
+            buffer = bufnr,
+        }
     )
 
-    vim.keymap.set(
-        'n',
-        '<Leader>la',
-        thunk('fzf-lua', 'lsp_code_actions'),
-        { desc = 'FzfLua [L]ist Code [A]ctions', noremap = true, silent = true, buffer = bufnr }
-    )
+    vim.keymap.set('n', '<Leader>la', thunk('fzf-lua', 'lsp_code_actions'), {
+        desc = 'FzfLua [L]ist Code [A]ctions',
+        noremap = true,
+        silent = true,
+        buffer = bufnr,
+    })
 
-    vim.keymap.set(
-        'n',
-        '<Leader>fr',
-        thunk('fzf-lua', 'lsp_references'),
-        { desc = 'FzfLua Find Symbol [R]eferences', noremap = true, silent = true, buffer = bufnr }
-    )
+    vim.keymap.set('n', '<Leader>fr', thunk('fzf-lua', 'lsp_references'), {
+        desc = 'FzfLua Find Symbol [R]eferences',
+        noremap = true,
+        silent = true,
+        buffer = bufnr,
+    })
 
     vim.keymap.set(
         'n',
         '<Leader>fs',
         thunk('fzf-lua', 'lsp_document_symbols'),
-        { desc = 'FzfLua Find Document [S]ymbols', noremap = true, silent = true, buffer = bufnr }
+        {
+            desc = 'FzfLua Find Document [S]ymbols',
+            noremap = true,
+            silent = true,
+            buffer = bufnr,
+        }
     )
 
     vim.keymap.set(
         'n',
         '<Leader>fS',
         thunk('fzf-lua', 'lsp_live_workspace_symbols'),
-        { desc = 'FzfLua Find Workspace [S]ymbols', noremap = true, silent = true, buffer = bufnr }
+        {
+            desc = 'FzfLua Find Workspace [S]ymbols',
+            noremap = true,
+            silent = true,
+            buffer = bufnr,
+        }
     )
 end
 
@@ -224,7 +289,11 @@ function M.setup()
         end
     end, {})
 
-    api.nvim_create_user_command('LspStatus', '<cmd>checkhealth lsp<CR>', { desc = 'Alias to checkhealth lsp' })
+    api.nvim_create_user_command(
+        'LspStatus',
+        '<cmd>checkhealth lsp<CR>',
+        { desc = 'Alias to checkhealth lsp' }
+    )
 
     api.nvim_create_user_command('LspLog', function()
         vim.cmd(string.format('tabnew %s', lsp.get_log_path()))

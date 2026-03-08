@@ -15,7 +15,8 @@ local function shorten_cwd(dir)
     end
 
     if #remaining_parts > 2 then
-        local last2 = { unpack(remaining_parts, #remaining_parts - 1, #remaining_parts) }
+        local last2 =
+            { unpack(remaining_parts, #remaining_parts - 1, #remaining_parts) }
         return prefix .. '/…' .. '/' .. table.concat(last2, '/')
     else
         return dir
@@ -32,7 +33,11 @@ local WorkDir = {
         return '   ' .. shorten_cwd(self.cwd) .. ' '
     end,
     hl = function(self)
-        return { fg = 'black', bg = self.mode_hl[self.mode] or 'replace', bold = true }
+        return {
+            fg = 'black',
+            bg = self.mode_hl[self.mode] or 'replace',
+            bold = true,
+        }
     end,
     update = true,
 }

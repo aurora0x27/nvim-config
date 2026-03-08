@@ -1,4 +1,8 @@
--- This file contains settings load before initializing lazy
+--------------------------------------------------------------------------------
+-- Preload Module
+--
+-- This file contains settings to load before initializing lazy
+--------------------------------------------------------------------------------
 local M = {}
 
 local profile = require 'modules.profile'
@@ -11,7 +15,10 @@ function M.setup()
     profile.setup()
 
     local alpha = function()
-        return string.format('%x', math.floor(255 * (vim.g.transparency or 0.8)))
+        return string.format(
+            '%x',
+            math.floor(255 * (vim.g.transparency or 0.8))
+        )
     end
 
     -- set global transparent_mode

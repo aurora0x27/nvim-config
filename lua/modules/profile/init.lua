@@ -1,3 +1,6 @@
+--------------------------------------------------------------------------------
+-- Profile Module
+--------------------------------------------------------------------------------
 local M = {}
 
 local uv = vim.uv or vim.loop
@@ -73,7 +76,14 @@ local function write_json(path, data)
     end
 
     if bytes ~= #res then
-        err(string.format('Partial write: %d/%d bytes written to `%s`', bytes, #res, path))
+        err(
+            string.format(
+                'Partial write: %d/%d bytes written to `%s`',
+                bytes,
+                #res,
+                path
+            )
+        )
         return false
     end
 
@@ -81,10 +91,14 @@ local function write_json(path, data)
 end
 
 local SCHEMA = require('config.assets.misc').ProfileSchema
-local RAW_LAZY_SPECS = require('utils.loader').load_data_dir_as_set('plugins.opt', log_queue.error, function(set, k, v)
-    v.enabled = false
-    set[table.concat(k, '.')] = v
-end)
+local RAW_LAZY_SPECS = require('utils.loader').load_data_dir_as_set(
+    'plugins.opt',
+    log_queue.error,
+    function(set, k, v)
+        v.enabled = false
+        set[table.concat(k, '.')] = v
+    end
+)
 
 function M.create_lazy_spec_mask_builder()
     local current_set = vim.deepcopy(RAW_LAZY_SPECS or {})
@@ -167,7 +181,9 @@ function M.setup(opts)
                     ---@type number
                     nvimrc[k] = num
                 else
-                    warn(string.format('Env %s is not a valid number', env_name))
+                    warn(
+                        string.format('Env %s is not a valid number', env_name)
+                    )
                 end
             elseif ty == 'string' then
                 -- `$@` is replaced with current value of the option

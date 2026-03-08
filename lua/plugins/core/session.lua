@@ -1,3 +1,7 @@
+--------------------------------------------------------------------------------
+-- Session manager
+--------------------------------------------------------------------------------
+
 local bind = require('utils.loader').bind
 local thunk = require('utils.loader').thunk
 local sandbox = require 'modules.sandbox'.get_mask()
@@ -39,7 +43,10 @@ local SessionMgr = {
         })
         vim.api.nvim_create_autocmd('User', {
             pattern = 'PersistenceSavePre',
-            callback = bind(thunk('neo-tree.command', 'execute'), { action = 'close' }),
+            callback = bind(
+                thunk('neo-tree.command', 'execute'),
+                { action = 'close' }
+            ),
         })
     end,
 }

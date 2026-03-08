@@ -1,5 +1,8 @@
 local function get_precommit_cfg(opts)
-    return vim.fs.find({ '.pre-commit-config.yaml', '.pre-commit-config.yml' }, { upward = true, path = opts.dir })[1]
+    return vim.fs.find(
+        { '.pre-commit-config.yaml', '.pre-commit-config.yml' },
+        { upward = true, path = opts.dir }
+    )[1]
 end
 
 ---@type overseer.TemplateFileProvider

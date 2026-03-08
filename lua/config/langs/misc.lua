@@ -23,7 +23,11 @@ return {
     { ft = 'latex', treesitter = true },
     { ft = 'llvm', treesitter = true },
     { ft = 'luadoc', treesitter = true },
-    { ft = 'nginx', treesitter = true, formatter = { name = 'nginxfmt', packname = 'nginx-config-formatter' } },
+    {
+        ft = 'nginx',
+        treesitter = true,
+        formatter = { name = 'nginxfmt', packname = 'nginx-config-formatter' },
+    },
     { ft = 'ninja', treesitter = true },
     { ft = 'query', treesitter = true },
     { ft = 'scheme', treesitter = true },

@@ -1,3 +1,6 @@
+--------------------------------------------------------------------------------
+-- Fold settings
+--------------------------------------------------------------------------------
 local function fold_virt_text(result, s, lnum, coloff)
     if not coloff then
         coloff = 0
@@ -26,7 +29,9 @@ end
 -- { ... }    󰁂 [xx lines folded]
 
 function _G.custom_foldtext()
-    local start = vim.fn.getline(vim.v.foldstart):gsub('\t', string.rep(' ', vim.o.tabstop))
+    local start = vim.fn
+        .getline(vim.v.foldstart)
+        :gsub('\t', string.rep(' ', vim.o.tabstop))
     local end_str = vim.fn.getline(vim.v.foldend)
     local end_ = vim.trim(end_str)
     local start_line = vim.v.foldstart
@@ -35,7 +40,10 @@ function _G.custom_foldtext()
     fold_virt_text(result, start, start_line - 1)
     table.insert(result, { ' ... ', 'Delimiter' })
     fold_virt_text(result, end_, end_line - 1, #(end_str:match '^(%s+)' or ''))
-    table.insert(result, { '    󰁂 [' .. end_line - start_line .. ' lines folded]', 'CustomFold' })
+    table.insert(result, {
+        '    󰁂 [' .. end_line - start_line .. ' lines folded]',
+        'CustomFold',
+    })
     return result
 end
 

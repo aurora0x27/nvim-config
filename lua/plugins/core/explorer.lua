@@ -1,6 +1,6 @@
+--------------------------------------------------------------------------------
 -- File system explorer
-
--- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+--------------------------------------------------------------------------------
 
 ---@type LazyPluginSpec
 local NeoTree = {
@@ -98,7 +98,8 @@ local NeoTree = {
                 default = '',
                 provider = function(icon, node, _) -- default icon provider utilizes nvim-web-devicons if available
                     if node.type == 'root' then
-                        local success, web_devicons = pcall(require, 'nvim-web-devicons')
+                        local success, web_devicons =
+                            pcall(require, 'nvim-web-devicons')
                         if success then
                             local devicon, _ = web_devicons.get_icon 'dot'
                             icon.text = devicon or icon.text
@@ -107,8 +108,10 @@ local NeoTree = {
                         return
                     end
                     if node.type == 'file' or node.type == 'terminal' then
-                        local success, web_devicons = pcall(require, 'nvim-web-devicons')
-                        local name = node.type == 'terminal' and 'terminal' or node.name
+                        local success, web_devicons =
+                            pcall(require, 'nvim-web-devicons')
+                        local name = node.type == 'terminal' and 'terminal'
+                            or node.name
                         if success then
                             local devicon, hl = web_devicons.get_icon(name)
                             icon.text = devicon or icon.text

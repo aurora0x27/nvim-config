@@ -37,7 +37,14 @@ function M.check()
         local t_stat = get_stat(spec.treesitter, feat and feat.ts)
         local p_stat = get_stat(spec.plugins, feat ~= nil)
 
-        local row = string.format('%s %s %s %s %s', pad(lang, 20), l_stat, f_stat, t_stat, p_stat)
+        local row = string.format(
+            '%s %s %s %s %s',
+            pad(lang, 20),
+            l_stat,
+            f_stat,
+            t_stat,
+            p_stat
+        )
 
         if feat then
             vim.health.info(row)

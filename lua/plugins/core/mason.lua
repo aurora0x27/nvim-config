@@ -1,6 +1,6 @@
--- Mason: lsp installer
-
--- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+--------------------------------------------------------------------------------
+-- Lsp installer
+--------------------------------------------------------------------------------
 
 local pip_args
 local proxy = os.getenv 'PIP_PROXY'
@@ -21,7 +21,10 @@ local function ensure_installed(list)
         local ok, pkg = pcall(registry.get_package, pkg_name)
         ---@cast pkg Package
         if not ok then
-            misc.warn(('Package %s not found'):format(pkg_name), { title = 'Mason' })
+            misc.warn(
+                ('Package %s not found'):format(pkg_name),
+                { title = 'Mason' }
+            )
             return
         end
         if not pkg:is_installed() then
@@ -29,11 +32,17 @@ local function ensure_installed(list)
             pkg:install():once('closed', function()
                 if pkg:is_installed() then
                     vim.schedule(function()
-                        misc.info('LSP installed: ' .. pkg_name, { title = 'Mason' })
+                        misc.info(
+                            'LSP installed: ' .. pkg_name,
+                            { title = 'Mason' }
+                        )
                     end)
                 else
                     vim.schedule(function()
-                        misc.err('Failed to install LSP: ' .. pkg_name, { title = 'Mason' })
+                        misc.err(
+                            'Failed to install LSP: ' .. pkg_name,
+                            { title = 'Mason' }
+                        )
                     end)
                 end
             end)
@@ -83,7 +92,9 @@ local Mason = {
     cmd = { 'Mason' },
     config = function()
         require('mason').setup(MasonOpt)
-        vim.schedule(require('utils.loader').bind(ensure_installed, LspEnsuredList))
+        vim.schedule(
+            require('utils.loader').bind(ensure_installed, LspEnsuredList)
+        )
     end,
 }
 

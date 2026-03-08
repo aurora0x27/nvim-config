@@ -1,3 +1,8 @@
+--------------------------------------------------------------------------------
+-- Input Method Auto Switch Module
+--
+-- Only work for fcitx5, require fcitx5-remote binary
+--------------------------------------------------------------------------------
 local M = {}
 
 local fcitx5_state
@@ -30,7 +35,10 @@ function M.setup()
     else
         if require('utils.detect').is_unix() then
             vim.schedule(function()
-                require('utils.misc').warn('Cannot find `fcitx5-remote`', { title = 'IM Switch' })
+                require('utils.misc').warn(
+                    'Cannot find `fcitx5-remote`',
+                    { title = 'IM Switch' }
+                )
             end)
         end
     end

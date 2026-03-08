@@ -1,4 +1,6 @@
--- Outline
+--------------------------------------------------------------------------------
+-- Dropbar, annotions the scope for current cursor pos context
+--------------------------------------------------------------------------------
 
 -- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
@@ -9,7 +11,12 @@ local Outline = {
     event = { 'BufReadPost', 'BufNewFile' },
     config = function()
         local dropbar_api = require 'dropbar.api'
-        vim.keymap.set('n', '<Leader>;', dropbar_api.pick, { desc = 'Pick Symbols In Dropbar' })
+        vim.keymap.set(
+            'n',
+            '<Leader>;',
+            dropbar_api.pick,
+            { desc = 'Pick Symbols In Dropbar' }
+        )
     end,
 }
 

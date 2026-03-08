@@ -1,3 +1,6 @@
+--------------------------------------------------------------------------------
+-- Auto complete pairs
+--------------------------------------------------------------------------------
 local M = {}
 
 -- Key configuration for autopair functionality
@@ -37,7 +40,8 @@ end
 ---@return number col The 0-indexed cursor column position
 local function get_info(mode)
     if mode == 'insert' then
-        return vim.api.nvim_get_current_line(), vim.api.nvim_win_get_cursor(0)[2]
+        return vim.api.nvim_get_current_line(),
+            vim.api.nvim_win_get_cursor(0)[2]
     else
         return vim.fn.getcmdline(), vim.fn.getcmdpos() - 1
     end
@@ -71,9 +75,12 @@ end
 ---@return string|nil The key sequence to execute, or nil
 local function handle_backspace(line, col, is_at_pair)
     -- Check for triple quotes """|""" or '''|'''
-    local trip_double = line:sub(col - 2, col) == '"""' and line:sub(col + 1, col + 3) == '"""'
-    local trip_single = line:sub(col - 2, col) == "'''" and line:sub(col + 1, col + 3) == "'''"
-    local trip_backtick = line:sub(col - 2, col) == '```' and line:sub(col + 1, col + 3) == '```'
+    local trip_double = line:sub(col - 2, col) == '"""'
+        and line:sub(col + 1, col + 3) == '"""'
+    local trip_single = line:sub(col - 2, col) == "'''"
+        and line:sub(col + 1, col + 3) == "'''"
+    local trip_backtick = line:sub(col - 2, col) == '```'
+        and line:sub(col + 1, col + 3) == '```'
 
     if trip_double or trip_single or trip_backtick then
         return '<bs><bs><bs><del><del><del>'

@@ -7,7 +7,9 @@ local function switch_source_header(bufnr)
     local client = vim.lsp.get_clients({ bufnr = bufnr, name = 'clangd' })[1]
     if not client then
         return misc.info(
-            ('method %s is not supported by any servers active on the current buffer'):format(method_name),
+            ('method %s is not supported by any servers active on the current buffer'):format(
+                method_name
+            ),
             { title = 'Lsp Clangd' }
         )
     end
@@ -18,7 +20,10 @@ local function switch_source_header(bufnr)
             error(tostring(err))
         end
         if not result then
-            misc.info('corresponding file cannot be determined', { title = 'Lsp Clangd' })
+            misc.info(
+                'corresponding file cannot be determined',
+                { title = 'Lsp Clangd' }
+            )
             return
         end
         vim.cmd.edit(vim.uri_to_fname(result))
@@ -27,13 +32,18 @@ end
 
 local function symbol_info()
     local bufnr = vim.api.nvim_get_current_buf()
-    local clangd_client = vim.lsp.get_clients({ bufnr = bufnr, name = 'clangd' })[1]
+    local clangd_client =
+        vim.lsp.get_clients({ bufnr = bufnr, name = 'clangd' })[1]
     ---@diagnostic disable-next-line: param-type-mismatch, missing-parameter
-    if not clangd_client or not clangd_client.supports_method 'textDocument/symbolInfo' then
+    if
+        not clangd_client
+        or not clangd_client.supports_method 'textDocument/symbolInfo'
+    then
         return misc.err('Clangd client not found', { title = 'Lsp Clangd' })
     end
     local win = vim.api.nvim_get_current_win()
-    local params = vim.lsp.util.make_position_params(win, clangd_client.offset_encoding)
+    local params =
+        vim.lsp.util.make_position_params(win, clangd_client.offset_encoding)
     ---@diagnostic disable-next-line: param-type-mismatch
     clangd_client.request('textDocument/symbolInfo', params, function(err, res)
         if err or #res == 0 then
@@ -108,13 +118,23 @@ local clangd = {
     end,
 
     on_attach = function(_, buf)
-        vim.api.nvim_buf_create_user_command(buf, 'LspClangdSwitchSourceHeader', function()
-            switch_source_header(buf)
-        end, { desc = 'Switch between source/header' })
+        vim.api.nvim_buf_create_user_command(
+            buf,
+            'LspClangdSwitchSourceHeader',
+            function()
+                switch_source_header(buf)
+            end,
+            { desc = 'Switch between source/header' }
+        )
 
-        vim.api.nvim_buf_create_user_command(buf, 'LspClangdSymbolInfo', function()
-            symbol_info()
-        end, { desc = 'Show symbol info' })
+        vim.api.nvim_buf_create_user_command(
+            buf,
+            'LspClangdSymbolInfo',
+            function()
+                symbol_info()
+            end,
+            { desc = 'Show symbol info' }
+        )
     end,
 }
 

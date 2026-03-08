@@ -1,6 +1,6 @@
+--------------------------------------------------------------------------------
 -- Notifier
-
--- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+--------------------------------------------------------------------------------
 
 ---@type LazyPluginSpec
 local Notifier = {
@@ -33,8 +33,13 @@ local Notifier = {
             vim.api.nvim_set_hl(0, hl[1], { fg = hl[2] })
         end
 
-        local body_highlights =
-            { 'NotifyERRORBody', 'NotifyWARNBody', 'NotifyINFOBody', 'NotifyDEBUGBody', 'NotifyTRACEBody' }
+        local body_highlights = {
+            'NotifyERRORBody',
+            'NotifyWARNBody',
+            'NotifyINFOBody',
+            'NotifyDEBUGBody',
+            'NotifyTRACEBody',
+        }
 
         for _, hl in ipairs(body_highlights) do
             vim.api.nvim_set_hl(0, hl, { link = 'Normal' })

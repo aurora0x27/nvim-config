@@ -65,7 +65,8 @@ function M.check()
 
     for _, k in ipairs(keys) do
         local is_masked = vim.tbl_contains(info.masks, k)
-        local status = is_masked and '[MASKED]' or (raw_values[k] == defaults[k] and '[DEFAULT]' or '[JSON]')
+        local status = is_masked and '[MASKED]'
+            or (raw_values[k] == defaults[k] and '[DEFAULT]' or '[JSON]')
 
         local line = string.format(
             '  %s | %s | %s | %s',
@@ -82,7 +83,11 @@ function M.check()
     if logs and #logs.data > 0 then
         vim.health.info 'Preload Logs:'
         for _, item in ipairs(logs.data) do
-            local msg = string.format('[%s] %s', os.date('%H:%M:%S', item.time / 1000), item.msg)
+            local msg = string.format(
+                '[%s] %s',
+                os.date('%H:%M:%S', item.time / 1000),
+                item.msg
+            )
             if item.lvl >= vim.log.levels.ERROR then
                 vim.health.error(msg)
             elseif item.lvl >= vim.log.levels.WARN then

@@ -13,7 +13,10 @@ overseer.register_template {
             cmd = { 'sh', '-c' },
             args = {
                 table.concat({
-                    'clang++ -std=c++23 -g -O2 -fsanitize=address,undefined -o ' .. out .. ' ' .. file,
+                    'clang++ -std=c++23 -g -O2 -fsanitize=address,undefined -o '
+                        .. out
+                        .. ' '
+                        .. file,
                     out,
                 }, ' && '),
             },

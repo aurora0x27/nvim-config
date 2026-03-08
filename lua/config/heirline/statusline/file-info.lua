@@ -10,7 +10,12 @@ local FileInfo = {
         if vim.api.nvim_win_get_width(0) < 120 then
             return (vim.bo.modified and '%m' or '') .. icon .. ' '
         end
-        return (vim.bo.modified and '%m' or '') .. ' ' .. icon .. ' ' .. filename .. ' '
+        return (vim.bo.modified and '%m' or '')
+            .. ' '
+            .. icon
+            .. ' '
+            .. filename
+            .. ' '
     end,
     hl = function(self)
         return { fg = self.mode_hl[self.mode] or 'replace', bold = true }

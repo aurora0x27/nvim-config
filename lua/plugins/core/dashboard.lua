@@ -1,6 +1,6 @@
+--------------------------------------------------------------------------------
 -- Dash board config
-
--- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+--------------------------------------------------------------------------------
 
 ---@type LazyPluginSpec
 local Dashboard = {
@@ -49,11 +49,19 @@ local Dashboard = {
                 hl_shortcut = 'AlphaShortcut',
             }
             if nil ~= keybind then
-                keybind_opts = vim.F.if_nil(keybind_opts, { noremap = true, silent = true, nowait = true })
+                keybind_opts = vim.F.if_nil(
+                    keybind_opts,
+                    { noremap = true, silent = true, nowait = true }
+                )
                 opts.keymap = { 'n', sc_after, keybind, keybind_opts }
             end
             local function on_press()
-                local key = vim.api.nvim_replace_termcodes(sc_after .. '<Ignore>', true, false, true)
+                local key = vim.api.nvim_replace_termcodes(
+                    sc_after .. '<Ignore>',
+                    true,
+                    false,
+                    true
+                )
                 vim.api.nvim_feedkeys(key, 't', false)
             end
             return {
@@ -69,7 +77,12 @@ local Dashboard = {
                 '<leader> n  ',
                 '  [N]ew File',
                 '<cmd>ene <BAR> startinsert<CR>',
-                { noremap = true, silent = true, nowait = true, desc = '[N]ew file' }
+                {
+                    noremap = true,
+                    silent = true,
+                    nowait = true,
+                    desc = '[N]ew file',
+                }
             ),
             button('<leader> f f', '  Find [F]ile'),
             button('<leader> f o', '󰈙  Recent/[O]ld Files'),
@@ -82,8 +95,11 @@ local Dashboard = {
         dashboard.section.footer.opts.hl = 'AlphaFooter'
 
         local head_butt_padding = 2
-        local occu_height = #dashboard.section.header.val + 2 * #dashboard.section.buttons.val + head_butt_padding
-        local header_padding = math.max(0, math.ceil((vim.fn.winheight(0) - occu_height) * 0.5))
+        local occu_height = #dashboard.section.header.val
+            + 2 * #dashboard.section.buttons.val
+            + head_butt_padding
+        local header_padding =
+            math.max(0, math.ceil((vim.fn.winheight(0) - occu_height) * 0.5))
         local foot_butt_padding = 1
 
         dashboard.config.layout = {

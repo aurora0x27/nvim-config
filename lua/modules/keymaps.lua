@@ -9,10 +9,30 @@ local map = vim.keymap.set
 
 function M.setup()
     -- resize window
-    map('n', '<C-Left>', thunk('smart-splits', 'resize_left'), { noremap = true, silent = true })
-    map('n', '<C-Right>', thunk('smart-splits', 'resize_right'), { noremap = true, silent = true })
-    map('n', '<C-Up>', thunk('smart-splits', 'resize_up'), { noremap = true, silent = true })
-    map('n', '<C-Down>', thunk('smart-splits', 'resize_down'), { noremap = true, silent = true })
+    map(
+        'n',
+        '<C-Left>',
+        thunk('smart-splits', 'resize_left'),
+        { noremap = true, silent = true }
+    )
+    map(
+        'n',
+        '<C-Right>',
+        thunk('smart-splits', 'resize_right'),
+        { noremap = true, silent = true }
+    )
+    map(
+        'n',
+        '<C-Up>',
+        thunk('smart-splits', 'resize_up'),
+        { noremap = true, silent = true }
+    )
+    map(
+        'n',
+        '<C-Down>',
+        thunk('smart-splits', 'resize_down'),
+        { noremap = true, silent = true }
+    )
 
     -- buffer swich
     map(
@@ -47,9 +67,19 @@ function M.setup()
     map('n', 'L', '<cmd>bn<CR>', { noremap = true, silent = true })
 
     -- Fzflua related, prefix is leader-t
-    map('n', '<Leader>ff', thunk('fzf-lua', 'files'), { desc = 'Find [F]iles', noremap = true, silent = true })
+    map(
+        'n',
+        '<Leader>ff',
+        thunk('fzf-lua', 'files'),
+        { desc = 'Find [F]iles', noremap = true, silent = true }
+    )
 
-    map('n', '<Leader>fo', thunk('fzf-lua', 'oldfiles'), { desc = 'Find [O]ld Files', noremap = true, silent = true })
+    map(
+        'n',
+        '<Leader>fo',
+        thunk('fzf-lua', 'oldfiles'),
+        { desc = 'Find [O]ld Files', noremap = true, silent = true }
+    )
 
     map(
         'n',
@@ -58,11 +88,26 @@ function M.setup()
         { desc = 'Find [T]reesitter Symbols', noremap = true, silent = true }
     )
 
-    map('n', '<Leader>fw', thunk('fzf-lua', 'live_grep'), { desc = '[W]ildcard Grep', noremap = true, silent = true })
+    map(
+        'n',
+        '<Leader>fw',
+        thunk('fzf-lua', 'live_grep'),
+        { desc = '[W]ildcard Grep', noremap = true, silent = true }
+    )
 
-    map('n', '<Leader>fb', thunk('fzf-lua', 'buffers'), { desc = 'Find [B]uffer', noremap = true, silent = true })
+    map(
+        'n',
+        '<Leader>fb',
+        thunk('fzf-lua', 'buffers'),
+        { desc = 'Find [B]uffer', noremap = true, silent = true }
+    )
 
-    map('n', '<Leader>fB', thunk('fzf-lua', 'builtin'), { desc = 'Find [B]uiltin', noremap = true, silent = true })
+    map(
+        'n',
+        '<Leader>fB',
+        thunk('fzf-lua', 'builtin'),
+        { desc = 'Find [B]uiltin', noremap = true, silent = true }
+    )
 
     map(
         'n',
@@ -99,12 +144,11 @@ function M.setup()
         { desc = 'Find [G]it [C]ommits', noremap = true, silent = true }
     )
 
-    map(
-        'n',
-        '<Leader>fgbc',
-        thunk('fzf-lua', 'git_bcommits'),
-        { desc = 'Find [G]it [B]uffer [C]ommits', noremap = true, silent = true }
-    )
+    map('n', '<Leader>fgbc', thunk('fzf-lua', 'git_bcommits'), {
+        desc = 'Find [G]it [B]uffer [C]ommits',
+        noremap = true,
+        silent = true,
+    })
 
     map(
         'n',
@@ -120,9 +164,19 @@ function M.setup()
         { desc = 'Find Noice [M]sg', noremap = true, silent = true }
     )
 
-    map('n', '<Leader>fH', thunk('fzf-lua', 'helptags'), { desc = 'Find [H]elp Tags', noremap = true, silent = true })
+    map(
+        'n',
+        '<Leader>fH',
+        thunk('fzf-lua', 'helptags'),
+        { desc = 'Find [H]elp Tags', noremap = true, silent = true }
+    )
 
-    map('n', '<Leader>fT', '<cmd>TodoFzfLua<CR>', { desc = 'Find [T]odo Items', noremap = true, silent = true })
+    map(
+        'n',
+        '<Leader>fT',
+        '<cmd>TodoFzfLua<CR>',
+        { desc = 'Find [T]odo Items', noremap = true, silent = true }
+    )
 
     map(
         'n',
@@ -131,21 +185,39 @@ function M.setup()
         { desc = 'Find Command History', noremap = true, silent = true }
     )
 
-    map('n', '<Leader>fR', thunk('fzf-lua', 'registers'), { desc = 'Find [R]egister', noremap = true, silent = true })
+    map(
+        'n',
+        '<Leader>fR',
+        thunk('fzf-lua', 'registers'),
+        { desc = 'Find [R]egister', noremap = true, silent = true }
+    )
 
     -- buffer releated, prefix is leader-b
-    map('n', '<Leader>bc', '<cmd>bp | bd #<CR>', { desc = 'Buffer [C]lose Current', noremap = true, silent = true })
+    map(
+        'n',
+        '<Leader>bc',
+        '<cmd>bp | bd #<CR>',
+        { desc = 'Buffer [C]lose Current', noremap = true, silent = true }
+    )
 
     map({ 'n', 'v' }, 'j', 'gj', { noremap = true, silent = true })
     map({ 'n', 'v' }, 'k', 'gk', { noremap = true, silent = true })
 
-    map('n', '<Leader>h', '<cmd>Alpha<CR>', { desc = 'Open [H]ome Page', noremap = true, silent = true })
+    map(
+        'n',
+        '<Leader>h',
+        '<cmd>Alpha<CR>',
+        { desc = 'Open [H]ome Page', noremap = true, silent = true }
+    )
 
     -- File explorer
     map(
         'n',
         '<leader>e',
-        bind(thunk('neo-tree.command', 'execute'), { action = 'show', source = 'filesystem', toggle = true }),
+        bind(
+            thunk('neo-tree.command', 'execute'),
+            { action = 'show', source = 'filesystem', toggle = true }
+        ),
         {
             desc = 'Toggle File [E]xplorer',
             noremap = true,
@@ -156,7 +228,10 @@ function M.setup()
     map(
         'n',
         '<leader>o',
-        bind(thunk('neo-tree.command', 'execute'), { action = 'show', source = 'document_symbols', toggle = true }),
+        bind(
+            thunk('neo-tree.command', 'execute'),
+            { action = 'show', source = 'document_symbols', toggle = true }
+        ),
         {
             desc = 'Toggle [O]utline',
             noremap = true,
@@ -174,7 +249,11 @@ function M.setup()
     map(
         'n',
         '-',
-        bind(thunk('oil', 'open_float'), nil, { preview = { horizontal = true } }),
+        bind(
+            thunk('oil', 'open_float'),
+            nil,
+            { preview = { horizontal = true } }
+        ),
         { desc = 'Open parent directory' }
     )
 
@@ -186,13 +265,28 @@ function M.setup()
 
     -- Use ctrl-/ to goto normal mode, so weird
     if vim.env.TMUX then
-        map('t', '<C-_>', '<cmd>stopinsert<cr>', { noremap = true, silent = true })
+        map(
+            't',
+            '<C-_>',
+            '<cmd>stopinsert<cr>',
+            { noremap = true, silent = true }
+        )
     else
-        map('t', '<C-/>', '<cmd>stopinsert<cr>', { noremap = true, silent = true })
+        map(
+            't',
+            '<C-/>',
+            '<cmd>stopinsert<cr>',
+            { noremap = true, silent = true }
+        )
     end
 
     -- Tab related
-    map({ 'n' }, '<Leader>tt', '<cmd>tabnext<cr>', { noremap = true, silent = true, desc = '[T]ab switch next' })
+    map(
+        { 'n' },
+        '<Leader>tt',
+        '<cmd>tabnext<cr>',
+        { noremap = true, silent = true, desc = '[T]ab switch next' }
+    )
     map({ 'n' }, '<Leader>tn', function()
         local name = vim.fn.input('File name: ', '', 'file')
         if name ~= '' then
@@ -201,14 +295,23 @@ function M.setup()
             misc.warn 'Warn: Filename not assigned, nothing todo'
         end
     end, { noremap = true, silent = true, desc = 'Tab [N]ew' })
-    map({ 'n' }, '<Leader>tp', '<cmd>tabprevious<cr>', { noremap = true, silent = true, desc = 'Tab [P]revious' })
     map(
         { 'n' },
-        '<Leader>ta',
-        '<cmd>tabnew %<cr>',
-        { noremap = true, silent = true, desc = 'Tab [A]dd With Current Buffer' }
+        '<Leader>tp',
+        '<cmd>tabprevious<cr>',
+        { noremap = true, silent = true, desc = 'Tab [P]revious' }
     )
-    map({ 'n' }, '<Leader>tc', '<cmd>tabclose<cr>', { noremap = true, silent = true, desc = 'Tab [C]lose' })
+    map({ 'n' }, '<Leader>ta', '<cmd>tabnew %<cr>', {
+        noremap = true,
+        silent = true,
+        desc = 'Tab [A]dd With Current Buffer',
+    })
+    map(
+        { 'n' },
+        '<Leader>tc',
+        '<cmd>tabclose<cr>',
+        { noremap = true, silent = true, desc = 'Tab [C]lose' }
+    )
 
     map(
         { 'n' },
@@ -227,10 +330,17 @@ function M.setup()
                 if vim.fn.filereadable(cache) ~= 0 then
                     sm.load()
                 else
-                    misc.warn('No session in ' .. vim.fn.getcwd(), { title = 'Session Manager' })
+                    misc.warn(
+                        'No session in ' .. vim.fn.getcwd(),
+                        { title = 'Session Manager' }
+                    )
                 end
             end)
-        end, { noremap = true, silent = true, desc = '[L]oad Last Session Of Current Workspace' })
+        end, {
+            noremap = true,
+            silent = true,
+            desc = '[L]oad Last Session Of Current Workspace',
+        })
 
         -- select a session to load
         map(
@@ -265,7 +375,11 @@ function M.setup()
                 end
             end
             misc.warn 'No previous file found in v:oldfiles'
-        end, { noremap = true, silent = true, desc = 'Recover [L]ast Buffer' })
+        end, {
+            noremap = true,
+            silent = true,
+            desc = 'Recover [L]ast Buffer',
+        })
     end
 
     map(

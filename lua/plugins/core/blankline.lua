@@ -1,6 +1,6 @@
+--------------------------------------------------------------------------------
 -- Indent line
-
--- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+--------------------------------------------------------------------------------
 
 ---@type LazyPluginSpec
 local IndentLine = {
@@ -31,11 +31,18 @@ local IndentLine = {
         -- create the highlight groups in the highlight setup hook, so they are reset
         -- every time the colorscheme changes
         hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
-            vim.api.nvim_set_hl(0, 'IndentLineNotSelected', { fg = mocha.overlay0 })
+            vim.api.nvim_set_hl(
+                0,
+                'IndentLineNotSelected',
+                { fg = mocha.overlay0 }
+            )
             vim.api.nvim_set_hl(0, 'IndentLineSelected', { fg = mocha.teal })
         end)
 
-        hooks.register(hooks.type.SCOPE_HIGHLIGHT, hooks.builtin.scope_highlight_from_extmark)
+        hooks.register(
+            hooks.type.SCOPE_HIGHLIGHT,
+            hooks.builtin.scope_highlight_from_extmark
+        )
 
         require('ibl').setup(opts)
     end,

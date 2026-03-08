@@ -1,3 +1,7 @@
+--------------------------------------------------------------------------------
+-- StatusColumn
+--------------------------------------------------------------------------------
+
 ---@type LazyPluginSpec
 local StatusCol = {
     'luukvbaal/statuscol.nvim',
@@ -37,7 +41,8 @@ local StatusCol = {
                     text = {
                         function(args)
                             local lnum = args.lnum - 1
-                            local diags = vim.diagnostic.get(args.buf, { lnum = lnum })
+                            local diags =
+                                vim.diagnostic.get(args.buf, { lnum = lnum })
                             if #diags == 0 then
                                 return ' '
                             end
@@ -47,7 +52,8 @@ local StatusCol = {
                             end)
 
                             local d = diags[1]
-                            local map = require('modules.diagnostics').get_icon_map()
+                            local map =
+                                require('modules.diagnostics').get_icon_map()
                             local spec = map[d.severity]
                             return ('%%#%s#%s%%*'):format(spec.hl, spec.icon)
                         end,
