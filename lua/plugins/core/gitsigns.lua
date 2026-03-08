@@ -115,7 +115,7 @@ local GitUtils = {
             map('n', '<leader>gtw', gitsigns.toggle_word_diff, { desc = 'Git toggle word diff' })
 
             -- Text object
-            -- map({'o', 'x'}, 'ih', gitsigns.select_hunk)
+            map({'o', 'x'}, 'ih', gitsigns.select_hunk)
         end,
     },
 }
