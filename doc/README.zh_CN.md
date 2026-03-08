@@ -10,9 +10,10 @@
 > 随着配置的不断增长，扁平化的结构变得难以维护。
 > 新的模块化架构将策略（启用哪些功能）与实现（插件设置）分离。
 > 现在，它是一种**数据驱动的**配置。
+>
 > - lua/modules/profile/：定义编辑器的行为方式。
 > - lua/modules/lang/：定义每种语言提供的功能。
-> 这使得该配置成为一个框架，而不仅仅是一组点文件。
+>   这使得该配置成为一个框架，而不仅仅是一组点文件。
 
 ## ⚡示例展示⚡
 
@@ -91,29 +92,29 @@ vi # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
 以下是可自定义项目：
 
 - 用户界面
-    - *`transparent_mode`* 启用透明模式
-    - *`dashboard_art_name`* 选择仪表盘上的 ASCII 艺术字
-    - *`statline_scrollbar_style`* 选择用于显示光标位置的滚动条样式
-    - *`diagnose_inline`* 不使用虚拟线显示诊断信息
-    - *`enable_current_line_blame`* 启用行尾的虚拟文本行错误信息显示
+  - _`transparent_mode`_ 启用透明模式
+  - _`dashboard_art_name`_ 选择仪表盘上的 ASCII 艺术字
+  - _`statline_scrollbar_style`_ 选择用于显示光标位置的滚动条样式
+  - _`diagnose_inline`_ 不使用虚拟线显示诊断信息
+  - _`enable_current_line_blame`_ 启用行尾的虚拟文本行错误信息显示
 
 - 语言模块
-    - *`silent_lang_diag`* 不输出语言加载器的日志
-    - *`lang_blacklist`* 禁用语言配置，默认禁用，以逗号分隔
-    - *`lang_whitelist`* 启用语言配置，默认启用，以逗号分隔
-    - *`lang_levels`* 语言特性配置，语法：字符串 `c:full;cpp:none;rust:lsp,+ts,-fmt` 表示启用 C 语言的全部功能，禁用 C++ 的所有功能，启用 tree-sitter 和 lsp，禁用 Rust 的格式化程序。
+  - _`silent_lang_diag`_ 不输出语言加载器的日志
+  - _`lang_blacklist`_ 禁用语言配置，默认禁用，以逗号分隔
+  - _`lang_whitelist`_ 启用语言配置，默认启用，以逗号分隔
+  - _`lang_levels`_ 语言特性配置，语法：字符串 `c:full;cpp:none;rust:lsp,+ts,-fmt` 表示启用 C 语言的全部功能，禁用 C++ 的所有功能，启用 tree-sitter 和 lsp，禁用 Rust 的格式化程序。
 
 - LSP
-    - *`enable_lsp`* 启用 LSP **如果 nvim 版本 <= 0.11，则禁用 LSP**
-    - *`use_emmylua_ls`* 使用 `emmylua_ls` 作为 Lua 语言服务器
-    - *`workspace_inject_plugin_path`* 将插件路径注入到 `emmylua_ls` 工作区配置中
-    - *`workspace_inject_vim_rt`* 将 Vim 运行时注入到 `emmylua_ls` 工作区配置中
+  - _`enable_lsp`_ 启用 LSP **如果 nvim 版本 <= 0.11，则禁用 LSP**
+  - _`use_emmylua_ls`_ 使用 `emmylua_ls` 作为 Lua 语言服务器
+  - _`workspace_inject_plugin_path`_ 将插件路径注入到 `emmylua_ls` 工作区配置中
+  - _`workspace_inject_vim_rt`_ 将 Vim 运行时注入到 `emmylua_ls` 工作区配置中
 
 - 其他
-    - *`sandbox_mode`* 控制沙盒功能 `sesson|undo|shada|swap|wb`，其中 `wb` 用于写回功能
-    - *`silent_profile_diag`* 不输出配置文件加载器的日志
-    - *`disable_im_switch`* 禁用自动 Im 切换器
-    - *`blink_use_binary`* 使用预编译二进制文件代替自行编译
+  - _`sandbox_mode`_ 控制沙盒功能 `sesson|undo|shada|swap|wb`，其中 `wb` 用于写回功能
+  - _`silent_profile_diag`_ 不输出配置文件加载器的日志
+  - _`disable_im_switch`_ 禁用自动 Im 切换器
+  - _`blink_use_binary`_ 使用预编译二进制文件代替自行编译
 
 以下是默认值：
 
@@ -155,16 +156,16 @@ local defaults = {
 
 **策略**（`LangSpec` 或 `PluginSpec`）是纯数据。
 
-* **优势**：您可以通过创建一个声明式文件来添加对新语言的支持，而无需修改编排逻辑。
+- **优势**：您可以通过创建一个声明式文件来添加对新语言的支持，而无需修改编排逻辑。
 
 ### 2. 环境驱动的运行时掩码
 
 此编辑器应能适应上下文，而无需更改代码。通过使用诸如 `NVIM_LANG_WHITELIST` 和 `NVIM_LANG_BLACKLIST` 之类的环境变量.
 配置允许“运行时屏蔽”。
 
-* **逻辑**：白名单充当“允许”机制，覆盖任何“全部拒绝”黑名单。
+- **逻辑**：白名单充当“允许”机制，覆盖任何“全部拒绝”黑名单。
 
-* **用例**：调试核心问题？执行 `NVIM_LANG_BLACKLIST=all nvim` 即可立即清除配置。
+- **用例**：调试核心问题？执行 `NVIM_LANG_BLACKLIST=all nvim` 即可立即清除配置。
 
 ### 3. 结构化原子性
 
@@ -175,12 +176,12 @@ local defaults = {
 
 ### 对比：发行版/典型 nvim 配置 vs. 本引擎
 
-| 特性 | 典型配置/发行版 | 本配置 |
-| --- | --- | --- |
-| **加载方式** | 过程式 & 线性加载 | 扫描式 & 聚合式加载 |
-| **切换方式** | 硬编码布尔值 | 语义化环境掩码 (+/-) |
-| **数据结构** | 命令式设置调用 | 声明式规范（模式驱动） |
-| **理念** | “包含所有内容” | “仅加载白名单中的内容” |
+| 特性         | 典型配置/发行版   | 本配置                 |
+| ------------ | ----------------- | ---------------------- |
+| **加载方式** | 过程式 & 线性加载 | 扫描式 & 聚合式加载    |
+| **切换方式** | 硬编码布尔值      | 语义化环境掩码 (+/-)   |
+| **数据结构** | 命令式设置调用    | 声明式规范（模式驱动） |
+| **理念**     | “包含所有内容”    | “仅加载白名单中的内容” |
 
 ## 可能需要的功能
 

@@ -1,5 +1,9 @@
 --------------------------------------------------------------------------------
 -- Profile Module
+--
+-- Parse `nvimrc.json` and mask the values with environment variables.
+-- Priority:
+-- env > nvimrc.json > default(schema)
 --------------------------------------------------------------------------------
 local M = {}
 

@@ -2,17 +2,18 @@
 
 English | [中文](./doc/README.zh_CN.md)
 
-A **Modular & High-performance** set of configurations for Nvim which is written all ***by hand***
+A **Modular & High-performance** set of configurations for Nvim which is written all **_by hand_**
 
 > [!NOTE]
 >
 > This config is used to be `streamlined`, why the complexity now?
-> As the configuration grew, a flat structure became hard to maintain. 
+> As the configuration grew, a flat structure became hard to maintain.
 > The new Modular Architecture separates Policy (what to enable) from Implementation (plugin setup).
 > It is now a **data driven** configuration.
->  - lua/modules/profile/: Defines how the editor behaves.
->  - lua/modules/lang/: Defines what each language provides.
->  This makes the config a framework rather than just a set of dotfiles.
+>
+> - lua/modules/profile/: Defines how the editor behaves.
+> - lua/modules/lang/: Defines what each language provides.
+>   This makes the config a framework rather than just a set of dotfiles.
 
 ## ⚡Showcase ⚡
 
@@ -49,9 +50,9 @@ Some binaries should be installed before launch the configuration.
 
 - `tree-sitter` required by nvim-treesitter
 
-- `fcitx5-remote` *Linux,MacOS* for ime-switcher
+- `fcitx5-remote` _Linux,MacOS_ for ime-switcher
 
-- `win32yank.exe` *Windows* for system clipboard support
+- `win32yank.exe` _Windows_ for system clipboard support
 
 - `cargo` full rust toolchain, **optionally** required by blink.cmp
 
@@ -95,30 +96,30 @@ Some features are optional, controlled by a json file -- `nvimrc.json`, this fil
 dir. Here're customizable items:
 
 - UI
-    - *`transparent_mode`* enable transparent mode 
-    - *`dashboard_art_name`* choose an ascii art on dashboard
-    - *`statline_scrollbar_style`* choose a style for heirline scroll bar, which displays cursor position
-    - *`diagnose_inline`* do not use virtual lines to display diagnostic messages
-    - *`enable_current_line_blame`* enable virtual text line blame at the end of line
+  - _`transparent_mode`_ enable transparent mode
+  - _`dashboard_art_name`_ choose an ascii art on dashboard
+  - _`statline_scrollbar_style`_ choose a style for heirline scroll bar, which displays cursor position
+  - _`diagnose_inline`_ do not use virtual lines to display diagnostic messages
+  - _`enable_current_line_blame`_ enable virtual text line blame at the end of line
 
 - Lang module
-    - *`silent_lang_diag`* do not output log of lang loader
-    - *`lang_blacklist`* disabled lang configs, default none, split by ','
-    - *`lang_whitelist`* enabled lang configs, default all, split by ','
-    - *`lang_levels`* lang feature config, syntax: string `c:full;cpp:none;rust:lsp,+ts,-fmt` means enable full 
+  - _`silent_lang_diag`_ do not output log of lang loader
+  - _`lang_blacklist`_ disabled lang configs, default none, split by ','
+  - _`lang_whitelist`_ enabled lang configs, default all, split by ','
+  - _`lang_levels`_ lang feature config, syntax: string `c:full;cpp:none;rust:lsp,+ts,-fmt` means enable full
     feature for c, disable all features for cpp, enable tree-sitter and lsp, disable formatter for rust.
 
 - Lsp
-    - *`enable_lsp`* enable lsp **Disable LSP if nvim version <= 0.11**
-    - *`use_emmylua_ls`* use `emmylua_ls` as lua language server
-    - *`workspace_inject_plugin_path`* inject plugin path to `emmylua_ls` workspace config
-    - *`workspace_inject_vim_rt`* inject vim runtime to `emmylua_ls` workspace config
+  - _`enable_lsp`_ enable lsp **Disable LSP if nvim version <= 0.11**
+  - _`use_emmylua_ls`_ use `emmylua_ls` as lua language server
+  - _`workspace_inject_plugin_path`_ inject plugin path to `emmylua_ls` workspace config
+  - _`workspace_inject_vim_rt`_ inject vim runtime to `emmylua_ls` workspace config
 
 - Misc
-    - *`sandbox_mode`* control sanbox features `sesson|undo|shada|swap|wb`, `wb` for writebackup
-    - *`silent_profile_diag`* do not output log of profile loader
-    - *`disable_im_switch`* disable auto im switcher
-    - *`blink_use_binary`* use prebuild binary instead of building
+  - _`sandbox_mode`_ control sanbox features `sesson|undo|shada|swap|wb`, `wb` for writebackup
+  - _`silent_profile_diag`_ do not output log of profile loader
+  - _`disable_im_switch`_ disable auto im switcher
+  - _`blink_use_binary`_ use prebuild binary instead of building
 
 Here are defaults:
 
@@ -156,11 +157,11 @@ and the loading process as a controlled pipeline.
 
 ### 1. Separation of Mechanism and Policy
 
-The core of this setup is the **Mechanism** (the Loader). It doesn't care *what* is being loaded;
-it only cares about *how* to scan directories, resolve module paths, and aggregate data.
+The core of this setup is the **Mechanism** (the Loader). It doesn't care _what_ is being loaded;
+it only cares about _how_ to scan directories, resolve module paths, and aggregate data.
 The **Policy** (`LangSpec` or `PluginSpec`) is pure data.
 
-* **Benefit**: You can add support for a new language by creating a single declarative file without touching the
+- **Benefit**: You can add support for a new language by creating a single declarative file without touching the
   orchestration logic.
 
 ### 2. Environment-Driven Runtime Masking
@@ -168,8 +169,8 @@ The **Policy** (`LangSpec` or `PluginSpec`) is pure data.
 This editor should adapt to context without code changes. By utilizing environment variables like
 `NVIM_LANG_WHITELIST` and `NVIM_LANG_BLACKLIST`, the configuration allows for "Runtime Masking."
 
-* **The Logic**: Whitelists act as a "Permit" that overrides any "Deny All" blacklist.
-* **Use Case**: Debugging a core issue? Execute `NVIM_LANG_BLACKLIST=all nvim` for a clean slate instantly.
+- **The Logic**: Whitelists act as a "Permit" that overrides any "Deny All" blacklist.
+- **Use Case**: Debugging a core issue? Execute `NVIM_LANG_BLACKLIST=all nvim` for a clean slate instantly.
 
 ### 3. Structured Atomicity
 
@@ -180,14 +181,12 @@ This avoids global namespace pollution and makes "Configuration Collections"
 
 ### Comparison: Distro / Typical nvim config vs. This Engine
 
-
-| Feature | Typical Distro | This Configuration |
-| --- | --- | --- |
-| **Loading** | Procedural & Linear | Scanned & Aggregated |
-| **Toggling** | Hardcoded Booleans | Semantic Env Masks (+/-) |
+| Feature            | Typical Distro         | This Configuration                |
+| ------------------ | ---------------------- | --------------------------------- |
+| **Loading**        | Procedural & Linear    | Scanned & Aggregated              |
+| **Toggling**       | Hardcoded Booleans     | Semantic Env Masks (+/-)          |
 | **Data Structure** | Imperative Setup Calls | Declarative Specs (Schema-driven) |
-| **Philosophy** | "Include Everything" | "Load only what's whitelisted" |
-
+| **Philosophy**     | "Include Everything"   | "Load only what's whitelisted"    |
 
 ## Maybe wanted features
 
