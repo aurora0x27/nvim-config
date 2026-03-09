@@ -136,7 +136,7 @@ local Dashboard = {
             local datetime = ' ' .. date .. '   ' .. time
 
             return string.format(
-                '⚡ %d/%d plugins loaded in %.2fms  |  %s',
+                ' %d/%d plugins loaded in %.2fms  |  %s',
                 plugin_load,
                 plugin_count,
                 load_time,

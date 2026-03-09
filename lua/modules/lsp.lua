@@ -138,29 +138,30 @@ local function lsp_buf_setup(event)
     local bufnr = event.buf
     local thunk = require('utils.loader').thunk
     local bind = require('utils.loader').bind
+    local map = vim.keymap.set
 
-    vim.keymap.set('n', 'gd', thunk('fzf-lua', 'lsp_definitions'), {
+    map('n', 'gd', thunk('fzf-lua', 'lsp_definitions'), {
         desc = 'LSP Goto Definition',
         noremap = true,
         silent = true,
         buffer = bufnr,
     })
 
-    vim.keymap.set('n', 'gD', thunk('fzf-lua', 'lsp_declarations'), {
+    map('n', 'gD', thunk('fzf-lua', 'lsp_declarations'), {
         desc = 'LSP Goto Declaration',
         noremap = true,
         silent = true,
         buffer = bufnr,
     })
 
-    vim.keymap.set('n', '<leader>lr', lsp.buf.rename, {
+    map('n', '<leader>lr', lsp.buf.rename, {
         desc = 'LSP [R]ename Symbol',
         noremap = true,
         silent = true,
         buffer = bufnr,
     })
 
-    vim.keymap.set('n', '<leader>lh', function()
+    map('n', '<leader>lh', function()
         local stat = lsp.inlay_hint.is_enabled { bufnr = bufnr }
         misc.info('Lsp Inlay Hints ' .. (stat and 'Disabled' or 'Enabled'))
         lsp.inlay_hint.enable(not stat, { bufnr = bufnr })
@@ -168,7 +169,7 @@ local function lsp_buf_setup(event)
 
     local FzfLspJmpCfg = { jump1 = false }
 
-    vim.keymap.set(
+    map(
         'n',
         '<Leader>lso',
         bind(thunk('fzf-lua', 'lsp_outgoing_calls'), FzfLspJmpCfg),
@@ -180,7 +181,7 @@ local function lsp_buf_setup(event)
         }
     )
 
-    vim.keymap.set(
+    map(
         'n',
         '<Leader>lsi',
         bind(thunk('fzf-lua', 'lsp_incoming_calls'), FzfLspJmpCfg),
@@ -192,7 +193,7 @@ local function lsp_buf_setup(event)
         }
     )
 
-    vim.keymap.set(
+    map(
         'n',
         '<Leader>lsS',
         bind(thunk('fzf-lua', 'lsp_type_super'), FzfLspJmpCfg),
@@ -204,7 +205,7 @@ local function lsp_buf_setup(event)
         }
     )
 
-    vim.keymap.set(
+    map(
         'n',
         '<Leader>lss',
         bind(thunk('fzf-lua', 'lsp_type_sub'), FzfLspJmpCfg),
@@ -216,43 +217,33 @@ local function lsp_buf_setup(event)
         }
     )
 
-    vim.keymap.set('n', '<Leader>la', thunk('fzf-lua', 'lsp_code_actions'), {
+    map('n', '<Leader>la', thunk('fzf-lua', 'lsp_code_actions'), {
         desc = 'FzfLua [L]ist Code [A]ctions',
         noremap = true,
         silent = true,
         buffer = bufnr,
     })
 
-    vim.keymap.set('n', '<Leader>fr', thunk('fzf-lua', 'lsp_references'), {
+    map('n', '<Leader>fr', thunk('fzf-lua', 'lsp_references'), {
         desc = 'FzfLua Find Symbol [R]eferences',
         noremap = true,
         silent = true,
         buffer = bufnr,
     })
 
-    vim.keymap.set(
-        'n',
-        '<Leader>fs',
-        thunk('fzf-lua', 'lsp_document_symbols'),
-        {
-            desc = 'FzfLua Find Document [S]ymbols',
-            noremap = true,
-            silent = true,
-            buffer = bufnr,
-        }
-    )
+    map('n', '<Leader>fs', thunk('fzf-lua', 'lsp_document_symbols'), {
+        desc = 'FzfLua Find Document [S]ymbols',
+        noremap = true,
+        silent = true,
+        buffer = bufnr,
+    })
 
-    vim.keymap.set(
-        'n',
-        '<Leader>fS',
-        thunk('fzf-lua', 'lsp_live_workspace_symbols'),
-        {
-            desc = 'FzfLua Find Workspace [S]ymbols',
-            noremap = true,
-            silent = true,
-            buffer = bufnr,
-        }
-    )
+    map('n', '<Leader>fS', thunk('fzf-lua', 'lsp_live_workspace_symbols'), {
+        desc = 'FzfLua Find Workspace [S]ymbols',
+        noremap = true,
+        silent = true,
+        buffer = bufnr,
+    })
 end
 
 function M.setup()

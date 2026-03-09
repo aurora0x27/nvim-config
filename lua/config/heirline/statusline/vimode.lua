@@ -42,6 +42,9 @@ local ViMode = {
         },
     },
     provider = function(self)
+        if vim.o.columns < 80 then
+            return '  '
+        end
         return ' ' .. (self.mode_name[self.mode] or 'UNKNOWN') .. ' '
     end,
     hl = function(self)

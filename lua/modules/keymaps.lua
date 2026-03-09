@@ -289,14 +289,21 @@ function M.setup()
         '<cmd>tabnext<cr>',
         { noremap = true, silent = true, desc = '[T]ab switch next' }
     )
-    map({ 'n' }, '<Leader>tn', function()
+    map(
+        { 'n' },
+        '<Leader>tn',
+        '<cmd>tabnew<cr>',
+        { noremap = true, silent = true, desc = 'Tab [N]ew' }
+    )
+    map({ 'n' }, '<Leader>tN', function()
         local name = vim.fn.input('File name: ', '', 'file')
         if name ~= '' then
             vim.cmd('tabnew ' .. name)
         else
-            misc.warn 'Warn: Filename not assigned, nothing todo'
+            vim.cmd 'tabnew'
+            misc.warn 'Warn: Filename not assigned, opening an anonymous buffer'
         end
-    end, { noremap = true, silent = true, desc = 'Tab [N]ew' })
+    end, { noremap = true, silent = true, desc = 'Tab [N]ew with name' })
     map(
         { 'n' },
         '<Leader>tp',

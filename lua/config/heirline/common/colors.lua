@@ -17,6 +17,7 @@ local Colors = {
     blue = mocha.blue,
     lavender = mocha.lavender,
     black = mocha.crust,
+    subtext1 = mocha.subtext1,
 
     -- Mode colors
     normal = mocha.blue,

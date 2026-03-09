@@ -1,0 +1,29 @@
+local IcoUI = require 'config.assets.icons'.get('ui')
+local IcoMisc = require 'config.assets.icons'.get('misc')
+
+local BufInfo = {
+    static = {
+        icon = {
+            indent = IcoUI.Tab,
+            bar = IcoMisc.Vbar,
+        },
+    },
+    provider = function(self)
+        local enc = #vim.bo.fileencoding ~= 0 and (vim.bo.fileencoding .. ' ')
+            or ''
+        return enc
+            .. vim.bo.fileformat
+            .. ' '
+            .. self.icon.indent
+            .. ' '
+            .. vim.bo.tabstop
+            .. ' '
+    end,
+    hl = { fg = 'subtext1', italic = true },
+    condition = function()
+        return vim.api.nvim_win_get_width(0) >= 120
+    end,
+    update = { 'BufEnter' },
+}
+
+return BufInfo

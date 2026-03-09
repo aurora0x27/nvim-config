@@ -5,14 +5,15 @@ local ScrollBar = require 'config.heirline.statusline.scroll-bar'
 local CursorPos = require 'config.heirline.statusline.cursor-pos'
 local Diagnostics = require 'config.heirline.statusline.diagnostics'
 local LSPInfo = require 'config.heirline.statusline.lsp-info'
-local FileInfo = require 'config.heirline.statusline.file-info'
+local BufName = require 'config.heirline.statusline.bufname'
 local WorkDir = require 'config.heirline.statusline.workdir'
 local TaskRunner = require 'config.heirline.statusline.overseer'
+local BufInfo = require 'config.heirline.statusline.bufinfo'
 
 local ctrl_v = string.char(22)
 local ctrl_s = string.char(19)
 
--- Status line layout
+--- Status line layout
 local StatusLine = {
     static = {
         mode_hl = {
@@ -77,7 +78,8 @@ local StatusLine = {
     { provider = '%=' },
     Diagnostics,
     LSPInfo,
-    FileInfo,
+    BufInfo,
+    BufName,
     WorkDir,
 }
 

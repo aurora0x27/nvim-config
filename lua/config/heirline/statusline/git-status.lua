@@ -1,7 +1,9 @@
 local conditions = require 'heirline.conditions'
 
 local GitStatus = {
-    condition = conditions.is_git_repo,
+    condition = function()
+        return conditions.is_git_repo() and vim.o.columns > 80
+    end,
     init = function(self)
         self.status = vim.b.gitsigns_status_dict or {}
     end,

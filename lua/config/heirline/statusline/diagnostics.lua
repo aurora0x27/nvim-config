@@ -26,9 +26,15 @@ local Diagnostics = {
     },
     {
         provider = function(self)
-            return self.hints > 0 and (' ' .. self.hints .. ' ') or ''
+            return self.info > 0 and (' ' .. self.info .. ' ') or ''
         end,
-        hl = { fg = 'green' },
+        hl = { fg = 'teal' },
+    },
+    {
+        provider = function(self)
+            return self.hints > 0 and ('󰌵 ' .. self.hints .. ' ') or ''
+        end,
+        hl = { fg = 'teal' },
     },
 }
 

@@ -30,6 +30,9 @@ local WorkDir = {
         self.mode = vim.fn.mode()
     end,
     provider = function(self)
+        if vim.o.columns < 80 then
+            return '  '
+        end
         return '   ' .. shorten_cwd(self.cwd) .. ' '
     end,
     hl = function(self)

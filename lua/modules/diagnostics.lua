@@ -6,19 +6,19 @@ local M = {}
 
 local RawIconSpec = {
     [vim.diagnostic.severity.ERROR] = {
-        icon = '󰅚 ',
+        icon = ' ',
         hl = 'DiagnosticError',
     },
     [vim.diagnostic.severity.WARN] = {
-        icon = '󰀪 ',
+        icon = ' ',
         hl = 'DiagnosticWarn',
     },
     [vim.diagnostic.severity.INFO] = {
-        icon = '󰋽 ',
+        icon = ' ',
         hl = 'DiagnosticInfo',
     },
     [vim.diagnostic.severity.HINT] = {
-        icon = '󰌶 ',
+        icon = '󰌵 ',
         hl = 'DiagnosticHint',
     },
 }
