@@ -11,20 +11,22 @@ RESET='\033[0m'
     exit 1
 }
 
-
-export SCRIPT_DIR=$(dirname "$(realpath "$0")")
-export TEST_ENV=$SCRIPT_DIR/nvim-cache
-mkdir -p $TEST_ENV/{share,state,cache}
-export PATH="$SCRIPT_DIR:$PATH"
+export NVIM_CONFIG_DEV_CONFIG_ROOT=$(dirname "$(realpath "$0")")
+export NVIM_CONFIG_DEV_CACHE_ROOT=$NVIM_CONFIG_DEV_CONFIG_ROOT/nvim-cache
+mkdir -p $NVIM_CONFIG_DEV_CACHE_ROOT/{share,state/log,cache,run,zdotdir}
+# export PATH="$SCRIPT_DIR:$PATH"
 export VIRTUAL_ENV=nvim-dev
 echo ""
 echo -e $CYAN $BOLD "[Note]: Please run \`vi\` to launch nvim and enter \`exit\` to exit debug shell" $RESET
-ZDOTDIR=$(mktemp -d)
-cat > "$ZDOTDIR/.zshrc" <<'EOF'
+ZDOTDIR=$NVIM_CONFIG_DEV_CACHE_ROOT/zdotdir
+[[ -f "$ZDOTDIR/.zshrc" ]] || {
+
+cat > "$ZDOTDIR/.zshrc" <<EOF
 [[ -f ~/.zshrc ]] && source ~/.zshrc
-alias vi="$(which nv)"
+alias vi="NVIM_CONFIG_DEV=1 nvim -u $NVIM_CONFIG_DEV_CONFIG_ROOT/init.lua"
 EOF
+
+}
 ZDOTDIR="$ZDOTDIR" zsh
-rm -rf "$ZDOTDIR"
 echo ""
 echo -e $CYAN $BOLD "[OK] Leaving debug shell..." $RESET

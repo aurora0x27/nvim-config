@@ -1,7 +1,0 @@
-#! /bin/bash
-
-export XDG_DATA_HOME=$TEST_ENV/share
-export XDG_STATE_HOME=$TEST_ENV/state
-export XDG_CACHE_HOME=$TEST_ENV/cache
-export NVIM_CONFIG_DEV=1
-nvim -u $SCRIPT_DIR/init.lua "$@"

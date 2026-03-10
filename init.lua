@@ -26,20 +26,44 @@ end
 -- Phase 0: DEBUG MODE
 --------------------------------------------------------------------------------
 vim.g.debug_mode = vim.env.NVIM_CONFIG_DEV
-
-local function set_rtpath()
-    vim.opt.rtp:prepend(vim.env.SCRIPT_DIR)
-end
-
 if vim.g.debug_mode == '1' then
-    local project_root = vim.env.SCRIPT_DIR
+    local project_root = vim.env.NVIM_CONFIG_DEV_CONFIG_ROOT
+    local cache_root = vim.env.NVIM_CONFIG_DEV_CACHE_ROOT
+
+    if not project_root then
+        vim.notify(
+            'DEBUG mode is set but config root is missing',
+            vim.log.levels.ERROR,
+            { title = 'Config Hack' }
+        )
+        return
+    end
+    if not cache_root then
+        vim.notify(
+            'DEBUG mode is set but cache root is missing',
+            vim.log.levels.WARN,
+            { title = 'Config Hack' }
+        )
+        return
+    end
+
+    local function set_rtpath()
+        vim.opt.rtp:prepend(project_root)
+    end
+
+    local shadow = {
+        config = project_root,
+        cache = cache_root .. '/cache',
+        data = cache_root .. '/share',
+        state = cache_root .. '/state',
+        log = cache_root .. '/state/log',
+        run = cache_root .. '/run',
+        config_dirs = { project_root },
+        data_dirs = { cache_root .. '/share' },
+    }
     ---@diagnostic disable: inject-field, duplicate-set-field
     vim.fn.stdpath = function(what)
-        if what == 'config' then
-            return project_root
-        else
-            return vim.fn.call('stdpath', { what })
-        end
+        return shadow[what] --or vim.fn.call('stdpath', { what })
     end
     set_rtpath()
     vim.api.nvim_create_autocmd('VimEnter', {
