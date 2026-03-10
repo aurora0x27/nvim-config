@@ -11,7 +11,7 @@ return {
     { ft = 'dosini', treesitter = 'ini' },
     { ft = 'fish', treesitter = true },
     { ft = 'gitattributes', treesitter = true },
-    { ft = 'gitcommit', treesitter = 'git_commit' },
+    { ft = 'gitcommit', treesitter = true },
     { ft = 'gitconfig', treesitter = 'git_config' },
     { ft = 'gitignore', treesitter = true },
     { ft = 'gitrebase', treesitter = 'git_rebase' },
