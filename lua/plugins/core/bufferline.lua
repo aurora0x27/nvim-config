@@ -1,14 +1,17 @@
 --------------------------------------------------------------------------------
 -- BufferLine/Tabline
 --------------------------------------------------------------------------------
+local thunk = require 'utils.loader'.thunk
 
 ---@type LazyPluginSpec
-local Tabline = {
+local BufferLine = {
     'akinsho/bufferline.nvim',
     version = '*',
     dependencies = 'nvim-tree/nvim-web-devicons',
     event = { 'TabEnter', 'BufReadPre', 'BufNewFile' },
     config = function()
+        ---@module 'bufferline'
+        ---@type bufferline.UserConfig
         require('bufferline').setup {
             highlights = require('catppuccin.special.bufferline').get_theme(),
             options = {
@@ -61,6 +64,19 @@ local Tabline = {
             { fg = mocha.teal, bold = true }
         )
     end,
+    keys = {
+        { ';', thunk('bufferline', 'pick'), desc = 'Pick Buffer' },
+        {
+            '<leader>bx',
+            thunk('bufferline', 'close_with_pick'),
+            desc = 'Close Picked Buffer',
+        },
+        {
+            '<leader>bC',
+            thunk('bufferline', 'close_others'),
+            desc = '[B]uffer [C]lear',
+        },
+    },
 }
 
-return Tabline
+return BufferLine

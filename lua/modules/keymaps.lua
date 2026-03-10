@@ -65,88 +65,113 @@ function M.setup()
         { desc = 'Move to right window', noremap = true, silent = true }
     )
 
-    map('n', 'H', '<cmd>bp<CR>', { noremap = true, silent = true })
-    map('n', 'L', '<cmd>bn<CR>', { noremap = true, silent = true })
+    -- Cycle switch buffer
+    map(
+        'n',
+        'H',
+        bind(thunk('bufferline', 'cycle'), -1),
+        { noremap = true, silent = true }
+    )
+    map(
+        'n',
+        'L',
+        bind(thunk('bufferline', 'cycle'), 1),
+        { noremap = true, silent = true }
+    )
+
+    -- Move buffer
+    map(
+        'n',
+        '<leader>bh',
+        bind(thunk('bufferline', 'move'), -1),
+        { noremap = true, silent = true }
+    )
+    map(
+        'n',
+        '<leader>bl',
+        bind(thunk('bufferline', 'move'), 1),
+        { noremap = true, silent = true }
+    )
 
     -- Fzflua related, prefix is leader-t
     map(
         'n',
-        '<Leader>ff',
+        '<leader>ff',
         thunk('fzf-lua', 'files'),
         { desc = 'Find [F]iles', noremap = true, silent = true }
     )
 
     map(
         'n',
-        '<Leader>fo',
+        '<leader>fo',
         thunk('fzf-lua', 'oldfiles'),
         { desc = 'Find [O]ld Files', noremap = true, silent = true }
     )
 
     map(
         'n',
-        '<Leader>ft',
+        '<leader>ft',
         thunk('fzf-lua', 'treesitter'),
         { desc = 'Find [T]reesitter Symbols', noremap = true, silent = true }
     )
 
     map(
         'n',
-        '<Leader>fw',
+        '<leader>fw',
         thunk('fzf-lua', 'live_grep'),
         { desc = '[W]ildcard Grep', noremap = true, silent = true }
     )
 
     map(
         'n',
-        '<Leader>fb',
+        '<leader>fb',
         thunk('fzf-lua', 'buffers'),
         { desc = 'Find [B]uffer', noremap = true, silent = true }
     )
 
     map(
         'n',
-        '<Leader>fB',
+        '<leader>fB',
         thunk('fzf-lua', 'builtin'),
         { desc = 'Find [B]uiltin', noremap = true, silent = true }
     )
 
     map(
         'n',
-        '<Leader>fd',
+        '<leader>fd',
         thunk('fzf-lua', 'diagnostics_document'),
         { desc = 'Find Document [D]iagnostics', noremap = true, silent = true }
     )
 
     map(
         'n',
-        '<Leader>fD',
+        '<leader>fD',
         thunk('fzf-lua', 'diagnostics_workspace'),
         { desc = 'Find Workspace [D]iagnostics', noremap = true, silent = true }
     )
 
     map(
         'n',
-        '<Leader>fC',
+        '<leader>fC',
         thunk('fzf-lua', 'highlights'),
         { desc = 'Find Highlight [C]olors', noremap = true, silent = true }
     )
 
     map(
         'n',
-        '<Leader>fgs',
+        '<leader>fgs',
         thunk('fzf-lua', 'git_status'),
         { desc = 'Find [G]it [S]tatus', noremap = true, silent = true }
     )
 
     map(
         'n',
-        '<Leader>fgc',
+        '<leader>fgc',
         thunk('fzf-lua', 'git_commits'),
         { desc = 'Find [G]it [C]ommits', noremap = true, silent = true }
     )
 
-    map('n', '<Leader>fgbc', thunk('fzf-lua', 'git_bcommits'), {
+    map('n', '<leader>fgbc', thunk('fzf-lua', 'git_bcommits'), {
         desc = 'Find [G]it [B]uffer [C]ommits',
         noremap = true,
         silent = true,
@@ -154,42 +179,42 @@ function M.setup()
 
     map(
         'n',
-        '<Leader>fgbr',
+        '<leader>fgbr',
         thunk('fzf-lua', 'git_branches'),
         { desc = 'Find [G]it [BR]anches', noremap = true, silent = true }
     )
 
     map(
         'n',
-        '<Leader>fm',
+        '<leader>fm',
         thunk('noice.integrations.fzf', 'open'),
         { desc = 'Find Noice [M]sg', noremap = true, silent = true }
     )
 
     map(
         'n',
-        '<Leader>fH',
+        '<leader>fH',
         thunk('fzf-lua', 'helptags'),
         { desc = 'Find [H]elp Tags', noremap = true, silent = true }
     )
 
     map(
         'n',
-        '<Leader>fT',
+        '<leader>fT',
         '<cmd>TodoFzfLua<CR>',
         { desc = 'Find [T]odo Items', noremap = true, silent = true }
     )
 
     map(
         'n',
-        '<Leader>f:',
+        '<leader>f:',
         thunk('fzf-lua', 'command_history'),
         { desc = 'Find Command History', noremap = true, silent = true }
     )
 
     map(
         'n',
-        '<Leader>fR',
+        '<leader>fR',
         thunk('fzf-lua', 'registers'),
         { desc = 'Find [R]egister', noremap = true, silent = true }
     )
@@ -197,7 +222,7 @@ function M.setup()
     -- buffer releated, prefix is leader-b
     map(
         'n',
-        '<Leader>bc',
+        '<leader>bc',
         '<cmd>bp | bd #<CR>',
         { desc = 'Buffer [C]lose Current', noremap = true, silent = true }
     )
@@ -207,7 +232,7 @@ function M.setup()
 
     map(
         'n',
-        '<Leader>h',
+        '<leader>h',
         '<cmd>Alpha<CR>',
         { desc = 'Open [H]ome Page', noremap = true, silent = true }
     )
@@ -285,17 +310,17 @@ function M.setup()
     -- Tab related
     map(
         { 'n' },
-        '<Leader>tt',
+        '<leader>tt',
         '<cmd>tabnext<cr>',
-        { noremap = true, silent = true, desc = '[T]ab switch next' }
+        { noremap = true, silent = true, desc = '[T]ab shif[T]' }
     )
     map(
         { 'n' },
-        '<Leader>tn',
+        '<leader>tn',
         '<cmd>tabnew<cr>',
         { noremap = true, silent = true, desc = 'Tab [N]ew' }
     )
-    map({ 'n' }, '<Leader>tN', function()
+    map({ 'n' }, '<leader>tN', function()
         local name = vim.fn.input('File name: ', '', 'file')
         if name ~= '' then
             vim.cmd('tabnew ' .. name)
@@ -306,25 +331,25 @@ function M.setup()
     end, { noremap = true, silent = true, desc = 'Tab [N]ew with name' })
     map(
         { 'n' },
-        '<Leader>tp',
+        '<leader>tp',
         '<cmd>tabprevious<cr>',
-        { noremap = true, silent = true, desc = 'Tab [P]revious' }
+        { noremap = true, silent = true, desc = '[T]ab switch [P]revious' }
     )
-    map({ 'n' }, '<Leader>ta', '<cmd>tabnew %<cr>', {
+    map({ 'n' }, '<leader>ta', '<cmd>tabnew %<cr>', {
         noremap = true,
         silent = true,
         desc = 'Tab [A]dd With Current Buffer',
     })
     map(
         { 'n' },
-        '<Leader>tc',
+        '<leader>tc',
         '<cmd>tabclose<cr>',
         { noremap = true, silent = true, desc = 'Tab [C]lose' }
     )
 
     map(
         { 'n' },
-        '<Leader>lm',
+        '<leader>lm',
         thunk('mason.ui', 'open'),
         { noremap = true, silent = true, desc = 'Launch Lsp [M]anager' }
     )

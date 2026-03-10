@@ -81,8 +81,7 @@ local ScrollBar = {
         local position = math.floor(line_ratio * 100)
         local icon = chars[math.floor(line_ratio * (#chars - 1)) + 1]
             .. position
-        local limit = 2
-        if position <= limit or vim.api.nvim_win_get_cursor(0)[1] == 1 then
+        if position <= 1 then
             return '↑ TOP'
         elseif
             position >= 99

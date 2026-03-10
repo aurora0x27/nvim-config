@@ -13,7 +13,7 @@ local Outline = {
         local dropbar_api = require 'dropbar.api'
         vim.keymap.set(
             'n',
-            '<Leader>;',
+            '<leader>;',
             dropbar_api.pick,
             { desc = 'Pick Symbols In Dropbar' }
         )

@@ -3,6 +3,7 @@
 --------------------------------------------------------------------------------
 
 local WinBorder = require('config.assets.misc').border
+local thunk = require 'utils.loader'.thunk
 
 local FzfLua = {
     'ibhagwan/fzf-lua',
@@ -54,19 +55,15 @@ local FzfLua = {
                 -- fzf '--bind=' options
                 -- true,        -- uncomment to inherit all the below in your custom config
                 ['ctrl-z'] = 'abort',
-                ['ctrl-u'] = 'unix-line-discard',
-                ['ctrl-f'] = 'half-page-down',
-                ['ctrl-b'] = 'half-page-up',
+                ['ctrl-n'] = 'half-page-down',
+                ['ctrl-p'] = 'half-page-up',
                 ['ctrl-a'] = 'beginning-of-line',
                 ['ctrl-e'] = 'end-of-line',
-                ['alt-a'] = 'toggle-all',
-                ['alt-g'] = 'first',
-                ['alt-G'] = 'last',
+                ['ctrl-u'] = 'first',
+                ['ctrl-d'] = 'last',
                 -- Only valid with fzf previewers (bat/cat/git/etc)
-                ['f3'] = 'toggle-preview-wrap',
-                ['f4'] = 'toggle-preview',
-                ['shift-down'] = 'preview-page-down',
                 ['shift-up'] = 'preview-page-up',
+                ['shift-down'] = 'preview-page-down',
             },
         },
 
@@ -82,28 +79,39 @@ local FzfLua = {
             ['--border'] = 'none',
             ['--highlight-line'] = true, -- fzf >= v0.53
         },
+
+        defaults = {
+            prompt = '> ',
+        },
+
+        files = {
+            cwd_prompt = false,
+        },
+
+        command_history = {
+            winopts = {
+                height = 0.4,
+                width = 0.4,
+                row = 0.5,
+                col = 0.5,
+                border = WinBorder,
+            },
+        },
+
+        grep = {
+            actions = {
+                -- actions inherit from 'actions.files' and merge
+                -- this action toggles between 'grep' and 'live_grep'
+                ['ctrl-f'] = { thunk('fzf-lua.actions', 'grep_lgrep') },
+                -- uncomment to enable '.gitignore' toggle for grep
+                -- ["ctrl-r"]   = { actions.toggle_ignore }
+                ['ctrl-g'] = false,
+            },
+        },
     },
     config = function(_, opts)
         local Fzf = require 'fzf-lua'
-        local PickerOpt = {
-            defaults = {
-                prompt = '> ',
-            },
-            files = {
-                cwd_prompt = false,
-            },
-            command_history = {
-                winopts = {
-                    height = 0.4,
-                    width = 0.4,
-                    row = 0.5,
-                    col = 0.5,
-                    border = WinBorder,
-                },
-            },
-        }
-        local FinalOpt = vim.tbl_extend('force', opts, PickerOpt)
-        Fzf.setup(FinalOpt)
+        Fzf.setup(opts)
         Fzf.register_ui_select {
             winopts = {
                 height = 0.4,

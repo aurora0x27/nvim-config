@@ -12,20 +12,20 @@ local KeyMapIntellisense = {
         icons = {
             breadcrumb = '', -- symbol used in the command line area that shows your active key combo
             separator = '→', -- symbol used between a key and it's label
-            group = ' ', -- symbol prepended to a group
+            group = '', -- symbol prepended to a group
             -- set icon mappings to true if you have a Nerd Font
             mappings = false,
             -- If you are using a Nerd Font: set icons.keys to an empty table which will use the
             -- default which-key.nvim defined Nerd Font icons, otherwise define a string table
-            keys = vim.g.have_nerd_font and {} or {
+            keys = {
                 Up = '<Up>',
                 Down = '<Down>',
                 Left = '<Left>',
                 Right = '<Right>',
-                C = '<C-…>',
-                M = '<M-…>',
-                D = '<D-…>',
-                S = '<S-…>',
+                C = 'C-',
+                M = 'M-',
+                D = 'D-',
+                S = 'S-',
                 CR = '<CR>',
                 Esc = '<Esc> ',
                 ScrollWheelDown = '<ScrollWheelDown>',
@@ -57,7 +57,7 @@ local KeyMapIntellisense = {
             { '<leader>e', group = '[E]xplorer' },
             { '<leader>l', group = '[L]anguage Utils' },
             { '<leader>ls', group = '[L]sp [S]earch' },
-            { '<leader>t', group = '[T]ab/[T]oggle/[T]erm' },
+            { '<leader>t', group = '[T]ab/[T]erm' },
             { '<leader>p', group = '[P]review' },
             { '<leader>b', group = '[B]uffer' },
             { '<leader>r', group = '[R]un tasks' },

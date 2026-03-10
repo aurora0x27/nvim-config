@@ -57,7 +57,7 @@ local IntergratedTerminal = {
         },
     },
     keys = {
-        { '<Leader>ts', '<cmd>TermSelect<cr>', desc = '[T]erm [S]elect' },
+        { '<leader>ts', '<cmd>TermSelect<cr>', desc = '[T]erm [S]elect' },
         { '<C-\\>', thunk('toggleterm', 'toggle'), desc = 'Toggle Terminal' },
     },
 }

@@ -70,7 +70,7 @@ function M.setup()
     -- Hover diagnostics
     vim.keymap.set(
         'n',
-        '<Leader>ld',
+        '<leader>ld',
         thunk('vim.diagnostic', 'open_float'),
         { desc = 'Hover [D]iagnostics' }
     )

@@ -81,8 +81,8 @@ local FsEditor = {
             ['<C-p>'] = 'actions.preview',
             ['q'] = { 'actions.close', mode = 'n' },
             ['<C-l>'] = 'actions.refresh',
-            ['<Leader>y'] = { 'actions.yank_entry' },
-            ['<Leader>Y'] = { 'actions.yank_entry', opts = { modify = ':.' } },
+            ['<leader>y'] = { 'actions.yank_entry' },
+            ['<leader>Y'] = { 'actions.yank_entry', opts = { modify = ':.' } },
             ['-'] = { 'actions.parent', mode = 'n' },
             ['_'] = { 'actions.open_cwd', mode = 'n' },
             ['`'] = { 'actions.cd', mode = 'n' },
@@ -91,7 +91,7 @@ local FsEditor = {
             ['gx'] = 'actions.open_external',
             ['g.'] = { 'actions.toggle_hidden', mode = 'n' },
             ['g\\'] = { 'actions.toggle_trash', mode = 'n' },
-            ['<Leader>d'] = {
+            ['<leader>d'] = {
                 desc = 'Oil toggle detail',
                 callback = function()
                     vim.b.detail = not vim.b.detail
