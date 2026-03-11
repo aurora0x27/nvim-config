@@ -21,12 +21,15 @@ local BufName = {
         if #filename > 0 then
             filename = filename .. ' '
         end
-        if vim.api.nvim_win_get_width(0) < 120 then
+        if vim.o.columns < 120 then
             return (vim.bo.modified and '%m' or '') .. icon .. ' '
         end
         local symbols = {}
         if vim.bo.modified then
             table.insert(symbols, '[+]')
+        end
+        if require 'utils.detect'.is_bigfile(0) then
+            table.insert(symbols, '[BIG]')
         end
         if vim.bo.readonly == true then
             table.insert(symbols, '[RO]')

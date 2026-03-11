@@ -110,6 +110,10 @@ vi # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
   - _`workspace_inject_plugin_path`_ 将插件路径注入到 `emmylua_ls` 工作区配置中
   - _`workspace_inject_vim_rt`_ 将 Vim 运行时注入到 `emmylua_ls` 工作区配置中
 
+- 大文件支持
+  - _`bigfile_size_byte`_ 平均字节大小
+  - _`bigfile_size_line`_ 平均行长度（适用于压缩文件）
+
 - 其他
   - _`sandbox_mode`_ 控制沙盒功能 `sesson|undo|shada|swap|wb`，其中 `wb` 用于写回功能
   - _`silent_profile_diag`_ 不输出配置文件加载器的日志
@@ -137,6 +141,8 @@ local defaults = {
   use_emmylua_ls = false,
   workspace_inject_plugin_path = false,
   workspace_inject_vim_rt = true
+  bigfile_size_byte = 2097152,
+  bigfile_size_line = 100000,
 }
 ```
 

@@ -79,6 +79,34 @@ function M.setup()
 
     -- register filetype `xmake`
     vim.treesitter.language.register('lua', 'xmake')
+
+    vim.api.nvim_create_autocmd('BufReadPost', {
+        ---@param arg vim.api.keyset.create_autocmd.callback_args
+        callback = function(arg)
+            local buf = arg.buf
+            if require 'utils.detect'.is_bigfile(buf) then
+                vim.b[buf].bigfile = true
+                vim.bo.undofile = false
+                vim.bo.swapfile = false
+
+                vim.api.nvim_create_autocmd('FileType', {
+                    buffer = buf,
+                    once = true,
+                    callback = function()
+                        vim.defer_fn(
+                            require 'utils.loader'.bind(
+                                require 'utils.misc'.info,
+                                'Large file detected, some features are disabled'
+                            ),
+                            100
+                        )
+                        vim.cmd 'syntax off'
+                        vim.bo.filetype = 'bigfile'
+                    end,
+                })
+            end
+        end,
+    })
 end
 
 return M

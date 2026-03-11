@@ -7,11 +7,26 @@
 local TSEnsureInstalled = require 'modules.lang'.get_ts_install_list()
 local bind = require 'utils.loader'.bind
 local thunk = require 'utils.loader'.thunk
+local misc = require 'utils.misc'
+local LOGTITLE = 'TreeSitter'
 
-local function safe_ts_start(buf)
+---@param args vim.api.keyset.create_autocmd.callback_args
+local function safe_ts_start(args)
+    local buf = args.buf
     local ft = vim.bo[buf].filetype
+    if require 'utils.detect'.is_bigfile(buf) then
+        return
+    end
+
     if ft == '' then
-        require('utils.misc').err 'Cannot start parser, ft not assigned'
+        vim.defer_fn(
+            bind(
+                misc.err,
+                'Cannot start parser, ft not assigned',
+                { title = LOGTITLE }
+            ),
+            500
+        )
         return
     end
 
@@ -22,8 +37,13 @@ local function safe_ts_start(buf)
 
     local ok1 = pcall(vim.treesitter.start, buf, lang)
     if not ok1 then
-        require('utils.misc').err(
-            string.format('Cannot start parser for `%s`', lang)
+        vim.defer_fn(
+            bind(
+                misc.err,
+                string.format('Cannot start parser for `%s`', lang),
+                { title = LOGTITLE }
+            ),
+            500
         )
     end
 end
@@ -42,9 +62,7 @@ local TreeSitter = {
         if #langs ~= 0 then
             vim.api.nvim_create_autocmd({ 'FileType' }, {
                 pattern = langs,
-                callback = function(args)
-                    safe_ts_start(args.buf)
-                end,
+                callback = safe_ts_start,
             })
         end
     end,

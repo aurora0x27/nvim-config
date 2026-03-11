@@ -26,4 +26,14 @@ function M.is_executable(cmd)
     return vim.fn.executable(cmd) == 1
 end
 
+---@param bufnr integer
+---@return boolean
+function M.is_bigfile(bufnr)
+    local profile = require 'modules.profile'
+    local line_count = vim.api.nvim_buf_line_count(bufnr)
+    return line_count > profile.bigfile_size_line
+        or vim.api.nvim_buf_get_offset(bufnr, line_count)
+            > profile.bigfile_size_byte
+end
+
 return M

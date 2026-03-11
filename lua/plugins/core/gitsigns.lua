@@ -6,6 +6,8 @@
 local GitUtils = {
     'lewis6991/gitsigns.nvim',
     event = { 'BufReadPost', 'BufNewFile' },
+    ---@module 'gitsigns'
+    ---@type Gitsigns.config
     opts = {
         signs = {
             add = { text = '┃' },

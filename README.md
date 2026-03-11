@@ -115,6 +115,10 @@ dir. Here're customizable items:
   - _`workspace_inject_plugin_path`_ inject plugin path to `emmylua_ls` workspace config
   - _`workspace_inject_vim_rt`_ inject vim runtime to `emmylua_ls` workspace config
 
+- BigFile
+  - _`bigfile_size_byte`_ average byte size
+  - _`bigfile_size_line`_ average line length (useful for minified files)
+
 - Misc
   - _`sandbox_mode`_ control sanbox features `sesson|undo|shada|swap|wb`, `wb` for writebackup
   - _`silent_profile_diag`_ do not output log of profile loader
@@ -142,6 +146,8 @@ local defaults = {
   use_emmylua_ls = false,
   workspace_inject_plugin_path = false,
   workspace_inject_vim_rt = true
+  bigfile_size_byte = 2097152,
+  bigfile_size_line = 100000,
 }
 ```
 

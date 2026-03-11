@@ -5,9 +5,11 @@
 local M = {}
 
 function M.setup()
+    local augrp = vim.api.nvim_create_augroup('Customed', { clear = false })
     -- Highlight yanked text
     vim.api.nvim_create_autocmd('TextYankPost', {
         pattern = '*',
+        group = augrp,
         callback = function()
             vim.highlight.on_yank {
                 higroup = 'IncSearch',
@@ -17,6 +19,7 @@ function M.setup()
     })
 
     vim.api.nvim_create_autocmd('BufReadPost', {
+        group = augrp,
         callback = function()
             local mark = vim.api.nvim_buf_get_mark(0, '"')
             local lcount = vim.api.nvim_buf_line_count(0)
@@ -29,6 +32,7 @@ function M.setup()
 
     vim.api.nvim_create_autocmd('FileType', {
         pattern = 'help',
+        group = augrp,
         callback = function()
             -- Trigger only when real `help` command is typed
             if vim.bo.buftype == 'help' then
