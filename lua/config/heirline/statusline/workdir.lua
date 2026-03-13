@@ -1,31 +1,10 @@
-local function shorten_cwd(dir)
-    local parts = {}
-    for p in string.gmatch(dir, '[^/]+') do
-        table.insert(parts, p)
-    end
-
-    local prefix
-    local remaining_parts
-    if vim.startswith(dir, '~') then
-        prefix = '~'
-        remaining_parts = { unpack(parts, 2) }
-    else
-        prefix = '/' .. parts[1]
-        remaining_parts = parts
-    end
-
-    if #remaining_parts > 2 then
-        local last2 =
-            { unpack(remaining_parts, #remaining_parts - 1, #remaining_parts) }
-        return prefix .. '/…' .. '/' .. table.concat(last2, '/')
-    else
-        return dir
-    end
-end
+local tools = require 'utils.fs'
+local get_logical_cwd = tools.get_logical_cwd
+local shorten_path = tools.shorten_path
 
 local WorkDir = {
     init = function(self)
-        local cwd = vim.fn.getcwd(0)
+        local cwd = get_logical_cwd()
         self.cwd = vim.fn.fnamemodify(cwd, ':~')
         self.mode = vim.fn.mode()
     end,
@@ -33,7 +12,7 @@ local WorkDir = {
         if vim.o.columns < 80 then
             return '  '
         end
-        return '   ' .. shorten_cwd(self.cwd) .. ' '
+        return '   ' .. shorten_path(self.cwd) .. ' '
     end,
     hl = function(self)
         return {

@@ -2,22 +2,24 @@
 -- Dropbar, annotions the scope for current cursor pos context
 --------------------------------------------------------------------------------
 
--- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+local thunk = require 'utils.loader'.thunk
 
 ---@type LazyPluginSpec
 local Outline = {
     'Bekaboo/dropbar.nvim',
     -- optional, but required for fuzzy finder support
     event = { 'BufReadPost', 'BufNewFile' },
-    config = function()
-        local dropbar_api = require 'dropbar.api'
-        vim.keymap.set(
-            'n',
+    ---@module 'dropbar'
+    ---@type dropbar_opts_t
+    opts = {},
+    keys = {
+        {
             '<leader>;',
-            dropbar_api.pick,
-            { desc = 'Pick Symbols In Dropbar' }
-        )
-    end,
+            thunk('dropbar.api', 'pick'),
+            mode = { 'n' },
+            desc = 'Pick Symbols In Dropbar',
+        },
+    },
 }
 
 return Outline

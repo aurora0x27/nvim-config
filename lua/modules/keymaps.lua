@@ -241,10 +241,11 @@ function M.setup()
     map(
         'n',
         '<leader>e',
-        bind(
-            thunk('neo-tree.command', 'execute'),
-            { action = 'show', source = 'filesystem', toggle = true }
-        ),
+        bind(thunk('neo-tree.command', 'execute'), {
+            action = 'show',
+            source = 'filesystem',
+            toggle = true,
+        }),
         {
             desc = 'Toggle File [E]xplorer',
             noremap = true,
