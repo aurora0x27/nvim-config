@@ -20,9 +20,9 @@ local M = {}
 ---@field packname? string
 
 ---@class LangSpec
----@field ft? string
+---@field ft? string|string[]
 ---@field lsp? ToolSpec
----@field formatter? ToolSpec
+---@field formatter? ToolSpec|ToolSpec[]
 ---@field treesitter string|string[]|boolean
 ---@field plugins? string|string[]
 
@@ -75,19 +75,52 @@ local CAPABILITY = require('utils.loader').load_data_dir_as_set(
     'config.langs',
     log_queue.error,
     function(set, k, v)
+        ---@param ft string
+        ---@param subtbl table
+        local function process_ft(ft, subtbl)
+            local ty = type(ft)
+            if ty == 'string' then
+                if set[ft] then
+                    log_queue.warn(
+                        string.format(
+                            '[Lang]: CAPABILITY[%s] is filled before, origin value will be over written',
+                            ft
+                        )
+                    )
+                end
+                set[ft] = subtbl
+            elseif vim.islist(ft) then
+                for _, single_ft in ipairs(ft) do
+                    local copy = vim.deepcopy(subtbl)
+
+                    copy.ft = single_ft
+
+                    if set[single_ft] then
+                        log_queue.warn(
+                            string.format(
+                                '[Lang]: CAPABILITY[%s] overwritten',
+                                single_ft
+                            )
+                        )
+                    end
+
+                    set[single_ft] = copy
+                end
+            else
+                log_queue.error(
+                    string.format(
+                        '[Lang]: Item in file `%s` has a bad `ft` type, expected string or string[]',
+                        table.concat(k, '/')
+                    )
+                )
+            end
+        end
+
         if vim.islist(v) then
             for i, subtbl in ipairs(v) do
                 local ft = subtbl.ft
                 if ft then
-                    if set[ft] then
-                        log_queue.warn(
-                            string.format(
-                                '[Lang]: CAPABILITY[%s] is filled before, origin value will be over written',
-                                ft
-                            )
-                        )
-                    end
-                    set[ft] = subtbl
+                    process_ft(ft, subtbl)
                 else
                     log_queue.error(
                         string.format(
@@ -100,15 +133,7 @@ local CAPABILITY = require('utils.loader').load_data_dir_as_set(
             end
         else
             local key = v.ft or k[#k]
-            if set[key] then
-                log_queue.warn(
-                    string.format(
-                        '[Lang]: CAPABILITY[%s] is filled before, origin value will be over written',
-                        key
-                    )
-                )
-            end
-            set[key] = v
+            process_ft(key, v)
         end
     end
 )
@@ -168,7 +193,7 @@ local function generate_lists()
         if feat.plg and spec.plugins then
             if type(spec.plugins) == 'string' then
                 table.insert(Data.LazyEnablePlugins, spec.plugins)
-            elseif type(spec.plugins == 'table') then
+            elseif type(spec.plugins) == 'table' then
                 ---@diagnostic disable:param-type-mismatch
                 for _, i in ipairs(spec.plugins) do
                     table.insert(Data.LazyEnablePlugins, i)
@@ -202,15 +227,26 @@ local function generate_lists()
         end
 
         if feat.fmt and spec.formatter then
-            Data.FormatterMap[lang] = { spec.formatter.name }
-            if spec.formatter.source ~= 'sys' then
-                local install_name = spec.formatter.packname
-                    or spec.formatter.name
-                if not mason_set[install_name] then
-                    table.insert(Data.MasonInstallList, install_name)
-                    mason_set[install_name] = true
+            local tbl = {}
+            local function process_single_fmt_decl(decl)
+                table.insert(tbl, decl.name)
+                if decl.source ~= 'sys' then
+                    local install_name = decl.packname
+                        or decl.name
+                    if not mason_set[install_name] then
+                        table.insert(Data.MasonInstallList, install_name)
+                        mason_set[install_name] = true
+                    end
                 end
             end
+            if vim.islist(spec.formatter) then
+                for _, decl in ipairs(spec.formatter) do
+                    process_single_fmt_decl(decl)
+                end
+            else
+                process_single_fmt_decl(spec.formatter)
+            end
+            Data.FormatterMap[lang] = tbl
         end
 
         local handle_ts = function(name)
