@@ -1,6 +1,6 @@
 local NeoCMake = {
     cmd = { 'neocmakelsp', 'stdio' },
-    filetypes = { 'cmake' },
+    filetypes = require 'modules.lang'.lsp_get_ft 'neocmakelsp',
     root_markers = { '.git', 'build', 'cmake' },
 }
 

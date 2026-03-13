@@ -1,7 +1,7 @@
 -- NOTE: For experimental use and devlopment, Clice is not availabe now.
 
 local clice = {
-    filetypes = { 'c', 'cpp' },
+    filetypes = require 'modules.lang'.lsp_get_ft 'clice',
 
     root_markers = {
         '.git/',

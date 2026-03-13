@@ -2,7 +2,7 @@
 
 local lua_ls = {
     cmd = { 'lua-language-server' },
-    filetypes = { 'lua' },
+    filetypes = require 'modules.lang'.lsp_get_ft 'lua_ls',
     root_markers = { '.git', 'stylua.toml', '.luarc.json' },
     workspace_required = false,
     on_init = function(client)

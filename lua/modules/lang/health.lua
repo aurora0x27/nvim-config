@@ -61,25 +61,13 @@ function M.check()
 
     local lists = {
         { name = 'Mason Install', data = lang_mod.get_mason_install_list() },
-        { name = 'Treesitter Install', data = lang_mod.get_ts_install_list() },
-        { name = 'LSP Enabled', data = lang_mod.get_lsp_enable_list() },
         { name = 'LazySpecs', data = lang_mod.get_lazy_enable_lists() },
+        { name = 'Treesitter Install', data = lang_mod.get_ts_install_list() },
     }
 
     local maps = {
         { name = 'Formatter Map', data = lang_mod.get_formatter_map() },
     }
-
-    for _, list in ipairs(lists) do
-        if #list.data > 0 then
-            vim.health.start(list.name .. ':')
-            for _, item in ipairs(list.data) do
-                vim.health.info(tostring(item))
-            end
-        else
-            vim.health.start(list.name .. ': (Empty)')
-        end
-    end
 
     for _, map in ipairs(maps) do
         vim.health.start(map.name .. ':')
@@ -89,6 +77,23 @@ function M.check()
             else
                 vim.health.info(key .. ' : ' .. val)
             end
+        end
+    end
+
+    vim.health.start('Enabled Lsp')
+    local enabled_lsp = lang_mod.get_lsp_enable_list()
+    for _, lsp in ipairs(enabled_lsp) do
+        vim.health.info(lsp .. ' : ' .. vim.inspect(lang_mod.lsp_get_ft(lsp)))
+    end
+
+    for _, list in ipairs(lists) do
+        if #list.data > 0 then
+            vim.health.start(list.name .. ':')
+            for _, item in ipairs(list.data) do
+                vim.health.info(tostring(item))
+            end
+        else
+            vim.health.start(list.name .. ': (Empty)')
         end
     end
 

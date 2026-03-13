@@ -97,7 +97,7 @@ local Jdtls = {
             detached = config.detached,
         })
     end,
-    filetypes = { 'java' },
+    filetypes = require 'modules.lang'.lsp_get_ft 'jdtls',
     root_markers = vim.fn.has 'nvim-0.11.3' == 1
             and { root_markers1, root_markers2 }
         or vim.list_extend(root_markers1, root_markers2),

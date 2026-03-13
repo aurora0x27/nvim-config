@@ -53,7 +53,7 @@ end
 ---@type vim.lsp.Config
 return {
     cmd = { 'tinymist' },
-    filetypes = { 'typst' },
+    filetypes = require 'modules.lang'.lsp_get_ft 'tinymist',
     root_markers = { '.git' },
     on_attach = function(client, bufnr)
         for _, command in ipairs {

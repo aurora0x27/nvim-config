@@ -65,7 +65,7 @@ local function symbol_info()
 end
 
 local clangd = {
-    filetypes = { 'c', 'cpp', 'objc' },
+    filetypes = require 'modules.lang'.lsp_get_ft 'clangd',
     root_markers = {
         '.git/',
         'clice.toml',

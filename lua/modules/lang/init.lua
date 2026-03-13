@@ -66,6 +66,9 @@ local Data = {
 
     ---@type table<string,string[]>
     FormatterMap = {},
+
+    ---@type table<string, string[]>
+    LspLangMap = {},
 }
 
 local CAPABILITY = require('utils.loader').load_data_dir_as_set(
@@ -157,7 +160,6 @@ end
 local function generate_lists()
     local mason_set = {}
     local ts_set = {}
-    local lsp_set = {}
 
     ---@param lang string
     ---@param spec LangSpec
@@ -185,9 +187,11 @@ local function generate_lists()
         if feat.lsp and spec.lsp then
             local name = spec.lsp.name
             local install_name = spec.lsp.packname or spec.lsp.name
-            if not lsp_set[name] then
+            if not Data.LspLangMap[name] then
                 table.insert(Data.LspEnableList, name)
-                lsp_set[name] = true
+                Data.LspLangMap[name] = { lang }
+            else
+                table.insert(Data.LspLangMap[name], lang)
             end
             if spec.lsp.source ~= 'sys' then
                 if not mason_set[install_name] then
@@ -376,6 +380,12 @@ end
 
 function M.get_capabilities()
     return CAPABILITY
+end
+
+---@param lsp string
+---@return string[] langs
+function M.lsp_get_ft(lsp)
+    return Data.LspLangMap[lsp] or {}
 end
 
 function M.emit_err()

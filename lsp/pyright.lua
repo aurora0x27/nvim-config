@@ -1,5 +1,5 @@
 local pyright = {
-    filetypes = { 'python' },
+    filetypes = require 'modules.lang'.lsp_get_ft 'pyright',
     cmd = { 'pyright-langserver', '--stdio' },
     workspace_required = false,
     root_markers = {

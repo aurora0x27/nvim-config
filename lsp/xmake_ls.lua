@@ -1,7 +1,7 @@
 ---@type vim.lsp.Config
 local xmake_ls = {
     cmd = { 'xmake_ls' },
-    filetypes = { 'xmake' },
+    filetypes = require 'modules.lang'.lsp_get_ft 'xmake_ls',
     root_markers = {
         'clice.toml',
         '.clang-tidy',
