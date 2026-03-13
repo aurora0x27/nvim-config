@@ -65,7 +65,7 @@ local function symbol_info()
 end
 
 local clangd = {
-    filetypes = { 'c', 'cpp' },
+    filetypes = { 'c', 'cpp', 'objc' },
     root_markers = {
         '.git/',
         'clice.toml',
