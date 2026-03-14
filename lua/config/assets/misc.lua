@@ -24,6 +24,8 @@ M.ProfileSchema = {
     statline_scrollbar_style = 'moon',
     bigfile_size_byte = 2097152, -- 2MB
     bigfile_size_line = 100000,
+    allow_workspace_patch = false,
+    workspace_patch_always_restrict = true,
 }
 
 M.ColorAlias = {

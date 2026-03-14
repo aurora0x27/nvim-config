@@ -231,8 +231,7 @@ local function generate_lists()
             local function process_single_fmt_decl(decl)
                 table.insert(tbl, decl.name)
                 if decl.source ~= 'sys' then
-                    local install_name = decl.packname
-                        or decl.name
+                    local install_name = decl.packname or decl.name
                     if not mason_set[install_name] then
                         table.insert(Data.MasonInstallList, install_name)
                         mason_set[install_name] = true

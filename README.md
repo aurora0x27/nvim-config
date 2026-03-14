@@ -119,6 +119,10 @@ dir. Here're customizable items:
   - _`bigfile_size_byte`_ average byte size
   - _`bigfile_size_line`_ average line length (useful for minified files)
 
+- Workspace
+  - _`allow_workspace_patch`_ allow editor patch its behavior according to workspace config
+  - _`workspace_patch_always_restrict`_ always enable restrict mode, disable _dofile_ to prevent **ACE**
+
 - Misc
   - _`sandbox_mode`_ control sanbox features `sesson|undo|shada|swap|wb`, `wb` for writebackup
   - _`silent_profile_diag`_ do not output log of profile loader
@@ -148,6 +152,8 @@ local defaults = {
   workspace_inject_vim_rt = true
   bigfile_size_byte = 2097152,
   bigfile_size_line = 100000,
+  allow_workspace_patch = false,
+  workspace_patch_always_restrict = true,
 }
 ```
 

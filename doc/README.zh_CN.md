@@ -113,6 +113,9 @@ vi # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
 - 大文件支持
   - _`bigfile_size_byte`_ 平均字节大小
   - _`bigfile_size_line`_ 平均行长度（适用于压缩文件）
+- 工作区
+  - `allow_workspace_patch` 允许编辑器根据工作区配置修改其行为
+  - `workspace_patch_always_restrict` 始终启用限制模式，禁用 `dofile` 以防止 **ACE**
 
 - 其他
   - _`sandbox_mode`_ 控制沙盒功能 `sesson|undo|shada|swap|wb`，其中 `wb` 用于写回功能
@@ -143,6 +146,8 @@ local defaults = {
   workspace_inject_vim_rt = true
   bigfile_size_byte = 2097152,
   bigfile_size_line = 100000,
+  allow_workspace_patch = false,
+  workspace_patch_always_restrict = true,
 }
 ```
 

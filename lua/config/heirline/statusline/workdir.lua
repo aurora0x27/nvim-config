@@ -7,12 +7,13 @@ local WorkDir = {
         local cwd = get_logical_cwd()
         self.cwd = vim.fn.fnamemodify(cwd, ':~')
         self.mode = vim.fn.mode()
+        self.icon = require 'modules.patch'.is_restrict() and '   ' or '   '
     end,
     provider = function(self)
         if vim.o.columns < 80 then
             return '  '
         end
-        return '   ' .. shorten_path(self.cwd) .. ' '
+        return self.icon .. shorten_path(self.cwd) .. ' '
     end,
     hl = function(self)
         return {

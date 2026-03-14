@@ -61,11 +61,16 @@ if vim.g.debug_mode == '1' then
         config_dirs = { project_root },
         data_dirs = { cache_root .. '/share' },
     }
+
+    --- Hack vim.stdpath, create a sandbox
     ---@diagnostic disable: inject-field, duplicate-set-field
     vim.fn.stdpath = function(what)
         return shadow[what] --or vim.fn.call('stdpath', { what })
     end
+
     set_rtpath()
+
+    --- Hint
     vim.api.nvim_create_autocmd('VimEnter', {
         once = true,
         callback = function()
@@ -105,7 +110,9 @@ vim.api.nvim_create_autocmd('User', {
             require('modules.fold').setup()
             require('modules.ssh_mode').setup()
             require('modules.pairs').setup()
-            require('modules.patch').setup()
+
+            -- dofile init.lua
+            require('modules.patch').load_main()
 
             -- emit diagnostics info of profile module after noice initialized
             if not profile.silent_profile_diag then
@@ -121,9 +128,10 @@ vim.api.nvim_create_autocmd('User', {
 })
 
 --------------------------------------------------------------------------------
--- Phase 1: Load preload module
+-- Phase 1: Load preload module and detect workspace patch
 --------------------------------------------------------------------------------
-require('modules.preload').setup()
+require 'modules.preload'.setup()
+local patch_dir = require 'modules.patch'.setup()
 
 --------------------------------------------------------------------------------
 -- Phase 2: Bootstrap and load lazy
@@ -196,14 +204,19 @@ require('lazy').setup {
     },
     performance = {
         rtp = {
+            reset = true,
+            -- keep workspace patch dir in rtp
+            paths = { patch_dir },
             -- disable some rtp plugins, add more to your liking
             disabled_plugins = {
                 'gzip',
-                'tarPlugin',
-                'zipPlugin',
+                'matchit',
+                'matchparen',
                 'netrwPlugin',
+                'tarPlugin',
                 'tohtml',
                 'tutor',
+                'zipPlugin',
             },
         },
     },
