@@ -14,10 +14,10 @@ local Outline = {
     opts = {},
     keys = {
         {
-            '<leader>;',
+            '<leader>;s',
             thunk('dropbar.api', 'pick'),
             mode = { 'n' },
-            desc = 'Pick Symbols In Dropbar',
+            desc = '[S]ymbols In Dropbar',
         },
     },
 }

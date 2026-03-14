@@ -65,6 +65,7 @@ local KeyMapIntellisense = {
             { '<leader>s', group = '[S]ession', mode = { 'n', 'v' } },
             { '<leader>gh', group = 'Git [H]unk', mode = { 'n', 'v' } },
             { '<leader>gt', group = 'Git [T]oggle', mode = { 'n', 'v' } },
+            { '<leader>;', group = 'Index Pick' },
         },
     },
 }

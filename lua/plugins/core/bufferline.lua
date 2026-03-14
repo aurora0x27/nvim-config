@@ -65,7 +65,8 @@ local BufferLine = {
         )
     end,
     keys = {
-        { ';', thunk('bufferline', 'pick'), desc = 'Pick Buffer' },
+        { '<leader>;b', thunk('bufferline', 'pick'), desc = '[B]uffer' },
+        -- { '<leader>;;', thunk('bufferline', 'pick'), desc = '[B]uffer' },
         {
             '<leader>bx',
             thunk('bufferline', 'close_with_pick'),
