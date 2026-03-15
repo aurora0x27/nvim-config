@@ -200,12 +200,31 @@ local function lsp_buf_setup(event)
 
     lsp_fzf_mux_map('g', 'd', 'lsp_definitions', '[D]efinition')
     lsp_fzf_mux_map('g', 'D', 'lsp_declarations', '[D]eclarations')
-    lsp_fzf_mux_map('g', 'r', 'lsp_references', '[R]eferences')
-    lsp_fzf_mux_map('g', 'i', 'lsp_implementations', '[I]mplementations')
     lsp_fzf_mux_map('<leader>l', 'i', 'lsp_incoming_calls', '[I]ncoming Calls')
     lsp_fzf_mux_map('<leader>l', 'o', 'lsp_outgoing_calls', '[O]utgoing Calls')
     lsp_fzf_mux_map('<leader>l', 's', 'lsp_type_sub', '[S]ub Types')
     lsp_fzf_mux_map('<leader>l', 'S', 'lsp_type_super', '[S]uper Types')
+
+    map('n', '<leader>fr', thunk('fzf-lua', 'lsp_references'), {
+        desc = '[R]eferences',
+        noremap = true,
+        silent = true,
+        buffer = bufnr,
+    })
+
+    map('n', '<leader>fs', thunk('fzf-lua', 'lsp_document_symbols'), {
+        desc = 'Document [S]ymbols',
+        noremap = true,
+        silent = true,
+        buffer = bufnr,
+    })
+
+    map('n', '<leader>fS', thunk('fzf-lua', 'lsp_live_workspace_symbols'), {
+        desc = 'Workspace [S]ymbols',
+        noremap = true,
+        silent = true,
+        buffer = bufnr,
+    })
 end
 
 function M.setup()

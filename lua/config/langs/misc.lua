@@ -10,6 +10,7 @@ return {
     { ft = 'dosini', treesitter = 'ini' },
     { ft = 'gitconfig', treesitter = 'git_config' },
     { ft = 'gitrebase', treesitter = 'git_rebase' },
+    { ft = 'toml', treesitter = true, formatter = { name = 'taplo' } },
 
     {
         ft = {
@@ -32,7 +33,6 @@ return {
             'query',
             'scheme',
             'tablegen',
-            'toml',
             'typescript',
             'vim',
             'vimdoc',
