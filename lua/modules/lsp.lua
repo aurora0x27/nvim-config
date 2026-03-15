@@ -179,7 +179,7 @@ local function lsp_buf_setup(event)
             prefix .. suffix,
             bind(thunk('fzf-lua', callee), FzfLspGotoCfg),
             {
-                desc = '[G]oto ' .. desc,
+                desc = desc,
                 noremap = true,
                 silent = true,
                 buffer = bufnr,
@@ -190,7 +190,7 @@ local function lsp_buf_setup(event)
             prefix .. 'p' .. suffix,
             bind(thunk('fzf-lua', callee), FzfLspPeekCfg),
             {
-                desc = '[P]eek ' .. desc,
+                desc = desc,
                 noremap = true,
                 silent = true,
                 buffer = bufnr,
