@@ -99,11 +99,11 @@ function M.load_main()
     if not workspace_nvim then
         return
     end
+    local init_lua = workspace_nvim .. '/init.lua'
     if profile.workspace_patch_always_restrict then
-        restrict_mode = true
+        restrict_mode = vim.fn.filereadable(init_lua) == 1
         return
     end
-    local init_lua = workspace_nvim .. '/init.lua'
     if vim.fn.filereadable(init_lua) == 0 then
         restrict_mode = false
         return
