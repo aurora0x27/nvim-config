@@ -12,11 +12,11 @@ map(
 )
 map(
     { 'n' },
-    '<leader>tn',
+    '<leader>tnn',
     '<cmd>tabnew<cr>',
     { noremap = true, silent = true, desc = 'Tab [N]ew' }
 )
-map({ 'n' }, '<leader>tN', function()
+map({ 'n' }, '<leader>tnN', function()
     local name = vim.fn.input('File name: ', '', 'file')
     if name ~= '' then
         vim.cmd('tabnew ' .. name)

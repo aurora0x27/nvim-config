@@ -157,6 +157,12 @@ function M.thunk(module, ...)
     local fields = { ... }
     local n = #fields
 
+    if n == 0 then
+        return function(...)
+            return require(module)(...)
+        end
+    end
+
     -- Early return when only one param is in the pack
     if n == 1 then
         local f = fields[1]

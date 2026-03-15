@@ -166,176 +166,46 @@ local function lsp_buf_setup(event)
         buffer = bufnr,
     })
 
-    ----------------------------------------------------------------------------
-    -- Peek
-    ----------------------------------------------------------------------------
-
     local FzfLspPeekCfg = { jump1 = false }
-
-    map(
-        'n',
-        'gpd',
-        bind(thunk('fzf-lua', 'lsp_definitions'), FzfLspPeekCfg),
-        { desc = '[P]eek [D]efinition' }
-    )
-
-    map(
-        'n',
-        'gpr',
-        bind(thunk('fzf-lua', 'lsp_references'), FzfLspPeekCfg),
-        { desc = '[P]eek [R]eference' }
-    )
-
-    map(
-        'n',
-        'gpi',
-        bind(thunk('fzf-lua', 'lsp_implementations'), FzfLspPeekCfg),
-        {
-            desc = '[P]eek Symbol [I]mplementation',
-            noremap = true,
-            silent = true,
-            buffer = bufnr,
-        }
-    )
-
-    map(
-        'n',
-        'gpso',
-        bind(thunk('fzf-lua', 'lsp_outgoing_calls'), FzfLspPeekCfg),
-        {
-            desc = '[P]eek [O]utgoing Calls',
-            noremap = true,
-            silent = true,
-            buffer = bufnr,
-        }
-    )
-
-    map(
-        'n',
-        'gpsi',
-        bind(thunk('fzf-lua', 'lsp_incoming_calls'), FzfLspPeekCfg),
-        {
-            desc = '[P]eek [I]ncoming Calls',
-            noremap = true,
-            silent = true,
-            buffer = bufnr,
-        }
-    )
-
-    map('n', 'gpsS', bind(thunk('fzf-lua', 'lsp_type_super'), FzfLspPeekCfg), {
-        desc = '[P]eek [S]uper Types',
-        noremap = true,
-        silent = true,
-        buffer = bufnr,
-    })
-
-    map('n', 'gpss', bind(thunk('fzf-lua', 'lsp_type_sub'), FzfLspPeekCfg), {
-        desc = 'FzfLua [P]eek [S]ub Types',
-        noremap = true,
-        silent = true,
-        buffer = bufnr,
-    })
-
-    ----------------------------------------------------------------------------
-    -- Goto
-    ----------------------------------------------------------------------------
-
     local FzfLspGotoCfg = { jump1 = true }
 
-    map('n', 'gd', bind(thunk('fzf-lua', 'lsp_definitions'), FzfLspGotoCfg), {
-        desc = 'LSP [G]oto [D]efinition',
-        noremap = true,
-        silent = true,
-        buffer = bufnr,
-    })
+    ---@param prefix string
+    ---@param suffix string
+    ---@param callee string
+    ---@param desc string
+    local function lsp_fzf_mux_map(prefix, suffix, callee, desc)
+        map(
+            'n',
+            prefix .. suffix,
+            bind(thunk('fzf-lua', callee), FzfLspGotoCfg),
+            {
+                desc = '[G]oto ' .. desc,
+                noremap = true,
+                silent = true,
+                buffer = bufnr,
+            }
+        )
+        map(
+            'n',
+            prefix .. 'p' .. suffix,
+            bind(thunk('fzf-lua', callee), FzfLspPeekCfg),
+            {
+                desc = '[P]eek ' .. desc,
+                noremap = true,
+                silent = true,
+                buffer = bufnr,
+            }
+        )
+    end
 
-    map('n', 'gD', bind(thunk('fzf-lua', 'lsp_declarations'), FzfLspGotoCfg), {
-        desc = 'LSP [G]oto [D]eclaration',
-        noremap = true,
-        silent = true,
-        buffer = bufnr,
-    })
-
-    map(
-        'n',
-        '<leader>lso',
-        bind(thunk('fzf-lua', 'lsp_outgoing_calls'), FzfLspGotoCfg),
-        {
-            desc = 'FzfLua [L]ist [O]utgoing Calls',
-            noremap = true,
-            silent = true,
-            buffer = bufnr,
-        }
-    )
-
-    map(
-        'n',
-        '<leader>lsi',
-        bind(thunk('fzf-lua', 'lsp_incoming_calls'), FzfLspGotoCfg),
-        {
-            desc = 'FzfLua [L]ist [I]ncoming Calls',
-            noremap = true,
-            silent = true,
-            buffer = bufnr,
-        }
-    )
-
-    map(
-        'n',
-        '<leader>lsS',
-        bind(thunk('fzf-lua', 'lsp_type_super'), FzfLspGotoCfg),
-        {
-            desc = '[L]ist [S]uper Types',
-            noremap = true,
-            silent = true,
-            buffer = bufnr,
-        }
-    )
-
-    map(
-        'n',
-        '<leader>lss',
-        bind(thunk('fzf-lua', 'lsp_type_sub'), FzfLspGotoCfg),
-        {
-            desc = '[L]ist [S]ub Types',
-            noremap = true,
-            silent = true,
-            buffer = bufnr,
-        }
-    )
-
-    map(
-        'n',
-        '<leader>fr',
-        bind(thunk('fzf-lua', 'lsp_references'), FzfLspGotoCfg),
-        {
-            desc = '[F]ind Symbol [R]eferences',
-            noremap = true,
-            silent = true,
-            buffer = bufnr,
-        }
-    )
-
-    map('n', '<leader>fi', thunk('fzf-lua', 'lsp_implementations'), {
-        desc = '[F]ind Symbol [I]mplementation',
-        noremap = true,
-        silent = true,
-        buffer = bufnr,
-    })
-
-    map('n', '<leader>fs', thunk('fzf-lua', 'lsp_document_symbols'), {
-        desc = '[F]ind Document [S]ymbols',
-        noremap = true,
-        silent = true,
-        buffer = bufnr,
-    })
-
-    map('n', '<leader>fS', thunk('fzf-lua', 'lsp_live_workspace_symbols'), {
-        desc = '[F]ind Workspace [S]ymbols',
-        noremap = true,
-        silent = true,
-        buffer = bufnr,
-    })
+    lsp_fzf_mux_map('g', 'd', 'lsp_definitions', '[D]efinition')
+    lsp_fzf_mux_map('g', 'D', 'lsp_declarations', '[D]eclarations')
+    lsp_fzf_mux_map('g', 'r', 'lsp_references', '[R]eferences')
+    lsp_fzf_mux_map('g', 'i', 'lsp_implementations', '[I]mplementations')
+    lsp_fzf_mux_map('<leader>l', 'i', 'lsp_incoming_calls', '[I]ncoming Calls')
+    lsp_fzf_mux_map('<leader>l', 'o', 'lsp_outgoing_calls', '[O]utgoing Calls')
+    lsp_fzf_mux_map('<leader>l', 's', 'lsp_type_sub', '[S]ub Types')
+    lsp_fzf_mux_map('<leader>l', 'S', 'lsp_type_super', '[S]uper Types')
 end
 
 function M.setup()

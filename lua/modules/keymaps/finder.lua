@@ -1,42 +1,72 @@
 local map = vim.keymap.set
 local thunk = require 'utils.loader'.thunk
+local bind = require 'utils.loader'.bind
 
 ----------------------------------------------------------------------------
 -- Fzflua related, prefix is leader-t
 ----------------------------------------------------------------------------
-map(
-    'n',
-    '<leader>ff',
-    thunk('fzf-lua', 'files'),
-    { desc = 'Find [F]iles', noremap = true, silent = true }
-)
 
-map(
-    'n',
-    '<leader>fo',
-    thunk('fzf-lua', 'oldfiles'),
-    { desc = 'Find [O]ld Files', noremap = true, silent = true }
-)
+---@param suffix string
+---@param callee string
+---@param desc string
+local function fzf_mux_map(suffix, callee, desc)
+    map(
+        'n',
+        '<leader>' .. suffix,
+        thunk('fzf-lua', callee),
+        { desc = desc, noremap = true, silent = true }
+    )
+    map(
+        'n',
+        '<leader>tn' .. suffix,
+        bind(thunk('fzf-lua', callee), {
+            actions = {
+                ['default'] = thunk('fzf-lua.actions', 'file_tabedit'),
+            },
+        }),
+        { desc = desc .. ' with [N]ew [T]ab', noremap = true, silent = true }
+    )
+    map(
+        'n',
+        '<leader>ws' .. suffix,
+        bind(thunk('fzf-lua', callee), {
+            actions = {
+                ['default'] = thunk('fzf-lua.actions', 'file_split'),
+            },
+        }),
+        {
+            desc = '[W]indow [S]plit ' .. desc,
+            noremap = true,
+            silent = true,
+        }
+    )
+    map(
+        'n',
+        '<leader>wv' .. suffix,
+        bind(thunk('fzf-lua', callee), {
+            actions = {
+                ['default'] = thunk('fzf-lua.actions', 'file_vsplit'),
+            },
+        }),
+        {
+            desc = '[W]indow [V]split ' .. desc,
+            noremap = true,
+            silent = true,
+        }
+    )
+end
+
+fzf_mux_map('ff', 'files', '[F]iles')
+fzf_mux_map('fo', 'oldfiles', '[O]ld Files')
+fzf_mux_map('fw', 'live_grep', '[W]ildcard Grep')
+fzf_mux_map('fb', 'buffers', '[B]uffers')
+fzf_mux_map('fgs', 'git_status', '[G]it [S]tatus')
 
 map(
     'n',
     '<leader>ft',
     thunk('fzf-lua', 'treesitter'),
     { desc = 'Find [T]reesitter Symbols', noremap = true, silent = true }
-)
-
-map(
-    'n',
-    '<leader>fw',
-    thunk('fzf-lua', 'live_grep'),
-    { desc = '[W]ildcard Grep', noremap = true, silent = true }
-)
-
-map(
-    'n',
-    '<leader>fb',
-    thunk('fzf-lua', 'buffers'),
-    { desc = 'Find [B]uffer', noremap = true, silent = true }
 )
 
 map(
@@ -65,13 +95,6 @@ map(
     '<leader>fC',
     thunk('fzf-lua', 'highlights'),
     { desc = 'Find Highlight [C]olors', noremap = true, silent = true }
-)
-
-map(
-    'n',
-    '<leader>fgs',
-    thunk('fzf-lua', 'git_status'),
-    { desc = 'Find [G]it [S]tatus', noremap = true, silent = true }
 )
 
 map(
