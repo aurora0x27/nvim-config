@@ -64,12 +64,12 @@ map(
     'n',
     '<leader>bh',
     bind(thunk('bufferline', 'move'), -1),
-    { noremap = true, silent = true }
+    { desc = 'Buffer Move Left', noremap = true, silent = true }
 )
 
 map(
     'n',
     '<leader>bl',
     bind(thunk('bufferline', 'move'), 1),
-    { noremap = true, silent = true }
+    { desc = 'Buffer Move Right', noremap = true, silent = true }
 )
