@@ -88,7 +88,6 @@ function M.setup()
                 vim.b[buf].bigfile = true
                 vim.bo.undofile = false
                 vim.bo.swapfile = false
-
                 vim.api.nvim_create_autocmd('FileType', {
                     buffer = buf,
                     once = true,
@@ -98,12 +97,12 @@ function M.setup()
                                 require 'utils.misc'.info,
                                 'Large file detected, some features are disabled'
                             ),
-                            100
+                            1000
                         )
-                        vim.cmd 'syntax off'
-                        vim.bo.filetype = 'bigfile'
                     end,
                 })
+                vim.cmd 'syntax off'
+                vim.bo.filetype = 'bigfile'
             end
         end,
     })
