@@ -19,9 +19,9 @@ local BufInfo = {
             .. vim.bo.tabstop
             .. ' '
     end,
-    hl = { fg = 'subtext1', italic = true },
+    hl = { fg = 'text_fg', italic = true },
     condition = function()
-        return vim.api.nvim_win_get_width(0) >= 120
+        return vim.o.columns >= 120
     end,
     update = { 'BufEnter' },
 }

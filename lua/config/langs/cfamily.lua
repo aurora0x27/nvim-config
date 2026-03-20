@@ -7,7 +7,7 @@ return {
         treesitter = true,
     },
     {
-        ft = {'objcpp'},
+        ft = { 'objcpp' },
         lsp = { name = 'clangd', source = 'sys' },
         formatter = { name = 'clang-format', source = 'sys' },
         treesitter = false,
