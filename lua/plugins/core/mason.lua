@@ -95,6 +95,7 @@ local Mason = {
         vim.schedule(
             require('utils.loader').bind(ensure_installed, LspEnsuredList)
         )
+        require 'modules.lsp'.setup()
     end,
 }
 

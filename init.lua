@@ -93,35 +93,33 @@ end
 --------------------------------------------------------------------------------
 vim.api.nvim_create_autocmd('User', {
     pattern = 'LazyVimStarted',
+    once = true,
     callback = function()
         vim.schedule(function()
             local profile = require 'modules.profile'
 
-            if profile.enable_lsp then
-                require('modules.lsp').setup()
-            end
             if not profile.disable_im_switch then
-                require('modules.im-switch').setup()
+                require 'modules.im-switch'.setup()
             end
-            require('modules.keymaps').setup()
-            require('modules.options').setup()
-            require('modules.autocmd').setup()
-            require('modules.diagnostics').setup()
-            require('modules.fold').setup()
-            require('modules.ssh_mode').setup()
-            require('modules.pairs').setup()
+            require 'modules.keymaps'.setup()
+            require 'modules.options'.setup()
+            require 'modules.autocmd'.setup()
+            require 'modules.diagnostics'.setup()
+            require 'modules.fold'.setup()
+            require 'modules.ssh_mode'.setup()
+            require 'modules.pairs'.setup()
 
             -- dofile init.lua
-            require('modules.patch').load_main()
+            require 'modules.patch'.load_main()
 
             -- emit diagnostics info of profile module after noice initialized
             if not profile.silent_profile_diag then
-                vim.defer_fn(require('modules.profile').emit_err, 1000)
+                vim.defer_fn(require 'modules.profile'.emit_err, 1000)
             end
 
             -- emit diagnostics info of lang module after noice initialized
             if not profile.silent_lang_diag then
-                vim.defer_fn(require('modules.lang').emit_err, 1200)
+                vim.defer_fn(require 'modules.lang'.emit_err, 1200)
             end
         end)
     end,

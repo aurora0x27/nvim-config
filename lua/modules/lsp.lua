@@ -227,7 +227,13 @@ local function lsp_buf_setup(event)
     })
 end
 
+local is_setup = false
+
 function M.setup()
+    if not require 'modules.profile'.enable_lsp or is_setup then
+        return
+    end
+
     for _, name in ipairs(lsp_list) do
         lsp.enable(name)
     end
@@ -324,6 +330,7 @@ function M.setup()
             end, 100)
         end
     end, {})
+    is_setup = true
 end
 
 return M
