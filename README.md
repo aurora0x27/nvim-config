@@ -42,6 +42,8 @@ Some binaries should be installed before launch the configuration.
 
 - `yarn` for markdown previewer
 
+- `websocat` for typst previewer
+
 - `rg` for fuzzy finder
 
 - `fzf` for fuzzy finder

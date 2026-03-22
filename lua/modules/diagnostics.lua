@@ -37,8 +37,8 @@ local profile = require 'modules.profile'
 
 ---@type vim.diagnostic.Opts
 local DiagnosticsConfig = {
-    virtual_text = profile.diag_inline,
-    virtual_lines = not profile.diag_inline,
+    virtual_text = profile.diagnose_inline,
+    virtual_lines = not profile.diagnose_inline,
     underline = false,
     signs = {
         text = IconTable,
