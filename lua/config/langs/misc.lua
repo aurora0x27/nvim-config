@@ -3,7 +3,7 @@
 return {
     {
         ft = 'nginx',
-        treesitter = true,
+        treesitter = false,
         formatter = { name = 'nginxfmt', packname = 'nginx-config-formatter' },
     },
 

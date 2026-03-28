@@ -35,6 +35,7 @@ local function safe_ts_start(args)
         return
     end
 
+    vim.bo.indentexpr = [[v:lua.require'nvim-treesitter'.indentexpr()]]
     local ok1 = pcall(vim.treesitter.start, buf, lang)
     if not ok1 then
         vim.defer_fn(
