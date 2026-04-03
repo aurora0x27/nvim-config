@@ -91,7 +91,7 @@ local clangd = {
         textDocument = {
             completion = {
                 editsNearCursor = true,
-                completionItem = { snippetSupport = false },
+                completionItem = { snippetSupport = true },
             },
         },
         offsetEncoding = { 'utf-8', 'utf-16' },

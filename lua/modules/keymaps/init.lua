@@ -59,9 +59,14 @@ function M.setup()
     )
 
     ----------------------------------------------------------------------------
-    -- Clean search highlight
+    -- Clean search highlight and snippet highlight
     ----------------------------------------------------------------------------
-    map('n', '<Esc>', '<cmd>nohlsearch<CR>', { silent = true })
+    map('n', '<Esc>', function()
+        vim.cmd 'nohlsearch'
+        if vim.snippet then
+            vim.snippet.stop()
+        end
+    end, { silent = true })
 
     ----------------------------------------------------------------------------
     -- File explorer
