@@ -103,6 +103,7 @@ dir. Here're customizable items:
   - _`statline_scrollbar_style`_ choose a style for heirline scroll bar, which displays cursor position
   - _`diagnose_inline`_ do not use virtual lines to display diagnostic messages
   - _`enable_current_line_blame`_ enable virtual text line blame at the end of line
+  - _`enable_dropbar`_ enable breadcrumbs for each window
 
 - Lang module
   - _`silent_lang_diag`_ do not output log of lang loader

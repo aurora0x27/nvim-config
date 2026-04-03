@@ -26,6 +26,7 @@ M.ProfileSchema = {
     bigfile_size_line = 100000,
     allow_workspace_patch = false,
     workspace_patch_always_restrict = true,
+    enable_dropbar = false,
 }
 
 M.ColorAlias = {

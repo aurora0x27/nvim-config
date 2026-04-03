@@ -7,11 +7,9 @@ local thunk = require 'utils.loader'.thunk
 ---@type LazyPluginSpec
 local Outline = {
     'Bekaboo/dropbar.nvim',
-    -- optional, but required for fuzzy finder support
+    enabled = require 'modules.profile'.enable_dropbar,
     event = { 'BufReadPost', 'BufNewFile' },
     ---@module 'dropbar'
-    ---@type dropbar_opts_t
-    opts = {},
     keys = {
         {
             '<leader>;s',

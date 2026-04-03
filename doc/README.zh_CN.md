@@ -97,6 +97,7 @@ vi # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
   - _`statline_scrollbar_style`_ 选择用于显示光标位置的滚动条样式
   - _`diagnose_inline`_ 不使用虚拟线显示诊断信息
   - _`enable_current_line_blame`_ 启用行尾的虚拟文本行错误信息显示
+  - _`enable_dropbar`_ 为每个窗口启用面包屑导航
 
 - 语言模块
   - _`silent_lang_diag`_ 不输出语言加载器的日志
