@@ -15,7 +15,7 @@ local function switch_source_header(bufnr)
     end
     local params = vim.lsp.util.make_text_document_params(bufnr)
     ---@diagnostic disable-next-line: param-type-mismatch
-    client.request(method_name, params, function(err, result)
+    client:request(method_name, params, function(err, result)
         if err then
             error(tostring(err))
         end
@@ -35,17 +35,14 @@ local function symbol_info()
     local clangd_client =
         vim.lsp.get_clients({ bufnr = bufnr, name = 'clangd' })[1]
     ---@diagnostic disable-next-line: param-type-mismatch, missing-parameter
-    if
-        not clangd_client
-        or not clangd_client.supports_method 'textDocument/symbolInfo'
-    then
+    if not clangd_client then
         return misc.err('Clangd client not found', { title = 'Lsp Clangd' })
     end
     local win = vim.api.nvim_get_current_win()
     local params =
         vim.lsp.util.make_position_params(win, clangd_client.offset_encoding)
     ---@diagnostic disable-next-line: param-type-mismatch
-    clangd_client.request('textDocument/symbolInfo', params, function(err, res)
+    clangd_client:request('textDocument/symbolInfo', params, function(err, res)
         if err or #res == 0 then
             -- Clangd always returns an error, there is not reason to parse it
             return

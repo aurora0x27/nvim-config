@@ -112,6 +112,10 @@ function M.setup()
     map({ 'n', 'v' }, 'j', 'gj', { noremap = true, silent = true })
     map({ 'n', 'v' }, 'k', 'gk', { noremap = true, silent = true })
 
+    -- Delete j and k under select mode to enable snippet
+    vim.keymap.del('s', 'j')
+    vim.keymap.del('s', 'k')
+
     map(
         'n',
         '<leader>h',

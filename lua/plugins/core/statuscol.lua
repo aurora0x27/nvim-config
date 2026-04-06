@@ -60,6 +60,11 @@ local StatusCol = {
                     },
                     condition = {
                         function(args)
+                            local mode = vim.fn.mode()
+                            if mode == 'i' or mode == 'ic' or mode == 'ix' then
+                                return false
+                            end
+
                             if vim.v.virtnum ~= 0 then
                                 return false
                             end
