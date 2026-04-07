@@ -5,7 +5,7 @@
 ---@type LazyPluginSpec
 local Heirline = {
     'rebelot/heirline.nvim',
-    event = 'VeryLazy',
+    event = 'UIEnter',
     config = function()
         ---@module 'heirline'
         require('heirline').setup {

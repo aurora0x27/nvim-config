@@ -35,18 +35,20 @@ local function safe_ts_start(args)
         return
     end
 
-    vim.bo.indentexpr = [[v:lua.require'nvim-treesitter'.indentexpr()]]
-    local ok1 = pcall(vim.treesitter.start, buf, lang)
-    if not ok1 then
-        vim.defer_fn(
-            bind(
-                misc.err,
-                string.format('Cannot start parser for `%s`', lang),
-                { title = LOGTITLE }
-            ),
-            500
-        )
-    end
+    vim.schedule(function()
+        vim.bo.indentexpr = [[v:lua.require'nvim-treesitter'.indentexpr()]]
+        local ok1 = pcall(vim.treesitter.start, buf, lang)
+        if not ok1 then
+            vim.defer_fn(
+                bind(
+                    misc.err,
+                    string.format('Cannot start parser for `%s`', lang),
+                    { title = LOGTITLE }
+                ),
+                500
+            )
+        end
+    end)
 end
 
 ---@type LazyPluginSpec
