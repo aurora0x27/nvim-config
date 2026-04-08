@@ -30,6 +30,28 @@ function M.setup()
         desc = 'Set cursor to the position where it was last left.',
     })
 
+    vim.api.nvim_create_autocmd('ModeChanged', {
+        group = augrp,
+        pattern = { '*:[vV\x16]*', '*:[sS\x13]*' },
+        callback = function()
+            vim.diagnostic.enable(false)
+        end,
+    })
+
+    vim.api.nvim_create_autocmd('ModeChanged', {
+        group = augrp,
+        pattern = { '[vV\x16]:*', '[sS\x13]:*' },
+        callback = function()
+            local new_mode = vim.v.event['new_mode']
+            if
+                new_mode
+                and not (new_mode:find('[vV\x16]') or new_mode:find('[sS\x13]'))
+            then
+                vim.diagnostic.enable(true)
+            end
+        end,
+    })
+
     vim.api.nvim_create_autocmd('FileType', {
         pattern = 'help',
         group = augrp,

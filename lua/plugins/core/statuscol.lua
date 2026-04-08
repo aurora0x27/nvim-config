@@ -61,7 +61,7 @@ local StatusCol = {
                     condition = {
                         function(args)
                             local mode = vim.fn.mode()
-                            if mode == 'i' or mode == 'ic' or mode == 'ix' then
+                            if mode:find('^[isIS\x13]') then
                                 return false
                             end
 
