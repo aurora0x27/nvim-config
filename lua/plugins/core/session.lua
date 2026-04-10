@@ -2,8 +2,6 @@
 -- Session manager
 --------------------------------------------------------------------------------
 
-local bind = require('utils.loader').bind
-local thunk = require('utils.loader').thunk
 local sandbox = require 'modules.sandbox'.get_mask()
 
 ---@type LazyPluginSpec
@@ -40,13 +38,6 @@ local SessionMgr = {
                     pcall(vim.cmd, 'silent! loadview')
                 end
             end,
-        })
-        vim.api.nvim_create_autocmd('User', {
-            pattern = 'PersistenceSavePre',
-            callback = bind(
-                thunk('neo-tree.command', 'execute'),
-                { action = 'close' }
-            ),
         })
     end,
 }

@@ -71,33 +71,17 @@ function M.setup()
     ----------------------------------------------------------------------------
     -- File explorer
     ----------------------------------------------------------------------------
-    map(
-        'n',
-        '<leader>e',
-        bind(thunk('neo-tree.command', 'execute'), {
-            action = 'show',
-            source = 'filesystem',
-            toggle = true,
-        }),
-        {
-            desc = 'Toggle File [E]xplorer',
-            noremap = true,
-            silent = true,
-        }
-    )
-    map(
-        'n',
-        '<leader>o',
-        bind(
-            thunk('neo-tree.command', 'execute'),
-            { action = 'show', source = 'document_symbols', toggle = true }
-        ),
-        {
-            desc = 'Toggle [O]utline',
-            noremap = true,
-            silent = true,
-        }
-    )
+    map('n', '<leader>e', function()
+        local open = require 'mini.files'.open
+        local close = require 'mini.files'.close
+        if not close() then
+            open()
+        end
+    end, {
+        desc = 'Toggle File [E]xplorer',
+        noremap = true,
+        silent = true,
+    })
     map(
         'n',
         '-',
