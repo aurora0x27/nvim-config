@@ -8,6 +8,9 @@ local thunk = require('utils.loader').thunk
 local FsEditor = {
     'stevearc/oil.nvim',
 
+    -- Optional dependencies
+    dependencies = 'nvim-tree/nvim-web-devicons',
+
     -- if dry startup, don't load it in early stage
     lazy = vim.fn.argc(-1) == 0,
 
@@ -73,18 +76,17 @@ local FsEditor = {
         -- See :help oil-actions for a list of all available actions
         keymaps = {
             ['g?'] = { 'actions.show_help', mode = 'n' },
-            ['='] = 'actions.select',
-            ['<CR>'] = 'actions.select',
-            ['<C-s>'] = { 'actions.select', opts = { vertical = true } },
-            ['<C-h>'] = { 'actions.select', opts = { horizontal = true } },
+            ['<CR>'] = { 'actions.select', mode = 'n' },
+            ['='] = { 'actions.select', mode = 'n' },
+            ['-'] = { 'actions.parent', mode = 'n' },
+            ['|'] = { 'actions.select', opts = { vertical = true } },
+            ['_'] = { 'actions.select', opts = { horizontal = true } },
             ['<C-t>'] = { 'actions.select', opts = { tab = true } },
             ['<C-p>'] = 'actions.preview',
             ['q'] = { 'actions.close', mode = 'n' },
             ['<C-l>'] = 'actions.refresh',
             ['<leader>y'] = { 'actions.yank_entry' },
             ['<leader>Y'] = { 'actions.yank_entry', opts = { modify = ':.' } },
-            ['-'] = { 'actions.parent', mode = 'n' },
-            ['_'] = { 'actions.open_cwd', mode = 'n' },
             ['`'] = { 'actions.cd', mode = 'n' },
             ['~'] = { 'actions.cd', opts = { scope = 'tab' }, mode = 'n' },
             ['gs'] = { 'actions.change_sort', mode = 'n' },
@@ -242,13 +244,10 @@ local FsEditor = {
     keys = {
         {
             '-',
-            thunk('oil', 'toggle_float'),
+            thunk('oil', 'open'),
             desc = 'Oil',
         },
     },
-
-    -- Optional dependencies
-    dependencies = { { 'nvim-tree/nvim-web-devicons', opts = {} } },
 }
 
 return FsEditor

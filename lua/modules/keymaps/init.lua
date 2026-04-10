@@ -82,16 +82,6 @@ function M.setup()
         noremap = true,
         silent = true,
     })
-    map(
-        'n',
-        '-',
-        bind(
-            thunk('oil', 'open_float'),
-            nil,
-            { preview = { horizontal = true } }
-        ),
-        { desc = 'Open parent directory' }
-    )
 
     map({ 'n', 'v' }, 'j', 'gj', { noremap = true, silent = true })
     map({ 'n', 'v' }, 'k', 'gk', { noremap = true, silent = true })
