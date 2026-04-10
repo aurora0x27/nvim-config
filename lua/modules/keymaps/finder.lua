@@ -133,13 +133,6 @@ map(
 
 map(
     'n',
-    '<leader>fT',
-    thunk('todo-comments.fzf', 'todo'),
-    { desc = '[T]odo Items', noremap = true, silent = true }
-)
-
-map(
-    'n',
     '<leader>f:',
     thunk('fzf-lua', 'command_history'),
     { desc = 'Command History', noremap = true, silent = true }

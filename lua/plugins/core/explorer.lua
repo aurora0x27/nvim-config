@@ -2,6 +2,19 @@
 -- File system explorer
 --------------------------------------------------------------------------------
 
+local git_ignore_cache = {}
+
+local function is_git_ignored(path)
+    if git_ignore_cache[path] ~= nil then
+        return git_ignore_cache[path]
+    end
+    local cmd = { 'git', 'check-ignore', '--quiet', path }
+    local obj = vim.system(cmd, { text = true }):wait()
+    local ignored = (obj.code == 0)
+    git_ignore_cache[path] = ignored
+    return ignored
+end
+
 ---@type LazyPluginSpec
 local MiniFiles = {
     'nvim-mini/mini.files',
@@ -11,7 +24,13 @@ local MiniFiles = {
         -- Customization of shown content
         content = {
             -- Predicate for which file system entries to show
-            filter = nil,
+            filter = function(entry)
+                if entry.name == '.git' then
+                    return false
+                end
+
+                return not is_git_ignored(entry.path)
+            end,
             -- Highlight group to use for a file system entry
             highlight = nil,
             -- Prefix text and highlight to show to the left of file system entry
