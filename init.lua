@@ -101,6 +101,7 @@ vim.api.nvim_create_autocmd('User', {
             if not profile.disable_im_switch then
                 require 'modules.im-switch'.setup()
             end
+            require 'modules.popup'.setup()
             require 'modules.keymaps'.setup()
             require 'modules.options'.setup()
             require 'modules.autocmd'.setup()

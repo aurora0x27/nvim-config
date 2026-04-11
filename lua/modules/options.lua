@@ -24,6 +24,9 @@ local Opt = {
     undodir = vim.fn.stdpath 'state' .. '/undo',
     scrolloff = 5,
     virtualedit = 'block',
+    showmode = false,
+    cmdheight = 0,
+    inccommand = '',
 }
 
 local misc = require 'utils.misc'
