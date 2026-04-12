@@ -118,7 +118,7 @@ function M.load_main()
         -- Popup ui to trust workspace, load fzf to override vim.ui.select
         require 'lazy'.load { plugins = { 'fzf-lua' } }
         vim.ui.select({ 'yes', 'no', 'check' }, {
-            prompt = 'Found workspace patch with `init.lua`, trust?',
+            prompt = 'Found workspace patch with `init.lua`, trust? ',
         }, function(choice)
             if choice == 'yes' then
                 trust_path(init_lua)

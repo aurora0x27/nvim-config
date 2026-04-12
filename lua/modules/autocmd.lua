@@ -51,19 +51,6 @@ function M.setup()
             end
         end,
     })
-
-    vim.api.nvim_create_autocmd('FileType', {
-        pattern = 'help',
-        group = augrp,
-        callback = function()
-            -- Trigger only when real `help` command is typed
-            if vim.bo.buftype == 'help' then
-                vim.schedule(function()
-                    vim.cmd 'wincmd T'
-                end)
-            end
-        end,
-    })
 end
 
 return M

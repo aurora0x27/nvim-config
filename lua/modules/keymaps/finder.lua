@@ -61,6 +61,7 @@ fzf_mux_map('fo', 'oldfiles', '[O]ld Files')
 fzf_mux_map('fw', 'live_grep', '[W]ildcard Grep')
 fzf_mux_map('fb', 'buffers', '[B]uffers')
 fzf_mux_map('fgs', 'git_status', '[G]it [S]tatus')
+fzf_mux_map('fH', 'helptags', '[H]elp Tags')
 
 map(
     'n',
@@ -122,13 +123,6 @@ map(
     '<leader>fm',
     thunk('noice.integrations.fzf', 'open'),
     { desc = 'Noice [M]sg', noremap = true, silent = true }
-)
-
-map(
-    'n',
-    '<leader>fH',
-    thunk('fzf-lua', 'helptags'),
-    { desc = '[H]elp Tags', noremap = true, silent = true }
 )
 
 map(
