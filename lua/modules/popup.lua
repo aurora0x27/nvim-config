@@ -406,24 +406,6 @@ end
 function M.setup(opts)
     Opt = vim.tbl_deep_extend('force', POPUP_OPT_DEFAULT, opts or {})
     NeedCursorHack = NeedCursorHack or Opt.cursor_hack == true
-    local highlights = {
-        CmdlineDefault = { link = 'MiniIconsCyan' },
-        CmdlineLua = { link = 'MiniIconsBlue' },
-        CmdlineHelp = { link = 'MiniIconsGreen' },
-        CmdlineSearchUp = { link = 'MiniIconsOrange' },
-        CmdlineSearchDown = { link = 'MiniIconsYellow' },
-        CmdlineFilter = { link = 'MiniIconsYellow' },
-        CmdlineInput = { link = 'MiniIconsCyan' },
-        LspRenameInput = { link = 'MiniIconsPurple' },
-        CmdlineHiddenCursor = {
-            cterm = { nocombine = true },
-            nocombine = true,
-            blend = 100,
-        },
-    }
-    for name, def in pairs(highlights) do
-        vim.api.nvim_set_hl(0, name, def)
-    end
 
     if Opt.no_register then
         return
@@ -443,6 +425,25 @@ function M.setup(opts)
             end
         end)
     end
+end
+
+local highlights = {
+    CmdlineDefault = { link = 'MiniIconsCyan' },
+    CmdlineLua = { link = 'MiniIconsBlue' },
+    CmdlineHelp = { link = 'MiniIconsGreen' },
+    CmdlineSearchUp = { link = 'MiniIconsOrange' },
+    CmdlineSearchDown = { link = 'MiniIconsYellow' },
+    CmdlineFilter = { link = 'MiniIconsYellow' },
+    CmdlineInput = { link = 'MiniIconsCyan' },
+    LspRenameInput = { link = 'MiniIconsPurple' },
+    CmdlineHiddenCursor = {
+        cterm = { nocombine = true },
+        nocombine = true,
+        blend = 100,
+    },
+}
+for name, def in pairs(highlights) do
+    vim.api.nvim_set_hl(0, name, def)
 end
 
 return M

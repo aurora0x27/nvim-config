@@ -4,6 +4,12 @@
 local M = {}
 M.__index = M
 
+---@class Timer
+---@field start function
+---@field restart function
+---@field stop function
+---@field close function
+
 ---@param ms integer
 ---@param cb function
 function M.new(ms, cb)

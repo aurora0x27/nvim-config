@@ -45,15 +45,6 @@ local Notifier = {
             vim.api.nvim_set_hl(0, hl, { link = 'Normal' })
         end
 
-        -- local icons = {
-        --     [vim.log.levels.ERROR] = "",
-        --     [vim.log.levels.WARN] = "",
-        --     [vim.log.levels.INFO] = "",
-        --     [vim.log.levels.DEBUG] = "",
-        --     [vim.log.levels.TRACE] = "✎",
-        -- }
-        -- local icon = icons[notif.level] or "󰂚"
-
         require('notify').setup {
             merge_duplicates = true,
             background_colour = mocha.base,
@@ -72,7 +63,12 @@ local Notifier = {
             },
         }
 
-        vim.notify = require 'notify'
+        require 'config.bus.notify'.setup()
+
+        -- start bus
+        Bus.start {
+            bus_backend = 'notify',
+        }
     end,
 }
 

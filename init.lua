@@ -101,7 +101,10 @@ vim.api.nvim_create_autocmd('User', {
             if not profile.disable_im_switch then
                 require 'modules.im-switch'.setup()
             end
-            require 'modules.popup'.setup()
+            require 'modules.popup'.setup {
+                cursor_hack = false,
+                no_register = true,
+            }
             require 'modules.keymaps'.setup()
             require 'modules.options'.setup()
             require 'modules.autocmd'.setup()
@@ -127,10 +130,16 @@ vim.api.nvim_create_autocmd('User', {
 })
 
 --------------------------------------------------------------------------------
--- Phase 1: Load preload module and detect workspace patch
+-- Phase 1: Initialize UI event adapter, load preload module and detect
+--          workspace patch
 --------------------------------------------------------------------------------
+require 'modules.adapter'.setup()
 require 'modules.preload'.setup()
 local patch_dir = require 'modules.patch'.setup()
+vim.api.nvim_create_autocmd('BufRead', {
+    once = true,
+    callback = require 'utils.loader'.thunk('modules.lsp-progress', 'setup'),
+})
 
 --------------------------------------------------------------------------------
 -- Phase 2: Bootstrap and load lazy

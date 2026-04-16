@@ -4,7 +4,7 @@ local misc = require 'utils.misc'
 
 local uv = vim.uv or vim.loop
 
----Load all template files from the specified module path and concatenate them into a large table.
+--Load all template files from the specified module path and concatenate them into a large table.
 ---@param module_root string prefix of module (such as 'user.templates')
 ---@param cb? fun(tbl: table):table|nil
 ---@param on_error? fun(msg: string)

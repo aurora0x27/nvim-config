@@ -15,8 +15,6 @@
   "mason.nvim": { "branch": "main", "commit": "44d1e90e1f66e077268191e3ee9d2ac97cc18e65" },
   "mini.files": { "branch": "main", "commit": "e8db416c9f5dbce70f5501da28263d45c0a4df6b" },
   "mini.hipatterns": { "branch": "main", "commit": "a3ffba45e4119917b254c372df82e79f7d8c4aad" },
-  "noice.nvim": { "branch": "main", "commit": "7bfd942445fb63089b59f97ca487d605e715f155" },
-  "nui.nvim": { "branch": "main", "commit": "de740991c12411b663994b2860f1a4fd0937c130" },
   "nvim-notify": { "branch": "master", "commit": "8701bece920b38ea289b457f902e2ad184131a5d" },
   "nvim-treesitter": { "branch": "main", "commit": "4d9466677a5ceadef104eaa0fe08d60d91c4e9a7" },
   "nvim-treesitter-textobjects": { "branch": "main", "commit": "0bc4ef0a34d80fd6e67b59bd71fcbb0ef9ef4756" },
