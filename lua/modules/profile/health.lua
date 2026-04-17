@@ -78,25 +78,6 @@ function M.check()
 
         vim.health.info(line)
     end
-
-    local logs = profile.get_logs()
-    if logs and #logs.data > 0 then
-        vim.health.info 'Preload Logs:'
-        for _, item in ipairs(logs.data) do
-            local msg = string.format(
-                '[%s] %s',
-                os.date('%H:%M:%S', item.time / 1000),
-                item.msg
-            )
-            if item.lvl >= vim.log.levels.ERROR then
-                vim.health.error(msg)
-            elseif item.lvl >= vim.log.levels.WARN then
-                vim.health.warn(msg)
-            else
-                vim.health.info(msg)
-            end
-        end
-    end
 end
 
 return M

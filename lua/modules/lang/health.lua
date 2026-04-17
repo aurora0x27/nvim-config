@@ -95,21 +95,6 @@ function M.check()
             vim.health.start(list.name .. ': (Empty)')
         end
     end
-
-    local errs = lang_mod.get_logs().data
-    local vlvl = vim.log.levels
-    local map = {
-        [vlvl.ERROR] = 'err',
-        [vlvl.WARN] = 'warn',
-        [vlvl.INFO] = 'info',
-        [vlvl.DEBUG] = 'info',
-    }
-    if #errs > 0 then
-        vim.health.start 'Diagnostics'
-        for _, e in ipairs(errs) do
-            vim.health[map[e.lvl]](e.msg)
-        end
-    end
 end
 
 return M
