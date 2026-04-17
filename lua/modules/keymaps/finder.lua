@@ -118,13 +118,12 @@ map(
     { desc = '[G]it [BR]anches', noremap = true, silent = true }
 )
 
--- TODO:
--- map(
---     'n',
---     '<leader>fm',
---     thunk('noice.integrations.fzf', 'open'),
---     { desc = 'Noice [M]sg', noremap = true, silent = true }
--- )
+map(
+    'n',
+    '<leader>fm',
+    thunk('config.bus.recorder', 'fzf_messages'),
+    { desc = 'Noice [M]sg', noremap = true, silent = true }
+)
 
 map(
     'n',

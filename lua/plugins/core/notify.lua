@@ -63,6 +63,7 @@ local Notifier = {
             },
         }
 
+        require 'config.bus.recorder'.setup()
         require 'config.bus.notify'.setup()
 
         -- start bus
