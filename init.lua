@@ -130,6 +130,10 @@ vim.api.nvim_create_autocmd('BufRead', {
     once = true,
     callback = require 'utils.loader'.thunk('modules.lsp-progress', 'setup'),
 })
+vim.api.nvim_create_autocmd('UIEnter', {
+    once = true,
+    callback = require 'utils.loader'.thunk('config.bus.fidget', 'setup'),
+})
 
 --------------------------------------------------------------------------------
 -- Phase 2: Bootstrap and load lazy

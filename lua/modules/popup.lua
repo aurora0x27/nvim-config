@@ -333,7 +333,7 @@ function M.on_cmdline_show(content, pos, firstc, prompt, indent, level)
     end
 
     local screen_w = vim.o.columns
-    local min_width = Win.resolve(view.width, screen_w)
+    local min_width = Win.resolve_size(view.width, screen_w)
     local prefix_len = #route.prefix + 1
 
     local content_width =

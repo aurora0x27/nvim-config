@@ -51,32 +51,48 @@ local WINOPT_DEFAULT = {
     bo = {},
 }
 
-local function resolve(val, max_val)
+local function resolve_size(val, max)
     if type(val) == 'number' and val > 0 and val < 1 then
-        return math.floor(val * max_val)
+        return math.floor(val * max)
     end
     return val
 end
 
-M.resolve = resolve
+local function resolve_pos(val, max_val, size)
+    if type(val) ~= 'number' then
+        return val
+    end
+
+    if val > 0 and val < 1 then
+        return math.floor(val * (max_val - size))
+    end
+
+    if val < 0 and val > -1 then
+        return math.floor((max_val - size) * (1 + val))
+    end
+
+    return val
+end
+
+M.resolve_size = resolve_size
+
+M.resolve_pos = resolve_pos
 
 function Win:_build_config()
     local columns = vim.o.columns
     local lines = vim.o.lines
 
-    local w = resolve(self.opts.width, columns)
-    local h = resolve(self.opts.height, lines)
-
-    local r = self.opts.row == 0.5 and math.floor((lines - h) / 2)
-        or resolve(self.opts.row, lines)
-
-    local c = self.opts.col == 0.5 and math.floor((columns - w) / 2)
-        or resolve(self.opts.col, columns)
+    local w = resolve_size(self.opts.width, columns)
+    local h = resolve_size(self.opts.height, lines)
+    w = math.max(1, w)
+    h = math.max(1, h)
+    local r = resolve_pos(self.opts.row, lines, h)
+    local c = resolve_pos(self.opts.col, columns, w)
 
     local cfg = {
         relative = self.opts.relative,
-        width = math.max(1, w),
-        height = math.max(1, h),
+        width = w,
+        height = h,
         row = r,
         col = c,
         anchor = self.opts.anchor,

@@ -73,15 +73,11 @@ local function on_progress(ev)
     end
 
     -- direct display, not using the bus at this moment
-    toast.notify_like(table.concat(msg, '\n'), {
+    toast.notify(table.concat(msg, '\n'), {
         id = 'lsp_progress',
         title = client.name,
         icon = get_icon(client.id),
         relayout = true,
-        size = {
-            width = { min = 30, max = 0.75 },
-            height = { min = 1, max = 0.6 },
-        },
     })
 end
 
