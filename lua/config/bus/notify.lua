@@ -98,6 +98,7 @@ function M.setup(opts)
                 'msg.show.wmsg',
                 'msg.show.emsg',
                 'msg.show.echoerr',
+                'msg.show.list_cmd',
                 'msg.show.lua_print',
                 'msg.show.lua_error',
                 'msg.show.rpc_error',
