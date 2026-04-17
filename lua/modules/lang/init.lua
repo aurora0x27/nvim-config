@@ -11,6 +11,8 @@
 -- Initialization options are all strings, which makes them very easy to
 -- concatenate and interface with environment variables.
 --------------------------------------------------------------------------------
+local profile = require 'modules.profile'
+
 local M = {}
 
 ---@class ToolSpec
@@ -31,18 +33,20 @@ local M = {}
 ---@field whitelist string
 ---@field levels string
 
-local misc = require 'utils.misc'
-
-local log_queue = misc.make_log_queue 'Lang Module'
-
 ---@param msg string
 local function err(msg)
-    log_queue.error(msg)
+    if profile.silent_lang_diag then
+        return
+    end
+    vim.notify(msg, vim.log.levels.ERROR, { title = 'Lang Loader' })
 end
 
 ---@param msg string
 local function warn(msg)
-    log_queue.warn(msg)
+    if profile.silent_lang_diag then
+        return
+    end
+    vim.notify(msg, vim.log.levels.WARN, { title = 'Lang Loader' })
 end
 
 local Data = {
@@ -73,7 +77,7 @@ local Data = {
 
 local CAPABILITY = require('utils.loader').load_data_dir_as_set(
     'config.langs',
-    log_queue.error,
+    err,
     function(set, k, v)
         ---@param ft string
         ---@param subtbl table
@@ -81,7 +85,7 @@ local CAPABILITY = require('utils.loader').load_data_dir_as_set(
             local ty = type(ft)
             if ty == 'string' then
                 if set[ft] then
-                    log_queue.warn(
+                    warn(
                         string.format(
                             '[Lang]: CAPABILITY[%s] is filled before, origin value will be over written',
                             ft
@@ -96,7 +100,7 @@ local CAPABILITY = require('utils.loader').load_data_dir_as_set(
                     copy.ft = single_ft
 
                     if set[single_ft] then
-                        log_queue.warn(
+                        warn(
                             string.format(
                                 '[Lang]: CAPABILITY[%s] overwritten',
                                 single_ft
@@ -107,7 +111,7 @@ local CAPABILITY = require('utils.loader').load_data_dir_as_set(
                     set[single_ft] = copy
                 end
             else
-                log_queue.error(
+                err(
                     string.format(
                         '[Lang]: Item in file `%s` has a bad `ft` type, expected string or string[]',
                         table.concat(k, '/')
@@ -122,7 +126,7 @@ local CAPABILITY = require('utils.loader').load_data_dir_as_set(
                 if ft then
                     process_ft(ft, subtbl)
                 else
-                    log_queue.error(
+                    err(
                         string.format(
                             '[Lang]: Item %d in file `%s` does not have field `ft`',
                             table.concat(k, '/'),
@@ -405,10 +409,6 @@ function M.get_formatter_map()
     return Data.FormatterMap
 end
 
-function M.get_logs()
-    return log_queue
-end
-
 function M.get_enabled_langs()
     return Data.EnabledLangs
 end
@@ -421,10 +421,6 @@ end
 ---@return string[] langs
 function M.lsp_get_ft(lsp)
     return Data.LspLangMap[lsp] or {}
-end
-
-function M.emit_err()
-    misc.flush_log_queue(log_queue)
 end
 
 return M

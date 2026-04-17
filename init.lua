@@ -115,16 +115,6 @@ vim.api.nvim_create_autocmd('User', {
 
             -- dofile init.lua
             require 'modules.patch'.load_main()
-
-            -- emit diagnostics info of profile module after noice initialized
-            if not profile.silent_profile_diag then
-                vim.defer_fn(require 'modules.profile'.emit_err, 1000)
-            end
-
-            -- emit diagnostics info of lang module after noice initialized
-            if not profile.silent_lang_diag then
-                vim.defer_fn(require 'modules.lang'.emit_err, 1200)
-            end
         end)
     end,
 })

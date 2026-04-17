@@ -8,17 +8,15 @@
 local M = {}
 
 local uv = vim.uv or vim.loop
-local misc = require 'utils.misc'
-local log_queue = misc.make_log_queue 'Profile Module'
 
 ---@param msg string
 local function err(msg)
-    log_queue.error(msg)
+    vim.notify(msg, vim.log.levels.ERROR, { title = 'Profile Module' })
 end
 
 ---@param msg string
 local function warn(msg)
-    log_queue.warn(msg)
+    vim.notify(msg, vim.log.levels.WARN, { title = 'Profile Module' })
 end
 
 --- Read json without expecption
@@ -97,7 +95,7 @@ end
 local SCHEMA = require('config.assets.misc').ProfileSchema
 local RAW_LAZY_SPECS = require('utils.loader').load_data_dir_as_set(
     'plugins.opt',
-    log_queue.error,
+    err,
     function(set, k, v)
         v.enabled = false
         set[table.concat(k, '.')] = v
@@ -196,14 +194,6 @@ function M.setup(opts)
             end
         end
     end
-end
-
-function M.get_logs()
-    return log_queue
-end
-
-function M.emit_err()
-    misc.flush_log_queue(log_queue)
 end
 
 function M.get_raw_tbl()
