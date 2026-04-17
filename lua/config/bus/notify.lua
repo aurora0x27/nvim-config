@@ -89,7 +89,24 @@ function M.setup(opts)
     local notify = require 'notify'
     Bus.register_subscriber(
         'notify',
-        { exact = { 'notify' }, prefix = { 'msg.show.' } },
+        {
+            exact = {
+                'notify',
+                'bus',
+                'msg.show.echo',
+                'msg.show.echomsg',
+                'msg.show.wmsg',
+                'msg.show.emsg',
+                'msg.show.echoerr',
+                'msg.show.lua_print',
+                'msg.show.lua_error',
+                'msg.show.rpc_error',
+                'msg.show.shell_cmd',
+                'msg.show.shell_err',
+                'msg.show.shell_out',
+                'msg.show.shell_ret',
+            },
+        },
         vim.log.levels.DEBUG,
         function(msg)
             if msg.tag == 'bus' then
