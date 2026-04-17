@@ -137,6 +137,28 @@ local function _bus_log(msg, lvl)
     Subscribers[Opt.bus_backend].handler(built_msg)
 end
 
+---@param backend BusSubscriber
+---@param tag string
+local function matches(backend, tag)
+    if backend.full_match[tag] then
+        return true
+    end
+
+    for _, prefix in ipairs(backend.prefix_match) do
+        if vim.startswith(tag, prefix) then
+            return true
+        end
+    end
+
+    for _, pattern in ipairs(backend.fuzzy_match) do
+        if tag:match(pattern) then
+            return true
+        end
+    end
+
+    return false
+end
+
 ---@param msg Message
 local function bus_dispatch(msg)
     if Stat.Busy then
@@ -149,50 +171,24 @@ local function bus_dispatch(msg)
     Stat.Busy = true
 
     for _, backend in pairs(Subscribers) do
-        if msg.level < backend.min_level then
-            goto continue
-        end
-
-        local match_pattern = false
-        if backend.full_match[msg.tag] then
-            match_pattern = true
-        else
-            for _, prefix in ipairs(backend.prefix_match) do
-                if vim.startswith(msg.tag, prefix) then
-                    match_pattern = true
-                    goto finish_matching
-                end
-            end
-            for _, pattern in ipairs(backend.fuzzy_match) do
-                if msg.tag:match(pattern) then
-                    match_pattern = true
-                    goto finish_matching
+        if matches(backend, msg.tag) then
+            -- protected call handler
+            if type(backend.handler) == 'function' then
+                local ok, should_stop = pcall(backend.handler, msg)
+                if not ok then
+                    _bus_log(
+                        string.format(
+                            "[Dispatcher] Handler '%s' panic for: '%s'",
+                            backend.id,
+                            should_stop
+                        ),
+                        vim.log.levels.ERROR
+                    )
+                elseif should_stop == true then
+                    break
                 end
             end
         end
-        ::finish_matching::
-        if not match_pattern then
-            goto continue
-        end
-
-        -- protected call handler
-        if type(backend.handler) == 'function' then
-            local ok, should_stop = pcall(backend.handler, msg)
-            if not ok then
-                _bus_log(
-                    string.format(
-                        "[Dispatcher] Handler '%s' panic for: '%s'",
-                        backend.id,
-                        should_stop
-                    ),
-                    vim.log.levels.ERROR
-                )
-            elseif should_stop == true then
-                break
-            end
-        end
-
-        ::continue::
     end
     Stat.Busy = false
 end
