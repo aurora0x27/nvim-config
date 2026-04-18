@@ -79,6 +79,22 @@ local BATCH_KINDS = {
 
 local BATCH_DELAY_MS = 20 -- flush after 20ms idle
 
+--- Emit a message to bus, Wrapper function
+--- if in confirm mode, handle it carefully, use sync mode
+--- in normal cases just schedule it to next loop, do not block
+---@param tag string
+---@param level integer
+---@param content string|table
+---@param data? table
+---@param cover_id? integer
+local function emit_wrap(tag, level, content, data, cover_id)
+    if Stat.IsConfirm then
+        Bus.emit(tag, level, content, data, cover_id)
+    else
+        vim.schedule(bind(Bus.emit, tag, level, content, data, cover_id))
+    end
+end
+
 ---@param kind string
 local function flush_batch(kind)
     local b = MsgBatches[kind]
@@ -99,9 +115,8 @@ local function flush_batch(kind)
         trigger = '',
         batched = true,
     }
-    vim.schedule(
-        bind(Bus.emit, 'msg.show.' .. kind, b.level, b.content, data, nil)
-    )
+
+    emit_wrap('msg.show.' .. kind, b.level, b.content, data, nil)
 end
 
 ---@type NvimMsgTuple
@@ -166,12 +181,7 @@ function Handlers.on_msg_show(
             id = id,
             trigger = trigger,
         }
-        vim.notify(
-            'Entering confirm mode',
-            vim.log.levels.WARN,
-            { title = 'Adapter' }
-        )
-        return
+        return false
     end
 
     local kind_to_level = {
@@ -199,14 +209,14 @@ function Handlers.on_msg_show(
         end
     end
 
-    vim.schedule(bind(Bus.emit, tag, level, content, {
+    emit_wrap(tag, level, content, {
         kind = kind,
         offsets = { 1 },
         replace_last = replace_last,
         history = history,
         append = append,
         trigger = trigger,
-    }, replace_last and id or nil))
+    }, replace_last and id or nil)
 end
 
 function Handlers.on_msg_clear()
@@ -308,6 +318,7 @@ function M.setup(opts)
             function(event, ...)
                 -- identify messages and dispatch to handlers
                 local is_cmdline_event = vim.startswith(event, 'cmdline_')
+
                 if Stat.IsConfirm and not is_cmdline_event then
                     local args = { ... }
                     if not (event == 'msg_show' and args[1] == 'confirm') then
@@ -320,13 +331,14 @@ function M.setup(opts)
                     if type(handler) == 'function' then
                         handler(...)
                     end
-                    return
+                    return false
                 end
 
                 local handler = Handlers['on_' .. event]
                 if type(handler) == 'function' then
                     handler(...)
                 end
+                return true
             end
         )
     end
