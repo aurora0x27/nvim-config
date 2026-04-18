@@ -109,13 +109,12 @@ function M.on_cmdline_show(
         },
     }
 
-    if not confirm_win or not confirm_win:is_valid() then
-        confirm_win = Win.create(win_opts)
-    else
+    if confirm_win and confirm_win:is_valid() then
         confirm_win:update(win_opts)
+    else
+        confirm_win = Win.open(win_opts)
     end
     confirm_win:open(layout.lines)
-
     local buf = confirm_win.buf
     vim.api.nvim_buf_clear_namespace(buf, ns_id, 0, -1)
     for _, m in ipairs(layout.marks) do
@@ -125,6 +124,7 @@ function M.on_cmdline_show(
             priority = 100,
         })
     end
+    vim.cmd 'redraw'
 end
 
 ---@param level integer

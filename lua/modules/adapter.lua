@@ -170,7 +170,6 @@ function Handlers.on_msg_show(
     trigger
 )
     if kind == 'confirm' then
-        -- TODO: record message and
         Stat.IsConfirm = true
         ConfirmData = {
             kind = kind,
@@ -267,15 +266,6 @@ function ConfirmHandlers.on_cmdline_hide(level, abort)
     )
 end
 
-local function force_cleanup_confirm()
-    if not Stat.IsConfirm then
-        return
-    end
-    bind(thunk('modules.confirm', 'on_cmdline_hide'), 0, true)()
-    Stat.IsConfirm = false
-    ConfirmData = nil
-end
-
 --- Pipe notify message to bus
 ---@param msg string
 ---@param lvl integer|nil
@@ -318,13 +308,6 @@ function M.setup(opts)
             function(event, ...)
                 -- identify messages and dispatch to handlers
                 local is_cmdline_event = vim.startswith(event, 'cmdline_')
-
-                if Stat.IsConfirm and not is_cmdline_event then
-                    local args = { ... }
-                    if not (event == 'msg_show' and args[1] == 'confirm') then
-                        force_cleanup_confirm()
-                    end
-                end
 
                 if Stat.IsConfirm and is_cmdline_event then
                     local handler = ConfirmHandlers['on_' .. event]
