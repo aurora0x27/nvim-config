@@ -141,6 +141,10 @@ function M.fzf_messages()
     })
 end
 
+function M.clear()
+    RecordedMessages = {}
+end
+
 function M.setup()
     Bus.register_subscriber(
         'recorder',
@@ -160,6 +164,8 @@ function M.setup()
             return false
         end
     )
+
+    vim.api.nvim_create_user_command('MessageClear', M.clear, {})
 end
 
 return M
