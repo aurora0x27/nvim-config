@@ -1,7 +1,7 @@
 --------------------------------------------------------------------------------
 -- Nvim-Notify backend
 --------------------------------------------------------------------------------
-local layout_chunks = require 'utils.render'.layout_chunks
+local calculate_layout = require 'utils.render'.calculate_layout
 
 local M = {}
 
@@ -98,7 +98,6 @@ function M.setup(opts)
                 'msg.show.wmsg',
                 'msg.show.emsg',
                 'msg.show.echoerr',
-                'msg.show.list_cmd',
                 'msg.show.lua_print',
                 'msg.show.lua_error',
                 'msg.show.rpc_error',
@@ -163,7 +162,7 @@ function M.setup(opts)
                 content = merged
             end
 
-            local layout = layout_chunks(content)
+            local layout = calculate_layout(content)
 
             local notify_opts = {
                 title = KIND_TITLE[kind] or 'Messages',

@@ -28,7 +28,7 @@ end
 --- Handles \n splits within chunks correctly
 ---@param chunks NvimMsgTuple[]
 ---@return ChunkLayout
-function M.layout_chunks(chunks)
+function M.calculate_layout(chunks)
     local lines = { '' }
     local marks = {}
     local row = 0
@@ -68,5 +68,16 @@ function M.layout_chunks(chunks)
 
     return { lines = lines, marks = marks }
 end
+
+---@param msg       string
+---@param text_hl?  integer
+---@param attr?     integer
+function M.to_chunks(msg, text_hl, attr)
+    return {
+        { attr or 0, msg, text_hl or vim.api.nvim_get_hl_id_by_name('Normal') },
+    }
+end
+
+M.NEWLINE_CHUNK = { 0, '\n', 0 }
 
 return M

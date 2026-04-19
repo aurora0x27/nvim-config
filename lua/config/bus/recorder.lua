@@ -1,7 +1,7 @@
 --------------------------------------------------------------------------------
 -- Recorder backend -- for fzf support
 --------------------------------------------------------------------------------
-local layout_chunks = require 'utils.render'.layout_chunks
+local calculate_layout = require 'utils.render'.calculate_layout
 
 local M = {}
 
@@ -43,7 +43,7 @@ local function make_previewer()
             local lines = vim.split(msg.content, '\n', { plain = true })
             vim.api.nvim_buf_set_lines(tmpbuf, 0, -1, false, lines)
         else
-            local layout = layout_chunks(msg.content)
+            local layout = calculate_layout(msg.content)
             vim.api.nvim_buf_set_lines(tmpbuf, 0, -1, false, layout.lines)
             local ns = vim.api.nvim_create_namespace('fzf_msg_preview')
             vim.api.nvim_buf_clear_namespace(tmpbuf, ns, 0, -1)
@@ -83,7 +83,7 @@ function M.fzf_messages()
         if type(msg.content) == 'string' then
             summary = msg.content
         else
-            local layout = layout_chunks(msg.content)
+            local layout = calculate_layout(msg.content)
             summary = layout.lines[1]:gsub('\n', ' '):sub(1, 80)
         end
 
@@ -112,7 +112,7 @@ function M.fzf_messages()
                     if type(msg.content) == 'string' then
                         print(msg.content)
                     else
-                        local layout = layout_chunks(msg.content)
+                        local layout = calculate_layout(msg.content)
                         print(table.concat(layout.lines, '\n'))
                     end
                 end
@@ -123,7 +123,7 @@ function M.fzf_messages()
                 if type(msg.content) == 'string' then
                     vim.fn.setreg('+', msg.content)
                 else
-                    local layout = layout_chunks(msg.content)
+                    local layout = calculate_layout(msg.content)
                     vim.fn.setreg('+', table.concat(layout.lines, '\n'))
                 end
                 print('Copied to clipboard')

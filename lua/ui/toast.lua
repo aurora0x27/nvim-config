@@ -22,6 +22,7 @@
 
 local Win = require 'ui.window'
 local Timer = require 'utils.timer'
+local Render = require 'utils.render'
 
 local NS = vim.api.nvim_create_namespace('ToastNs')
 local M = {}
@@ -49,6 +50,7 @@ local LAYOUT = {
 ---@field id       string|nil
 ---@field win      Win          Win instance
 ---@field buf      integer
+---@field content  NvimMsgChunk[]
 ---@field timer    table|nil    Timer instance
 ---@field height   integer      current rendered height (without border)
 ---@field border   string       'rounded'|'single'|'none'
@@ -317,7 +319,7 @@ end
 -- rendering
 --------------------------------------------------------------------------------
 ---@param buf       integer
----@param notif_msg string
+---@param notif_msg NvimMsgTuple[]
 ---@param title     string
 ---@param icon      string
 ---@param win_opts  table   Win.opts (mutated for title/footer)
@@ -350,13 +352,15 @@ local function render_into(buf, notif_msg, title, icon, win_opts, hl, ns)
 
     vim.bo[buf].modifiable = true
     vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
-    vim.api.nvim_buf_set_lines(
-        buf,
-        0,
-        -1,
-        false,
-        vim.split(notif_msg or '', '\n', { plain = true })
-    )
+    local layout = Render.calculate_layout(notif_msg)
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, layout.lines)
+    for _, m in ipairs(layout.marks) do
+        pcall(vim.api.nvim_buf_set_extmark, buf, ns, m.row, m.col_start, {
+            end_col = m.col_end,
+            hl_group = m.hl,
+            priority = 100,
+        })
+    end
     vim.bo[buf].modifiable = false
 end
 
@@ -364,7 +368,7 @@ end
 -- public API
 --------------------------------------------------------------------------------
 ---Show (or update) a toast notification.
----@param msg  string
+---@param msg  string|NvimMsgTuple[]
 ---@param opts ToastNotifyOpts|nil
 ---@return table  win  Win instance
 function M.notify(msg, opts)
@@ -375,6 +379,10 @@ function M.notify(msg, opts)
     local hl = vim.tbl_extend('force', default_hl(opts.level), opts.hl or {})
     local icon = resolve_icon(opts)
     local title = opts.title or ' Messages '
+
+    if type(msg) == 'string' then
+        msg = Render.to_chunks(msg)
+    end
 
     -- reuse existing toast for same id
     local existing_idx = opts.id and ID_MAP[opts.id]
@@ -389,13 +397,14 @@ function M.notify(msg, opts)
     end
 
     if entry then
-        local final_msg = msg
+        local final_msg = {}
 
         if mode == 'append' and entry.win:is_valid() then
-            local old_lines =
-                vim.api.nvim_buf_get_lines(entry.buf, 0, -1, false)
-            local old_msg = table.concat(old_lines, '\n')
-            final_msg = old_msg .. '\n' .. msg
+            vim.list_extend(final_msg, entry.content)
+            table.insert(final_msg, Render.NEWLINE_CHUNK)
+            vim.list_extend(final_msg, msg)
+        else
+            final_msg = msg
         end
 
         -- update in place
@@ -421,6 +430,7 @@ function M.notify(msg, opts)
             entry.win.opts.width = w
             entry.height = h
             entry.win.opts.height = h
+            entry.content = final_msg
         end
 
         entry.win:open() -- reconfigure (idempotent)
@@ -453,7 +463,6 @@ function M.notify(msg, opts)
 
     win_obj:open()
     local buf = win_obj.buf
-
     render_into(buf, msg, title, icon, win_obj.opts, hl, NS)
 
     -- compute real dimensions
@@ -475,6 +484,7 @@ function M.notify(msg, opts)
         id = opts.id,
         win = win_obj,
         buf = buf,
+        content = msg,
         timer = nil,
         height = h,
         border = border,
