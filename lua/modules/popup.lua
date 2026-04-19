@@ -72,7 +72,7 @@ local POPUP_OPT_DEFAULT = {
             view = 'cmdline',
         },
         {
-            match = { firstc = ':', pattern = '%s*he?l?p?%s+' },
+            match = { firstc = ':', pattern = '^%s*h[e]?[l]?[p]?%f[%s]' },
             prefix = '?',
             title = 'Help',
             hl = 'CmdlineHelp',
