@@ -1,6 +1,10 @@
 --------------------------------------------------------------------------------
 -- Recorder backend -- for fzf support
 --------------------------------------------------------------------------------
+
+---@class MsgRecorderOpt
+---@field max_msg_limit? integer
+
 local calculate_layout = require 'utils.render'.calculate_layout
 
 local M = {}
@@ -10,6 +14,13 @@ local RecordedMessages = {}
 local MessagePreviewer = nil
 
 local PREVIEW_TITLE = ' RecordedMsg '
+
+---@type MsgRecorderOpt
+local MSG_RECORDER_OPT_DEFAULT = {
+    max_msg_limit = 1024,
+}
+
+local Opt = vim.deepcopy(MSG_RECORDER_OPT_DEFAULT)
 
 local function make_previewer()
     local Previewer = require 'fzf-lua.previewer.builtin'
@@ -145,7 +156,9 @@ function M.clear()
     RecordedMessages = {}
 end
 
-function M.setup()
+---@param opts? MsgRecorderOpt
+function M.setup(opts)
+    Opt = vim.tbl_deep_extend('force', Opt, opts or {})
     Bus.register_subscriber(
         'recorder',
         {
@@ -154,12 +167,22 @@ function M.setup()
                 'bus',
                 'msg.show.emsg',
                 'msg.show.echoerr',
+                'msg.show.echo',
+                'msg.show.echomsg',
                 'msg.show.lua_error',
                 'msg.show.rpc_error',
+                'msg.show.shell_out',
+                'msg.show.shell_ret',
+                'msg.show.shell_err',
+                'msg.show.bufwrite',
+                'msg.show.quickfix',
             },
         },
         vim.log.levels.TRACE,
         function(msg)
+            if #RecordedMessages > Opt.max_msg_limit then
+                table.remove(RecordedMessages, 1)
+            end
             table.insert(RecordedMessages, msg)
             return false
         end

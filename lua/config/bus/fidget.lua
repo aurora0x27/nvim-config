@@ -18,7 +18,12 @@ end
 
 local MODE_OF_TAG = {
     ['msg.show.bufwrite'] = 'append',
+    ['msg.show.lua_print'] = 'append',
+    ['msg.show.echo'] = 'append',
+    ['msg.show.wmsg'] = 'append',
+    ['msg.show.echomsg'] = 'replace',
     ['msg.show.undo'] = 'replace',
+    ['msg.show.list_cmd'] = 'replace',
 }
 
 ---@param msg Message
@@ -45,10 +50,19 @@ end
 function M.setup()
     Bus.register_subscriber('fidget', {
         exact = {
+            'msg.show.wmsg',
             'msg.show.undo',
+            'msg.show.echo',
+            'msg.show.echomsg',
+            'msg.show.unknown',
             'msg.show.bufwrite',
             'msg.show.progress',
-            'msg.show.unknown',
+            'msg.show.list_cmd',
+            'msg.show.lua_print',
+            'msg.show.shell_cmd',
+            'msg.show.shell_err',
+            'msg.show.shell_out',
+            'msg.show.shell_ret',
         },
     }, vim.log.levels.TRACE, handler)
 end

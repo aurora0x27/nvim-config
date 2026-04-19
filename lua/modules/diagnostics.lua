@@ -60,13 +60,6 @@ function M.setup()
     -- diagnostic info
     vim.diagnostic.config(DiagnosticsConfig)
 
-    -- auto update diagnostic info
-    vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
-        callback = function()
-            vim.diagnostic.show(nil, 0, nil)
-        end,
-    })
-
     -- Hover diagnostics
     vim.keymap.set(
         'n',
