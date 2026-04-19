@@ -24,14 +24,7 @@ local Mask = misc.process_feat_mask(
     require('modules.profile').sandbox_mode,
     SANDBOX_MODE_DEFAULT,
     function(msg)
-        vim.defer_fn(
-            require('utils.loader').bind(
-                misc.err,
-                msg,
-                { title = 'Sandbox option' }
-            ),
-            1000
-        )
+        misc.err(msg, { title = 'Sandbox option' })
     end
 )
 

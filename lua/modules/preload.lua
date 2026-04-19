@@ -56,29 +56,30 @@ function M.setup()
     vim.o.shiftwidth = 4
     vim.o.expandtab = true
     vim.o.autoindent = true
+    vim.o.shada = require 'modules.sandbox'.get_mask().shada
+            and [[!,'100,<50,s10,h]]
+        or ''
 
     -- filetype alias
-    vim.filetype.add {
+    vim.filetype.add({
         extension = {
             mdx = 'markdown',
-            -- '*.tmpl' template file in configuration
-            tmpl = function(path, _)
-                local new_ft = path:match('%.([%w_]+)%.tmpl$')
-                if new_ft then
-                    return new_ft
-                end
-                return 'template' -- fallback
+            tmpl = function(path)
+                return path:match('%.([%w_]+)%.tmpl$') or 'template'
             end,
         },
         pattern = {
-            -- Add patterns
-            -- ['<pattern>'] = '<filetype>',
             ['xmake.lua'] = 'xmake',
         },
-    }
+    })
 
-    -- register filetype `xmake`
-    vim.treesitter.language.register('lua', 'xmake')
+    -- register new filetypes
+    vim.api.nvim_create_autocmd({ 'BufRead', 'BufNewFile' }, {
+        once = true,
+        callback = function(_)
+            vim.treesitter.language.register('lua', 'xmake')
+        end,
+    })
 
     vim.api.nvim_create_autocmd('BufReadPost', {
         ---@param arg vim.api.keyset.create_autocmd.callback_args

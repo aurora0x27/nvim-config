@@ -94,29 +94,27 @@ end
 vim.api.nvim_create_autocmd('User', {
     pattern = 'LazyVimStarted',
     once = true,
-    callback = function()
-        vim.schedule(function()
-            local profile = require 'modules.profile'
+    callback = vim.schedule_wrap(function()
+        local profile = require 'modules.profile'
 
-            if not profile.disable_im_switch then
-                require 'modules.im-switch'.setup()
-            end
-            require 'modules.popup'.setup {
-                cursor_hack = false,
-                no_register = true,
-            }
-            require 'modules.keymaps'.setup()
-            require 'modules.options'.setup()
-            require 'modules.autocmd'.setup()
-            require 'modules.diagnostics'.setup()
-            require 'modules.fold'.setup()
-            require 'modules.ssh_mode'.setup()
-            require 'modules.pairs'.setup()
+        if not profile.disable_im_switch then
+            require 'modules.im-switch'.setup()
+        end
+        require 'modules.popup'.setup {
+            cursor_hack = false,
+            no_register = true,
+        }
+        require 'modules.keymaps'.setup()
+        require 'modules.options'.setup()
+        require 'modules.autocmd'.setup()
+        require 'modules.diagnostics'.setup()
+        require 'modules.fold'.setup()
+        require 'modules.ssh_mode'.setup()
+        require 'modules.pairs'.setup()
 
-            -- dofile init.lua
-            require 'modules.patch'.load_main()
-        end)
-    end,
+        -- dofile init.lua
+        require 'modules.patch'.load_main()
+    end),
 })
 
 --------------------------------------------------------------------------------
