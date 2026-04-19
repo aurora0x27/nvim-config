@@ -16,8 +16,6 @@ M.ProfileSchema = {
     enable_lsp = vim.fn.has 'nvim-0.11' == 1,
     enable_current_line_blame = false,
     blink_use_binary = true,
-    silent_lang_diag = false,
-    silent_profile_diag = false,
     lang_blacklist = 'all',
     lang_whitelist = '',
     lang_levels = '',

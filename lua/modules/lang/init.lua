@@ -11,8 +11,6 @@
 -- Initialization options are all strings, which makes them very easy to
 -- concatenate and interface with environment variables.
 --------------------------------------------------------------------------------
-local profile = require 'modules.profile'
-
 local M = {}
 
 ---@class ToolSpec
@@ -35,17 +33,11 @@ local M = {}
 
 ---@param msg string
 local function err(msg)
-    if profile.silent_lang_diag then
-        return
-    end
     vim.notify(msg, vim.log.levels.ERROR, { title = 'Lang Loader' })
 end
 
 ---@param msg string
 local function warn(msg)
-    if profile.silent_lang_diag then
-        return
-    end
     vim.notify(msg, vim.log.levels.WARN, { title = 'Lang Loader' })
 end
 

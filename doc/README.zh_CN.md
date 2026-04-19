@@ -100,7 +100,6 @@ vi # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
   - _`enable_dropbar`_ 为每个窗口启用面包屑导航
 
 - 语言模块
-  - _`silent_lang_diag`_ 不输出语言加载器的日志
   - _`lang_blacklist`_ 禁用语言配置，默认禁用，以逗号分隔
   - _`lang_whitelist`_ 启用语言配置，默认启用，以逗号分隔
   - _`lang_levels`_ 语言特性配置，语法：字符串 `c:full;cpp:none;rust:lsp,+ts,-fmt` 表示启用 C 语言的全部功能，禁用 C++ 的所有功能，启用 tree-sitter 和 lsp，禁用 Rust 的格式化程序。
@@ -121,7 +120,6 @@ vi # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
 
 - 其他
   - _`sandbox_mode`_ 控制沙盒功能 `sesson|undo|shada|swap|wb`，其中 `wb` 用于写回功能
-  - _`silent_profile_diag`_ 不输出配置文件加载器的日志
   - _`disable_im_switch`_ 禁用自动 Im 切换器
   - _`blink_use_binary`_ 使用预编译二进制文件代替自行编译
 
@@ -139,8 +137,6 @@ local defaults = {
   lang_levels = "",
   lang_whitelist = "",
   sandbox_mode = "none",
-  silent_lang_diag = false,
-  silent_profile_diag = false,
   statline_scrollbar_style = "moon",
   transparent_mode = false,
   use_emmylua_ls = false,

@@ -106,7 +106,6 @@ dir. Here're customizable items:
   - _`enable_dropbar`_ enable breadcrumbs for each window
 
 - Lang module
-  - _`silent_lang_diag`_ do not output log of lang loader
   - _`lang_blacklist`_ disabled lang configs, default none, split by ','
   - _`lang_whitelist`_ enabled lang configs, default all, split by ','
   - _`lang_levels`_ lang feature config, syntax: string `c:full;cpp:none;rust:lsp,+ts,-fmt` means enable full
@@ -128,7 +127,6 @@ dir. Here're customizable items:
 
 - Misc
   - _`sandbox_mode`_ control sanbox features `sesson|undo|shada|swap|wb`, `wb` for writebackup
-  - _`silent_profile_diag`_ do not output log of profile loader
   - _`disable_im_switch`_ disable auto im switcher
   - _`blink_use_binary`_ use prebuild binary instead of building
 
@@ -146,8 +144,6 @@ local defaults = {
   lang_levels = "",
   lang_whitelist = "",
   sandbox_mode = "none",
-  silent_lang_diag = false,
-  silent_profile_diag = false,
   statline_scrollbar_style = "moon",
   transparent_mode = false,
   use_emmylua_ls = false,
