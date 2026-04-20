@@ -15,7 +15,7 @@ A **Modular & High-performance** set of configurations for Nvim which is written
 > - lua/modules/lang/: Defines what each language provides.
 >   This makes the config a framework rather than just a set of dotfiles.
 
-## ⚡Showcase ⚡
+##  Showcase 
 
 ![Dashboard](./doc/img/Dashboard.png)
 
@@ -58,7 +58,7 @@ Some binaries should be installed before launch the configuration.
 
 - `cargo` full rust toolchain, **optionally** required by blink.cmp
 
-## ⚡Try it now ⚡
+##  Try it now 
 
 You can try it immediately without replacing your origin configurations.
 
@@ -87,7 +87,6 @@ Or, you may download the repo to `~/.config/<name>`, and run `NVIM_APPNAME=<name
 - [x] Input method auto switch (**On Linux and MacOS**)
 - [x] Workspace patch
 - [x] Typst support
-- [x] Task runner infrastructure (**Overseer**)
 - [x] Windows Support
 - [x] Centralized lang feature switch
 - [x] Json-env combined profile system

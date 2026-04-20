@@ -7,7 +7,6 @@ local Diagnostics = require 'config.heirline.statusline.diagnostics'
 local LSPInfo = require 'config.heirline.statusline.lsp-info'
 local BufName = require 'config.heirline.statusline.bufname'
 local WorkDir = require 'config.heirline.statusline.workdir'
-local TaskRunner = require 'config.heirline.statusline.overseer'
 local BufInfo = require 'config.heirline.statusline.bufinfo'
 
 local ctrl_v = string.char(22)
@@ -74,7 +73,6 @@ local StatusLine = {
     GitStatus,
     ScrollBar,
     CursorPos,
-    TaskRunner,
     { provider = '%=' },
     Diagnostics,
     LSPInfo,

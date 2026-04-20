@@ -26,6 +26,8 @@ local Opt = {
     showmode = false,
     cmdheight = 0,
     inccommand = '',
+    splitright = true,
+    splitbelow = true,
 }
 
 local misc = require 'utils.misc'
