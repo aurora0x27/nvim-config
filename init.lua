@@ -130,7 +130,7 @@ vim.api.nvim_create_autocmd('BufRead', {
 })
 vim.api.nvim_create_autocmd('UIEnter', {
     once = true,
-    callback = require 'utils.loader'.thunk('config.bus.fidget', 'setup'),
+    callback = require 'utils.loader'.thunk('config.bus.toast', 'setup'),
 })
 
 --------------------------------------------------------------------------------

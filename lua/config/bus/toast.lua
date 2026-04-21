@@ -1,3 +1,6 @@
+--------------------------------------------------------------------------------
+-- Toast notifier backend
+--------------------------------------------------------------------------------
 local thunk = require 'utils.loader'.thunk
 local notify = thunk('ui.toast', 'notify')
 local M = {}
@@ -48,7 +51,7 @@ local function handler(msg)
 end
 
 function M.setup()
-    Bus.register_subscriber('fidget', {
+    Bus.register_subscriber('toast', {
         exact = {
             'msg.show.wmsg',
             'msg.show.undo',
