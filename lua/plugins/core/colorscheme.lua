@@ -2,7 +2,7 @@
 -- Catppuccin Mocha scheme
 --------------------------------------------------------------------------------
 
-local transparent_mode = require('modules.profile').transparent_mode
+local transparent_mode = Profile.transparent_mode
 
 ---@type LazyPluginSpec
 local ColorScheme = {

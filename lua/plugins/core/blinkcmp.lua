@@ -16,9 +16,7 @@ local CodeCompletion = {
 
     -- use a release tag to download pre-built binaries
     version = '1.*',
-    build = not require('modules.profile').blink_use_binary
-            and 'cargo build --release'
-        or nil,
+    build = not Profile.blink_use_binary and 'cargo build --release' or nil,
     -- If you use nix, you can build from source using latest nightly rust with:
     -- build = 'nix run .#build-plugin',
 

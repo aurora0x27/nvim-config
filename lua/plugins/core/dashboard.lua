@@ -19,7 +19,7 @@ local Dashboard = {
 
         local logos = require 'config.assets.logo'
 
-        local art = logos[require('modules.profile').dashboard_art_name]
+        local art = logos[Profile.dashboard_art_name]
 
         dashboard.section.header.val = art or logos['Ayanami Rei']
 

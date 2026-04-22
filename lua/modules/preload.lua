@@ -5,14 +5,12 @@
 --------------------------------------------------------------------------------
 local M = {}
 
-local profile = require 'modules.profile'
-
 function M.setup()
     -- set global leader
     vim.g.mapleader = ' '
     vim.g.maplocalleader = ' '
 
-    profile.setup()
+    require 'modules.profile'.setup()
 
     local alpha = function()
         return string.format(
@@ -22,7 +20,7 @@ function M.setup()
     end
 
     -- set global transparent_mode
-    if profile.transparent_mode and vim.g.neovide then
+    if Profile.transparent_mode and vim.g.neovide then
         vim.g.neovide_window_blurred = true
         vim.g.neovide_opacity = 0.9
         vim.g.neovide_normal_opacity = 0.8
@@ -31,16 +29,16 @@ function M.setup()
     end
 
     require('modules.lang').setup {
-        blacklist = profile.lang_blacklist,
-        whitelist = profile.lang_whitelist,
-        levels = profile.lang_levels,
+        blacklist = Profile.lang_blacklist,
+        whitelist = Profile.lang_whitelist,
+        levels = Profile.lang_levels,
     }
 
     -- WARN: put this line here instead of `options.lua`
     -- prevents line number and cursor line appear on
     -- dashboard, so werid.
     vim.o.number = true
-    vim.o.cursorline = not profile.transparent_mode
+    vim.o.cursorline = not Profile.transparent_mode
 
     vim.opt.fillchars = {
         eob = ' ',

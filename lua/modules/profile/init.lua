@@ -218,8 +218,12 @@ function M.debug_info()
     return info
 end
 
-return setmetatable(M, {
+local Profile = setmetatable(M, {
     __index = function(_, key)
         return rawget(M, key) or (nvimrc and nvimrc[key])
     end,
 })
+
+_G.Profile = Profile
+
+return Profile

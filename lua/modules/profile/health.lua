@@ -1,15 +1,13 @@
 local M = {}
 
-local profile = require 'modules.profile'
-
 local pad = require('utils.misc').pad
 
 function M.check()
     vim.health.start 'Profile Loader'
 
-    local info = profile.debug_info()
-    local defaults = profile.get_defaults()
-    local raw_values = profile.get_raw_tbl()
+    local info = Profile.debug_info()
+    local defaults = Profile.get_defaults()
+    local raw_values = Profile.get_raw_tbl()
 
     if info.path then
         vim.health.info('Config file path: ' .. info.path)

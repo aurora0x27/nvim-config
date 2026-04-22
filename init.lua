@@ -95,9 +95,7 @@ vim.api.nvim_create_autocmd('User', {
     pattern = 'LazyVimStarted',
     once = true,
     callback = vim.schedule_wrap(function()
-        local profile = require 'modules.profile'
-
-        if not profile.disable_im_switch then
+        if not Profile.disable_im_switch then
             require 'modules.im-switch'.setup()
         end
         require 'modules.popup'.setup {
@@ -167,8 +165,7 @@ require('lazy').setup {
     -- all the plugins' configure files should be put under `lua/plugins`
     spec = {
         { import = 'plugins.core' },
-        require('modules.profile')
-            .create_lazy_spec_mask_builder()
+        Profile.create_lazy_spec_mask_builder()
             :pipe(require('modules.lang').mask_lazy_spec)
             .unpack(),
     },

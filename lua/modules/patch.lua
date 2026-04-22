@@ -6,8 +6,6 @@
 --------------------------------------------------------------------------------
 local M = {}
 
-local profile = require 'modules.profile'
-
 local workspace_nvim
 local trust_file = vim.fn.stdpath('data') .. '/trusted_workspaces'
 local ignore_file = vim.fn.stdpath('data') .. '/ignored_workspaces'
@@ -100,7 +98,7 @@ function M.load_main()
         return
     end
     local init_lua = workspace_nvim .. '/init.lua'
-    if profile.workspace_patch_always_restrict then
+    if Profile.workspace_patch_always_restrict then
         restrict_mode = vim.fn.filereadable(init_lua) == 1
         return
     end
@@ -137,7 +135,7 @@ end
 
 ---@return string?
 function M.setup()
-    if not profile.allow_workspace_patch then
+    if not Profile.allow_workspace_patch then
         return
     end
 

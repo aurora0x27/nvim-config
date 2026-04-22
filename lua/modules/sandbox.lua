@@ -21,7 +21,7 @@ local SANDBOX_MODE_DEFAULT = {
 local misc = require 'utils.misc'
 
 local Mask = misc.process_feat_mask(
-    require('modules.profile').sandbox_mode,
+    Profile.sandbox_mode,
     SANDBOX_MODE_DEFAULT,
     function(msg)
         misc.err(msg, { title = 'Sandbox option' })

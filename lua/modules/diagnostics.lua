@@ -33,12 +33,10 @@ local IconTable = (function()
     return ret
 end)()
 
-local profile = require 'modules.profile'
-
 ---@type vim.diagnostic.Opts
 local DiagnosticsConfig = {
-    virtual_text = profile.diagnose_inline,
-    virtual_lines = not profile.diagnose_inline,
+    virtual_text = Profile.diagnose_inline,
+    virtual_lines = not Profile.diagnose_inline,
     underline = false,
     signs = {
         text = IconTable,

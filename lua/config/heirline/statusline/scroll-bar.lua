@@ -62,7 +62,7 @@ local Styles = {
 }
 
 local function get_style()
-    local theme = require('modules.profile').statline_scrollbar_style
+    local theme = Profile.statline_scrollbar_style
     if not Styles[theme] then
         return Styles['moon']
     else

@@ -4,7 +4,6 @@
 local M = {}
 
 local detect = require 'utils.detect'
-local profile = require 'modules.profile'
 local sandbox = require 'modules.sandbox'.get_mask()
 
 local Opt = {
@@ -82,7 +81,7 @@ function M.setup()
 
     local mocha = require('catppuccin.palettes').get_palette 'mocha'
 
-    if profile.transparent_mode then
+    if Profile.transparent_mode then
         vim.api.nvim_set_hl(
             0,
             '@variable',

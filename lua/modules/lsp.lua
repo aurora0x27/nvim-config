@@ -109,7 +109,7 @@ end
 local is_setup = false
 
 function M.setup()
-    if not require 'modules.profile'.enable_lsp or is_setup then
+    if not Profile.enable_lsp or is_setup then
         return
     end
 
