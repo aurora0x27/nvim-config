@@ -1,5 +1,5 @@
 globals = {
-    'vim', 'Bus', 'Profile'
+    'vim', 'Bus', 'Profile', 'Lang'
 }
 ignore = {
     "212"

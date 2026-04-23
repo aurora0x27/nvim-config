@@ -10,7 +10,7 @@ else
     pip_args = {}
 end
 
-local LspEnsuredList = require('modules.lang').get_mason_install_list()
+local LspEnsuredList = Lang.get_mason_install_list()
 
 local misc = require 'utils.misc'
 

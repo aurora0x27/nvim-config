@@ -46,7 +46,7 @@ end
 ---@type vim.lsp.Config
 local emmylua_ls = {
     cmd = { 'emmylua_ls' },
-    filetypes = require 'modules.lang'.lsp_get_ft 'emmylua_ls',
+    filetypes = Lang.lsp_get_ft 'emmylua_ls',
     root_markers = {
         '.luarc.json',
         '.emmyrc.json',

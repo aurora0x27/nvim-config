@@ -166,7 +166,7 @@ require('lazy').setup {
     spec = {
         { import = 'plugins.core' },
         Profile.create_lazy_spec_mask_builder()
-            :pipe(require('modules.lang').mask_lazy_spec)
+            :pipe(Lang.mask_lazy_spec)
             .unpack(),
     },
     install = {

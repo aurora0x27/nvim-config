@@ -2,7 +2,7 @@
 -- CodeCompletion: code completor ui
 --------------------------------------------------------------------------------
 
-local lazydev_enabled = require 'modules.lang'.is_supported('lua', 'plg')
+local lazydev_enabled = Lang.is_supported('lua', 'plg')
 
 ---@type LazyPluginSpec
 local CodeCompletion = {

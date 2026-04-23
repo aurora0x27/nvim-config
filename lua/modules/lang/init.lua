@@ -415,4 +415,7 @@ function M.lsp_get_ft(lsp)
     return Data.LspLangMap[lsp] or {}
 end
 
+-- export as global
+_G.Lang = M
+
 return M

@@ -10,7 +10,7 @@ local CodeFormatter = {
     'stevearc/conform.nvim',
     event = { 'BufReadPost', 'BufNewFile' },
     opts = {
-        formatters_by_ft = require('modules.lang').get_formatter_map(),
+        formatters_by_ft = Lang.get_formatter_map(),
         formatters = {
             prettier = {
                 prepend_args = {

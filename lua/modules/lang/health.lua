@@ -1,11 +1,11 @@
 local M = {}
-local lang_mod = require 'modules.lang'
 
 local pad = require('utils.misc').pad
 
 function M.check()
-    local enabled = lang_mod.get_enabled_langs()
-    local caps = lang_mod.get_capabilities()
+    assert(Lang)
+    local enabled = Lang.get_enabled_langs()
+    local caps = Lang.get_capabilities()
 
     -- Table head
     -- L: LSP, F: Formatter, T: Treesitter, P: Plugins
@@ -59,13 +59,13 @@ function M.check()
     vim.health.start 'Resource Lists (Final Output)'
 
     local lists = {
-        { name = 'Mason Install', data = lang_mod.get_mason_install_list() },
-        { name = 'LazySpecs', data = lang_mod.get_lazy_enable_lists() },
-        { name = 'Treesitter Install', data = lang_mod.get_ts_install_list() },
+        { name = 'Mason Install', data = Lang.get_mason_install_list() },
+        { name = 'LazySpecs', data = Lang.get_lazy_enable_lists() },
+        { name = 'Treesitter Install', data = Lang.get_ts_install_list() },
     }
 
     local maps = {
-        { name = 'Formatter Map', data = lang_mod.get_formatter_map() },
+        { name = 'Formatter Map', data = Lang.get_formatter_map() },
     }
 
     for _, map in ipairs(maps) do
@@ -80,9 +80,9 @@ function M.check()
     end
 
     vim.health.start('Enabled Lsp')
-    local enabled_lsp = lang_mod.get_lsp_enable_list()
+    local enabled_lsp = Lang.get_lsp_enable_list()
     for _, lsp in ipairs(enabled_lsp) do
-        vim.health.info(lsp .. ' : ' .. vim.inspect(lang_mod.lsp_get_ft(lsp)))
+        vim.health.info(lsp .. ' : ' .. vim.inspect(Lang.lsp_get_ft(lsp)))
     end
 
     for _, list in ipairs(lists) do

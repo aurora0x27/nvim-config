@@ -44,16 +44,16 @@ local function create_tinymist_command(command_name, client, bufnr)
     end
     -- Construct a readable command name/desc
     local cmd_name = export_type and ('TinymistExport' .. cmd_display)
-        or ('Tinymist' .. cmd_display) ---@type string
+        or ('Tinymist' .. cmd_display) ---@as string
     local cmd_desc = export_type and ('Export to ' .. cmd_display)
-        or ('Get ' .. cmd_display) ---@type string
+        or ('Get ' .. cmd_display) ---@as string
     return run_tinymist_command, cmd_name, cmd_desc
 end
 
 ---@type vim.lsp.Config
 return {
     cmd = { 'tinymist' },
-    filetypes = require 'modules.lang'.lsp_get_ft 'tinymist',
+    filetypes = Lang.lsp_get_ft 'tinymist',
     root_markers = { '.git' },
     on_attach = function(client, bufnr)
         for _, command in ipairs {

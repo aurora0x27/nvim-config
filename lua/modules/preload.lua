@@ -28,7 +28,7 @@ function M.setup()
         vim.g.neovide_floating_corner_radius = 0.3
     end
 
-    require('modules.lang').setup {
+    require 'modules.lang'.setup {
         blacklist = Profile.lang_blacklist,
         whitelist = Profile.lang_whitelist,
         levels = Profile.lang_levels,

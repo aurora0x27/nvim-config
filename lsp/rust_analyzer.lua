@@ -1,5 +1,5 @@
 local rust_analyzer = {
-    filetypes = require 'modules.lang'.lsp_get_ft 'rust_analyzer',
+    filetypes = Lang.lsp_get_ft 'rust_analyzer',
     settings = {
         ['rust_analyzer'] = {
             diagnostics = {

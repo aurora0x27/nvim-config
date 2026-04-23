@@ -10,7 +10,7 @@ local misc = require 'utils.misc'
 local thunk = require('utils.loader').thunk
 local bind = require 'utils.loader'.bind
 
-local lsp_list = require('modules.lang').get_lsp_enable_list()
+local lsp_list = Lang.get_lsp_enable_list()
 
 --------------------------------------------------------------------------------
 -- Override lsp.hover
