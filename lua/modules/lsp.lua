@@ -45,14 +45,64 @@ local function lsp_buf_setup(event)
         buffer = bufnr,
     })
 
-    local FzfLspPeekCfg = { jump1 = false }
-    local FzfLspGotoCfg = { jump1 = true }
-
     ---@param prefix string
     ---@param suffix string
     ---@param callee string
     ---@param desc string
-    local function lsp_fzf_mux_map(prefix, suffix, callee, desc)
+    ---@param opts? table
+    local function mux_map(prefix, suffix, callee, desc, opts)
+        opts = vim.tbl_deep_extend('force', { with_leader = false }, opts or {})
+        local comb = prefix .. suffix
+        map(
+            'n',
+            '<leader>tn' .. comb,
+            bind(thunk('fzf-lua', callee), {
+                jump1 = false,
+                actions = {
+                    ['default'] = thunk('fzf-lua.actions', 'file_tabedit'),
+                },
+            }),
+            {
+                desc = desc .. ' with [N]ew [T]ab',
+                noremap = true,
+                silent = true,
+            }
+        )
+        map(
+            'n',
+            '<leader>ws' .. comb,
+            bind(thunk('fzf-lua', callee), {
+                jump1 = false,
+                actions = {
+                    ['default'] = thunk('fzf-lua.actions', 'file_split'),
+                },
+            }),
+            {
+                desc = '[W]indow [S]plit ' .. desc,
+                noremap = true,
+                silent = true,
+            }
+        )
+        map(
+            'n',
+            '<leader>wv' .. comb,
+            bind(thunk('fzf-lua', callee), {
+                jump1 = false,
+                actions = {
+                    ['default'] = thunk('fzf-lua.actions', 'file_vsplit'),
+                },
+            }),
+            {
+                desc = '[W]indow [V]split ' .. desc,
+                noremap = true,
+                silent = true,
+            }
+        )
+        if opts.with_leader then
+            prefix = '<leader>' .. prefix
+        end
+        local FzfLspPeekCfg = { jump1 = false }
+        local FzfLspGotoCfg = { jump1 = true }
         map(
             'n',
             prefix .. suffix,
@@ -77,12 +127,24 @@ local function lsp_buf_setup(event)
         )
     end
 
-    lsp_fzf_mux_map('g', 'd', 'lsp_definitions', '[D]efinition')
-    lsp_fzf_mux_map('g', 'D', 'lsp_declarations', '[D]eclarations')
-    lsp_fzf_mux_map('<leader>l', 'i', 'lsp_incoming_calls', '[I]ncoming Calls')
-    lsp_fzf_mux_map('<leader>l', 'o', 'lsp_outgoing_calls', '[O]utgoing Calls')
-    lsp_fzf_mux_map('<leader>l', 's', 'lsp_type_sub', '[S]ub Types')
-    lsp_fzf_mux_map('<leader>l', 'S', 'lsp_type_super', '[S]uper Types')
+    mux_map('g', 'd', 'lsp_definitions', '[D]efinition')
+    mux_map('g', 'D', 'lsp_declarations', '[D]eclarations')
+    mux_map(
+        'l',
+        'i',
+        'lsp_incoming_calls',
+        '[I]ncoming Calls',
+        { with_leader = true }
+    )
+    mux_map(
+        'l',
+        'o',
+        'lsp_outgoing_calls',
+        '[O]utgoing Calls',
+        { with_leader = true }
+    )
+    mux_map('l', 's', 'lsp_type_sub', '[S]ub Types', { with_leader = true })
+    mux_map('l', 'S', 'lsp_type_super', '[S]uper Types', { with_leader = true })
 
     map('n', '<leader>fr', thunk('fzf-lua', 'lsp_references'), {
         desc = '[R]eferences',
