@@ -5,6 +5,7 @@ local M = {}
 
 ---@class BusInitOpt
 ---@field cache_max? integer
+---@field bus_backend? string
 
 ---@class BusSubscriber
 ---@field id string
@@ -89,6 +90,7 @@ end
 ---@field Ready boolean cache message when ui not ready
 ---@field Queue Message[] fifo message buffer
 ---@field Busy boolean is dispatching message?
+---@field Backend string
 ---@field queue_end integer end(head) of message, point to the message to emit
 ---@field flush_depth integer
 
@@ -100,6 +102,7 @@ local Stat = {
     Busy = false,
     queue_end = 1,
     flush_depth = 0,
+    Backend = '',
 }
 
 local _id_counter = 0
@@ -134,7 +137,7 @@ end
 ---@param lvl? vim.log.levels
 local function _bus_log(msg, lvl)
     local built_msg = build_msg('bus', lvl or vim.log.levels.INFO, msg)
-    Subscribers[Opt.bus_backend].handler(built_msg)
+    Subscribers[Stat.Backend].handler(built_msg)
 end
 
 ---@param backend BusSubscriber
@@ -289,7 +292,7 @@ function M.emit(tag, level, content, data, cover_id)
 end
 
 --- Stage2: emit messages in buffer and start routing
----@param opts BusOpt
+---@param opts? BusOpt
 function M.start(opts)
     if Stat.Ready then
         _bus_log('Should not start bus more than once !', vim.log.levels.WARN)
@@ -297,6 +300,9 @@ function M.start(opts)
     end
     ---@type BusOpt
     Opt = vim.tbl_extend('force', Opt, opts or {})
+    if Opt.bus_backend then
+        Stat.Backend = Opt.bus_backend
+    end
     for _, decl in ipairs(Opt.subscribers) do
         M.register_subscriber(unpack(decl))
     end
@@ -312,6 +318,9 @@ function M.init(opts)
         return
     end
     InitOpt = vim.tbl_extend('force', InitOpt, opts or {})
+    if InitOpt.bus_backend then
+        Stat.Backend = InitOpt.bus_backend
+    end
     _G.Bus = M
 end
 

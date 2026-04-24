@@ -108,6 +108,8 @@ vi # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
   - _`use_emmylua_ls`_ 使用 `emmylua_ls` 作为 Lua 语言服务器
   - _`workspace_inject_plugin_path`_ 将插件路径注入到 `emmylua_ls` 工作区配置中
   - _`workspace_inject_vim_rt`_ 将 Vim 运行时注入到 `emmylua_ls` 工作区配置中
+  - `clang_format_path` 指定 `clang-format` 二进制文件路径
+  - `clangd_path` 指定 `clangd` 二进制文件路径
 
 - 大文件支持
   - _`bigfile_size_byte`_ 平均字节大小

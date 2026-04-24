@@ -150,7 +150,8 @@ local nvimrc
 local nvimrc_path
 
 ---@class ProfileOpt
----@field config_path string
+---@field config_path? string
+---@field files_to_merge? string[]
 
 local function safe_replace(str, placeholder, repl)
     local s, e = str:find(placeholder, 1, true)
@@ -160,14 +161,98 @@ local function safe_replace(str, placeholder, repl)
     return str:sub(1, s - 1) .. repl .. str:sub(e + 1)
 end
 
+---@param tbl table
+---@return boolean ok, string err
+local function schema_check(tbl)
+    local ok = true
+    local errmsg = {}
+    for k, v in pairs(tbl) do
+        local ty_s = type(SCHEMA[k])
+        local ty_v = type(v)
+        if ty_s == 'nil' then
+            warn(string.format('`%s` is not expected to appear in config', k))
+        elseif ty_s ~= ty_v then
+            ok = false
+            table.insert(
+                errmsg,
+                string.format(
+                    '`%s` is expected as `%s`, but has type `%s`\n',
+                    k,
+                    ty_s,
+                    ty_v
+                )
+            )
+        end
+    end
+    return ok, table.concat(errmsg, '\n')
+end
+
+---@param base table base table, mutable
+---@param ... table[] tables to merge
+local function merge_cfg(base, ...)
+    local to_merge = { ... }
+    if #to_merge == 0 then
+        return
+    end
+    for _, tbl in ipairs(to_merge) do
+        for k, new_val in pairs(tbl) do
+            if type(new_val) == 'string' then
+                base[k] = safe_replace(new_val, '$@', base[k])
+            else
+                base[k] = new_val
+            end
+        end
+    end
+end
+
 ---@param opts? ProfileOpt
 function M.setup(opts)
     opts = opts or {}
     nvimrc_path = opts.config_path or vim.fn.stdpath 'config' .. '/nvimrc.json'
-    local defaults = vim.deepcopy(SCHEMA)
+    nvimrc = vim.deepcopy(SCHEMA)
+
+    local data_to_merge = {}
+
     local loaded_data = try_load_nvimrc(nvimrc_path)
+    local loaded_safe, err_msg = schema_check(loaded_data)
+
+    if loaded_safe then
+        table.insert(data_to_merge, loaded_data)
+    else
+        err('User config is ill formed: ' .. err_msg)
+    end
+
+    if opts.files_to_merge then
+        if vim.islist(opts.files_to_merge) then
+            for _, file in ipairs(opts.files_to_merge) do
+                local data = read_json(file)
+                if data and data ~= vim.NIL and type(data) == 'table' then
+                    local ok, emsg = schema_check(data)
+                    if ok then
+                        table.insert(data_to_merge, data)
+                    else
+                        err(
+                            'config from file `'
+                                .. file
+                                .. '` is ill formed: '
+                                .. emsg
+                        )
+                    end
+                else
+                    err('Cannot read json from `' .. file .. '`')
+                end
+            end
+        else
+            warn(
+                'Opts.files_to_merge is provided but is not a string[], detail:\n'
+                    .. vim.inspect(opts.files_to_merge)
+            )
+        end
+    end
+
     -- resolve nvimrc
-    nvimrc = vim.tbl_deep_extend('force', defaults, loaded_data)
+    merge_cfg(nvimrc, unpack(data_to_merge))
+
     -- environment mask
     for k, v in pairs(nvimrc) do
         local env_name = 'NVIM_' .. k:upper()

@@ -119,9 +119,13 @@ vim.api.nvim_create_autocmd('User', {
 -- Phase 1: Initialize UI event adapter, load preload module and detect
 --          workspace patch
 --------------------------------------------------------------------------------
-require 'modules.adapter'.setup()
+require 'modules.adapter'.setup { bus_init = { bus_backend = 'toast' } }
+local patch_dir, nvimrc = require 'modules.patch'.probe()
+require 'modules.profile'.setup {
+    files_to_merge = nvimrc and { nvimrc } or {},
+}
 require 'modules.preload'.setup()
-local patch_dir = require 'modules.patch'.setup()
+require 'modules.patch'.setup()
 vim.api.nvim_create_autocmd('BufRead', {
     once = true,
     callback = require 'utils.loader'.thunk('modules.lsp-progress', 'setup'),

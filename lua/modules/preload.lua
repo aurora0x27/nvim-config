@@ -10,8 +10,6 @@ function M.setup()
     vim.g.mapleader = ' '
     vim.g.maplocalleader = ' '
 
-    require 'modules.profile'.setup()
-
     local alpha = function()
         return string.format(
             '%x',

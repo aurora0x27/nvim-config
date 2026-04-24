@@ -9,6 +9,8 @@ local thunk = require('utils.loader').thunk
 local CodeFormatter = {
     'stevearc/conform.nvim',
     event = { 'BufReadPost', 'BufNewFile' },
+    ---@module "conform"
+    ---@type conform.setupOpts
     opts = {
         formatters_by_ft = Lang.get_formatter_map(),
         formatters = {
@@ -17,6 +19,9 @@ local CodeFormatter = {
                     '--ignore-path',
                     require 'utils.detect'.is_unix() and '/dev/null' or 'NUL',
                 },
+            },
+            ['clang-format'] = {
+                command = Profile.clang_format_path,
             },
         },
     },

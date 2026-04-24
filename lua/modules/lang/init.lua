@@ -323,16 +323,16 @@ function M.setup(opt)
     local bl_set = parse_to_set(bl_s)
     local has_whitelist = #wl_s > 0 and wl_s ~= 'all'
     for _, name in ipairs(all_lang_keys) do
-        local is_enabled = true
+        local in_wl = wl_set[name]
+        local in_bl = bl_set['all'] or bl_set[name]
+        local is_enabled
         if has_whitelist then
-            is_enabled = wl_set[name] == true
+            is_enabled = in_wl
+        else
+            is_enabled = not in_bl
         end
-        -- `name` is declared in blacklist but enabled in whitelist, enable it
-        if
-            (bl_set['all'] or bl_set[name])
-            and not (has_whitelist and wl_set[name])
-        then
-            is_enabled = false
+        if has_whitelist and in_wl and in_bl then
+            is_enabled = true
         end
         if is_enabled then
             Data.EnabledLangs[name] = vim.deepcopy(LANG_FEAT_TBL_DEFAULT)

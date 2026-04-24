@@ -7,6 +7,8 @@
 local M = {}
 
 local workspace_nvim
+local workspace_nvimrc
+local has_probed = false
 local trust_file = vim.fn.stdpath('data') .. '/trusted_workspaces'
 local ignore_file = vim.fn.stdpath('data') .. '/ignored_workspaces'
 local restrict_mode = true
@@ -49,7 +51,14 @@ local function is_trusted(path)
     if not content then
         return false
     end
-    return content:find(get_hash(path)) ~= nil
+    local lines = vim.split(content, '\n')
+    local hash = get_hash(path)
+    for _, line in ipairs(lines) do
+        if line:gsub('%s+', '') == hash then
+            return true
+        end
+    end
+    return false
 end
 
 local function is_ignored(path)
@@ -108,7 +117,14 @@ function M.load_main()
     end
     if is_trusted(init_lua) then
         -- Load module execute main
-        dofile(init_lua)
+        local ok, err = pcall(dofile, init_lua)
+        if not ok then
+            vim.notify(
+                'Cannot dofile `' .. init_lua .. '`,\nbecause ' .. err,
+                vim.log.levels.ERROR,
+                { title = 'Workspace Patch' }
+            )
+        end
         restrict_mode = false
     elseif is_ignored(init_lua) then
         restrict_mode = true
@@ -133,24 +149,39 @@ function M.load_main()
     end
 end
 
----@return string?
+---@return string? workspace_nvim, string? workspace_nvimrc
+function M.probe()
+    if has_probed then
+        return workspace_nvim, workspace_nvimrc
+    end
+    local workspace_patch_dir = vim.fn.getcwd() .. '/.nvim'
+    local secondary = vim.fn.getcwd() .. '/.vscode/nvim'
+    local has_ws = false
+    if vim.fn.isdirectory(workspace_patch_dir) == 1 then
+        has_ws = true
+    elseif vim.fn.isdirectory(secondary) == 1 then
+        workspace_patch_dir = secondary
+        has_ws = true
+    end
+    workspace_nvim = workspace_patch_dir
+    local nvimrc_path = workspace_patch_dir .. '/nvimrc.json'
+    if has_ws and vim.fn.filereadable(nvimrc_path) == 1 then
+        workspace_nvimrc = nvimrc_path
+    end
+    has_probed = true
+    return workspace_nvim, workspace_nvimrc
+end
+
 function M.setup()
     if not Profile.allow_workspace_patch then
         return
     end
 
-    workspace_nvim = vim.fn.getcwd() .. '/.nvim'
-    local secondary = vim.fn.getcwd() .. '/.vscode/nvim'
-    if vim.fn.isdirectory(workspace_nvim) ~= 1 then
-        if vim.fn.isdirectory(secondary) == 1 then
-            workspace_nvim = secondary
-        else
-            return
-        end
+    if not has_probed then
+        M.probe()
     end
 
     vim.opt.runtimepath:prepend(workspace_nvim)
-    return workspace_nvim
 end
 
 return M

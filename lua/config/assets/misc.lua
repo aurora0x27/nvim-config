@@ -25,6 +25,8 @@ M.ProfileSchema = {
     allow_workspace_patch = false,
     workspace_patch_always_restrict = true,
     enable_dropbar = false,
+    clang_format_path = 'clang-format',
+    clangd_path = 'clangd',
 }
 
 M.ColorAlias = {

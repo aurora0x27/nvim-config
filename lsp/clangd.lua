@@ -74,7 +74,7 @@ local clangd = {
     },
 
     cmd = {
-        'clangd',
+        Profile.clangd_path,
         '--background-index',
         '--clang-tidy',
         '--header-insertion=iwyu',

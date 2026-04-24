@@ -46,10 +46,10 @@ local FzfLua = {
                 ['<F8>'] = 'preview-ts-ctx-dec',
                 ['<F9>'] = 'preview-ts-ctx-inc',
                 ['<S-Left>'] = 'preview-reset',
-                ['<S-down>'] = 'preview-page-down',
-                ['<S-up>'] = 'preview-page-up',
-                ['<M-S-down>'] = 'preview-down',
-                ['<M-S-up>'] = 'preview-up',
+                ['<S-Down>'] = 'preview-page-down',
+                ['<S-Up>'] = 'preview-page-up',
+                -- ['<M-S-down>'] = 'preview-down',
+                -- ['<M-S-up>'] = 'preview-up',
             },
             fzf = {
                 -- fzf '--bind=' options

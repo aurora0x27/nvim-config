@@ -115,6 +115,8 @@ dir. Here're customizable items:
   - _`use_emmylua_ls`_ use `emmylua_ls` as lua language server
   - _`workspace_inject_plugin_path`_ inject plugin path to `emmylua_ls` workspace config
   - _`workspace_inject_vim_rt`_ inject vim runtime to `emmylua_ls` workspace config
+  - `clang_format_path` assign `clang-format` binary path
+  - `clangd_path` assign `clangd` binary path
 
 - BigFile
   - _`bigfile_size_byte`_ average byte size
