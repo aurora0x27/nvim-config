@@ -115,7 +115,7 @@ local RenderMarkdown = {
             min_width = 120,
             -- borders
             border = 'thin',
-            left_pad = 1,
+            left_pad = 0,
             right_pad = 1,
             -- language info
             position = 'left',
