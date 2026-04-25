@@ -88,6 +88,16 @@ local FzfLua = {
             cwd_prompt = false,
         },
 
+        filetypes = {
+            winopts = {
+                height = 0.4,
+                width = 0.4,
+                row = 0.5,
+                col = 0.5,
+                border = WinBorder,
+            },
+        },
+
         command_history = {
             winopts = {
                 height = 0.4,

@@ -72,6 +72,13 @@ map(
 
 map(
     'n',
+    '<leader>fT',
+    thunk('fzf-lua', 'filetypes'),
+    { desc = 'File [T]ypes', noremap = true, silent = true }
+)
+
+map(
+    'n',
     '<leader>fB',
     thunk('fzf-lua', 'builtin'),
     { desc = '[B]uiltin', noremap = true, silent = true }

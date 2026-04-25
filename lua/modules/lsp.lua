@@ -38,7 +38,7 @@ local function lsp_buf_setup(event)
         lsp.inlay_hint.enable(not stat, { bufnr = bufnr })
     end, { buffer = bufnr, desc = 'Toggle Inlay [H]ints' })
 
-    map('n', '<leader>la', thunk('fzf-lua', 'lsp_code_actions'), {
+    map({ 'n', 'v' }, '<leader>la', thunk('fzf-lua', 'lsp_code_actions'), {
         desc = '[L]ist Code [A]ctions',
         noremap = true,
         silent = true,
