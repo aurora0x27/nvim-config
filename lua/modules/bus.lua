@@ -56,6 +56,28 @@ local Opt = vim.deepcopy(BUS_OPT_DEFAULT)
 ---@type BusSubscriber[]
 local Subscribers = {}
 
+---@class BusStat
+---@field IsInitialized boolean
+---@field Ready boolean cache message when ui not ready
+---@field Queue Message[] fifo message buffer
+---@field Busy boolean is dispatching message?
+---@field Backend string
+---@field QueueEnd integer end(head) of message, point to the message to emit
+---@field FlushDepth integer
+---@field RouteCache table<string, table<string, boolean>>
+
+---@type BusStat
+local Stat = {
+    IsInitialized = false,
+    Ready = false,
+    Queue = {},
+    Busy = false,
+    QueueEnd = 1,
+    FlushDepth = 0,
+    Backend = '',
+    RouteCache = {},
+}
+
 ---@param id string
 ---@param interested BusSubscriberInterestedTagDecl patterns to match interested tags
 ---@param min_level vim.log.levels
@@ -66,8 +88,10 @@ function M.register_subscriber(id, interested, min_level, handler)
         return false, 'Subscriber `' .. id .. '` already exist'
     end
     local set = {}
-    for _, candidate in ipairs(interested.exact) do
-        set[candidate] = true
+    if interested.exact then
+        for _, candidate in ipairs(interested.exact) do
+            set[candidate] = true
+        end
     end
     Subscribers[id] = {
         id = id,
@@ -83,27 +107,9 @@ end
 ---@param id string
 function M.unsubscribe(id)
     Subscribers[id] = nil
+    -- clear cache, since this function is rarely used
+    Stat.RouteCache = {}
 end
-
----@class BusStat
----@field IsInitialized boolean
----@field Ready boolean cache message when ui not ready
----@field Queue Message[] fifo message buffer
----@field Busy boolean is dispatching message?
----@field Backend string
----@field queue_end integer end(head) of message, point to the message to emit
----@field flush_depth integer
-
----@type BusStat
-local Stat = {
-    IsInitialized = false,
-    Ready = false,
-    Queue = {},
-    Busy = false,
-    queue_end = 1,
-    flush_depth = 0,
-    Backend = '',
-}
 
 local _id_counter = 0
 
@@ -118,7 +124,7 @@ local function build_msg(tag, level, content, data, cover_id)
     if cover_id then
         id = cover_id
     else
-        _id_counter = (_id_counter + 1) % 0x7FFFFFFF
+        _id_counter = _id_counter + 1
         id = _id_counter
     end
     ---@type Message
@@ -140,25 +146,47 @@ local function _bus_log(msg, lvl)
     Subscribers[Stat.Backend].handler(built_msg)
 end
 
+---@param tag        string
+---@param backend_id string
+---@param ret        boolean
+local function add_to_cache(tag, backend_id, ret)
+    if Stat.RouteCache[tag] then
+        Stat.RouteCache[tag][backend_id] = ret
+    else
+        Stat.RouteCache[tag] = { [backend_id] = ret }
+    end
+end
+
 ---@param backend BusSubscriber
 ---@param tag string
 local function matches(backend, tag)
+    -- Try to find in cache
+    if Stat.RouteCache[tag] and Stat.RouteCache[tag][backend.id] ~= nil then
+        -- Cache hit
+        return Stat.RouteCache[tag][backend.id]
+    end
+    -- Cache miss
+
     if backend.full_match[tag] then
+        add_to_cache(tag, backend.id, true)
         return true
     end
 
     for _, prefix in ipairs(backend.prefix_match) do
         if vim.startswith(tag, prefix) then
+            add_to_cache(tag, backend.id, true)
             return true
         end
     end
 
     for _, pattern in ipairs(backend.fuzzy_match) do
         if tag:match(pattern) then
+            add_to_cache(tag, backend.id, true)
             return true
         end
     end
 
+    add_to_cache(tag, backend.id, false)
     return false
 end
 
@@ -193,6 +221,7 @@ local function bus_dispatch(msg)
             end
         end
     end
+
     Stat.Busy = false
 end
 
@@ -200,7 +229,7 @@ local FLUSH_MAX_DEPTH = 4
 
 local function clear_queue()
     Stat.Queue = {}
-    Stat.queue_end = 1
+    Stat.QueueEnd = 1
 end
 
 function M.flush_queue()
@@ -208,7 +237,7 @@ function M.flush_queue()
         vim.schedule(M.flush_queue)
         return
     end
-    if Stat.flush_depth >= FLUSH_MAX_DEPTH then
+    if Stat.FlushDepth >= FLUSH_MAX_DEPTH then
         -- force empty queue
         _bus_log(
             string.format(
@@ -223,7 +252,7 @@ function M.flush_queue()
     end
 
     -- snapshot current batch
-    local batch_start = Stat.queue_end
+    local batch_start = Stat.QueueEnd
     local batch_end = #Stat.Queue
     if batch_start > batch_end then
         -- all clear
@@ -232,11 +261,11 @@ function M.flush_queue()
     end
 
     -- mark current depth
-    Stat.flush_depth = Stat.flush_depth + 1
+    Stat.FlushDepth = Stat.FlushDepth + 1
 
     for i = batch_start, batch_end do
         local msg = Stat.Queue[i]
-        Stat.queue_end = i + 1
+        Stat.QueueEnd = i + 1
         local ok, err = pcall(bus_dispatch, msg)
         if not ok then
             -- release lock
@@ -255,7 +284,7 @@ function M.flush_queue()
     end
 
     -- unwind depth
-    Stat.flush_depth = Stat.flush_depth - 1
+    Stat.FlushDepth = Stat.FlushDepth - 1
 end
 
 --- Emit a message to bus
@@ -281,7 +310,7 @@ function M.emit(tag, level, content, data, cover_id)
         -- unlock dispatcher avoid locked forever
         Stat.Busy = false
         _bus_log(
-            '[Emiter] dispatcher panic for `' .. err .. '`',
+            '[Emitter] dispatcher panic for `' .. err .. '`',
             vim.log.levels.ERROR
         )
     end
@@ -304,7 +333,12 @@ function M.start(opts)
         Stat.Backend = Opt.bus_backend
     end
     for _, decl in ipairs(Opt.subscribers) do
-        M.register_subscriber(unpack(decl))
+        M.register_subscriber(
+            decl.id,
+            decl.interested,
+            decl.min_level,
+            decl.handler
+        )
     end
     assert(type(Opt.bus_backend) == 'string' and Subscribers[Opt.bus_backend])
     Stat.Ready = true
