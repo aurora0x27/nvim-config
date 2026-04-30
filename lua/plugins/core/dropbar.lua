@@ -10,6 +10,14 @@ local Outline = {
     enabled = Profile.enable_dropbar,
     event = { 'BufReadPost', 'BufNewFile' },
     ---@module 'dropbar'
+    ---@type dropbar_configs_t
+    opts = {
+        bar = {
+            update_events = {
+                buf = { 'FileChangedShellPost', 'TextChanged', 'ModeChanged' },
+            },
+        },
+    },
     keys = {
         {
             '<leader>;s',
