@@ -101,7 +101,7 @@ function M.fzf_messages()
         table.insert(
             contents,
             string.format(
-                '[%d] %s │ %-15s │ %s',
+                '[%d] %s │ %-10s │ %s',
                 i,
                 time_str,
                 msg.tag:gsub('msg.show.', ''),
@@ -153,6 +153,11 @@ function M.fzf_messages()
 end
 
 function M.clear()
+    vim.notify(
+        'All the messages cleared',
+        vim.log.levels.INFO,
+        { title = 'Message Recorder' }
+    )
     RecordedMessages = {}
 end
 
@@ -165,6 +170,7 @@ function M.setup(opts)
             exact = {
                 'notify',
                 'bus',
+                'msg.clear',
                 'msg.show.emsg',
                 'msg.show.echoerr',
                 'msg.show.echo',
@@ -181,6 +187,10 @@ function M.setup(opts)
         },
         vim.log.levels.TRACE,
         function(msg)
+            if msg.tag == 'msg.clear' then
+                M.clear()
+                return false
+            end
             if #RecordedMessages > Opt.max_msg_limit then
                 table.remove(RecordedMessages, 1)
             end
