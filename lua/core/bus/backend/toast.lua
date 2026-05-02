@@ -2,7 +2,7 @@
 -- Toast notifier backend
 --------------------------------------------------------------------------------
 local thunk = require 'utils.loader'.thunk
-local notify = thunk('ui.toast', 'notify')
+local notify = thunk('core.ui.toast', 'notify')
 local M = {}
 
 local TITLE_OF_LEVEL = {

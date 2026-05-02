@@ -2,7 +2,7 @@ local map = vim.keymap.set
 local misc = require 'utils.misc'
 local thunk = require 'utils.loader'.thunk
 local bind = require 'utils.loader'.bind
-local sandbox = require 'modules.sandbox'.get_mask()
+local sandbox = require 'core.sandbox'.get_mask()
 
 ----------------------------------------------------------------------------
 -- Sandbox sessions

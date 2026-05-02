@@ -128,7 +128,7 @@ map(
 map(
     'n',
     '<leader>fm',
-    thunk('config.bus.recorder', 'fzf_messages'),
+    thunk('core.bus.backend.recorder', 'fzf_messages'),
     { desc = 'Noice [M]sg', noremap = true, silent = true }
 )
 

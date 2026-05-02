@@ -1,8 +1,8 @@
 --------------------------------------------------------------------------------
 -- Filesystem editor
 --------------------------------------------------------------------------------
-local border = require('config.assets.misc').border
-local thunk = require('utils.loader').thunk
+local border = require 'assets.theme'.border
+local thunk = require 'utils.loader'.thunk
 
 ---@type LazyPluginSpec
 local FsEditor = {

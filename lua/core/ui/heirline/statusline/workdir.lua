@@ -7,7 +7,7 @@ local WorkDir = {
         local cwd = get_logical_cwd()
         self.cwd = vim.fn.fnamemodify(cwd, ':~')
         self.mode = vim.fn.mode()
-        self.icon = require 'modules.patch'.is_restrict() and '   '
+        self.icon = require 'core.workspace'.is_restrict() and '   '
             or '   '
     end,
     provider = function(self)

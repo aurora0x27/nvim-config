@@ -38,7 +38,7 @@ local WindowManager = {
         normal_hl = 'Normal',
 
         -- The border style to use for the floating window.
-        border = require 'config.assets.misc'.border,
+        border = require 'assets.theme'.border,
 
         -- How the hints should be rendered. The possible values are:
         --

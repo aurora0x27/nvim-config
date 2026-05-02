@@ -91,11 +91,11 @@ local Mason = {
     event = { 'BufReadPre', 'VeryLazy' },
     cmd = { 'Mason' },
     config = function()
-        require('mason').setup(MasonOpt)
+        require 'mason'.setup(MasonOpt)
         vim.schedule(
-            require('utils.loader').bind(ensure_installed, LspEnsuredList)
+            require 'utils.loader'.bind(ensure_installed, LspEnsuredList)
         )
-        require 'modules.lsp'.setup()
+        require 'edit.lsp'.setup()
     end,
 }
 

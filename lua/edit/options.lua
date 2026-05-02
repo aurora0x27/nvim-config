@@ -4,7 +4,7 @@
 local M = {}
 
 local detect = require 'utils.detect'
-local sandbox = require 'modules.sandbox'.get_mask()
+local sandbox = require 'core.sandbox'.get_mask()
 
 local Opt = {
     relativenumber = false,

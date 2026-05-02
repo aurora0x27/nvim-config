@@ -3,7 +3,6 @@
 --------------------------------------------------------------------------------
 local M = {}
 local bind = require 'utils.loader'.bind
-local thunk = require 'utils.loader'.thunk
 
 ---@class ExtHandlerDecl for use config
 ---@field event string
@@ -44,9 +43,15 @@ local thunk = require 'utils.loader'.thunk
 ---@field flushing boolean
 
 ---@class AdapterOpt
+---@field enable_ui2? boolean
+---@field bus_init? BusInitOpt
+---@field popup? PopupOpt
+
+---@type AdapterOpt
 local ADAPTER_OPT_DEFAULT = {
     enable_ui2 = false,
     bus_init = {},
+    popup = {},
 }
 
 ---@type AdapterOpt
@@ -59,9 +64,9 @@ local Stat = {
 
 local Handlers = {}
 
-Handlers.on_cmdline_show = thunk('modules.popup', 'on_cmdline_show')
-Handlers.on_cmdline_pos = thunk('modules.popup', 'on_cmdline_pos')
-Handlers.on_cmdline_hide = thunk('modules.popup', 'on_cmdline_hide')
+Handlers.on_cmdline_show = require 'core.adapter.popup'.on_cmdline_show
+Handlers.on_cmdline_pos = require 'core.adapter.popup'.on_cmdline_pos
+Handlers.on_cmdline_hide = require 'core.adapter.popup'.on_cmdline_hide
 
 local ConfirmHandlers = {}
 
@@ -231,7 +236,7 @@ function ConfirmHandlers.on_cmdline_show(...)
         on_close_timer:stop()
     end
     if ConfirmData then
-        bind(thunk('modules.confirm', 'on_cmdline_show'), ConfirmData, ...)()
+        bind(require 'core.adapter.confirm'.on_cmdline_show, ConfirmData, ...)()
     end
 end
 
@@ -246,7 +251,7 @@ function ConfirmHandlers.on_cmdline_hide(level, abort)
     end
 
     local function actual_abort()
-        bind(thunk('modules.confirm', 'on_cmdline_hide'), level, abort)()
+        bind(require 'core.adapter.confirm'.on_cmdline_hide, level, abort)()
         Stat.IsConfirm = false
         ConfirmData = nil
     end
@@ -288,8 +293,9 @@ function M.setup(opts)
     Opt = vim.tbl_deep_extend('force', Opt, opts or {})
     if not Bus then
         -- initialize the bus if not initialized
-        require 'modules.bus'.init(Opt.bus_init)
+        require 'core.bus'.init(Opt.bus_init)
     end
+    require 'core.adapter.popup'.setup(Opt.popup)
     if Opt.enable_ui2 then
         local ui2 = require 'vim._core.ui2'
         for name, handler in pairs(Handlers) do

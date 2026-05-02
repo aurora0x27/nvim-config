@@ -5,7 +5,7 @@
 
 ---@type table<number, {token:lsp.ProgressToken, msg:NvimMsgChunk[], done:boolean}[]>
 local progress = vim.defaulttable()
-local toast = require 'ui.toast'
+local toast = require 'core.ui.toast'
 
 local last_chunks_cache = {}
 

@@ -10,14 +10,14 @@ local Dashboard = {
         local alpha = require 'alpha'
         local dashboard = require 'alpha.themes.dashboard'
         local set_global_hl = require 'utils.misc'.set_global_hl
-        local colors = require 'config.assets.misc'.ColorAlias
+        local colors = require 'assets.theme'.ColorAlias
 
         set_global_hl('AlphaHeader', colors.blue)
         set_global_hl('AlphaButtons', colors.green)
         set_global_hl('AlphaShortcut', colors.pink, nil, true, true)
         set_global_hl('AlphaFooter', colors.yellow)
 
-        local logos = require 'config.assets.logo'
+        local logos = require 'assets.logo'
 
         local art = logos[Profile.dashboard_art_name]
 

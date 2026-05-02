@@ -1,5 +1,5 @@
-local IcoUI = require 'config.assets.icons'.get('ui')
-local IcoMisc = require 'config.assets.icons'.get('misc')
+local IcoUI = require 'assets.icons'.get('ui')
+local IcoMisc = require 'assets.icons'.get('misc')
 
 local BufInfo = {
     static = {

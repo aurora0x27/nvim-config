@@ -2,7 +2,7 @@
 -- Session manager
 --------------------------------------------------------------------------------
 
-local sandbox = require 'modules.sandbox'.get_mask()
+local sandbox = require 'core.sandbox'.get_mask()
 
 ---@type LazyPluginSpec
 local SessionMgr = {

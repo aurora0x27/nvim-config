@@ -2,7 +2,7 @@
 -- Fuzzy finder
 --------------------------------------------------------------------------------
 
-local WinBorder = require('config.assets.misc').border
+local WinBorder = require 'assets.theme'.border
 local thunk = require 'utils.loader'.thunk
 
 local FzfLua = {

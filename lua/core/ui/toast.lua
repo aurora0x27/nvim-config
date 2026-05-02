@@ -20,7 +20,7 @@
 --   hl?          ToastNotifyHL        override highlight groups
 --------------------------------------------------------------------------------
 
-local Win = require 'ui.window'
+local Win = require 'core.ui.window'
 local Timer = require 'utils.timer'
 local Render = require 'utils.render'
 

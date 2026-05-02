@@ -26,12 +26,6 @@ function M.setup()
         vim.g.neovide_floating_corner_radius = 0.3
     end
 
-    require 'modules.lang'.setup {
-        blacklist = Profile.lang_blacklist,
-        whitelist = Profile.lang_whitelist,
-        levels = Profile.lang_levels,
-    }
-
     -- WARN: put this line here instead of `options.lua`
     -- prevents line number and cursor line appear on
     -- dashboard, so werid.
@@ -52,7 +46,7 @@ function M.setup()
     vim.o.shiftwidth = 4
     vim.o.expandtab = true
     vim.o.autoindent = true
-    vim.o.shada = require 'modules.sandbox'.get_mask().shada
+    vim.o.shada = require 'core.sandbox'.get_mask().shada
             and [[!,'100,<50,s10,h]]
         or ''
 

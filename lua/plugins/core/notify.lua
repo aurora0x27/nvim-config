@@ -45,7 +45,7 @@ local Notifier = {
             vim.api.nvim_set_hl(0, hl, { link = 'Normal' })
         end
 
-        require('notify').setup {
+        require 'notify'.setup {
             merge_duplicates = true,
             background_colour = mocha.base,
             fps = 60,
@@ -63,8 +63,8 @@ local Notifier = {
             },
         }
 
-        require 'config.bus.recorder'.setup()
-        require 'config.bus.notify'.setup()
+        require 'core.bus.backend.recorder'.setup()
+        require 'core.bus.backend.notify'.setup()
 
         -- start bus
         Bus.start {

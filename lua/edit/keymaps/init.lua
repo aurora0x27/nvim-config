@@ -4,16 +4,16 @@
 
 local M = {}
 
-local thunk = require('utils.loader').thunk
-local bind = require('utils.loader').bind
+local thunk = require 'utils.loader'.thunk
+local bind = require 'utils.loader'.bind
 local map = vim.keymap.set
 
 function M.setup()
-    require 'modules.keymaps.buffer'
-    require 'modules.keymaps.window'
-    require 'modules.keymaps.tab'
-    require 'modules.keymaps.finder'
-    require 'modules.keymaps.sandbox'
+    require 'edit.keymaps.buffer'
+    require 'edit.keymaps.window'
+    require 'edit.keymaps.tab'
+    require 'edit.keymaps.finder'
+    require 'edit.keymaps.sandbox'
 
     ----------------------------------------------------------------------------
     -- insert mode move cursor

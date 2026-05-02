@@ -1,13 +1,13 @@
-local ViMode = require 'config.heirline.statusline.vimode'
-local FileType = require 'config.heirline.statusline.filetype'
-local GitStatus = require 'config.heirline.statusline.git-status'
-local ScrollBar = require 'config.heirline.statusline.scroll-bar'
-local CursorPos = require 'config.heirline.statusline.cursor-pos'
-local Diagnostics = require 'config.heirline.statusline.diagnostics'
-local LSPInfo = require 'config.heirline.statusline.lsp-info'
-local BufName = require 'config.heirline.statusline.bufname'
-local WorkDir = require 'config.heirline.statusline.workdir'
-local BufInfo = require 'config.heirline.statusline.bufinfo'
+local ViMode = require 'core.ui.heirline.statusline.vimode'
+local FileType = require 'core.ui.heirline.statusline.filetype'
+local GitStatus = require 'core.ui.heirline.statusline.git-status'
+local ScrollBar = require 'core.ui.heirline.statusline.scroll-bar'
+local CursorPos = require 'core.ui.heirline.statusline.cursor-pos'
+local Diagnostics = require 'core.ui.heirline.statusline.diagnostics'
+local LSPInfo = require 'core.ui.heirline.statusline.lsp-info'
+local BufName = require 'core.ui.heirline.statusline.bufname'
+local WorkDir = require 'core.ui.heirline.statusline.workdir'
+local BufInfo = require 'core.ui.heirline.statusline.bufinfo'
 
 local ctrl_v = string.char(22)
 local ctrl_s = string.char(19)

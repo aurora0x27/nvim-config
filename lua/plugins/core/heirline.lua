@@ -9,8 +9,8 @@ local Heirline = {
     config = function()
         ---@module 'heirline'
         require('heirline').setup {
-            statusline = require 'config.heirline.statusline',
-            opts = { colors = require 'config.heirline.common.colors' },
+            statusline = require 'core.ui.heirline.statusline',
+            opts = { colors = require 'core.ui.heirline.common.colors' },
         }
 
         -- set global status line

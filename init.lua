@@ -96,22 +96,18 @@ vim.api.nvim_create_autocmd('User', {
     once = true,
     callback = vim.schedule_wrap(function()
         if not Profile.disable_im_switch then
-            require 'modules.im-switch'.setup()
+            require 'edit.im-switch'.setup()
         end
-        require 'modules.popup'.setup {
-            cursor_hack = false,
-            no_register = true,
-        }
-        require 'modules.keymaps'.setup()
-        require 'modules.options'.setup()
-        require 'modules.autocmd'.setup()
-        require 'modules.diagnostics'.setup()
-        require 'modules.fold'.setup()
-        require 'modules.ssh_mode'.setup()
-        require 'modules.pairs'.setup()
+        require 'edit.keymaps'.setup()
+        require 'edit.options'.setup()
+        require 'edit.autocmd'.setup()
+        require 'edit.diagnostics'.setup()
+        require 'edit.fold'.setup()
+        require 'edit.ssh-mode'.setup()
+        require 'edit.pairs'.setup()
 
         -- dofile init.lua
-        require 'modules.patch'.load_main()
+        require 'core.workspace'.load_main()
     end),
 })
 
@@ -119,20 +115,32 @@ vim.api.nvim_create_autocmd('User', {
 -- Phase 1: Initialize UI event adapter, load preload module and detect
 --          workspace patch
 --------------------------------------------------------------------------------
-require 'modules.adapter'.setup { bus_init = { bus_backend = 'toast' } }
-local patch_dir, nvimrc = require 'modules.patch'.probe()
-require 'modules.profile'.setup {
-    files_to_merge = nvimrc and { nvimrc } or {},
+require 'core.adapter'.setup {
+    bus_init = { bus_backend = 'toast' },
+    popup = {
+        cursor_hack = false,
+        no_register = true,
+    },
 }
-require 'modules.preload'.setup()
-require 'modules.patch'.setup()
-vim.api.nvim_create_autocmd('BufRead', {
-    once = true,
-    callback = require 'utils.loader'.thunk('modules.lsp-progress', 'setup'),
-})
+
+local PatchDir, Nvimrc = require 'core.workspace'.probe()
+
+require 'core.profile'.setup {
+    files_to_merge = Nvimrc and { Nvimrc } or {},
+}
+
+require 'core.lang'.setup {
+    blacklist = Profile.lang_blacklist,
+    whitelist = Profile.lang_whitelist,
+    levels = Profile.lang_levels,
+}
+
+require 'core.preload'.setup()
+require 'core.workspace'.setup()
+
 vim.api.nvim_create_autocmd('UIEnter', {
     once = true,
-    callback = require 'utils.loader'.thunk('config.bus.toast', 'setup'),
+    callback = require 'utils.loader'.thunk('core.bus.backend.toast', 'setup'),
 })
 
 --------------------------------------------------------------------------------
@@ -156,12 +164,12 @@ if not vim.uv.fs_stat(lazypath) then
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
-local icons = {
-    kind = require('config.assets.icons').get('kind'),
-    documents = require('config.assets.icons').get('documents'),
-    ui = require('config.assets.icons').get('ui'),
-    ui_sep = require('config.assets.icons').get('ui', true),
-    misc = require('config.assets.icons').get('misc'),
+local Icons = {
+    Kind = require 'assets.icons'.get('kind'),
+    Documents = require 'assets.icons'.get('documents'),
+    UI = require 'assets.icons'.get('ui'),
+    UISep = require 'assets.icons'.get('ui', true),
+    Misc = require 'assets.icons'.get('misc'),
 }
 
 -- import plugins
@@ -182,24 +190,24 @@ require('lazy').setup {
         height = 0.8,
         border = 'rounded',
         icons = {
-            cmd = icons.misc.Code,
-            config = icons.ui.Gear,
-            event = icons.kind.Event,
-            ft = icons.documents.Files,
-            init = icons.misc.Gear,
-            import = icons.documents.Import,
-            keys = icons.ui.Keyboard,
-            loaded = icons.ui.Check,
-            not_loaded = icons.ui.Circle,
-            plugin = icons.ui.Package,
-            runtime = icons.misc.Vim,
-            source = icons.kind.StaticMethod,
-            start = icons.ui.Play,
+            cmd = Icons.Misc.Code,
+            config = Icons.UI.Gear,
+            event = Icons.Kind.Event,
+            ft = Icons.Documents.Files,
+            init = Icons.Misc.Gear,
+            import = Icons.Documents.Import,
+            keys = Icons.UI.Keyboard,
+            loaded = Icons.UI.Check,
+            not_loaded = Icons.UI.Circle,
+            plugin = Icons.UI.Package,
+            runtime = Icons.Misc.Vim,
+            source = Icons.Kind.StaticMethod,
+            start = Icons.UI.Play,
             list = {
-                icons.ui_sep.Dot,
-                icons.ui_sep.Circle,
-                icons.ui_sep.Right,
-                icons.ui_sep.ArrowRight,
+                Icons.UISep.Dot,
+                Icons.UISep.Circle,
+                Icons.UISep.Right,
+                Icons.UISep.ArrowRight,
             },
         },
     },
@@ -207,7 +215,7 @@ require('lazy').setup {
         rtp = {
             reset = true,
             -- keep workspace patch dir in rtp
-            paths = { patch_dir },
+            paths = { PatchDir },
             -- disable some rtp plugins, add more to your liking
             disabled_plugins = {
                 'gzip',
