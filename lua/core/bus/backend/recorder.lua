@@ -92,7 +92,7 @@ function M.fzf_messages()
 
         local summary
         if type(msg.content) == 'string' then
-            summary = msg.content
+            summary = vim.split(msg.content, '\n')[1]:sub(1, 80)
         else
             local layout = calculate_layout(msg.content)
             summary = layout.lines[1]:gsub('\n', ' '):sub(1, 80)
@@ -176,7 +176,8 @@ function M.setup(opts)
                 'msg.show.echo',
                 'msg.show.echomsg',
                 'msg.show.lua_error',
-                'msg.show.lua_print',
+                -- Should keep listen to lua_print?
+                -- 'msg.show.lua_print',
                 'msg.show.rpc_error',
                 'msg.show.shell_out',
                 'msg.show.shell_ret',
