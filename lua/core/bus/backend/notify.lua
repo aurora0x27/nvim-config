@@ -1,66 +1,11 @@
 --------------------------------------------------------------------------------
--- Nvim-Notify backend
+-- Toast notifier backend (nvim-notify like)
 --------------------------------------------------------------------------------
-local calculate_layout = require 'utils.render'.calculate_layout
+local toast = require 'core.ui.toast' -- toast.notify, toast.dismiss_all
 
 local M = {}
 
-local UserConfig = {}
-
---- Build on_open callback that applies extmarks after notify renders the buffer
----@param layout ChunkLayout
----@return fun(buf: integer, notification: notify.Record, highlights: notify.Highlights, config)
-local function make_render(layout)
-    return function(buf, notification, highlights, config)
-        -- notify writes content starting at line 0; find the actual content lines
-        local default_render_name = UserConfig.render or 'default'
-        local default_render = require('notify.render')[default_render_name]
-        default_render(buf, notification, highlights, config)
-        local ns = vim.api.nvim_create_namespace 'MessageBusNotify'
-        vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
-        -- notify prepends decoration lines; scan for our first content line
-        local buf_lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-        local offset = 0
-        for i, line in ipairs(buf_lines) do
-            if line == layout.lines[1] then
-                offset = i - 1
-                break
-            end
-        end
-        for _, m in ipairs(layout.marks) do
-            pcall(
-                vim.api.nvim_buf_set_extmark,
-                buf,
-                ns,
-                m.row + offset,
-                m.col_start,
-                {
-                    end_col = m.col_end,
-                    hl_group = m.hl,
-                    priority = 100,
-                }
-            )
-        end
-    end
-end
-
----@class SentMsg
----@field content NvimMsgTuple[]
----@field rec notify.Record
-
----@type table<integer, SentMsg>  msg.id -> nvim-notify record
-local replace_map = {}
-
----@type table<string, SentMsg>  kind -> current active notify record (for unstable-id kinds)
-local kind_active = {}
-
---- kinds whose nvim id is unstable across emissions, must replace by kind
-local ALWAYS_REPLACE_CURRENT_KIND = {
-    echomsg = true,
-    echo = true,
-    lua_print = true,
-}
-
+-- Titles for known message kinds (fallback: 'Messages')
 local KIND_TITLE = {
     emsg = 'Error',
     lua_error = 'Lua Error',
@@ -69,12 +14,13 @@ local KIND_TITLE = {
     wmsg = 'Warning',
     bufwrite = 'Write',
     quickfix = 'Quickfix',
-    shell_cmd = 'Shell',
+    shell_cmd = 'Shell Cmd',
     shell_err = 'Shell Error',
+    shell_ret = 'Shell Ret',
     progress = 'Progress',
 }
 
--- kinds better handled by statusline / cmdline, skip in notify
+-- Kinds to skip – already handled elsewhere (statusline, cmdline, etc.)
 local SKIP_KIND = {
     search_count = true,
     search_cmd = true,
@@ -84,99 +30,102 @@ local SKIP_KIND = {
     empty = true,
 }
 
-function M.setup(opts)
-    UserConfig = opts or {}
-    local notify = require 'notify'
-    Bus.register_subscriber(
-        'notify',
-        {
-            exact = {
-                'notify',
-                'bus',
-                'msg.show.emsg',
-                'msg.show.echoerr',
-                'msg.show.lua_error',
-                'msg.show.rpc_error',
-            },
+-- Kinds whose notification should always replace the previous one
+-- (e.g. echomsg overwrites previous echo messages).
+local ALWAYS_REPLACE_CURRENT_KIND = {
+    echomsg = true,
+    echo = true,
+    lua_print = true,
+}
+
+-- Mode mapping: some message types naturally append content
+local MODE_OF_TAG = {
+    ['notify'] = 'replace',
+    ['bus'] = 'replace',
+    ['msg.show.emsg'] = 'append',
+    ['msg.show.echoerr'] = 'append',
+    ['msg.show.lua_error'] = 'replace',
+    ['msg.show.rpc_error'] = 'replace',
+}
+
+---@param msg Message
+local function handler(msg)
+    -- msg.clear: dismiss all toast windows
+    if msg.tag == 'msg.clear' then
+        toast.dismiss_all()
+        return false
+    end
+
+    local content = msg.content
+    if not content then
+        return false
+    end
+
+    --- Resolve notification options
+    ---@type ToastNotifyOpts
+    local toast_opts = { anchor = 'NE' }
+
+    -- level: used for icon & default highlights
+    toast_opts.level = msg.level
+
+    if msg.tag == 'notify' then
+        toast_opts = vim.tbl_deep_extend('force', toast_opts, msg.data)
+        -- Show the toast (string or chunk list accepted)
+        toast.notify(content, toast_opts)
+        return false
+    end
+
+    local data = msg.data ---@type NvimMsgShowData?
+    if not data then
+        return false
+    end
+
+    local kind = data.kind
+    if SKIP_KIND[kind] then
+        return false
+    end
+
+    -- id: for deduplication / replacement
+    if ALWAYS_REPLACE_CURRENT_KIND[kind] then
+        -- Always replace the last notification of this kind
+        toast_opts.id = kind
+    elseif data.replace_last then
+        -- Replace the directly preceding notification (identified by message id)
+        toast_opts.id = tostring(msg.id)
+    end
+
+    -- mode: 'append' grows the existing notification, otherwise full replace
+    if data.append then
+        toast_opts.mode = 'append'
+    else
+        toast_opts.mode = MODE_OF_TAG[msg.tag] or 'replace'
+    end
+
+    -- title
+    toast_opts.title = KIND_TITLE[msg.data.kind] or 'Messages'
+
+    -- Show the toast (string or chunk list accepted)
+    toast.notify(content, toast_opts)
+
+    return false -- already handled
+end
+
+function M.setup()
+    -- Subscribe to all message events we want to display as toasts
+    Bus.register_subscriber('notify', {
+        exact = {
+            'notify',
+            'bus',
+            'msg.show.emsg',
+            'msg.show.echoerr',
+            'msg.show.lua_error',
+            'msg.show.rpc_error',
+            'msg.show.shell_cmd',
+            'msg.show.shell_err',
+            'msg.show.shell_out',
+            'msg.show.shell_ret',
         },
-        vim.log.levels.DEBUG,
-        function(msg)
-            if msg.tag == 'bus' then
-                notify(msg.content, msg.level, { title = 'Bus' })
-                return false
-            end
-
-            -- handle msg.clear
-            if msg.tag == 'msg.clear' then
-                replace_map = {}
-                kind_active = {}
-                notify.dismiss { silent = true, pending = true }
-                return false
-            end
-
-            -- handle notify calls
-            if msg.tag == 'notify' then
-                -- normal notify message
-                notify(msg.content, msg.level, msg.data)
-                return false
-            end
-
-            -- handle msg.show.*
-
-            local data = msg.data ---@type NvimMsgShowData
-            if not data then
-                return false
-            end
-
-            local kind = data.kind
-            if SKIP_KIND[kind] then
-                return false
-            end
-
-            local content = msg.content
-            if not content then
-                return false
-            end
-
-            ---@type SentMsg|nil
-            local prev
-            if ALWAYS_REPLACE_CURRENT_KIND[kind] then
-                prev = kind_active[kind]
-            elseif data.replace_last then
-                prev = replace_map[msg.id]
-            end
-
-            -- append: grow content in place
-            if data.append and prev and prev.content then
-                local merged = {}
-                vim.list_extend(merged, prev.content)
-                vim.list_extend(merged, content)
-                content = merged
-            end
-
-            local layout = calculate_layout(content)
-
-            local notify_opts = {
-                title = KIND_TITLE[kind] or 'Messages',
-                replace = prev and prev.rec,
-                render = make_render(layout),
-                on_close = function()
-                    kind_active[kind] = nil
-                end,
-            }
-
-            local text = table.concat(layout.lines, '\n')
-            local record = notify(text, msg.level, notify_opts)
-
-            if ALWAYS_REPLACE_CURRENT_KIND[kind] then
-                kind_active[kind] = { content = content, rec = record }
-            else
-                replace_map[msg.id] = { content = content, rec = record }
-            end
-
-            return false
-        end
-    )
+    }, vim.log.levels.TRACE, handler)
 end
 
 return M

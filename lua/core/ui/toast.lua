@@ -3,7 +3,7 @@
 --
 -- Public API (position / size are intentionally NOT exposed):
 --
---   Toast.notify(msg, opts)           → win handle
+--   Toast.notify(msg, opts)           -> win handle
 --   Toast.dismiss(id)
 --   Toast.dismiss_all()
 --
@@ -24,21 +24,50 @@ local Win = require 'core.ui.window'
 local Timer = require 'utils.timer'
 local Render = require 'utils.render'
 
-local NS = vim.api.nvim_create_namespace('ToastNs')
+local NS = vim.api.nvim_create_namespace 'ToastNs'
 local M = {}
 
 --------------------------------------------------------------------------------
 -- layout constants
 --------------------------------------------------------------------------------
+
+---@alias ToastAnchor 'SE'|'NE'
+
+---@class LayoutConstantDecl
+---@field anchor            ToastAnchor
+---@field margin_right      integer
+---@field margin_bottom     integer
+---@field margin_top        integer
+---@field gap               integer
+---@field min_width         integer
+---@field max_width         number
+---@field max_height        number
+---@field zindex_base       integer
+
+---@type {SE: LayoutConstantDecl, NE: LayoutConstantDecl}
 local LAYOUT = {
-    anchor = 'SE', -- always bottom-right
-    margin_right = 1, -- columns from right edge
-    margin_bottom = 1, -- lines  from bottom edge
-    gap = 1, -- lines between toasts (border counts as 1)
-    min_width = 40,
-    max_width = 0.45, -- fraction of &columns
-    max_height = 0.5, -- fraction of &lines
-    zindex_base = 200,
+    SE = {
+        anchor = 'SE',
+        margin_right = 0,
+        margin_top = 1, -- placeholder
+        margin_bottom = 1,
+        gap = 1,
+        min_width = 40,
+        max_width = 0.45,
+        max_height = 0.5,
+        zindex_base = 200,
+    },
+    NE = {
+        anchor = 'NE',
+        margin_right = 0,
+        margin_top = 1,
+        margin_bottom = 1, -- placeholder
+        gap = 1,
+        min_width = 50,
+        max_width = 0.45,
+        max_height = 0.5,
+        zindex_base = 250,
+    },
 }
 
 --------------------------------------------------------------------------------
@@ -47,6 +76,7 @@ local LAYOUT = {
 -- Ordered list of active toasts; index 1 = bottommost (most recent).
 -- Each entry: { id, win, buf, timer, height, border }
 ---@class ToastEntry
+---@field anchor   ToastAnchor
 ---@field id       string|nil
 ---@field win      Win          Win instance
 ---@field buf      integer
@@ -55,12 +85,18 @@ local LAYOUT = {
 ---@field height   integer      current rendered height (without border)
 ---@field border   string       'rounded'|'single'|'none'
 
----@type ToastEntry[]
-local STACK = {}
+---@type {NE: ToastEntry[], SE: ToastEntry[]}
+local STACK = {
+    NE = {},
+    SE = {},
+}
 
--- id → index in STACK (kept in sync)
----@type table<string, integer>
-local ID_MAP = {}
+-- id -> index in STACK (kept in sync)
+---@type {NE: table<string, integer>, SE: table<string, integer>}
+local ID_MAP = {
+    NE = {},
+    SE = {},
+}
 
 --------------------------------------------------------------------------------
 -- highlight defaults
@@ -99,7 +135,7 @@ local function default_hl(lvl)
         [vim.log.levels.TRACE] = {
             icon = 'Comment',
             title = 'Comment',
-            border = 'FloatBorder',
+            border = 'Comment',
         },
     }
 
@@ -107,7 +143,7 @@ local function default_hl(lvl)
 
     return {
         title = hl.title or 'Title',
-        icon = hl.icon or 'Identifier',
+        icon = hl.icon or 'Title',
         msg = 'NormalFloat',
         border = hl.border or 'FloatBorder',
         footer = 'Comment',
@@ -129,6 +165,7 @@ end
 ---@field more_format?  string
 ---@field border?       'rounded'|'single'|'none'|false
 ---@field hl?           ToastNotifyHL
+---@field anchor?       ToastAnchor
 
 --------------------------------------------------------------------------------
 -- helpers
@@ -164,20 +201,32 @@ local function resolve_icon(opts)
     end
     if opts.level then
         local icons = {
-            [vim.log.levels.ERROR] = ' ',
-            [vim.log.levels.WARN] = ' ',
-            [vim.log.levels.INFO] = ' ',
-            [vim.log.levels.DEBUG] = '󰃤 ',
-            [vim.log.levels.TRACE] = '󰐤 ',
+            [vim.log.levels.ERROR] = '',
+            [vim.log.levels.WARN] = '',
+            [vim.log.levels.INFO] = '',
+            [vim.log.levels.DEBUG] = '󰃤',
+            [vim.log.levels.TRACE] = '󰐤',
         }
-        return icons[opts.level] or ' '
+        return icons[opts.level] or ''
     end
-    return ' '
+    return ''
+end
+
+--- Resolve the anchor, always one of 'NE' or 'SE'
+---@param opts ToastNotifyOpts
+---@return string
+local function resolve_anchor(opts)
+    local a = opts.anchor or 'SE'
+    if a ~= 'NE' and a ~= 'SE' then
+        a = 'SE'
+    end
+    return a
 end
 
 --------------------------------------------------------------------------------
 -- dimension calculation
 --------------------------------------------------------------------------------
+---@param anchor       ToastAnchor
 ---@param lines        string[]
 ---@param title_text   string
 ---@param footer_text  string
@@ -185,18 +234,18 @@ end
 ---@return integer width
 ---@return integer height
 ---@return integer wanted_height
-local function compute_dims(lines, title_text, footer_text, border)
+local function compute_dims(anchor, lines, title_text, footer_text, border)
     local bw = border_w(border)
     local cols = vim.o.columns
     local rows = vim.o.lines
 
-    local max_w = LAYOUT.max_width >= 1 and LAYOUT.max_width
-        or math.floor(cols * LAYOUT.max_width)
-    local max_h = LAYOUT.max_height >= 1 and LAYOUT.max_height
-        or math.floor(rows * LAYOUT.max_height)
+    local max_w = LAYOUT[anchor].max_width >= 1 and LAYOUT[anchor].max_width
+        or math.floor(cols * LAYOUT[anchor].max_width)
+    local max_h = LAYOUT[anchor].max_height >= 1 and LAYOUT[anchor].max_height
+        or math.floor(rows * LAYOUT[anchor].max_height)
 
     -- content width needed
-    local cw = LAYOUT.min_width - bw
+    local cw = LAYOUT[anchor].min_width - bw
     cw = math.max(cw, vim.fn.strdisplaywidth(title_text))
     cw = math.max(cw, vim.fn.strdisplaywidth(footer_text))
     for _, l in ipairs(lines) do
@@ -213,36 +262,37 @@ end
 --------------------------------------------------------------------------------
 -- layout engine
 --------------------------------------------------------------------------------
--- Returns the col position for SE-anchored windows.
+-- Returns the col position for SE/NE-anchored windows.
 -- nvim_open_win with anchor=SE: col is the RIGHT edge of the window.
-local function layout_col()
-    return vim.o.columns - LAYOUT.margin_right
+---@param anchor ToastAnchor
+local function layout_col(anchor)
+    return vim.o.columns - LAYOUT[anchor].margin_right
 end
 
 -- Reflow all toasts after any add / remove / resize.
 -- Toasts are stacked upward from the bottom; STACK[1] is bottommost.
-local function reflow()
-    local bottom = vim.o.lines - LAYOUT.margin_bottom -- SE row anchor
-    local cursor = bottom
+---@param anchor ToastAnchor
+local function reflow(anchor)
+    local cfg = LAYOUT[anchor]
+    local is_top = (anchor == 'NE')
+    local stk = STACK[anchor]
 
-    for i = 1, #STACK do
-        local entry = STACK[i]
+    local cursor = is_top and cfg.margin_top
+        or (vim.o.lines - cfg.margin_bottom)
+
+    local step = is_top and 1 or -1
+
+    for i = 1, #stk do
+        local entry = stk[i]
         if entry.win:is_valid() then
-            local bh = border_h(entry.border)
-            local total = entry.height + bh -- full rows this window occupies
-
-            -- SE anchor: row = bottom edge of window
-            local row = cursor
-            local col = layout_col()
-
+            local total = entry.height + border_h(entry.border)
             local new_opts = {
-                row = row,
-                col = col,
-                anchor = LAYOUT.anchor,
+                row = cursor,
+                col = vim.o.columns - cfg.margin_right,
+                anchor = cfg.anchor,
             }
-            entry.win:update(new_opts) -- lightweight: only set_config pos
-
-            cursor = cursor - total - LAYOUT.gap
+            entry.win:update(new_opts)
+            cursor = cursor + step * (total + cfg.gap)
         end
     end
 end
@@ -250,35 +300,37 @@ end
 --------------------------------------------------------------------------------
 -- stack management
 --------------------------------------------------------------------------------
+---@param anchor ToastAnchor
 ---@param entry ToastEntry
-local function push(entry)
-    table.insert(STACK, 1, entry)
+local function push(anchor, entry)
+    table.insert(STACK[anchor], 1, entry)
     -- rebuild id map
-    ID_MAP = {}
-    for i, e in ipairs(STACK) do
+    ID_MAP[anchor] = {}
+    for i, e in ipairs(STACK[anchor]) do
         if e.id then
-            ID_MAP[e.id] = i
+            ID_MAP[anchor][e.id] = i
         end
     end
-    reflow()
+    reflow(anchor)
 end
 
+---@param anchor ToastAnchor
 ---@param index integer  1-based index into STACK
-local function remove_at(index)
-    local entry = STACK[index]
+local function remove_at(anchor, index)
+    local entry = STACK[anchor][index]
     if entry.timer then
         entry.timer:close()
         entry.timer = nil
     end
-    table.remove(STACK, index)
+    table.remove(STACK[anchor], index)
     -- rebuild id map
-    ID_MAP = {}
-    for i, e in ipairs(STACK) do
+    ID_MAP[anchor] = {}
+    for i, e in ipairs(STACK[anchor]) do
         if e.id then
             ID_MAP[e.id] = i
         end
     end
-    reflow()
+    reflow(anchor)
 end
 
 --------------------------------------------------------------------------------
@@ -298,14 +350,14 @@ local function arm_timer(entry, timeout)
     local t = Timer.new(timeout, function()
         entry.timer = nil
         -- find and close
-        for i, e in ipairs(STACK) do
+        for i, e in ipairs(STACK[entry.anchor]) do
             if e == entry then
                 if e.win:is_valid() then
                     pcall(function()
                         e.win:close()
                     end)
                 else
-                    remove_at(i)
+                    remove_at(entry.anchor, i)
                 end
                 break
             end
@@ -373,25 +425,26 @@ end
 ---@return table  win  Win instance
 function M.notify(msg, opts)
     opts = opts or {}
+    local anchor = resolve_anchor(opts)
     local timeout = opts.timeout ~= nil and opts.timeout or 3000
     local border = resolve_border(opts)
     local mode = opts.mode or 'replace'
     local hl = vim.tbl_extend('force', default_hl(opts.level), opts.hl or {})
     local icon = resolve_icon(opts)
-    local title = opts.title or ' Messages '
+    local title = opts.title or 'Messages'
 
     if type(msg) == 'string' then
         msg = Render.to_chunks(msg)
     end
 
     -- reuse existing toast for same id
-    local existing_idx = opts.id and ID_MAP[opts.id]
+    local existing_idx = opts.id and ID_MAP[anchor][opts.id]
     local entry ---@type ToastEntry|nil
 
     if existing_idx then
-        entry = STACK[existing_idx]
+        entry = STACK[anchor][existing_idx]
         if not entry.win:is_valid() then
-            remove_at(existing_idx)
+            remove_at(anchor, existing_idx)
             entry = nil
         end
     end
@@ -418,7 +471,7 @@ function M.notify(msg, opts)
                     and entry.win.opts.footer
                 or '' --[[@as string]]
             local w, h, wanted =
-                compute_dims(lines, title_text, footer_text, border)
+                compute_dims(anchor, lines, title_text, footer_text, border)
 
             if wanted > h and border ~= 'none' and opts.more_format then
                 entry.win.opts.footer = opts.more_format:format(wanted - h)
@@ -435,26 +488,33 @@ function M.notify(msg, opts)
 
         entry.win:open() -- reconfigure (idempotent)
         arm_timer(entry, timeout)
-        reflow()
+        reflow(anchor)
         return entry.win
     end
 
     -- create new toast
     -- Placeholder position; reflow() corrects it immediately after push().
-    local placeholder_row = vim.o.lines - LAYOUT.margin_bottom
-    local placeholder_col = layout_col()
+    local is_se = (anchor == 'SE')
+    local cfg = LAYOUT[anchor]
+    local placeholder_row
+    if is_se then
+        placeholder_row = vim.o.lines - cfg.margin_bottom
+    else
+        placeholder_row = cfg.margin_top
+    end
+    local placeholder_col = layout_col(anchor)
 
     local win_obj = Win.create({
         relative = 'editor',
-        anchor = LAYOUT.anchor,
+        anchor = cfg.anchor,
         row = placeholder_row,
         col = placeholder_col,
-        width = LAYOUT.min_width,
+        width = cfg.min_width,
         height = 3,
         border = border,
         focusable = false,
         focus_on_open = false,
-        zindex = LAYOUT.zindex_base,
+        zindex = cfg.zindex_base,
         ft = opts.ft or '',
         wo = { number = false, wrap = false, cursorline = false },
         bo = {},
@@ -468,7 +528,7 @@ function M.notify(msg, opts)
     -- compute real dimensions
     local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
     local title_text = title ~= '' and (icon .. ' ' .. title) or ''
-    local w, h, wanted = compute_dims(lines, title_text, '', border)
+    local w, h, wanted = compute_dims(anchor, lines, title_text, '', border)
 
     if wanted > h and border ~= 'none' and opts.more_format then
         win_obj.opts.footer = opts.more_format:format(wanted - h)
@@ -481,6 +541,7 @@ function M.notify(msg, opts)
 
     ---@type ToastEntry
     local new_entry = {
+        anchor = anchor,
         id = opts.id,
         win = win_obj,
         buf = buf,
@@ -493,9 +554,9 @@ function M.notify(msg, opts)
     -- wire up cleanup on window close (user presses q, etc.)
     local orig_on_close = win_obj.opts.on_close
     win_obj.opts.on_close = function(win)
-        for i, e in ipairs(STACK) do
+        for i, e in ipairs(STACK[anchor]) do
             if e == new_entry then
-                remove_at(i)
+                remove_at(anchor, i)
                 break
             end
         end
@@ -505,40 +566,53 @@ function M.notify(msg, opts)
     end
 
     arm_timer(new_entry, timeout)
-    push(new_entry) -- inserts at bottom and reflowing
+    push(anchor, new_entry) -- inserts at bottom and reflowing
 
     return win_obj
 end
 
----Dismiss a specific toast by id.
+---Dismiss a specific toast by its id.
+---Searches all stacks; if the same id exists in both, both are dismissed.
 ---@param id string
 function M.dismiss(id)
-    local idx = ID_MAP[id]
-    if not idx then
-        return
-    end
-    local entry = STACK[idx]
-    if entry.win:is_valid() then
-        pcall(function()
-            entry.win:close()
-        end)
-    else
-        remove_at(idx)
+    for anchor in pairs(STACK) do
+        local idx = ID_MAP[anchor][id]
+        if idx then
+            local entry = STACK[anchor][idx]
+            if entry.win:is_valid() then
+                pcall(function()
+                    entry.win:close()
+                end)
+            else
+                remove_at(anchor, idx)
+            end
+        end
     end
 end
 
 ---Dismiss all active toasts.
-function M.dismiss_all()
-    -- iterate in reverse so indices remain valid while closing
-    for i = #STACK, 1, -1 do
-        local entry = STACK[i]
-        if entry.win:is_valid() then
-            pcall(function()
-                entry.win:close()
-            end)
+---@param opts? { anchor?: ToastAnchor }  if provided, only clears that stack
+function M.dismiss_all(opts)
+    opts = opts or {}
+    local target_anchors
+    if opts.anchor and (opts.anchor == 'NE' or opts.anchor == 'SE') then
+        target_anchors = { opts.anchor }
+    else
+        target_anchors = { 'NE', 'SE' }
+    end
+
+    for _, anchor in ipairs(target_anchors) do
+        local stack = STACK[anchor]
+        -- iterate in reverse so indices remain valid while closing
+        for i = #stack, 1, -1 do
+            local entry = stack[i]
+            if entry.win:is_valid() then
+                pcall(function()
+                    entry.win:close()
+                end)
+            end
         end
     end
-    -- on_close callbacks will drain STACK via remove_at
 end
 
 -- Re-layout on VimResized (single global autocmd).

@@ -116,7 +116,7 @@ vim.api.nvim_create_autocmd('User', {
 --          workspace patch
 --------------------------------------------------------------------------------
 require 'core.adapter'.setup {
-    bus_init = { bus_backend = 'toast' },
+    bus_init = { bus_backend = 'fidget' },
     popup = {
         cursor_hack = false,
         no_register = true,
@@ -140,7 +140,15 @@ require 'core.workspace'.setup()
 
 vim.api.nvim_create_autocmd('UIEnter', {
     once = true,
-    callback = require 'utils.loader'.thunk('core.bus.backend.toast', 'setup'),
+    callback = function()
+        require 'core.bus.backend.recorder'.setup()
+        require 'core.bus.backend.fidget'.setup()
+        require 'core.bus.backend.notify'.setup()
+        -- start bus
+        Bus.start {
+            bus_backend = 'notify',
+        }
+    end,
 })
 
 --------------------------------------------------------------------------------

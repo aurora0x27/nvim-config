@@ -11,6 +11,7 @@ local bind = require 'utils.loader'.bind
 ---@class AdapterOpt
 ---@field enable_ui2? boolean
 ---@field bus_init? BusInitOpt
+---@field popup? PopupOpt
 ---@field customed_handlers? ExtHandlerDecl[]
 
 ---@class AdapterStat
@@ -41,11 +42,6 @@ local bind = require 'utils.loader'.bind
 ---@field id       integer|string|nil  nvim msg id of first msg in batch (for cover)
 ---@field timer    uv.uv_timer_t
 ---@field flushing boolean
-
----@class AdapterOpt
----@field enable_ui2? boolean
----@field bus_init? BusInitOpt
----@field popup? PopupOpt
 
 ---@type AdapterOpt
 local ADAPTER_OPT_DEFAULT = {

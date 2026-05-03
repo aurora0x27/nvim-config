@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------
--- Toast notifier backend
+-- Toast notifier backend (fidget like)
 --------------------------------------------------------------------------------
 local thunk = require 'utils.loader'.thunk
 local notify = thunk('core.ui.toast', 'notify')
@@ -51,7 +51,7 @@ local function handler(msg)
 end
 
 function M.setup()
-    Bus.register_subscriber('toast', {
+    Bus.register_subscriber('fidget', {
         exact = {
             'msg.show.wmsg',
             'msg.show.undo',
@@ -62,10 +62,6 @@ function M.setup()
             'msg.show.progress',
             'msg.show.list_cmd',
             'msg.show.lua_print',
-            'msg.show.shell_cmd',
-            'msg.show.shell_err',
-            'msg.show.shell_out',
-            'msg.show.shell_ret',
         },
     }, vim.log.levels.TRACE, handler)
 end
