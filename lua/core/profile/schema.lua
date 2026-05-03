@@ -1,7 +1,9 @@
 return {
     sandbox_mode = 'none', -- experimental sandbox mode
     transparent_mode = false,
-    diagnose_inline = false,
+    diagnose_mode = 'inline', -- 'inline'|'detailed'|'pretty'
+    diagnose_level = 'hint', -- 'hint'|'info'|'warn'|'error'
+    diagnose_with_fancy_underline = false,
     dashboard_art_name = 'Ayanami Rei',
     workspace_inject_vim_rt = true,
     workspace_inject_plugin_path = false,

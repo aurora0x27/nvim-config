@@ -1,4 +1,11 @@
 local conditions = require 'heirline.conditions'
+local UI = require 'assets.icons'.get('diagnostics', true)
+local Icons = {
+    Error = UI.Error,
+    Warn = UI.Warning,
+    Info = UI.Information,
+    Hint = UI.Hint,
+}
 
 local Diagnostics = {
     condition = conditions.has_diagnostics,
@@ -14,25 +21,26 @@ local Diagnostics = {
     end,
     {
         provider = function(self)
-            return self.errors > 0 and (' ' .. self.errors .. ' ') or ''
+            return self.errors > 0 and (Icons.Error .. self.errors .. ' ') or ''
         end,
         hl = { fg = 'red' },
     },
     {
         provider = function(self)
-            return self.warnings > 0 and (' ' .. self.warnings .. ' ') or ''
+            return self.warnings > 0 and (Icons.Warn .. self.warnings .. ' ')
+                or ''
         end,
         hl = { fg = 'yellow' },
     },
     {
         provider = function(self)
-            return self.info > 0 and (' ' .. self.info .. ' ') or ''
+            return self.info > 0 and (Icons.Info .. self.info .. ' ') or ''
         end,
         hl = { fg = 'teal' },
     },
     {
         provider = function(self)
-            return self.hints > 0 and ('󰌵 ' .. self.hints .. ' ') or ''
+            return self.hints > 0 and (Icons.Hint .. self.hints .. ' ') or ''
         end,
         hl = { fg = 'teal' },
     },

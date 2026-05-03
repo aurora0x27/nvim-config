@@ -101,7 +101,7 @@ vim.api.nvim_create_autocmd('User', {
         require 'edit.keymaps'.setup()
         require 'edit.options'.setup()
         require 'edit.autocmd'.setup()
-        require 'edit.diagnostics'.setup()
+        require 'edit.diagnostic'.setup()
         require 'edit.fold'.setup()
         require 'edit.ssh-mode'.setup()
         require 'edit.pairs'.setup()

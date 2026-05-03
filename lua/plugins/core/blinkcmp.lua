@@ -2,7 +2,8 @@
 -- CodeCompletion: code completor ui
 --------------------------------------------------------------------------------
 
-local lazydev_enabled = Lang.is_supported('lua', 'plg')
+local LazydevEnabled = Lang.is_supported('lua', 'plg')
+local KindIcon = require 'assets.icons'.get 'kind'
 
 ---@type LazyPluginSpec
 local CodeCompletion = {
@@ -95,6 +96,12 @@ local CodeCompletion = {
                         { 'provider' },
                     },
                     components = {
+                        kind_icon = {
+                            text = function(ctx)
+                                local icon = KindIcon[ctx.kind] or ctx.kind_icon
+                                return icon .. ctx.icon_gap
+                            end,
+                        },
                         provider = {
                             text = function(ctx)
                                 return '['
@@ -129,13 +136,13 @@ local CodeCompletion = {
                 'lsp',
                 'path',
                 'buffer',
-                lazydev_enabled and 'lazydev' or nil,
+                LazydevEnabled and 'lazydev' or nil,
             }),
             providers = {
                 lazydev = {
                     name = 'Development',
                     module = 'lazydev.integrations.blink',
-                    enabled = lazydev_enabled,
+                    enabled = LazydevEnabled,
                 },
                 snippets = {
                     opts = {

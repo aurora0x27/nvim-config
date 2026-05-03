@@ -52,8 +52,7 @@ local StatusCol = {
                             end)
 
                             local d = diags[1]
-                            local map =
-                                require 'edit.diagnostics'.get_icon_map()
+                            local map = require 'edit.diagnostic'.get_icon_map()
                             local spec = map[d.severity]
                             return ('%%#%s#%s%%*'):format(spec.hl, spec.icon)
                         end,

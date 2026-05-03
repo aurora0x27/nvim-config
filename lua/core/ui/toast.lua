@@ -618,7 +618,10 @@ end
 -- Re-layout on VimResized (single global autocmd).
 vim.api.nvim_create_autocmd('VimResized', {
     group = vim.api.nvim_create_augroup('ToastLayout', { clear = true }),
-    callback = reflow,
+    callback = function()
+        reflow 'NE'
+        reflow 'SE'
+    end,
 })
 
 return M

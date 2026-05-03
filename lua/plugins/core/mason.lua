@@ -64,6 +64,8 @@ local function ensure_installed(list)
     end
 end
 
+local Icons = { ui = require 'assets.icons'.get 'ui' }
+
 ---@module 'mason'
 ---@type MasonSettings
 local MasonOpt = {
@@ -77,9 +79,9 @@ local MasonOpt = {
         height = 0.8,
         backdrop = 100,
         icons = {
-            package_installed = '',
-            package_pending = '󰁔',
-            package_uninstalled = '',
+            package_installed = Icons.ui.Check,
+            package_pending = Icons.ui.CloudDownload,
+            package_uninstalled = Icons.ui.Circle,
         },
     },
 }

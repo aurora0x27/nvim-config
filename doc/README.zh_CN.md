@@ -96,30 +96,35 @@ nvim # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
   - _`transparent_mode`_ 启用透明模式
   - _`dashboard_art_name`_ 选择仪表盘上的 ASCII 艺术字
   - _`statline_scrollbar_style`_ 选择用于显示光标位置的滚动条样式
-  - _`diagnose_inline`_ 不使用虚拟线显示诊断信息
+  - _`diagnose_mode`_ 诊断显示级别，选项为 `'inline'|'detailed'|'pretty'`，`inline` 表示使用虚拟文本显示诊断信息，
+    `detailed` 表示使用额外的虚拟行显示诊断信息，`pretty` 表示使用额外的插件 -- `tiny-inline-diagnostic`
+    用于显示诊断信息，默认为 `inline`
+  - _`diagnose_level`_ 要显示的最低诊断信息级别
+  - _`diagnose_with_fancy_underline`_ 是否使用花哨的下划线，**需要终端和 tmux 支持**
   - _`enable_current_line_blame`_ 启用行尾的虚拟文本行错误信息显示
   - _`enable_dropbar`_ 为每个窗口启用面包屑导航
 
 - 语言模块
   - _`lang_blacklist`_ 禁用语言配置，默认禁用，以逗号分隔
   - _`lang_whitelist`_ 启用语言配置，默认启用，以逗号分隔
-  - _`lang_levels`_ 语言特性配置，语法：字符串 `c:full;cpp:none;rust:lsp,+ts,-fmt` 表示启用 C 语言的全部功能，禁用 C++ 的所有功能，启用 tree-sitter 和 lsp，禁用 Rust 的格式化程序。
+  - _`lang_levels`_ 语言特性配置，语法：字符串 `c:full;cpp:none;rust:lsp,+ts,-fmt` 表示启用 C 语言的全部功能,
+    禁用 C++ 的所有功能，启用 tree-sitter 和 lsp，禁用 Rust 的格式化程序。
 
 - LSP
   - _`enable_lsp`_ 启用 LSP **如果 nvim 版本 <= 0.11，则禁用 LSP**
   - _`use_emmylua_ls`_ 使用 `emmylua_ls` 作为 Lua 语言服务器
   - _`workspace_inject_plugin_path`_ 将插件路径注入到 `emmylua_ls` 工作区配置中
   - _`workspace_inject_vim_rt`_ 将 Vim 运行时注入到 `emmylua_ls` 工作区配置中
-  - `clang_format_path` 指定 `clang-format` 二进制文件路径
-  - `clangd_path` 指定 `clangd` 二进制文件路径
+  - _`clang_format_path`_ 指定 `clang-format` 二进制文件路径
+  - _`clangd_path`_ 指定 `clangd` 二进制文件路径
 
 - 大文件支持
   - _`bigfile_size_byte`_ 平均字节大小
   - _`bigfile_size_line`_ 平均行长度（适用于压缩文件）
 
 - 工作区
-  - `allow_workspace_patch` 允许编辑器根据工作区配置修改其行为
-  - `workspace_patch_always_restrict` 始终启用限制模式，禁用 `dofile` 以防止 **ACE**
+  - _`allow_workspace_patch`_ 允许编辑器根据工作区配置修改其行为
+  - _`workspace_patch_always_restrict`_ 始终启用限制模式，禁用 `dofile` 以防止 **ACE**
 
 - 其他
   - _`sandbox_mode`_ 控制沙盒功能 `sesson|undo|shada|swap|wb`，其中 `wb` 用于写回功能
@@ -130,25 +135,30 @@ nvim # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
 
 ```lua
 local defaults = {
-  blink_use_binary = true,
-  dashboard_art_name = "Ayanami Rei",
-  diagnose_inline = false,
-  disable_im_switch = false,
-  enable_current_line_blame = false,
-  enable_lsp = true,
-  lang_blacklist = "all",
-  lang_levels = "",
-  lang_whitelist = "",
-  sandbox_mode = "none",
-  statline_scrollbar_style = "moon",
+  sandbox_mode = 'none', -- experimental sandbox mode
   transparent_mode = false,
-  use_emmylua_ls = false,
+  diagnose_mode = 'inline', -- 'inline'|'detailed'|'pretty'
+  diagnose_level = 'hint', -- 'hint'|'info'|'warn'|'error'
+  diagnose_with_fancy_underline = false,
+  dashboard_art_name = 'Ayanami Rei',
+  workspace_inject_vim_rt = true,
   workspace_inject_plugin_path = false,
-  workspace_inject_vim_rt = true
-  bigfile_size_byte = 2097152,
+  use_emmylua_ls = false,
+  disable_im_switch = false,
+  enable_lsp = vim.fn.has 'nvim-0.11' == 1,
+  enable_current_line_blame = false,
+  blink_use_binary = true,
+  lang_blacklist = 'all',
+  lang_whitelist = '',
+  lang_levels = '',
+  statline_scrollbar_style = 'moon',
+  bigfile_size_byte = 2097152, -- 2MB
   bigfile_size_line = 100000,
   allow_workspace_patch = false,
   workspace_patch_always_restrict = true,
+  enable_dropbar = false,
+  clang_format_path = 'clang-format',
+  clangd_path = 'clangd',
 }
 ```
 

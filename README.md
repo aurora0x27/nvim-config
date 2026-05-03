@@ -104,6 +104,11 @@ dir. Here're customizable items:
   - _`dashboard_art_name`_ choose an ascii art on dashboard
   - _`statline_scrollbar_style`_ choose a style for heirline scroll bar, which displays cursor position
   - _`diagnose_inline`_ do not use virtual lines to display diagnostic messages
+  - _`diagnose_mode`_ diagnose display level, options are `'inline'|'detailed'|'pretty'`, `inline` means use virtual text
+    to display diagnostic messages, `detailed` means use extra virtual lines, `pretty` means use extra plugin --
+    `tiny-inline-diagnostic` to display, default `inline`
+  - _`diagnose_level`_ minimal level of diagnostic messages to display
+  - _`diagnose_with_fancy_underline`_ whether to use fancy undercurl line, **need terminal and tmux support**
   - _`enable_current_line_blame`_ enable virtual text line blame at the end of line
   - _`enable_dropbar`_ enable breadcrumbs for each window
 
@@ -138,25 +143,30 @@ Here are defaults:
 
 ```lua
 local defaults = {
-  blink_use_binary = true,
-  dashboard_art_name = "Ayanami Rei",
-  diagnose_inline = false,
-  disable_im_switch = false,
-  enable_current_line_blame = false,
-  enable_lsp = true,
-  lang_blacklist = "all",
-  lang_levels = "",
-  lang_whitelist = "",
-  sandbox_mode = "none",
-  statline_scrollbar_style = "moon",
+  sandbox_mode = 'none', -- experimental sandbox mode
   transparent_mode = false,
-  use_emmylua_ls = false,
+  diagnose_mode = 'inline', -- 'inline'|'detailed'|'pretty'
+  diagnose_level = 'hint', -- 'hint'|'info'|'warn'|'error'
+  diagnose_with_fancy_underline = false,
+  dashboard_art_name = 'Ayanami Rei',
+  workspace_inject_vim_rt = true,
   workspace_inject_plugin_path = false,
-  workspace_inject_vim_rt = true
-  bigfile_size_byte = 2097152,
+  use_emmylua_ls = false,
+  disable_im_switch = false,
+  enable_lsp = vim.fn.has 'nvim-0.11' == 1,
+  enable_current_line_blame = false,
+  blink_use_binary = true,
+  lang_blacklist = 'all',
+  lang_whitelist = '',
+  lang_levels = '',
+  statline_scrollbar_style = 'moon',
+  bigfile_size_byte = 2097152, -- 2MB
   bigfile_size_line = 100000,
   allow_workspace_patch = false,
   workspace_patch_always_restrict = true,
+  enable_dropbar = false,
+  clang_format_path = 'clang-format',
+  clangd_path = 'clangd',
 }
 ```
 
