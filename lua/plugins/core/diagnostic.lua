@@ -24,16 +24,22 @@ end
 ---@type LazySpec
 local TinyInlineDiag = {
     'rachartier/tiny-inline-diagnostic.nvim',
-    event = 'BufRead',
+    event = { 'BufReadPost', 'BufNewFile' },
     enabled = Diagnose.get_mode() == Diagnose.MODE.pretty,
     opts = {
         preset = 'simple',
+        transparent_bg = Profile.transparent_mode,
         options = {
+            multilines = {
+                enabled = true,
+            },
             show_source = {
                 enabled = true,
                 if_many = true,
             },
-            add_messages = true,
+            add_messages = {
+                display_count = true,
+            },
             set_arrow_to_diag_color = false,
             use_icons_from_diagnostic = true,
             show_all_diags_on_cursorline = false,

@@ -49,6 +49,7 @@ local lua_ls = {
     end,
     settings = {
         Lua = {
+            hint = { enable = true },
             runtime = {
                 version = 'LuaJIT',
             },

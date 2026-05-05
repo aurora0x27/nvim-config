@@ -7,10 +7,16 @@ local lsp = vim.lsp
 local api = vim.api
 local methods = lsp.protocol.Methods
 local misc = require 'utils.misc'
-local thunk = require('utils.loader').thunk
+local thunk = require 'utils.loader'.thunk
 local bind = require 'utils.loader'.bind
 
 local lsp_list = Lang.get_lsp_enable_list()
+
+local Opts = {
+    enable_inlay_hint = Profile.enable_inlay_hint,
+}
+
+local LOG_TITLE = 'LSP Module'
 
 --------------------------------------------------------------------------------
 -- Override lsp.hover
@@ -32,9 +38,28 @@ local function lsp_buf_setup(event)
         buffer = bufnr,
     })
 
+    local client = vim.lsp.get_client_by_id(event.data.client_id)
+    local has_inlay_hint = client
+        and client:supports_method('textDocument/inlayHint', bufnr)
+    if has_inlay_hint and Opts.enable_inlay_hint then
+        lsp.inlay_hint.enable(true, { bufnr = event.buf })
+    end
     map('n', '<leader>lh', function()
+        if not has_inlay_hint then
+            misc.warn(
+                string.format(
+                    'Buffer id = %d does not have capability of `inlayHint`',
+                    bufnr
+                ),
+                { title = LOG_TITLE }
+            )
+            return
+        end
         local stat = lsp.inlay_hint.is_enabled { bufnr = bufnr }
-        misc.info('Lsp Inlay Hints ' .. (stat and 'Disabled' or 'Enabled'))
+        misc.info(
+            'Lsp Inlay Hints ' .. (stat and 'Disabled' or 'Enabled'),
+            { title = LOG_TITLE }
+        )
         lsp.inlay_hint.enable(not stat, { bufnr = bufnr })
     end, { buffer = bufnr, desc = 'Toggle Inlay [H]ints' })
 
@@ -229,7 +254,7 @@ function M.setup()
         local servers = info.fargs
         if #servers == 0 then
             local bufnr = vim.api.nvim_get_current_buf()
-            require('utils.misc').lsp_buf_startup(bufnr)
+            misc.lsp_buf_startup(bufnr)
         end
         lsp.enable(servers)
     end, {

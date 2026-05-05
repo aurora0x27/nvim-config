@@ -31,7 +31,7 @@ local thunk = require 'utils.loader'.thunk
 local IconTable = (function()
     local ret = {}
     for severity, spec in pairs(RawIconSpec) do
-        ret[severity] = spec.icon
+        ret[severity] = spec.icon .. ' '
     end
     return ret
 end)()

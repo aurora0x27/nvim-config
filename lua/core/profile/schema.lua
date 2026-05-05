@@ -10,6 +10,7 @@ return {
     use_emmylua_ls = false,
     disable_im_switch = false,
     enable_lsp = vim.fn.has 'nvim-0.11' == 1,
+    enable_inlay_hint = false,
     enable_current_line_blame = false,
     blink_use_binary = true,
     lang_blacklist = 'all',

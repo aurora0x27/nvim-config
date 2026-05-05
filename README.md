@@ -120,6 +120,7 @@ dir. Here're customizable items:
 
 - Lsp
   - _`enable_lsp`_ enable lsp **Disable LSP if nvim version <= 0.11**
+  - *`enable_inlay_hint`* default enable lsp inlay hint if has capability
   - _`use_emmylua_ls`_ use `emmylua_ls` as lua language server
   - _`workspace_inject_plugin_path`_ inject plugin path to `emmylua_ls` workspace config
   - _`workspace_inject_vim_rt`_ inject vim runtime to `emmylua_ls` workspace config
