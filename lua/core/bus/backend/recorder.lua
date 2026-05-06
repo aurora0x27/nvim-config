@@ -175,6 +175,7 @@ function M.setup(opts)
                 'msg.show.echoerr',
                 'msg.show.echo',
                 'msg.show.echomsg',
+                'msg.show.list_cmd',
                 'msg.show.lua_error',
                 'msg.show.lua_print',
                 'msg.show.rpc_error',

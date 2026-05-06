@@ -36,7 +36,6 @@ local function safe_ts_start(args)
     end
 
     vim.schedule(function()
-        vim.bo.indentexpr = [[v:lua.require'nvim-treesitter'.indentexpr()]]
         local ok1 = pcall(vim.treesitter.start, buf, lang)
         if not ok1 then
             vim.defer_fn(
@@ -48,6 +47,7 @@ local function safe_ts_start(args)
                 500
             )
         end
+        vim.bo.indentexpr = [[v:lua.require'nvim-treesitter'.indentexpr()]]
     end)
 end
 

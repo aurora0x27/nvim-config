@@ -9,6 +9,7 @@ local methods = lsp.protocol.Methods
 local misc = require 'utils.misc'
 local thunk = require 'utils.loader'.thunk
 local bind = require 'utils.loader'.bind
+local AUG = api.nvim_create_augroup('lsp-module', { clear = true })
 
 local lsp_list = Lang.get_lsp_enable_list()
 
@@ -215,7 +216,7 @@ function M.setup()
     require 'edit.lsp.progress'.setup()
 
     api.nvim_create_autocmd('LspAttach', {
-        group = api.nvim_create_augroup('lsp-attach', { clear = true }),
+        group = AUG,
         callback = lsp_buf_setup,
     })
 

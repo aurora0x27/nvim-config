@@ -101,14 +101,21 @@ vim.api.nvim_create_autocmd('User', {
         require 'edit.keymaps'.setup()
         require 'edit.options'.setup()
         require 'edit.autocmd'.setup()
-        require 'edit.diagnostic'.setup()
-        require 'edit.fold'.setup()
         require 'edit.ssh-mode'.setup()
-        require 'edit.pairs'.setup()
 
         -- dofile init.lua
         require 'core.workspace'.load_main()
     end),
+})
+
+-- This should be initialized when buffer enter
+vim.api.nvim_create_autocmd('BufReadPost', {
+    once = true,
+    callback = function()
+        require 'edit.fold'.setup()
+        require 'edit.pairs'.setup()
+        require 'edit.diagnostic'.setup()
+    end,
 })
 
 --------------------------------------------------------------------------------
@@ -145,9 +152,7 @@ vim.api.nvim_create_autocmd('UIEnter', {
         require 'core.bus.backend.fidget'.setup()
         require 'core.bus.backend.notify'.setup()
         -- start bus
-        Bus.start {
-            bus_backend = 'notify',
-        }
+        Bus.start { bus_backend = 'notify' }
     end,
 })
 
