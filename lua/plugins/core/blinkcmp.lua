@@ -167,7 +167,22 @@ local CodeCompletion = {
         -- See the fuzzy documentation for more information
         fuzzy = { implementation = 'prefer_rust_with_warning' },
     },
+
     opts_extend = { 'sources.default' },
+
+    config = function(_, opts)
+        local mocha = require 'catppuccin.palettes'.get_palette 'mocha'
+        -- set Blink border highlight
+        vim.api.nvim_set_hl(0, 'BlinkCmpMenuBorder', { fg = mocha.blue })
+        vim.api.nvim_set_hl(0, 'BlinkCmpDocBorder', { fg = mocha.blue })
+        vim.api.nvim_set_hl(
+            0,
+            'BlinkCmpSignatureHelpBorder',
+            { fg = mocha.blue }
+        )
+        vim.api.nvim_set_hl(0, 'BlinkCmpDocSeparator', { fg = mocha.blue })
+        require 'blink.cmp'.setup(opts)
+    end,
 }
 
 return CodeCompletion

@@ -103,6 +103,7 @@ nvim # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
   - _`diagnose_with_fancy_underline`_ 是否使用花哨的下划线，**需要终端和 tmux 支持**
   - _`enable_current_line_blame`_ 启用行尾的虚拟文本行错误信息显示
   - _`enable_dropbar`_ 为每个窗口启用面包屑导航
+  - *`use_ufo_as_fold_provider`* 使用 `nvim-ufo` 作为默认的折叠提供来源, 获得更好的代码折叠体验.
 
 - 语言模块
   - _`lang_blacklist`_ 禁用语言配置，默认禁用，以逗号分隔
@@ -144,8 +145,10 @@ local defaults = {
   workspace_inject_vim_rt = true,
   workspace_inject_plugin_path = false,
   use_emmylua_ls = false,
+  use_ufo_as_fold_provider = false,
   disable_im_switch = false,
   enable_lsp = vim.fn.has 'nvim-0.11' == 1,
+  enable_inlay_hint = false,
   enable_current_line_blame = false,
   blink_use_binary = true,
   lang_blacklist = 'all',

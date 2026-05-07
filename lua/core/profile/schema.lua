@@ -8,6 +8,7 @@ return {
     workspace_inject_vim_rt = true,
     workspace_inject_plugin_path = false,
     use_emmylua_ls = false,
+    use_ufo_as_fold_provider = false,
     disable_im_switch = false,
     enable_lsp = vim.fn.has 'nvim-0.11' == 1,
     enable_inlay_hint = false,

@@ -26,12 +26,22 @@ function M.custom_foldtext()
 end
 
 function M.setup()
-    vim.o.foldtext = [[v:lua.require'edit.fold'.custom_foldtext()]]
+    -- Fold hint
+    local mocha = require 'catppuccin.palettes'.get_palette 'mocha'
+    vim.api.nvim_set_hl(
+        0,
+        'CustomFold',
+        { fg = mocha.teal, bold = true, italic = true }
+    )
+
     vim.o.foldlevel = 99
     vim.o.foldlevelstart = 99
-    vim.o.foldmethod = 'expr'
-    vim.o.foldexpr = [[v:lua.vim.treesitter.foldexpr()]]
     vim.o.foldcolumn = '1'
+    if not Profile.use_ufo_as_fold_provider then
+        vim.o.foldtext = [[v:lua.require'edit.fold'.custom_foldtext()]]
+        vim.o.foldmethod = 'expr'
+        vim.o.foldexpr = [[v:lua.vim.treesitter.foldexpr()]]
+    end
 end
 
 return M

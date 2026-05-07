@@ -111,6 +111,7 @@ dir. Here're customizable items:
   - _`diagnose_with_fancy_underline`_ whether to use fancy undercurl line, **need terminal and tmux support**
   - _`enable_current_line_blame`_ enable virtual text line blame at the end of line
   - _`enable_dropbar`_ enable breadcrumbs for each window
+  - *`use_ufo_as_fold_provider`* use `nvim-ufo` as fold provider to get better code fold experience
 
 - Lang module
   - _`lang_blacklist`_ disabled lang configs, default none, split by ','
@@ -120,7 +121,7 @@ dir. Here're customizable items:
 
 - Lsp
   - _`enable_lsp`_ enable lsp **Disable LSP if nvim version <= 0.11**
-  - *`enable_inlay_hint`* default enable lsp inlay hint if has capability
+  - _`enable_inlay_hint`_ default enable lsp inlay hint if has capability
   - _`use_emmylua_ls`_ use `emmylua_ls` as lua language server
   - _`workspace_inject_plugin_path`_ inject plugin path to `emmylua_ls` workspace config
   - _`workspace_inject_vim_rt`_ inject vim runtime to `emmylua_ls` workspace config
@@ -153,8 +154,10 @@ local defaults = {
   workspace_inject_vim_rt = true,
   workspace_inject_plugin_path = false,
   use_emmylua_ls = false,
+  use_ufo_as_fold_provider = false,
   disable_im_switch = false,
   enable_lsp = vim.fn.has 'nvim-0.11' == 1,
+  enable_inlay_hint = false,
   enable_current_line_blame = false,
   blink_use_binary = true,
   lang_blacklist = 'all',
