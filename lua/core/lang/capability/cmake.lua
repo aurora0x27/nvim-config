@@ -1,5 +1,5 @@
 ---@type LangSpec
 return {
-    treesitter = 'cmake',
-    lsp = { name = 'neocmakelsp' },
+  treesitter = 'cmake',
+  lsp = { name = 'neocmakelsp' },
 }

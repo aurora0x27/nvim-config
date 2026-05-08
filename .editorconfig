@@ -1,0 +1,24 @@
+[*.lua]
+# [basic]
+
+# optional space/tab
+indent_style = space
+# if indent_style is space, this is valid
+indent_size = 2
+# if indent_style is tab, this is valid
+tab_width = 2
+# none/single/double
+quote_style = single
+
+continuation_indent = 2
+## extend option
+# continuation_indent.before_block = 4
+# continuation_indent.in_expr = 4
+# continuation_indent.in_table = 4
+
+[*]
+# optional crlf/lf/cr/auto, if it is 'auto', in windows it is crlf other platforms are lf
+# in neovim the value 'auto' is not a valid option, please use 'unset'
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true

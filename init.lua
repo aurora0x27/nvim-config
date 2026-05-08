@@ -10,16 +10,16 @@
 --]]
 
 if vim.g.vscode then
-    vim.notify(
-        'Cannot apply this configuration to vscode, Nothing is loaded',
-        vim.log.levels.WARN
-    )
-    return
+  vim.notify(
+    'Cannot apply this configuration to vscode, Nothing is loaded',
+    vim.log.levels.WARN
+  )
+  return
 end
 
 -- Enable aot bytecode
 if vim.loader then
-    vim.loader.enable()
+  vim.loader.enable()
 end
 
 --------------------------------------------------------------------------------
@@ -27,62 +27,62 @@ end
 --------------------------------------------------------------------------------
 vim.g.debug_mode = vim.env.NVIM_CONFIG_DEV
 if vim.g.debug_mode == '1' then
-    local project_root = vim.env.NVIM_CONFIG_DEV_CONFIG_ROOT
-    local cache_root = vim.env.NVIM_CONFIG_DEV_CACHE_ROOT
+  local project_root = vim.env.NVIM_CONFIG_DEV_CONFIG_ROOT
+  local cache_root = vim.env.NVIM_CONFIG_DEV_CACHE_ROOT
 
-    if not project_root then
+  if not project_root then
+    vim.notify(
+      'DEBUG mode is set but config root is missing',
+      vim.log.levels.ERROR,
+      { title = 'Config Hack' }
+    )
+    return
+  end
+  if not cache_root then
+    vim.notify(
+      'DEBUG mode is set but cache root is missing',
+      vim.log.levels.WARN,
+      { title = 'Config Hack' }
+    )
+    return
+  end
+
+  local function set_rtpath()
+    vim.opt.rtp:prepend(project_root)
+  end
+
+  local shadow = {
+    config = project_root,
+    cache = cache_root .. '/cache',
+    data = cache_root .. '/share',
+    state = cache_root .. '/state',
+    log = cache_root .. '/state/log',
+    run = cache_root .. '/run',
+    config_dirs = { project_root },
+    data_dirs = { cache_root .. '/share' },
+  }
+
+  --- Hack vim.stdpath, create a sandbox
+  ---@diagnostic disable: inject-field, duplicate-set-field
+  vim.fn.stdpath = function(what)
+    return shadow[what] --or vim.fn.call('stdpath', { what })
+  end
+
+  set_rtpath()
+
+  --- Hint
+  vim.api.nvim_create_autocmd('VimEnter', {
+    once = true,
+    callback = function()
+      vim.defer_fn(function()
         vim.notify(
-            'DEBUG mode is set but config root is missing',
-            vim.log.levels.ERROR,
-            { title = 'Config Hack' }
+          'Entered DEBUG mode',
+          vim.log.levels.WARN,
+          { title = 'Config' }
         )
-        return
-    end
-    if not cache_root then
-        vim.notify(
-            'DEBUG mode is set but cache root is missing',
-            vim.log.levels.WARN,
-            { title = 'Config Hack' }
-        )
-        return
-    end
-
-    local function set_rtpath()
-        vim.opt.rtp:prepend(project_root)
-    end
-
-    local shadow = {
-        config = project_root,
-        cache = cache_root .. '/cache',
-        data = cache_root .. '/share',
-        state = cache_root .. '/state',
-        log = cache_root .. '/state/log',
-        run = cache_root .. '/run',
-        config_dirs = { project_root },
-        data_dirs = { cache_root .. '/share' },
-    }
-
-    --- Hack vim.stdpath, create a sandbox
-    ---@diagnostic disable: inject-field, duplicate-set-field
-    vim.fn.stdpath = function(what)
-        return shadow[what] --or vim.fn.call('stdpath', { what })
-    end
-
-    set_rtpath()
-
-    --- Hint
-    vim.api.nvim_create_autocmd('VimEnter', {
-        once = true,
-        callback = function()
-            vim.defer_fn(function()
-                vim.notify(
-                    'Entered DEBUG mode',
-                    vim.log.levels.WARN,
-                    { title = 'Config' }
-                )
-            end, 150)
-        end,
-    })
+      end, 150)
+    end,
+  })
 end
 --------------------------------------------------------------------------------
 -- END DEBUG MODE
@@ -92,30 +92,30 @@ end
 -- Phase 3: Load user defined settings after Lazy initialization
 --------------------------------------------------------------------------------
 vim.api.nvim_create_autocmd('User', {
-    pattern = 'LazyVimStarted',
-    once = true,
-    callback = vim.schedule_wrap(function()
-        if not Profile.disable_im_switch then
-            require 'edit.im-switch'.setup()
-        end
-        require 'edit.keymaps'.setup()
-        require 'edit.options'.setup()
-        require 'edit.autocmd'.setup()
-        require 'edit.ssh-mode'.setup()
+  pattern = 'LazyVimStarted',
+  once = true,
+  callback = vim.schedule_wrap(function()
+    if not Profile.disable_im_switch then
+      require 'edit.im-switch'.setup()
+    end
+    require 'edit.keymaps'.setup()
+    require 'edit.options'.setup()
+    require 'edit.autocmd'.setup()
+    require 'edit.ssh-mode'.setup()
 
-        -- dofile init.lua
-        require 'core.workspace'.load_main()
-    end),
+    -- dofile init.lua
+    require 'core.workspace'.load_main()
+  end),
 })
 
 -- This should be initialized when buffer enter
 vim.api.nvim_create_autocmd({ 'BufReadPost', 'BufNewFile' }, {
-    once = true,
-    callback = function()
-        require 'edit.fold'.setup()
-        require 'edit.pairs'.setup()
-        require 'edit.diagnostic'.setup()
-    end,
+  once = true,
+  callback = function()
+    require 'edit.fold'.setup()
+    require 'edit.pairs'.setup()
+    require 'edit.diagnostic'.setup()
+  end,
 })
 
 --------------------------------------------------------------------------------
@@ -123,37 +123,37 @@ vim.api.nvim_create_autocmd({ 'BufReadPost', 'BufNewFile' }, {
 --          workspace patch
 --------------------------------------------------------------------------------
 require 'core.adapter'.setup {
-    bus_init = { bus_backend = 'fidget' },
-    popup = {
-        cursor_hack = false,
-        no_register = true,
-    },
+  bus_init = { bus_backend = 'fidget' },
+  popup = {
+    cursor_hack = false,
+    no_register = true,
+  },
 }
 
 local PatchDir, Nvimrc = require 'core.workspace'.probe()
 
 require 'core.profile'.setup {
-    files_to_merge = Nvimrc and { Nvimrc } or {},
+  files_to_merge = Nvimrc and { Nvimrc } or {},
 }
 
 require 'core.lang'.setup {
-    blacklist = Profile.lang_blacklist,
-    whitelist = Profile.lang_whitelist,
-    levels = Profile.lang_levels,
+  blacklist = Profile.lang_blacklist,
+  whitelist = Profile.lang_whitelist,
+  levels = Profile.lang_levels,
 }
 
 require 'core.preload'.setup()
 require 'core.workspace'.setup()
 
 vim.api.nvim_create_autocmd('UIEnter', {
-    once = true,
-    callback = function()
-        require 'core.bus.backend.recorder'.setup()
-        require 'core.bus.backend.fidget'.setup()
-        require 'core.bus.backend.notify'.setup()
-        -- start bus
-        Bus.start { bus_backend = 'notify' }
-    end,
+  once = true,
+  callback = function()
+    require 'core.bus.backend.recorder'.setup()
+    require 'core.bus.backend.fidget'.setup()
+    require 'core.bus.backend.notify'.setup()
+    -- start bus
+    Bus.start { bus_backend = 'notify' }
+  end,
 })
 
 --------------------------------------------------------------------------------
@@ -162,86 +162,84 @@ vim.api.nvim_create_autocmd('UIEnter', {
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 ---@diagnostic disable: undefined-field
 if not vim.uv.fs_stat(lazypath) then
-    local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
-    local out = vim.fn.system {
-        'git',
-        'clone',
-        '--filter=blob:none',
-        '--branch=stable',
-        lazyrepo,
-        lazypath,
-    }
-    if vim.v.shell_error ~= 0 then
-        error('Error cloning lazy.nvim:\n' .. out)
-    end
+  local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
+  local out = vim.fn.system {
+    'git',
+    'clone',
+    '--filter=blob:none',
+    '--branch=stable',
+    lazyrepo,
+    lazypath,
+  }
+  if vim.v.shell_error ~= 0 then
+    error('Error cloning lazy.nvim:\n' .. out)
+  end
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
 local Icons = {
-    Kind = require 'assets.icons'.get('kind'),
-    Documents = require 'assets.icons'.get('documents'),
-    UI = require 'assets.icons'.get('ui'),
-    UISep = require 'assets.icons'.get('ui', true),
-    Misc = require 'assets.icons'.get('misc'),
+  Kind = require 'assets.icons'.get('kind'),
+  Documents = require 'assets.icons'.get('documents'),
+  UI = require 'assets.icons'.get('ui'),
+  UISep = require 'assets.icons'.get('ui', true),
+  Misc = require 'assets.icons'.get('misc'),
 }
 
 -- import plugins
 require('lazy').setup {
-    -- all the plugins' configure files should be put under `lua/plugins`
-    spec = {
-        { import = 'plugins.core' },
-        Profile.create_lazy_spec_mask_builder()
-            :pipe(Lang.mask_lazy_spec)
-            .unpack(),
+  -- all the plugins' configure files should be put under `lua/plugins`
+  spec = {
+    { import = 'plugins.core' },
+    Profile.create_lazy_spec_mask_builder():pipe(Lang.mask_lazy_spec).unpack(),
+  },
+  install = {
+    colorscheme = { 'default' },
+  },
+  ui = {
+    backdrop = 100,
+    width = 0.8,
+    height = 0.8,
+    border = 'rounded',
+    icons = {
+      cmd = Icons.Misc.Code,
+      config = Icons.UI.Gear,
+      event = Icons.Kind.Event,
+      ft = Icons.Documents.Files,
+      init = Icons.Misc.Gear,
+      import = Icons.Documents.Import,
+      keys = Icons.UI.Keyboard,
+      loaded = Icons.UI.Check,
+      not_loaded = Icons.UI.Circle,
+      plugin = Icons.UI.Package,
+      runtime = Icons.Misc.Vim,
+      source = Icons.Kind.StaticMethod,
+      start = Icons.UI.Play,
+      list = {
+        Icons.UISep.Dot,
+        Icons.UISep.Circle,
+        Icons.UISep.Right,
+        Icons.UISep.ArrowRight,
+      },
     },
-    install = {
-        colorscheme = { 'default' },
+  },
+  performance = {
+    rtp = {
+      reset = true,
+      -- keep workspace patch dir in rtp
+      paths = { PatchDir },
+      -- disable some rtp plugins, add more to your liking
+      disabled_plugins = {
+        'gzip',
+        'matchit',
+        'matchparen',
+        'netrwPlugin',
+        'tarPlugin',
+        'tohtml',
+        'tutor',
+        'zipPlugin',
+      },
     },
-    ui = {
-        backdrop = 100,
-        width = 0.8,
-        height = 0.8,
-        border = 'rounded',
-        icons = {
-            cmd = Icons.Misc.Code,
-            config = Icons.UI.Gear,
-            event = Icons.Kind.Event,
-            ft = Icons.Documents.Files,
-            init = Icons.Misc.Gear,
-            import = Icons.Documents.Import,
-            keys = Icons.UI.Keyboard,
-            loaded = Icons.UI.Check,
-            not_loaded = Icons.UI.Circle,
-            plugin = Icons.UI.Package,
-            runtime = Icons.Misc.Vim,
-            source = Icons.Kind.StaticMethod,
-            start = Icons.UI.Play,
-            list = {
-                Icons.UISep.Dot,
-                Icons.UISep.Circle,
-                Icons.UISep.Right,
-                Icons.UISep.ArrowRight,
-            },
-        },
-    },
-    performance = {
-        rtp = {
-            reset = true,
-            -- keep workspace patch dir in rtp
-            paths = { PatchDir },
-            -- disable some rtp plugins, add more to your liking
-            disabled_plugins = {
-                'gzip',
-                'matchit',
-                'matchparen',
-                'netrwPlugin',
-                'tarPlugin',
-                'tohtml',
-                'tutor',
-                'zipPlugin',
-            },
-        },
-    },
+  },
 } --[[@as LazyConfig]]
 
 --[[

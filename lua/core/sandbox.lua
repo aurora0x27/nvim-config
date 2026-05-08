@@ -11,25 +11,25 @@
 local M = {}
 
 local SANDBOX_MODE_DEFAULT = {
-    session = false,
-    undo = false,
-    shada = false,
-    swap = false,
-    wb = false,
+  session = false,
+  undo = false,
+  shada = false,
+  swap = false,
+  wb = false,
 }
 
 local misc = require 'utils.misc'
 
 local Mask = misc.process_feat_mask(
-    Profile.sandbox_mode,
-    SANDBOX_MODE_DEFAULT,
-    function(msg)
-        misc.err(msg, { title = 'Sandbox option' })
-    end
+  Profile.sandbox_mode,
+  SANDBOX_MODE_DEFAULT,
+  function(msg)
+    misc.err(msg, { title = 'Sandbox option' })
+  end
 )
 
 function M.get_mask()
-    return Mask
+  return Mask
 end
 
 return M

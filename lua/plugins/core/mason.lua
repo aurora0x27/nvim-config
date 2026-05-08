@@ -5,9 +5,9 @@
 local pip_args
 local proxy = os.getenv 'PIP_PROXY'
 if proxy then
-    pip_args = { '--proxy', proxy }
+  pip_args = { '--proxy', proxy }
 else
-    pip_args = {}
+  pip_args = {}
 end
 
 local LspEnsuredList = Lang.get_mason_install_list()
@@ -15,53 +15,44 @@ local LspEnsuredList = Lang.get_mason_install_list()
 local misc = require 'utils.misc'
 
 local function ensure_installed(list)
-    local registry = require 'mason-registry'
+  local registry = require 'mason-registry'
 
-    local function install_package(pkg_name)
-        local ok, pkg = pcall(registry.get_package, pkg_name)
-        ---@cast pkg Package
-        if not ok then
-            misc.warn(
-                ('Package %s not found'):format(pkg_name),
-                { title = 'Mason' }
-            )
-            return
-        end
-        if not pkg:is_installed() then
-            misc.info('Installing LSP: ' .. pkg_name, { title = 'Mason' })
-            pkg:install():once('closed', function()
-                if pkg:is_installed() then
-                    vim.schedule(function()
-                        misc.info(
-                            'LSP installed: ' .. pkg_name,
-                            { title = 'Mason' }
-                        )
-                    end)
-                else
-                    vim.schedule(function()
-                        misc.err(
-                            'Failed to install LSP: ' .. pkg_name,
-                            { title = 'Mason' }
-                        )
-                    end)
-                end
-            end)
-        end
+  local function install_package(pkg_name)
+    local ok, pkg = pcall(registry.get_package, pkg_name)
+    ---@cast pkg Package
+    if not ok then
+      misc.warn(('Package %s not found'):format(pkg_name), { title = 'Mason' })
+      return
     end
+    if not pkg:is_installed() then
+      misc.info('Installing LSP: ' .. pkg_name, { title = 'Mason' })
+      pkg:install():once('closed', function()
+        if pkg:is_installed() then
+          vim.schedule(function()
+            misc.info('LSP installed: ' .. pkg_name, { title = 'Mason' })
+          end)
+        else
+          vim.schedule(function()
+            misc.err('Failed to install LSP: ' .. pkg_name, { title = 'Mason' })
+          end)
+        end
+      end)
+    end
+  end
 
-    if not registry.refresh then
-        -- Old Mason version fallback
-        for _, name in ipairs(list) do
-            install_package(name)
-        end
-    else
-        -- Newer Mason: async registry refresh
-        registry.refresh(function()
-            for _, name in ipairs(list) do
-                install_package(name)
-            end
-        end)
+  if not registry.refresh then
+    -- Old Mason version fallback
+    for _, name in ipairs(list) do
+      install_package(name)
     end
+  else
+    -- Newer Mason: async registry refresh
+    registry.refresh(function()
+      for _, name in ipairs(list) do
+        install_package(name)
+      end
+    end)
+  end
 end
 
 local Icons = { ui = require 'assets.icons'.get 'ui' }
@@ -69,36 +60,34 @@ local Icons = { ui = require 'assets.icons'.get 'ui' }
 ---@module 'mason'
 ---@type MasonSettings
 local MasonOpt = {
-    pip = {
-        upgrade_pip = false,
-        install_args = pip_args,
+  pip = {
+    upgrade_pip = false,
+    install_args = pip_args,
+  },
+  ui = {
+    border = 'rounded',
+    width = 0.8,
+    height = 0.8,
+    backdrop = 100,
+    icons = {
+      package_installed = Icons.ui.Check,
+      package_pending = Icons.ui.CloudDownload,
+      package_uninstalled = Icons.ui.Circle,
     },
-    ui = {
-        border = 'rounded',
-        width = 0.8,
-        height = 0.8,
-        backdrop = 100,
-        icons = {
-            package_installed = Icons.ui.Check,
-            package_pending = Icons.ui.CloudDownload,
-            package_uninstalled = Icons.ui.Circle,
-        },
-    },
+  },
 }
 
 -- Mason config table
 ---@type LazyPluginSpec
 local Mason = {
-    'williamboman/mason.nvim',
-    event = { 'BufReadPre', 'VeryLazy' },
-    cmd = { 'Mason' },
-    config = function()
-        require 'mason'.setup(MasonOpt)
-        vim.schedule(
-            require 'utils.loader'.bind(ensure_installed, LspEnsuredList)
-        )
-        require 'edit.lsp'.setup()
-    end,
+  'williamboman/mason.nvim',
+  event = { 'BufReadPre', 'VeryLazy' },
+  cmd = { 'Mason' },
+  config = function()
+    require 'mason'.setup(MasonOpt)
+    vim.schedule(require 'utils.loader'.bind(ensure_installed, LspEnsuredList))
+    require 'edit.lsp'.setup()
+  end,
 }
 
 return Mason

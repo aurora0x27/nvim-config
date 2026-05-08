@@ -46,28 +46,28 @@ local M = {}
 
 ---@type {SE: LayoutConstantDecl, NE: LayoutConstantDecl}
 local LAYOUT = {
-    SE = {
-        anchor = 'SE',
-        margin_right = 0,
-        margin_top = 1, -- placeholder
-        margin_bottom = 1,
-        gap = 1,
-        min_width = 40,
-        max_width = 0.45,
-        max_height = 0.5,
-        zindex_base = 200,
-    },
-    NE = {
-        anchor = 'NE',
-        margin_right = 0,
-        margin_top = 1,
-        margin_bottom = 1, -- placeholder
-        gap = 1,
-        min_width = 50,
-        max_width = 0.45,
-        max_height = 0.5,
-        zindex_base = 250,
-    },
+  SE = {
+    anchor = 'SE',
+    margin_right = 0,
+    margin_top = 1, -- placeholder
+    margin_bottom = 1,
+    gap = 1,
+    min_width = 40,
+    max_width = 0.45,
+    max_height = 0.5,
+    zindex_base = 200,
+  },
+  NE = {
+    anchor = 'NE',
+    margin_right = 0,
+    margin_top = 1,
+    margin_bottom = 1, -- placeholder
+    gap = 1,
+    min_width = 50,
+    max_width = 0.45,
+    max_height = 0.5,
+    zindex_base = 250,
+  },
 }
 
 --------------------------------------------------------------------------------
@@ -87,15 +87,15 @@ local LAYOUT = {
 
 ---@type {NE: ToastEntry[], SE: ToastEntry[]}
 local STACK = {
-    NE = {},
-    SE = {},
+  NE = {},
+  SE = {},
 }
 
 -- id -> index in STACK (kept in sync)
 ---@type {NE: table<string, integer>, SE: table<string, integer>}
 local ID_MAP = {
-    NE = {},
-    SE = {},
+  NE = {},
+  SE = {},
 }
 
 --------------------------------------------------------------------------------
@@ -111,43 +111,43 @@ local ID_MAP = {
 ---@param lvl integer
 ---@return ToastNotifyHL
 local function default_hl(lvl)
-    local level_map = {
-        [vim.log.levels.ERROR] = {
-            icon = 'DiagnosticError',
-            title = 'DiagnosticError',
-            border = 'DiagnosticError',
-        },
-        [vim.log.levels.WARN] = {
-            icon = 'DiagnosticWarn',
-            title = 'DiagnosticWarn',
-            border = 'DiagnosticWarn',
-        },
-        [vim.log.levels.INFO] = {
-            icon = 'FloatBorder',
-            title = 'FloatBorder',
-            border = 'FloatBorder',
-        },
-        [vim.log.levels.DEBUG] = {
-            icon = 'DiagnosticHint',
-            title = 'DiagnosticHint',
-            border = 'DiagnosticHint',
-        },
-        [vim.log.levels.TRACE] = {
-            icon = 'Comment',
-            title = 'Comment',
-            border = 'Comment',
-        },
-    }
+  local level_map = {
+    [vim.log.levels.ERROR] = {
+      icon = 'DiagnosticError',
+      title = 'DiagnosticError',
+      border = 'DiagnosticError',
+    },
+    [vim.log.levels.WARN] = {
+      icon = 'DiagnosticWarn',
+      title = 'DiagnosticWarn',
+      border = 'DiagnosticWarn',
+    },
+    [vim.log.levels.INFO] = {
+      icon = 'FloatBorder',
+      title = 'FloatBorder',
+      border = 'FloatBorder',
+    },
+    [vim.log.levels.DEBUG] = {
+      icon = 'DiagnosticHint',
+      title = 'DiagnosticHint',
+      border = 'DiagnosticHint',
+    },
+    [vim.log.levels.TRACE] = {
+      icon = 'Comment',
+      title = 'Comment',
+      border = 'Comment',
+    },
+  }
 
-    local hl = level_map[lvl] or {}
+  local hl = level_map[lvl] or {}
 
-    return {
-        title = hl.title or 'Title',
-        icon = hl.icon or 'Title',
-        msg = 'NormalFloat',
-        border = hl.border or 'FloatBorder',
-        footer = 'Comment',
-    }
+  return {
+    title = hl.title or 'Title',
+    icon = hl.icon or 'Title',
+    msg = 'NormalFloat',
+    border = hl.border or 'FloatBorder',
+    footer = 'Comment',
+  }
 end
 
 --------------------------------------------------------------------------------
@@ -173,54 +173,54 @@ end
 ---@param border string
 ---@return integer  extra_height  rows consumed by top+bottom border
 local function border_h(border)
-    return border == 'none' and 0 or 2
+  return border == 'none' and 0 or 2
 end
 
 ---@param border string
 ---@return integer  extra_width  columns consumed by left+right border + padding
 local function border_w(border)
-    return border == 'none' and 0 or 4 -- 1 border + 1 pad each side
+  return border == 'none' and 0 or 4 -- 1 border + 1 pad each side
 end
 
 ---@param opts ToastNotifyOpts
 ---@return string
 local function resolve_border(opts)
-    if opts.border == false then
-        return 'none'
-    elseif opts.border == nil or opts.border == true then
-        return 'rounded'
-    end
-    return opts.border --[[@as string]]
+  if opts.border == false then
+    return 'none'
+  elseif opts.border == nil or opts.border == true then
+    return 'rounded'
+  end
+  return opts.border --[[@as string]]
 end
 
 ---@param opts ToastNotifyOpts
 ---@return string
 local function resolve_icon(opts)
-    if opts.icon then
-        return opts.icon
-    end
-    if opts.level then
-        local icons = {
-            [vim.log.levels.ERROR] = '',
-            [vim.log.levels.WARN] = '',
-            [vim.log.levels.INFO] = '',
-            [vim.log.levels.DEBUG] = '󰃤',
-            [vim.log.levels.TRACE] = '󰐤',
-        }
-        return icons[opts.level] or ''
-    end
-    return ''
+  if opts.icon then
+    return opts.icon
+  end
+  if opts.level then
+    local icons = {
+      [vim.log.levels.ERROR] = '',
+      [vim.log.levels.WARN] = '',
+      [vim.log.levels.INFO] = '',
+      [vim.log.levels.DEBUG] = '󰃤',
+      [vim.log.levels.TRACE] = '󰐤',
+    }
+    return icons[opts.level] or ''
+  end
+  return ''
 end
 
 --- Resolve the anchor, always one of 'NE' or 'SE'
 ---@param opts ToastNotifyOpts
 ---@return string
 local function resolve_anchor(opts)
-    local a = opts.anchor or 'SE'
-    if a ~= 'NE' and a ~= 'SE' then
-        a = 'SE'
-    end
-    return a
+  local a = opts.anchor or 'SE'
+  if a ~= 'NE' and a ~= 'SE' then
+    a = 'SE'
+  end
+  return a
 end
 
 --------------------------------------------------------------------------------
@@ -235,28 +235,28 @@ end
 ---@return integer height
 ---@return integer wanted_height
 local function compute_dims(anchor, lines, title_text, footer_text, border)
-    local bw = border_w(border)
-    local cols = vim.o.columns
-    local rows = vim.o.lines
+  local bw = border_w(border)
+  local cols = vim.o.columns
+  local rows = vim.o.lines
 
-    local max_w = LAYOUT[anchor].max_width >= 1 and LAYOUT[anchor].max_width
-        or math.floor(cols * LAYOUT[anchor].max_width)
-    local max_h = LAYOUT[anchor].max_height >= 1 and LAYOUT[anchor].max_height
-        or math.floor(rows * LAYOUT[anchor].max_height)
+  local max_w = LAYOUT[anchor].max_width >= 1 and LAYOUT[anchor].max_width
+    or math.floor(cols * LAYOUT[anchor].max_width)
+  local max_h = LAYOUT[anchor].max_height >= 1 and LAYOUT[anchor].max_height
+    or math.floor(rows * LAYOUT[anchor].max_height)
 
-    -- content width needed
-    local cw = LAYOUT[anchor].min_width - bw
-    cw = math.max(cw, vim.fn.strdisplaywidth(title_text))
-    cw = math.max(cw, vim.fn.strdisplaywidth(footer_text))
-    for _, l in ipairs(lines) do
-        cw = math.max(cw, vim.fn.strdisplaywidth(l))
-    end
+  -- content width needed
+  local cw = LAYOUT[anchor].min_width - bw
+  cw = math.max(cw, vim.fn.strdisplaywidth(title_text))
+  cw = math.max(cw, vim.fn.strdisplaywidth(footer_text))
+  for _, l in ipairs(lines) do
+    cw = math.max(cw, vim.fn.strdisplaywidth(l))
+  end
 
-    local width = math.min(max_w, cw + bw)
-    local wanted = #lines
-    local height = math.min(max_h, math.max(1, wanted))
+  local width = math.min(max_w, cw + bw)
+  local wanted = #lines
+  local height = math.min(max_h, math.max(1, wanted))
 
-    return width, height, wanted
+  return width, height, wanted
 end
 
 --------------------------------------------------------------------------------
@@ -266,35 +266,34 @@ end
 -- nvim_open_win with anchor=SE: col is the RIGHT edge of the window.
 ---@param anchor ToastAnchor
 local function layout_col(anchor)
-    return vim.o.columns - LAYOUT[anchor].margin_right
+  return vim.o.columns - LAYOUT[anchor].margin_right
 end
 
 -- Reflow all toasts after any add / remove / resize.
 -- Toasts are stacked upward from the bottom; STACK[1] is bottommost.
 ---@param anchor ToastAnchor
 local function reflow(anchor)
-    local cfg = LAYOUT[anchor]
-    local is_top = (anchor == 'NE')
-    local stk = STACK[anchor]
+  local cfg = LAYOUT[anchor]
+  local is_top = (anchor == 'NE')
+  local stk = STACK[anchor]
 
-    local cursor = is_top and cfg.margin_top
-        or (vim.o.lines - cfg.margin_bottom)
+  local cursor = is_top and cfg.margin_top or (vim.o.lines - cfg.margin_bottom)
 
-    local step = is_top and 1 or -1
+  local step = is_top and 1 or -1
 
-    for i = 1, #stk do
-        local entry = stk[i]
-        if entry.win:is_valid() then
-            local total = entry.height + border_h(entry.border)
-            local new_opts = {
-                row = cursor,
-                col = vim.o.columns - cfg.margin_right,
-                anchor = cfg.anchor,
-            }
-            entry.win:update(new_opts)
-            cursor = cursor + step * (total + cfg.gap)
-        end
+  for i = 1, #stk do
+    local entry = stk[i]
+    if entry.win:is_valid() then
+      local total = entry.height + border_h(entry.border)
+      local new_opts = {
+        row = cursor,
+        col = vim.o.columns - cfg.margin_right,
+        anchor = cfg.anchor,
+      }
+      entry.win:update(new_opts)
+      cursor = cursor + step * (total + cfg.gap)
     end
+  end
 end
 
 --------------------------------------------------------------------------------
@@ -303,34 +302,34 @@ end
 ---@param anchor ToastAnchor
 ---@param entry ToastEntry
 local function push(anchor, entry)
-    table.insert(STACK[anchor], 1, entry)
-    -- rebuild id map
-    ID_MAP[anchor] = {}
-    for i, e in ipairs(STACK[anchor]) do
-        if e.id then
-            ID_MAP[anchor][e.id] = i
-        end
+  table.insert(STACK[anchor], 1, entry)
+  -- rebuild id map
+  ID_MAP[anchor] = {}
+  for i, e in ipairs(STACK[anchor]) do
+    if e.id then
+      ID_MAP[anchor][e.id] = i
     end
-    reflow(anchor)
+  end
+  reflow(anchor)
 end
 
 ---@param anchor ToastAnchor
 ---@param index integer  1-based index into STACK
 local function remove_at(anchor, index)
-    local entry = STACK[anchor][index]
-    if entry.timer then
-        entry.timer:close()
-        entry.timer = nil
+  local entry = STACK[anchor][index]
+  if entry.timer then
+    entry.timer:close()
+    entry.timer = nil
+  end
+  table.remove(STACK[anchor], index)
+  -- rebuild id map
+  ID_MAP[anchor] = {}
+  for i, e in ipairs(STACK[anchor]) do
+    if e.id then
+      ID_MAP[e.id] = i
     end
-    table.remove(STACK[anchor], index)
-    -- rebuild id map
-    ID_MAP[anchor] = {}
-    for i, e in ipairs(STACK[anchor]) do
-        if e.id then
-            ID_MAP[e.id] = i
-        end
-    end
-    reflow(anchor)
+  end
+  reflow(anchor)
 end
 
 --------------------------------------------------------------------------------
@@ -339,32 +338,32 @@ end
 ---@param entry   ToastEntry
 ---@param timeout number|false
 local function arm_timer(entry, timeout)
-    if entry.timer then
-        entry.timer:close()
-        entry.timer = nil
-    end
-    if not timeout or timeout == false or timeout == 0 then
-        return
-    end
+  if entry.timer then
+    entry.timer:close()
+    entry.timer = nil
+  end
+  if not timeout or timeout == false or timeout == 0 then
+    return
+  end
 
-    local t = Timer.new(timeout, function()
-        entry.timer = nil
-        -- find and close
-        for i, e in ipairs(STACK[entry.anchor]) do
-            if e == entry then
-                if e.win:is_valid() then
-                    pcall(function()
-                        e.win:close()
-                    end)
-                else
-                    remove_at(entry.anchor, i)
-                end
-                break
-            end
+  local t = Timer.new(timeout, function()
+    entry.timer = nil
+    -- find and close
+    for i, e in ipairs(STACK[entry.anchor]) do
+      if e == entry then
+        if e.win:is_valid() then
+          pcall(function()
+            e.win:close()
+          end)
+        else
+          remove_at(entry.anchor, i)
         end
-    end)
-    entry.timer = t
-    t:start()
+        break
+      end
+    end
+  end)
+  entry.timer = t
+  t:start()
 end
 
 --------------------------------------------------------------------------------
@@ -378,42 +377,42 @@ end
 ---@param hl        ToastNotifyHL
 ---@param ns        integer
 local function render_into(buf, notif_msg, title, icon, win_opts, hl, ns)
-    -- title bar in window border
-    local title_chunks = {
-        { ' ', hl.title },
-        { icon or ' ', hl.icon },
-        { ' ', hl.title },
-        { title or ' Messages ', hl.title },
-        { ' ', hl.title },
-    }
+  -- title bar in window border
+  local title_chunks = {
+    { ' ', hl.title },
+    { icon or ' ', hl.icon },
+    { ' ', hl.title },
+    { title or ' Messages ', hl.title },
+    { ' ', hl.title },
+  }
 
-    win_opts.title = title_chunks
-    win_opts.title_pos = 'center'
+  win_opts.title = title_chunks
+  win_opts.title_pos = 'center'
 
-    -- apply winhighlight
-    win_opts.wo = win_opts.wo or {}
-    win_opts.wo.winhighlight = ('Normal:%s,NormalNC:%s,FloatBorder:%s,FloatTitle:%s,FloatFooter:%s'):format(
-        hl.msg,
-        hl.msg,
-        hl.border,
-        hl.title,
-        hl.footer
-    )
-    win_opts.wo.conceallevel = 2
-    win_opts.wo.concealcursor = 'n'
+  -- apply winhighlight
+  win_opts.wo = win_opts.wo or {}
+  win_opts.wo.winhighlight = ('Normal:%s,NormalNC:%s,FloatBorder:%s,FloatTitle:%s,FloatFooter:%s'):format(
+    hl.msg,
+    hl.msg,
+    hl.border,
+    hl.title,
+    hl.footer
+  )
+  win_opts.wo.conceallevel = 2
+  win_opts.wo.concealcursor = 'n'
 
-    vim.bo[buf].modifiable = true
-    vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
-    local layout = Render.calculate_layout(notif_msg)
-    vim.api.nvim_buf_set_lines(buf, 0, -1, false, layout.lines)
-    for _, m in ipairs(layout.marks) do
-        pcall(vim.api.nvim_buf_set_extmark, buf, ns, m.row, m.col_start, {
-            end_col = m.col_end,
-            hl_group = m.hl,
-            priority = 100,
-        })
-    end
-    vim.bo[buf].modifiable = false
+  vim.bo[buf].modifiable = true
+  vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
+  local layout = Render.calculate_layout(notif_msg)
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, layout.lines)
+  for _, m in ipairs(layout.marks) do
+    pcall(vim.api.nvim_buf_set_extmark, buf, ns, m.row, m.col_start, {
+      end_col = m.col_end,
+      hl_group = m.hl,
+      priority = 100,
+    })
+  end
+  vim.bo[buf].modifiable = false
 end
 
 --------------------------------------------------------------------------------
@@ -424,204 +423,204 @@ end
 ---@param opts ToastNotifyOpts|nil
 ---@return table  win  Win instance
 function M.notify(msg, opts)
-    opts = opts or {}
-    local anchor = resolve_anchor(opts)
-    local timeout = opts.timeout ~= nil and opts.timeout or 3000
-    local border = resolve_border(opts)
-    local mode = opts.mode or 'replace'
-    local hl = vim.tbl_extend('force', default_hl(opts.level), opts.hl or {})
-    local icon = resolve_icon(opts)
-    local title = opts.title or 'Messages'
+  opts = opts or {}
+  local anchor = resolve_anchor(opts)
+  local timeout = opts.timeout ~= nil and opts.timeout or 3000
+  local border = resolve_border(opts)
+  local mode = opts.mode or 'replace'
+  local hl = vim.tbl_extend('force', default_hl(opts.level), opts.hl or {})
+  local icon = resolve_icon(opts)
+  local title = opts.title or 'Messages'
 
-    if type(msg) == 'string' then
-        msg = Render.to_chunks(msg)
+  if type(msg) == 'string' then
+    msg = Render.to_chunks(msg)
+  end
+
+  -- reuse existing toast for same id
+  local existing_idx = opts.id and ID_MAP[anchor][opts.id]
+  local entry ---@type ToastEntry|nil
+
+  if existing_idx then
+    entry = STACK[anchor][existing_idx]
+    if not entry.win:is_valid() then
+      remove_at(anchor, existing_idx)
+      entry = nil
     end
+  end
 
-    -- reuse existing toast for same id
-    local existing_idx = opts.id and ID_MAP[anchor][opts.id]
-    local entry ---@type ToastEntry|nil
+  if entry then
+    local final_msg = {}
 
-    if existing_idx then
-        entry = STACK[anchor][existing_idx]
-        if not entry.win:is_valid() then
-            remove_at(anchor, existing_idx)
-            entry = nil
-        end
-    end
-
-    if entry then
-        local final_msg = {}
-
-        if mode == 'append' and entry.win:is_valid() then
-            vim.list_extend(final_msg, entry.content)
-            table.insert(final_msg, Render.NEWLINE_CHUNK)
-            vim.list_extend(final_msg, msg)
-        else
-            final_msg = msg
-        end
-
-        -- update in place
-        render_into(entry.buf, final_msg, title, icon, entry.win.opts, hl, NS)
-
-        if opts.relayout ~= false then
-            -- recompute dimensions
-            local lines = vim.api.nvim_buf_get_lines(entry.buf, 0, -1, false)
-            local title_text = title ~= '' and (icon .. ' ' .. title) or ''
-            local footer_text = type(entry.win.opts.footer) == 'string'
-                    and entry.win.opts.footer
-                or '' --[[@as string]]
-            local w, h, wanted =
-                compute_dims(anchor, lines, title_text, footer_text, border)
-
-            if wanted > h and border ~= 'none' and opts.more_format then
-                entry.win.opts.footer = opts.more_format:format(wanted - h)
-                entry.win.opts.footer_pos = 'right'
-            else
-                entry.win.opts.footer = nil
-            end
-
-            entry.win.opts.width = w
-            entry.height = h
-            entry.win.opts.height = h
-            entry.content = final_msg
-        end
-
-        entry.win:open() -- reconfigure (idempotent)
-        arm_timer(entry, timeout)
-        reflow(anchor)
-        return entry.win
-    end
-
-    -- create new toast
-    -- Placeholder position; reflow() corrects it immediately after push().
-    local is_se = (anchor == 'SE')
-    local cfg = LAYOUT[anchor]
-    local placeholder_row
-    if is_se then
-        placeholder_row = vim.o.lines - cfg.margin_bottom
+    if mode == 'append' and entry.win:is_valid() then
+      vim.list_extend(final_msg, entry.content)
+      table.insert(final_msg, Render.NEWLINE_CHUNK)
+      vim.list_extend(final_msg, msg)
     else
-        placeholder_row = cfg.margin_top
-    end
-    local placeholder_col = layout_col(anchor)
-
-    local win_obj = Win.create({
-        relative = 'editor',
-        anchor = cfg.anchor,
-        row = placeholder_row,
-        col = placeholder_col,
-        width = cfg.min_width,
-        height = 3,
-        border = border,
-        focusable = false,
-        focus_on_open = false,
-        zindex = cfg.zindex_base,
-        ft = opts.ft or '',
-        wo = { number = false, wrap = false, cursorline = false },
-        bo = {},
-        noautocmd = true,
-    })
-
-    win_obj:open()
-    local buf = win_obj.buf
-    render_into(buf, msg, title, icon, win_obj.opts, hl, NS)
-
-    -- compute real dimensions
-    local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-    local title_text = title ~= '' and (icon .. ' ' .. title) or ''
-    local w, h, wanted = compute_dims(anchor, lines, title_text, '', border)
-
-    if wanted > h and border ~= 'none' and opts.more_format then
-        win_obj.opts.footer = opts.more_format:format(wanted - h)
-        win_obj.opts.footer_pos = 'right'
+      final_msg = msg
     end
 
-    win_obj.opts.width = w
-    win_obj.opts.height = h
-    win_obj:open() -- reconfigure with real dims
+    -- update in place
+    render_into(entry.buf, final_msg, title, icon, entry.win.opts, hl, NS)
 
-    ---@type ToastEntry
-    local new_entry = {
-        anchor = anchor,
-        id = opts.id,
-        win = win_obj,
-        buf = buf,
-        content = msg,
-        timer = nil,
-        height = h,
-        border = border,
-    }
+    if opts.relayout ~= false then
+      -- recompute dimensions
+      local lines = vim.api.nvim_buf_get_lines(entry.buf, 0, -1, false)
+      local title_text = title ~= '' and (icon .. ' ' .. title) or ''
+      local footer_text = type(entry.win.opts.footer) == 'string'
+          and entry.win.opts.footer
+        or '' --[[@as string]]
+      local w, h, wanted =
+        compute_dims(anchor, lines, title_text, footer_text, border)
 
-    -- wire up cleanup on window close (user presses q, etc.)
-    local orig_on_close = win_obj.opts.on_close
-    win_obj.opts.on_close = function(win)
-        for i, e in ipairs(STACK[anchor]) do
-            if e == new_entry then
-                remove_at(anchor, i)
-                break
-            end
-        end
-        if orig_on_close then
-            orig_on_close(win)
-        end
+      if wanted > h and border ~= 'none' and opts.more_format then
+        entry.win.opts.footer = opts.more_format:format(wanted - h)
+        entry.win.opts.footer_pos = 'right'
+      else
+        entry.win.opts.footer = nil
+      end
+
+      entry.win.opts.width = w
+      entry.height = h
+      entry.win.opts.height = h
+      entry.content = final_msg
     end
 
-    arm_timer(new_entry, timeout)
-    push(anchor, new_entry) -- inserts at bottom and reflowing
+    entry.win:open() -- reconfigure (idempotent)
+    arm_timer(entry, timeout)
+    reflow(anchor)
+    return entry.win
+  end
 
-    return win_obj
+  -- create new toast
+  -- Placeholder position; reflow() corrects it immediately after push().
+  local is_se = (anchor == 'SE')
+  local cfg = LAYOUT[anchor]
+  local placeholder_row
+  if is_se then
+    placeholder_row = vim.o.lines - cfg.margin_bottom
+  else
+    placeholder_row = cfg.margin_top
+  end
+  local placeholder_col = layout_col(anchor)
+
+  local win_obj = Win.create({
+    relative = 'editor',
+    anchor = cfg.anchor,
+    row = placeholder_row,
+    col = placeholder_col,
+    width = cfg.min_width,
+    height = 3,
+    border = border,
+    focusable = false,
+    focus_on_open = false,
+    zindex = cfg.zindex_base,
+    ft = opts.ft or '',
+    wo = { number = false, wrap = false, cursorline = false },
+    bo = {},
+    noautocmd = true,
+  })
+
+  win_obj:open()
+  local buf = win_obj.buf
+  render_into(buf, msg, title, icon, win_obj.opts, hl, NS)
+
+  -- compute real dimensions
+  local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+  local title_text = title ~= '' and (icon .. ' ' .. title) or ''
+  local w, h, wanted = compute_dims(anchor, lines, title_text, '', border)
+
+  if wanted > h and border ~= 'none' and opts.more_format then
+    win_obj.opts.footer = opts.more_format:format(wanted - h)
+    win_obj.opts.footer_pos = 'right'
+  end
+
+  win_obj.opts.width = w
+  win_obj.opts.height = h
+  win_obj:open() -- reconfigure with real dims
+
+  ---@type ToastEntry
+  local new_entry = {
+    anchor = anchor,
+    id = opts.id,
+    win = win_obj,
+    buf = buf,
+    content = msg,
+    timer = nil,
+    height = h,
+    border = border,
+  }
+
+  -- wire up cleanup on window close (user presses q, etc.)
+  local orig_on_close = win_obj.opts.on_close
+  win_obj.opts.on_close = function(win)
+    for i, e in ipairs(STACK[anchor]) do
+      if e == new_entry then
+        remove_at(anchor, i)
+        break
+      end
+    end
+    if orig_on_close then
+      orig_on_close(win)
+    end
+  end
+
+  arm_timer(new_entry, timeout)
+  push(anchor, new_entry) -- inserts at bottom and reflowing
+
+  return win_obj
 end
 
 ---Dismiss a specific toast by its id.
 ---Searches all stacks; if the same id exists in both, both are dismissed.
 ---@param id string
 function M.dismiss(id)
-    for anchor in pairs(STACK) do
-        local idx = ID_MAP[anchor][id]
-        if idx then
-            local entry = STACK[anchor][idx]
-            if entry.win:is_valid() then
-                pcall(function()
-                    entry.win:close()
-                end)
-            else
-                remove_at(anchor, idx)
-            end
-        end
+  for anchor in pairs(STACK) do
+    local idx = ID_MAP[anchor][id]
+    if idx then
+      local entry = STACK[anchor][idx]
+      if entry.win:is_valid() then
+        pcall(function()
+          entry.win:close()
+        end)
+      else
+        remove_at(anchor, idx)
+      end
     end
+  end
 end
 
 ---Dismiss all active toasts.
 ---@param opts? { anchor?: ToastAnchor }  if provided, only clears that stack
 function M.dismiss_all(opts)
-    opts = opts or {}
-    local target_anchors
-    if opts.anchor and (opts.anchor == 'NE' or opts.anchor == 'SE') then
-        target_anchors = { opts.anchor }
-    else
-        target_anchors = { 'NE', 'SE' }
-    end
+  opts = opts or {}
+  local target_anchors
+  if opts.anchor and (opts.anchor == 'NE' or opts.anchor == 'SE') then
+    target_anchors = { opts.anchor }
+  else
+    target_anchors = { 'NE', 'SE' }
+  end
 
-    for _, anchor in ipairs(target_anchors) do
-        local stack = STACK[anchor]
-        -- iterate in reverse so indices remain valid while closing
-        for i = #stack, 1, -1 do
-            local entry = stack[i]
-            if entry.win:is_valid() then
-                pcall(function()
-                    entry.win:close()
-                end)
-            end
-        end
+  for _, anchor in ipairs(target_anchors) do
+    local stack = STACK[anchor]
+    -- iterate in reverse so indices remain valid while closing
+    for i = #stack, 1, -1 do
+      local entry = stack[i]
+      if entry.win:is_valid() then
+        pcall(function()
+          entry.win:close()
+        end)
+      end
     end
+  end
 end
 
 -- Re-layout on VimResized (single global autocmd).
 vim.api.nvim_create_autocmd('VimResized', {
-    group = vim.api.nvim_create_augroup('ToastLayout', { clear = true }),
-    callback = function()
-        reflow 'NE'
-        reflow 'SE'
-    end,
+  group = vim.api.nvim_create_augroup('ToastLayout', { clear = true }),
+  callback = function()
+    reflow 'NE'
+    reflow 'SE'
+  end,
 })
 
 return M

@@ -5,47 +5,47 @@ local thunk = require 'utils.loader'.thunk
 -- resize window
 ----------------------------------------------------------------------------
 map(
-    'n',
-    '<C-Left>',
-    thunk('smart-splits', 'resize_left'),
-    { noremap = true, silent = true }
+  'n',
+  '<C-Left>',
+  thunk('smart-splits', 'resize_left'),
+  { noremap = true, silent = true }
 )
 map(
-    'n',
-    '<C-Right>',
-    thunk('smart-splits', 'resize_right'),
-    { noremap = true, silent = true }
+  'n',
+  '<C-Right>',
+  thunk('smart-splits', 'resize_right'),
+  { noremap = true, silent = true }
 )
 map(
-    'n',
-    '<C-Up>',
-    thunk('smart-splits', 'resize_up'),
-    { noremap = true, silent = true }
+  'n',
+  '<C-Up>',
+  thunk('smart-splits', 'resize_up'),
+  { noremap = true, silent = true }
 )
 map(
-    'n',
-    '<C-Down>',
-    thunk('smart-splits', 'resize_down'),
-    { noremap = true, silent = true }
-)
-
-map(
-    'n',
-    '<leader>;w',
-    thunk('nvim-window', 'pick'),
-    { desc = 'Pick [W]indows', noremap = true, silent = true }
+  'n',
+  '<C-Down>',
+  thunk('smart-splits', 'resize_down'),
+  { noremap = true, silent = true }
 )
 
 map(
-    'n',
-    '<leader>wss',
-    '<cmd>split<cr>',
-    { desc = '[S]plit Current Window', noremap = true, silent = true }
+  'n',
+  '<leader>;w',
+  thunk('nvim-window', 'pick'),
+  { desc = 'Pick [W]indows', noremap = true, silent = true }
 )
 
 map(
-    'n',
-    '<leader>wvv',
-    '<cmd>vsplit<cr>',
-    { desc = '[V]split Current Window', noremap = true, silent = true }
+  'n',
+  '<leader>wss',
+  '<cmd>split<cr>',
+  { desc = '[S]plit Current Window', noremap = true, silent = true }
+)
+
+map(
+  'n',
+  '<leader>wvv',
+  '<cmd>vsplit<cr>',
+  { desc = '[V]split Current Window', noremap = true, silent = true }
 )

@@ -7,98 +7,98 @@ local detect = require 'utils.detect'
 local sandbox = require 'core.sandbox'.get_mask()
 
 local Opt = {
-    numberwidth = 1,
-    spell = false,
-    signcolumn = 'auto',
-    wrap = false,
-    clipboard = 'unnamedplus',
-    termguicolors = true,
-    wildmenu = true,
-    ssop = 'blank,buffers,curdir,folds,help,tabpages,winsize,terminal',
-    ignorecase = true,
-    undofile = sandbox.undo,
-    swapfile = sandbox.swap,
-    writebackup = sandbox.wb,
-    undodir = vim.fn.stdpath 'state' .. '/undo',
-    scrolloff = 5,
-    virtualedit = 'block',
-    showmode = false,
-    cmdheight = 0,
-    inccommand = '',
-    splitright = true,
-    splitbelow = true,
-    guicursor = 'n-v-c-sm:block,i-ci-ve:ver25,r-cr-o:hor20,t:block-blinkon0-TermCursor',
+  numberwidth = 1,
+  spell = false,
+  signcolumn = 'auto',
+  wrap = false,
+  clipboard = 'unnamedplus',
+  termguicolors = true,
+  wildmenu = true,
+  ssop = 'blank,buffers,curdir,folds,help,tabpages,winsize,terminal',
+  ignorecase = true,
+  undofile = sandbox.undo,
+  swapfile = sandbox.swap,
+  writebackup = sandbox.wb,
+  undodir = vim.fn.stdpath 'state' .. '/undo',
+  scrolloff = 5,
+  virtualedit = 'block',
+  showmode = false,
+  cmdheight = 0,
+  inccommand = '',
+  splitright = true,
+  splitbelow = true,
+  guicursor = 'n-v-c-sm:block,i-ci-ve:ver25,r-cr-o:hor20,t:block-blinkon0-TermCursor',
 }
 
 local misc = require 'utils.misc'
 
 function M.setup()
-    -- An ungracefull way to fix neovide terminal color render bug
-    if vim.g.neovide then
-        vim.g.terminal_color_0 = '#45475a'
-        vim.g.terminal_color_1 = '#f38ba8'
-        vim.g.terminal_color_2 = '#a6e3a1'
-        vim.g.terminal_color_3 = '#f9e2af'
-        vim.g.terminal_color_4 = '#89b4fa'
-        vim.g.terminal_color_5 = '#f5c2e7'
-        vim.g.terminal_color_6 = '#94e2d5'
-        vim.g.terminal_color_7 = '#bac2de'
-        vim.g.terminal_color_8 = '#585b70'
-        vim.g.terminal_color_9 = '#f38ba8'
-        vim.g.terminal_color_10 = '#a6e3a1'
-        vim.g.terminal_color_11 = '#f9e2af'
-        vim.g.terminal_color_12 = '#89b4fa'
-        vim.g.terminal_color_13 = '#f5c2e7'
-        vim.g.terminal_color_14 = '#94e2d5'
-        vim.g.terminal_color_15 = '#a6adc8'
+  -- An ungracefull way to fix neovide terminal color render bug
+  if vim.g.neovide then
+    vim.g.terminal_color_0 = '#45475a'
+    vim.g.terminal_color_1 = '#f38ba8'
+    vim.g.terminal_color_2 = '#a6e3a1'
+    vim.g.terminal_color_3 = '#f9e2af'
+    vim.g.terminal_color_4 = '#89b4fa'
+    vim.g.terminal_color_5 = '#f5c2e7'
+    vim.g.terminal_color_6 = '#94e2d5'
+    vim.g.terminal_color_7 = '#bac2de'
+    vim.g.terminal_color_8 = '#585b70'
+    vim.g.terminal_color_9 = '#f38ba8'
+    vim.g.terminal_color_10 = '#a6e3a1'
+    vim.g.terminal_color_11 = '#f9e2af'
+    vim.g.terminal_color_12 = '#89b4fa'
+    vim.g.terminal_color_13 = '#f5c2e7'
+    vim.g.terminal_color_14 = '#94e2d5'
+    vim.g.terminal_color_15 = '#a6adc8'
+  end
+
+  if detect.is_windows() then
+    if detect.is_executable 'win32yank.exe' then
+      vim.o.shell = 'nu'
+      vim.o.shellcmdflag = '-c'
+      vim.o.shellquote = ''
+      vim.o.shellxquote = ''
+      misc.info('Run windows clipboard settings', { title = 'Options' })
+      vim.g.clipboard = {
+        name = 'win32yank',
+        copy = {
+          ['+'] = 'win32yank.exe -i --crlf',
+          ['*'] = 'win32yank.exe -i --crlf',
+        },
+        paste = {
+          ['+'] = 'win32yank.exe -o --lf',
+          ['*'] = 'win32yank.exe -o --lf',
+        },
+        cache_enabled = 0,
+      }
+    else
+      misc.warn(
+        'Under windows cannot find win32yank.exe, please install',
+        { title = 'Clipboard' }
+      )
     end
+  end
 
-    if detect.is_windows() then
-        if detect.is_executable 'win32yank.exe' then
-            vim.o.shell = 'nu'
-            vim.o.shellcmdflag = '-c'
-            vim.o.shellquote = ''
-            vim.o.shellxquote = ''
-            misc.info('Run windows clipboard settings', { title = 'Options' })
-            vim.g.clipboard = {
-                name = 'win32yank',
-                copy = {
-                    ['+'] = 'win32yank.exe -i --crlf',
-                    ['*'] = 'win32yank.exe -i --crlf',
-                },
-                paste = {
-                    ['+'] = 'win32yank.exe -o --lf',
-                    ['*'] = 'win32yank.exe -o --lf',
-                },
-                cache_enabled = 0,
-            }
-        else
-            misc.warn(
-                'Under windows cannot find win32yank.exe, please install',
-                { title = 'Clipboard' }
-            )
-        end
-    end
+  local mocha = require('catppuccin.palettes').get_palette 'mocha'
 
-    local mocha = require('catppuccin.palettes').get_palette 'mocha'
+  if Profile.transparent_mode then
+    vim.api.nvim_set_hl(
+      0,
+      '@variable',
+      vim.tbl_extend(
+        'force',
+        vim.api.nvim_get_hl(0, { name = '@variable' }),
+        { italic = true, fg = mocha.lavender }
+      )
+    )
+  end
 
-    if Profile.transparent_mode then
-        vim.api.nvim_set_hl(
-            0,
-            '@variable',
-            vim.tbl_extend(
-                'force',
-                vim.api.nvim_get_hl(0, { name = '@variable' }),
-                { italic = true, fg = mocha.lavender }
-            )
-        )
-    end
+  vim.fn.mkdir(vim.opt.undodir:get()[1], 'p')
 
-    vim.fn.mkdir(vim.opt.undodir:get()[1], 'p')
-
-    for k, v in pairs(Opt) do
-        vim.o[k] = v
-    end
+  for k, v in pairs(Opt) do
+    vim.o[k] = v
+  end
 end
 
 return M
