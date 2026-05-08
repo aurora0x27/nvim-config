@@ -103,7 +103,7 @@ dir. Here're customizable items:
   - _`transparent_mode`_ enable transparent mode
   - _`dashboard_art_name`_ choose an ascii art on dashboard
   - _`statline_scrollbar_style`_ choose a style for heirline scroll bar, which displays cursor position
-  - _`diagnose_inline`_ do not use virtual lines to display diagnostic messages
+  - _`enable_relative_lnum`_ use relative number
   - _`diagnose_mode`_ diagnose display level, options are `'inline'|'detailed'|'pretty'`, `inline` means use virtual text
     to display diagnostic messages, `detailed` means use extra virtual lines, `pretty` means use extra plugin --
     `tiny-inline-diagnostic` to display, default `inline`
@@ -111,7 +111,7 @@ dir. Here're customizable items:
   - _`diagnose_with_fancy_underline`_ whether to use fancy undercurl line, **need terminal and tmux support**
   - _`enable_current_line_blame`_ enable virtual text line blame at the end of line
   - _`enable_dropbar`_ enable breadcrumbs for each window
-  - *`use_ufo_as_fold_provider`* use `nvim-ufo` as fold provider to get better code fold experience
+  - _`use_ufo_as_fold_provider`_ use `nvim-ufo` as fold provider to get better code fold experience
 
 - Lang module
   - _`lang_blacklist`_ disabled lang configs, default none, split by ','
@@ -159,6 +159,7 @@ local defaults = {
   enable_lsp = vim.fn.has 'nvim-0.11' == 1,
   enable_inlay_hint = false,
   enable_current_line_blame = false,
+  enable_relative_lnum = false,
   blink_use_binary = true,
   lang_blacklist = 'all',
   lang_whitelist = '',

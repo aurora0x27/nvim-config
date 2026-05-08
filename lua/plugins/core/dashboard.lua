@@ -12,6 +12,11 @@ local Dashboard = {
         local set_global_hl = require 'utils.misc'.set_global_hl
         local colors = require 'assets.theme'.ColorAlias
 
+        vim.cmd [[ autocmd FileType alpha setlocal nofoldenable ]]
+        vim.cmd [[ autocmd FileType alpha setlocal nonumber ]]
+        vim.cmd [[ autocmd FileType alpha setlocal norelativenumber ]]
+        vim.cmd [[ autocmd FileType alpha setlocal nocursorline ]]
+
         set_global_hl('AlphaHeader', colors.blue)
         set_global_hl('AlphaButtons', colors.green)
         set_global_hl('AlphaShortcut', colors.pink, nil, true, true)
@@ -152,8 +157,6 @@ local Dashboard = {
                 pcall(vim.cmd.AlphaRedraw)
             end,
         })
-
-        vim.cmd [[ autocmd FileType alpha setlocal nofoldenable ]]
     end,
 }
 

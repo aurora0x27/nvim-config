@@ -7,7 +7,7 @@ local detect = require 'utils.detect'
 local sandbox = require 'core.sandbox'.get_mask()
 
 local Opt = {
-    relativenumber = false,
+    numberwidth = 1,
     spell = false,
     signcolumn = 'auto',
     wrap = false,

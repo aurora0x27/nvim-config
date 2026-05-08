@@ -30,6 +30,7 @@ function M.setup()
     -- prevents line number and cursor line appear on
     -- dashboard, so werid.
     vim.o.number = true
+    vim.o.relativenumber = Profile.enable_relative_lnum
     vim.o.cursorline = not Profile.transparent_mode
 
     vim.opt.fillchars = {

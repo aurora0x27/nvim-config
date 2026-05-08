@@ -96,6 +96,7 @@ nvim # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
   - _`transparent_mode`_ 启用透明模式
   - _`dashboard_art_name`_ 选择仪表盘上的 ASCII 艺术字
   - _`statline_scrollbar_style`_ 选择用于显示光标位置的滚动条样式
+  - _`enable_relative_lnum`_ 使用相对行号.
   - _`diagnose_mode`_ 诊断显示级别，选项为 `'inline'|'detailed'|'pretty'`，`inline` 表示使用虚拟文本显示诊断信息，
     `detailed` 表示使用额外的虚拟行显示诊断信息，`pretty` 表示使用额外的插件 -- `tiny-inline-diagnostic`
     用于显示诊断信息，默认为 `inline`
@@ -103,7 +104,7 @@ nvim # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
   - _`diagnose_with_fancy_underline`_ 是否使用花哨的下划线，**需要终端和 tmux 支持**
   - _`enable_current_line_blame`_ 启用行尾的虚拟文本行错误信息显示
   - _`enable_dropbar`_ 为每个窗口启用面包屑导航
-  - *`use_ufo_as_fold_provider`* 使用 `nvim-ufo` 作为默认的折叠提供来源, 获得更好的代码折叠体验.
+  - _`use_ufo_as_fold_provider`_ 使用 `nvim-ufo` 作为默认的折叠提供来源, 获得更好的代码折叠体验.
 
 - 语言模块
   - _`lang_blacklist`_ 禁用语言配置，默认禁用，以逗号分隔

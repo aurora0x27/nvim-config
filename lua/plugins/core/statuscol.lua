@@ -6,99 +6,98 @@
 local StatusCol = {
     'luukvbaal/statuscol.nvim',
     event = 'UIEnter',
-    config = function()
-        local builtin = require 'statuscol.builtin'
-
-        require('statuscol').setup {
-            bt_ignore = { 'nofile', 'terminal', 'help' },
-            ft_ignore = { 'NeogitStatus', 'help' },
-            segments = {
-                {
-                    sign = {
-                        namespace = { 'gitsigns' },
-                        wrap = false,
-                        auto = true,
-                        colwidth = 1,
-                    },
-                    condition = {
-                        function()
-                            local status = vim.b.gitsigns_status_dict or {}
-                            local added = status.added or 0
-                            local changed = status.changed or 0
-                            local removed = status.removed or 0
-                            return added > 0 or changed > 0 or removed > 0
-                        end,
-                    },
-                    click = 'v:lua.ScSa',
+    opts = {
+        bt_ignore = { 'nofile', 'terminal', 'help' },
+        ft_ignore = { 'NeogitStatus', 'help' },
+        segments = {
+            {
+                sign = {
+                    namespace = { 'gitsigns' },
+                    wrap = false,
+                    auto = true,
+                    colwidth = 1,
                 },
-                {
-                    sign = {
-                        namespace = { 'diagnostic/signs' },
-                        wrap = false,
-                        auto = true,
-                        colwidth = 1,
-                    },
-                    text = {
-                        function(args)
-                            local lnum = args.lnum - 1
-                            local diags =
-                                vim.diagnostic.get(args.buf, { lnum = lnum })
-                            if #diags == 0 then
-                                return ' '
-                            end
-
-                            table.sort(diags, function(a, b)
-                                return a.severity < b.severity
-                            end)
-
-                            local d = diags[1]
-                            local map = require 'edit.diagnostic'.get_icon_map()
-                            local spec = map[d.severity]
-                            return ('%%#%s#%s%%*'):format(spec.hl, spec.icon)
-                        end,
-                    },
-                    condition = {
-                        function(args)
-                            local mode = vim.fn.mode()
-                            if mode:find('^[isIS\x13]') then
-                                return false
-                            end
-
-                            if vim.v.virtnum ~= 0 then
-                                return false
-                            end
-
-                            local diags = vim.diagnostic.get(args.buf, {
-                                lnum = args.lnum - 1,
-                            })
-
-                            return #diags > 0
-                        end,
-                    },
-                    click = 'v:lua.ScSa',
+                condition = {
+                    function()
+                        local status = vim.b.gitsigns_status_dict or {}
+                        local added = status.added or 0
+                        local changed = status.changed or 0
+                        local removed = status.removed or 0
+                        return added > 0 or changed > 0 or removed > 0
+                    end,
                 },
-                {
-                    text = {
-                        function(args)
-                            return builtin.lnumfunc(args) .. ' '
-                        end,
-                    },
-                    click = 'v:lua.ScLa',
-                },
-                {
-                    text = {
-                        function(args)
-                            args.fold.close = ''
-                            args.fold.open = ''
-                            args.fold.sep = ' '
-                            return builtin.foldfunc(args) .. ' '
-                        end,
-                    },
-                    click = 'v:lua.ScFa',
-                },
+                click = 'v:lua.ScSa',
             },
-        }
-    end,
+            {
+                sign = {
+                    namespace = { 'diagnostic/signs' },
+                    wrap = false,
+                    auto = true,
+                    colwidth = 2,
+                },
+                text = {
+                    function(args)
+                        local lnum = args.lnum - 1
+                        local diags =
+                            vim.diagnostic.get(args.buf, { lnum = lnum })
+                        if #diags == 0 then
+                            return ' '
+                        end
+
+                        table.sort(diags, function(a, b)
+                            return a.severity < b.severity
+                        end)
+
+                        local d = diags[1]
+                        local map = require 'edit.diagnostic'.get_icon_map()
+                        local spec = map[d.severity]
+                        return ('%%#%s#%s%%*'):format(spec.hl, spec.icon)
+                    end,
+                },
+                condition = {
+                    function(args)
+                        local mode = vim.fn.mode()
+                        if mode:find('^[isIS\x13]') then
+                            return false
+                        end
+
+                        if vim.v.virtnum ~= 0 then
+                            return false
+                        end
+
+                        local diags = vim.diagnostic.get(args.buf, {
+                            lnum = args.lnum - 1,
+                        })
+
+                        return #diags > 0
+                    end,
+                },
+                click = 'v:lua.ScSa',
+            },
+            {
+                text = {
+                    function(args)
+                        return string.format(
+                            ' %s ',
+                            require 'statuscol.builtin'.lnumfunc(args)
+                        )
+                    end,
+                },
+                click = 'v:lua.ScLa',
+            },
+            {
+                text = {
+                    function(args)
+                        args.fold.close = ''
+                        args.fold.open = ''
+                        args.fold.sep = ' '
+                        return require 'statuscol.builtin'.foldfunc(args) .. ' '
+                    end,
+                },
+                click = 'v:lua.ScFa',
+            },
+        },
+    },
 }
 
 return StatusCol

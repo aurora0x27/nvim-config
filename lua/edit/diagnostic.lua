@@ -4,7 +4,7 @@
 
 local M = {}
 
-local IconDiag = require 'assets.icons'.get 'diagnostics'
+local IconDiag = require 'assets.icons'.get('diagnostics', true)
 
 local RawIconSpec = {
     [vim.diagnostic.severity.ERROR] = {
@@ -31,7 +31,7 @@ local thunk = require 'utils.loader'.thunk
 local IconTable = (function()
     local ret = {}
     for severity, spec in pairs(RawIconSpec) do
-        ret[severity] = spec.icon .. ' '
+        ret[severity] = spec.icon
     end
     return ret
 end)()
@@ -60,7 +60,7 @@ function M.setup()
             prefix = function(diag)
                 local map = RawIconSpec
                 local spec = map[diag.severity]
-                return spec.icon .. ' ', spec.hl
+                return spec.icon, spec.hl
             end,
         },
     }

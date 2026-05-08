@@ -13,6 +13,7 @@ return {
     enable_lsp = vim.fn.has 'nvim-0.11' == 1,
     enable_inlay_hint = false,
     enable_current_line_blame = false,
+    enable_relative_lnum = false,
     blink_use_binary = true,
     lang_blacklist = 'all',
     lang_whitelist = '',
