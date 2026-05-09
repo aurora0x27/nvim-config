@@ -1,5 +1,7 @@
 local misc = require 'utils.misc'
 local map = vim.keymap.set
+local bind = require 'utils.loader'.bind
+local LOG_TITLE = 'Tabline'
 
 ----------------------------------------------------------------------------
 -- Tab related
@@ -10,12 +12,14 @@ map(
   '<cmd>tabnext<cr>',
   { noremap = true, silent = true, desc = '[T]ab shif[T]' }
 )
+
 map(
   { 'n' },
   '<leader>tnn',
   '<cmd>tabnew<cr>',
   { noremap = true, silent = true, desc = 'Tab [N]ew' }
 )
+
 map({ 'n' }, '<leader>tnN', function()
   local name = vim.fn.input('File name: ', '', 'file')
   if name ~= '' then
@@ -25,17 +29,37 @@ map({ 'n' }, '<leader>tnN', function()
     misc.warn 'Warn: Filename not assigned, opening an anonymous buffer'
   end
 end, { noremap = true, silent = true, desc = 'Tab [N]ew with name' })
+
 map(
   { 'n' },
   '<leader>tp',
   '<cmd>tabprevious<cr>',
   { noremap = true, silent = true, desc = '[T]ab switch [P]revious' }
 )
+
 map({ 'n' }, '<leader>ta', '<cmd>tabnew %<cr>', {
   noremap = true,
   silent = true,
   desc = 'Tab [A]dd With Current Buffer',
 })
+
+map(
+  { 'n' },
+  '<leader>tr',
+  bind(vim.ui.input, { prompt = 'New Tab Name' }, function(input)
+    if input then
+      require 'bufferline.tabpages'.rename_tab(0, input)
+    else
+      vim.notify('', vim.log.levels.INFO, { title = LOG_TITLE })
+    end
+  end),
+  {
+    noremap = true,
+    silent = true,
+    desc = 'Tab [R]ename',
+  }
+)
+
 map(
   { 'n' },
   '<leader>tc',

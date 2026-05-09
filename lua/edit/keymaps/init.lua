@@ -81,12 +81,6 @@ function M.setup()
   vim.keymap.del('s', 'k')
 
   map(
-    'n',
-    '<leader>h',
-    '<cmd>Alpha<CR>',
-    { desc = 'Open [H]ome Page', noremap = true, silent = true }
-  )
-  map(
     { 'n' },
     '<leader>lm',
     thunk('mason.ui', 'open'),
