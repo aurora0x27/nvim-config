@@ -15,6 +15,8 @@ local MessagePreviewer = nil
 
 local PREVIEW_TITLE = ' RecordedMsg '
 
+local LOG_TITLE = 'Message Recorder'
+
 ---@type MsgRecorderOpt
 local MSG_RECORDER_OPT_DEFAULT = {
   max_msg_limit = 1024,
@@ -113,12 +115,10 @@ function M.fzf_messages()
         local idx = tonumber(selected[1]:match('^%[(%d+)%]'))
         local msg = RecordedMessages[idx]
         if msg then
-          if type(msg.content) == 'string' then
-            print(msg.content)
-          else
-            local layout = calculate_layout(msg.content)
-            print(table.concat(layout.lines, '\n'))
-          end
+          -- reboardcast
+          -- NOTE: Keep origin message immutable
+          local snapshot = Bus.dup(msg, { no_record = true })
+          Bus.emit_msg(snapshot)
         end
       end,
       ['ctrl-y'] = function(selected)
@@ -130,7 +130,14 @@ function M.fzf_messages()
           local layout = calculate_layout(msg.content)
           vim.fn.setreg('+', table.concat(layout.lines, '\n'))
         end
-        print('Copied to clipboard')
+        local newmsg = Bus.build_msg(
+          'notify',
+          vim.log.levels.INFO,
+          'Copied to clipboard',
+          { title = LOG_TITLE }
+        )
+        newmsg.meta.no_record = true
+        Bus.emit_msg(newmsg)
       end,
     },
     winopts = {
@@ -165,8 +172,8 @@ function M.setup(opts)
         'bus',
         'msg.clear',
         'msg.show.emsg',
-        'msg.show.echoerr',
         'msg.show.echo',
+        'msg.show.echoerr',
         'msg.show.echomsg',
         'msg.show.list_cmd',
         'msg.show.lua_error',
@@ -175,7 +182,6 @@ function M.setup(opts)
         'msg.show.shell_out',
         'msg.show.shell_ret',
         'msg.show.shell_err',
-        -- 'msg.show.bufwrite',
         'msg.show.quickfix',
       },
     },
@@ -185,7 +191,10 @@ function M.setup(opts)
         M.clear()
         return false
       end
-      if #RecordedMessages > Opt.max_msg_limit then
+      if msg.meta.no_record then
+        return false
+      end
+      if #RecordedMessages >= Opt.max_msg_limit then
         table.remove(RecordedMessages, 1)
       end
       table.insert(RecordedMessages, msg)

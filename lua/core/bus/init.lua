@@ -38,6 +38,7 @@ local M = {}
 ---@field level     integer
 ---@field content   any            payload, format defined by tag convention
 ---@field timestamp number         vim.uv.now()
+---@field meta      table          meta flags
 ---@field data      table?         source-defined metadata, opaque to bus
 
 ---@type BusInitOpt
@@ -112,6 +113,11 @@ function M.unsubscribe(id)
 end
 
 local _id_counter = 0
+---@return integer
+local function new_id()
+  _id_counter = _id_counter + 1
+  return _id_counter
+end
 
 ---@param tag string
 ---@param level integer
@@ -124,8 +130,7 @@ local function build_msg(tag, level, content, data, cover_id)
   if cover_id then
     id = cover_id
   else
-    _id_counter = _id_counter + 1
-    id = _id_counter
+    id = new_id()
   end
   ---@type Message
   return {
@@ -135,6 +140,7 @@ local function build_msg(tag, level, content, data, cover_id)
     content = content,
     timestamp = vim.uv.now(),
     data = data,
+    meta = {},
   }
 end
 
@@ -287,15 +293,9 @@ function M.flush_queue()
   Stat.FlushDepth = Stat.FlushDepth - 1
 end
 
---- Emit a message to bus
----@param tag string
----@param level integer
----@param content string|table
----@param data? table
----@param cover_id? integer
+---@param msg Message
 ---@return integer id
-function M.emit(tag, level, content, data, cover_id)
-  local msg = build_msg(tag, level, content, data, cover_id)
+local function emit_impl(msg)
   local id = msg.id
   if not Stat.Ready or Stat.Busy then
     -- push when ui not ready or busy
@@ -318,6 +318,46 @@ function M.emit(tag, level, content, data, cover_id)
     vim.schedule(M.flush_queue)
   end
   return id
+end
+
+M.build_msg = build_msg
+
+--- Duplicate as a new emission identity
+--- Add a meta.derived_from field
+---@param msg Message
+---@param overrides table?
+---@return Message
+function M.dup(msg, overrides)
+  local new = vim.deepcopy(msg)
+
+  new.id = new_id()
+  new.timestamp = vim.uv.now()
+
+  new.meta = vim.tbl_extend('force', new.meta or {}, {
+    derived_from = msg.id,
+  }, overrides or {})
+  new.meta.is_emitted = false
+
+  return new
+end
+
+--- Build and emit a message to bus
+---@param tag string
+---@param level integer
+---@param content string|table
+---@param data? table
+---@param cover_id? integer
+---@return integer id
+function M.emit(tag, level, content, data, cover_id)
+  local msg = build_msg(tag, level, content, data, cover_id)
+  return emit_impl(msg)
+end
+
+--- Emit an existing message
+---@param msg Message
+---@return integer id
+function M.emit_msg(msg)
+  return emit_impl(msg)
 end
 
 --- Stage2: emit messages in buffer and start routing

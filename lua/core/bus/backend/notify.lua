@@ -52,7 +52,7 @@ local MODE_OF_TAG = {
 local function handler(msg)
   -- msg.clear: dismiss all toast windows
   if msg.tag == 'msg.clear' then
-    toast.dismiss_all()
+    toast.dismiss_all { anchor = 'NE' }
     return false
   end
 
@@ -116,6 +116,7 @@ function M.setup()
     exact = {
       'notify',
       'bus',
+      'msg.clear',
       'msg.show.emsg',
       'msg.show.echoerr',
       'msg.show.lua_error',

@@ -1,8 +1,6 @@
 --------------------------------------------------------------------------------
 -- Toast notifier backend (fidget like)
 --------------------------------------------------------------------------------
-local thunk = require 'utils.loader'.thunk
-local notify = thunk('core.ui.toast', 'notify')
 local M = {}
 
 local TITLE_OF_LEVEL = {
@@ -37,6 +35,12 @@ end
 
 ---@param msg Message
 local function handler(msg)
+  local toast = require 'core.ui.toast'
+  if msg.tag == 'msg.clear' then
+    toast.dismiss_all { anchor = 'SE' }
+    return false
+  end
+
   local is_system_msg = vim.startswith(msg.tag, 'msg.show.')
 
   ---@type ToastNotifyOpts
@@ -47,12 +51,14 @@ local function handler(msg)
     level = msg.level,
   }
 
-  notify(msg.content, opts)
+  toast.notify(msg.content, opts)
+  return false
 end
 
 function M.setup()
   Bus.register_subscriber('fidget', {
     exact = {
+      'msg.clear',
       'msg.show.wmsg',
       'msg.show.undo',
       'msg.show.echo',
