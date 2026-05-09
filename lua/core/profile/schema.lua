@@ -26,4 +26,5 @@ return {
   enable_dropbar = false,
   clang_format_path = 'clang-format',
   clangd_path = 'clangd',
+  integrated_terminal_shell = 'zsh',
 }

@@ -130,8 +130,9 @@ nvim # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
 
 - 其他
   - _`sandbox_mode`_ 控制沙盒功能 `sesson|undo|shada|swap|wb`，其中 `wb` 用于写回功能
-  - _`disable_im_switch`_ 禁用自动 Im 切换器
+  - _`disable_im_switch`_ 禁用自动输入法切换器
   - _`blink_use_binary`_ 使用预编译二进制文件代替自行编译
+  - _`integrated_terminal_shell`_ 为集成终端设置 shell, 默认为 zsh
 
 以下是默认值：
 
@@ -151,6 +152,7 @@ local defaults = {
   enable_lsp = vim.fn.has 'nvim-0.11' == 1,
   enable_inlay_hint = false,
   enable_current_line_blame = false,
+  enable_relative_lnum = false,
   blink_use_binary = true,
   lang_blacklist = 'all',
   lang_whitelist = '',
@@ -163,6 +165,7 @@ local defaults = {
   enable_dropbar = false,
   clang_format_path = 'clang-format',
   clangd_path = 'clangd',
+  integrated_terminal_shell = 'zsh',
 }
 ```
 

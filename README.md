@@ -140,6 +140,7 @@ dir. Here're customizable items:
   - _`sandbox_mode`_ control sanbox features `sesson|undo|shada|swap|wb`, `wb` for writebackup
   - _`disable_im_switch`_ disable auto im switcher
   - _`blink_use_binary`_ use prebuild binary instead of building
+  - _`integrated_terminal_shell`_ choose integrated terminal shell, default zsh
 
 Here are defaults:
 
@@ -172,6 +173,7 @@ local defaults = {
   enable_dropbar = false,
   clang_format_path = 'clang-format',
   clangd_path = 'clangd',
+  integrated_terminal_shell = 'zsh',
 }
 ```
 
