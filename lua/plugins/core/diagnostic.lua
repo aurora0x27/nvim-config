@@ -40,13 +40,13 @@ local TinyInlineDiag = {
       add_messages = {
         display_count = true,
       },
+      overflow = {
+        mode = 'wrap',
+        padding = 2,
+      },
       set_arrow_to_diag_color = false,
       use_icons_from_diagnostic = true,
       show_all_diags_on_cursorline = false,
-      break_line = {
-        enabled = true,
-        after = 80,
-      },
       severity = vim.tbl_filter(function(level)
         return level <= resolve_lvl(Profile.diagnose_level)
       end, {
