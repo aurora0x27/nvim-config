@@ -23,7 +23,7 @@ return {
   bigfile_size_line = 100000,
   allow_workspace_patch = false,
   workspace_patch_always_restrict = true,
-  enable_dropbar = false,
+  enable_sticky_buffer = false,
   clang_format_path = 'clang-format',
   clangd_path = 'clangd',
   integrated_terminal_shell = 'zsh',

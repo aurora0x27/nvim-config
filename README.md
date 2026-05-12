@@ -110,7 +110,7 @@ dir. Here're customizable items:
   - _`diagnose_level`_ minimal level of diagnostic messages to display
   - _`diagnose_with_fancy_underline`_ whether to use fancy undercurl line, **need terminal and tmux support**
   - _`enable_current_line_blame`_ enable virtual text line blame at the end of line
-  - _`enable_dropbar`_ enable breadcrumbs for each window
+  - _`enable_sticky_buffer`_ enable sticky buffer for each window
   - _`use_ufo_as_fold_provider`_ use `nvim-ufo` as fold provider to get better code fold experience
 
 - Lang module
@@ -170,7 +170,7 @@ local defaults = {
   bigfile_size_line = 100000,
   allow_workspace_patch = false,
   workspace_patch_always_restrict = true,
-  enable_dropbar = false,
+  enable_sticky_buffer = false,
   clang_format_path = 'clang-format',
   clangd_path = 'clangd',
   integrated_terminal_shell = 'zsh',

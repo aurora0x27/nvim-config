@@ -103,7 +103,7 @@ nvim # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
   - _`diagnose_level`_ 要显示的最低诊断信息级别
   - _`diagnose_with_fancy_underline`_ 是否使用花哨的下划线，**需要终端和 tmux 支持**
   - _`enable_current_line_blame`_ 启用行尾的虚拟文本行错误信息显示
-  - _`enable_dropbar`_ 为每个窗口启用面包屑导航
+  - _`enable_sticky_buffer`_ 为每个窗口启用粘性缓冲区
   - _`use_ufo_as_fold_provider`_ 使用 `nvim-ufo` 作为默认的折叠提供来源, 获得更好的代码折叠体验.
 
 - 语言模块
@@ -162,7 +162,7 @@ local defaults = {
   bigfile_size_line = 100000,
   allow_workspace_patch = false,
   workspace_patch_always_restrict = true,
-  enable_dropbar = false,
+  enable_sticky_buffer = false,
   clang_format_path = 'clang-format',
   clangd_path = 'clangd',
   integrated_terminal_shell = 'zsh',
