@@ -1,3 +1,4 @@
+local summary = require 'utils.fs'.summary
 local function is_new_file()
   local filename = vim.fn.expand('%')
   return filename ~= ''
@@ -18,6 +19,7 @@ local BufName = {
     if #icon > 0 then
       icon = icon .. ' '
     end
+    filename = summary(filename)
     if #filename > 0 then
       filename = filename .. ' '
     end
