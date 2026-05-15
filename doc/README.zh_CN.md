@@ -15,11 +15,11 @@
 > - `lua/modules/lang/` 定义每种语言提供的功能。
 >   这使得该配置成为一个框架，而不仅仅是一组点文件。
 
-##  示例展示 
+## 示例展示
 
-![仪表盘](./img/Dashboard.png)
+![仪表盘](./img/Dashboard.webp)
 
-![工作区](./img/Workspace.png)
+![工作区](./img/Workspace.webp)
 
 ## 功能
 
@@ -55,7 +55,7 @@
 
 - `cargo` 完整的 `rust` 工具鏈, 是 `blink.cmp` 的可選依賴
 
-##  立即尝试 
+## 立即尝试
 
 无需修改您的原始配置，即可立即尝试。
 

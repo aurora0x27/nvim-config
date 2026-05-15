@@ -15,11 +15,11 @@ A **Modular & High-performance** set of configurations for Nvim which is written
 > - `lua/core/lang/` Defines what each language provides.
 >   This makes the config a framework rather than just a set of dotfiles.
 
-##  Showcase 
+## Showcase
 
-![Dashboard](./doc/img/Dashboard.png)
+![Dashboard](./doc/img/Dashboard.webp)
 
-![Workspace](./doc/img/Workspace.png)
+![Workspace](./doc/img/Workspace.webp)
 
 ## Feature
 
@@ -61,7 +61,7 @@ Some binaries should be installed before launch the configuration.
 
 - `cargo` full rust toolchain, **optionally** required by blink.cmp
 
-##  Try it now 
+## Try it now
 
 You can try it immediately without replacing your origin configurations.
 
