@@ -38,6 +38,7 @@ return {
       'vim',
       'vimdoc',
       'yaml',
+      'xml',
     },
     treesitter = true,
   },
