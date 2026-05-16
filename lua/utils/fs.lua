@@ -1,4 +1,5 @@
 local M = {}
+local unpack = table.unpack or unpack
 
 --- `/foo/bar/baz/aaa/bbb/ccc` -> `/foo/…/bbb/ccc`
 ---@param dir string path to resolve
@@ -13,21 +14,15 @@ function M.shorten_path(dir, lvl, sep)
     table.insert(parts, p)
   end
 
-  local prefix
-  local remaining_parts
-  if vim.startswith(dir, '~') then
-    prefix = '~'
-    remaining_parts = { unpack(parts, lvl) }
+  local total_parts = #parts
+  if total_parts > (1 + lvl) then
+    -- need compact
+    local is_tilde = string.sub(dir, 1, 1) == '~'
+    local prefix = is_tilde and '~' or ('/' .. parts[1])
+    local last_parts = { unpack(parts, total_parts - lvl + 1, total_parts) }
+    return prefix .. '/' .. sep .. '/' .. table.concat(last_parts, '/')
   else
-    prefix = '/' .. parts[1]
-    remaining_parts = parts
-  end
-
-  if #remaining_parts > lvl then
-    local last2 =
-      { unpack(remaining_parts, #remaining_parts - 1, #remaining_parts) }
-    return prefix .. '/' .. sep .. '/' .. table.concat(last2, '/')
-  else
+    -- too short
     return dir
   end
 end
