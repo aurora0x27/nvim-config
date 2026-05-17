@@ -22,7 +22,6 @@ local CommentRenderer = {
       },
       Note = {
         'note',
-        'info',
       },
       Todo = {
         'todo',

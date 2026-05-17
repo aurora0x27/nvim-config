@@ -1,15 +1,17 @@
 --------------------------------------------------------------------------------
 -- Define some behaviors
 --------------------------------------------------------------------------------
-
 local M = {}
 
+local AUG = vim.api.nvim_create_augroup('UserCustomed', { clear = true })
+local CWD
+local summary = require 'utils.fs'.summary
+
 function M.setup()
-  local augrp = vim.api.nvim_create_augroup('Customed', { clear = false })
   -- Highlight yanked text
   vim.api.nvim_create_autocmd('TextYankPost', {
     pattern = '*',
-    group = augrp,
+    group = AUG,
     callback = function()
       vim.highlight.on_yank {
         higroup = 'IncSearch',
@@ -19,8 +21,42 @@ function M.setup()
   })
 
   vim.api.nvim_create_autocmd('BufReadPost', {
-    group = augrp,
-    callback = function()
+    group = AUG,
+    callback = function(ev)
+      if not CWD then
+        CWD = vim.fn.getcwd()
+      end
+
+      local buf = ev.buf
+      -- don't trigger warning on help.txt
+      if vim.bo[buf].buftype == 'help' then
+        return
+      end
+
+      local path = vim.api.nvim_buf_get_name(buf)
+      if vim.startswith(path, 'oil://') then
+        return
+      end
+
+      if #path > 0 and not vim.startswith(path, CWD) then
+        vim.notify(
+          '# Jump out of workspace\n*`'
+            .. summary(path, 40, 20, 20)
+            .. '`* is not in current workspace',
+          vim.log.levels.WARN,
+          { ft = 'markdown' }
+        )
+      end
+    end,
+  })
+
+  vim.api.nvim_create_autocmd('BufReadPost', {
+    group = AUG,
+    callback = function(ev)
+      -- don't set cursor on help.txt
+      if vim.bo[ev.buf].buftype == 'help' then
+        return
+      end
       local mark = vim.api.nvim_buf_get_mark(0, '"')
       local lcount = vim.api.nvim_buf_line_count(0)
       if mark[1] > 0 and mark[1] <= lcount then
@@ -31,7 +67,7 @@ function M.setup()
   })
 
   vim.api.nvim_create_autocmd('ModeChanged', {
-    group = augrp,
+    group = AUG,
     pattern = { '*:[vV\x16]*', '*:[sS\x13]*' },
     callback = function()
       vim.diagnostic.enable(false)
@@ -39,7 +75,7 @@ function M.setup()
   })
 
   vim.api.nvim_create_autocmd('ModeChanged', {
-    group = augrp,
+    group = AUG,
     pattern = { '[vV\x16]:*', '[sS\x13]:*' },
     callback = function()
       local new_mode = vim.v.event['new_mode']
