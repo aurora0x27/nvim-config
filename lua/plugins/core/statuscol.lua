@@ -8,7 +8,7 @@ local StatusCol = {
   event = 'UIEnter',
   opts = {
     bt_ignore = { 'nofile', 'terminal', 'help' },
-    ft_ignore = { 'NeogitStatus', 'help' },
+    ft_ignore = { 'NeogitStatus', 'help', 'scrollback' },
     segments = {
       {
         sign = {

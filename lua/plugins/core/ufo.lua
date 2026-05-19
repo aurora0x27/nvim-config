@@ -3,7 +3,7 @@
 --------------------------------------------------------------------------------
 local thunk = require 'utils.loader'.thunk
 
----@type LazySpec
+---@type LazyPluginSpec
 local Ufo = {
   'kevinhwang91/nvim-ufo',
   enabled = Profile.use_ufo_as_fold_provider,

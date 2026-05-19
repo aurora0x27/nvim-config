@@ -1,4 +1,4 @@
----@type LazySpec
+---@type LazyPluginSpec
 local WindowManager = {
   'yorickpeterse/nvim-window',
   lazy = true,

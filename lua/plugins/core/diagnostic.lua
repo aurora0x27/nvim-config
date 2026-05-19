@@ -21,7 +21,7 @@ local function resolve_lvl(s)
   return lvl
 end
 
----@type LazySpec
+---@type LazyPluginSpec
 local TinyInlineDiag = {
   'rachartier/tiny-inline-diagnostic.nvim',
   event = { 'BufReadPost', 'BufNewFile' },
