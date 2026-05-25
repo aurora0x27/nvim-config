@@ -25,6 +25,7 @@ local Colors = {
   visual = mocha.mauve,
   replace = mocha.red,
   command = mocha.teal,
+  terminal = mocha.yellow,
   select = mocha.rosewater,
   text_fg = mocha.text,
   bg = mocha.base,

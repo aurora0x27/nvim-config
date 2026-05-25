@@ -65,7 +65,7 @@ local StatusLine = {
       ['!'] = 'command', -- shell-command mode in cmdline
 
       -- TERMINAL
-      t = 'insert',
+      t = 'terminal',
     },
   },
   ViMode,
