@@ -1,3 +1,6 @@
+--------------------------------------------------------------------------------
+-- Show git status of current buffer
+--------------------------------------------------------------------------------
 local conditions = require 'heirline.conditions'
 
 local GitStatus = {

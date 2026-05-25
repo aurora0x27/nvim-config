@@ -1,3 +1,6 @@
+--------------------------------------------------------------------------------
+-- Hint attached lsp of current buffer
+--------------------------------------------------------------------------------
 local conditions = require 'heirline.conditions'
 local IconMisc = require 'assets.icons'.get('misc', true)
 local IconLspActive = IconMisc.LspAvailable

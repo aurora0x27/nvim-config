@@ -1,3 +1,6 @@
+--------------------------------------------------------------------------------
+-- Hint diagnostic info of current buffer
+--------------------------------------------------------------------------------
 local conditions = require 'heirline.conditions'
 local UI = require 'assets.icons'.get('diagnostics', true)
 local Icons = {

@@ -1,4 +1,6 @@
--- Cursor position
+--------------------------------------------------------------------------------
+-- Hint cursor position -- line and column
+--------------------------------------------------------------------------------
 local CursorPos = {
   provider = function()
     return string.format(' %d:%d ', vim.fn.line '.', vim.fn.col '.')

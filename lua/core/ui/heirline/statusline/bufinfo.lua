@@ -1,3 +1,6 @@
+--------------------------------------------------------------------------------
+-- Display encoding, file format and indent width
+--------------------------------------------------------------------------------
 local IcoUI = require 'assets.icons'.get('ui')
 local IcoMisc = require 'assets.icons'.get('misc')
 

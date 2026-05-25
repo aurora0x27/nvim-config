@@ -1,3 +1,6 @@
+--------------------------------------------------------------------------------
+-- Mode identifier -- Hint current mode, shrink to blocks when window is small
+--------------------------------------------------------------------------------
 local ViMode = {
   init = function(self)
     self.mode = vim.fn.mode()

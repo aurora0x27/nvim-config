@@ -1,3 +1,6 @@
+--------------------------------------------------------------------------------
+--- Hint current buffer filetype
+--------------------------------------------------------------------------------
 local FileType = {
   provider = function()
     local filename, extension = vim.fn.expand '%:t', vim.fn.expand '%:e'

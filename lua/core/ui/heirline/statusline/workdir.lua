@@ -1,3 +1,6 @@
+--------------------------------------------------------------------------------
+-- Display current workspace dir path with a summay string
+--------------------------------------------------------------------------------
 local tools = require 'utils.fs'
 local get_logical_cwd = tools.get_logical_cwd
 local shorten_path = tools.shorten_path

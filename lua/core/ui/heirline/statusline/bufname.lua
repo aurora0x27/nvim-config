@@ -1,3 +1,6 @@
+--------------------------------------------------------------------------------
+-- Implement an incline
+--------------------------------------------------------------------------------
 local summary = require 'utils.fs'.summary
 local function is_new_file()
   local filename = vim.fn.expand('%')

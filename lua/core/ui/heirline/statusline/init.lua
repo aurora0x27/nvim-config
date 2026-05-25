@@ -1,3 +1,6 @@
+--------------------------------------------------------------------------------
+-- Bottom statusline customization
+--------------------------------------------------------------------------------
 local ViMode = require 'core.ui.heirline.statusline.vimode'
 local FileType = require 'core.ui.heirline.statusline.filetype'
 local GitStatus = require 'core.ui.heirline.statusline.git-status'
