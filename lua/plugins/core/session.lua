@@ -3,6 +3,7 @@
 --------------------------------------------------------------------------------
 
 local sandbox = require 'core.sandbox'.get_mask()
+local BufferPoolManager = require 'core.bpm'
 
 ---@type LazyPluginSpec
 local SessionMgr = {
@@ -21,11 +22,17 @@ local SessionMgr = {
     require 'persistence'.setup(opts)
     vim.api.nvim_create_autocmd('User', {
       pattern = 'PersistenceLoadPost',
-      command = 'ScopeLoadState',
+      callback = function()
+        if type(vim.g.BufferPoolState) == 'string' then
+          BufferPoolManager.from_json(vim.g.BufferPoolState)
+        end
+      end,
     })
     vim.api.nvim_create_autocmd('User', {
       pattern = 'PersistenceSavePre',
-      command = 'ScopeSaveState',
+      callback = function()
+        vim.g.BufferPoolState = BufferPoolManager.to_json()
+      end,
     })
     -- save folds and view (cursor position, etc.)
     vim.api.nvim_create_autocmd('BufWinLeave', {

@@ -148,10 +148,16 @@ require 'core.workspace'.setup()
 vim.api.nvim_create_autocmd('UIEnter', {
   once = true,
   callback = function()
+    -- start BufferPoolManager
+    -- files via commandline args is not recorded. so we sync here
+    local BufferPoolManager = require 'core.bpm'
+    BufferPoolManager.sync()
+    BufferPoolManager.install_hooks()
+
+    -- start bus
     require 'core.bus.backend.recorder'.setup()
     require 'core.bus.backend.fidget'.setup()
     require 'core.bus.backend.notify'.setup()
-    -- start bus
     Bus.start { bus_backend = 'notify' }
   end,
 })

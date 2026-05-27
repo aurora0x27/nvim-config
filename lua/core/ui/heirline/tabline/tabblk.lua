@@ -1,10 +1,9 @@
 --------------------------------------------------------------------------------
 -- Tab display element
 --------------------------------------------------------------------------------
+local BufferPoolManager = require 'core.bpm'
+
 local TabBlk = {
-  condition = function()
-    return #vim.api.nvim_list_tabpages() > 1
-  end,
   hl = function(self)
     return self.is_active and { fg = 'teal', bold = true }
       or { fg = 'overlay2' }
@@ -21,8 +20,7 @@ local TabBlk = {
     name = 'heirline_tab_switch_button',
   },
   provider = function(self)
-    -- TODO: Use buffer pool manager to display renamed tab
-    return ' ' .. self.tabnr .. ' '
+    return ' ' .. BufferPoolManager.resolve_tabname(self.tabpage) .. ' '
   end,
 }
 

@@ -2,7 +2,8 @@
 -- Buffer display element
 --------------------------------------------------------------------------------
 local summary = require 'utils.fs'.summary
-local UIIcons = require 'assets.icons'.get('ui', true)
+local UIIcons = require 'assets.icons'.get 'ui'
+local BufferPoolManager = require 'core.bpm'
 
 -- Identify focus
 local ActiveMark = {
@@ -41,7 +42,7 @@ local FileIcon = {
 
 local ModifiedIcon = {
   static = {
-    modified_icon = UIIcons.Dot,
+    modified_icon = ' ' .. UIIcons.Dot,
   },
   provider = function(self)
     return self.modified and self.modified_icon or '  '
@@ -49,7 +50,6 @@ local ModifiedIcon = {
   hl = { fg = 'teal' },
 }
 
--- TODO: get unique name from buffer pool manager
 -- Display summarized filename
 local FileName = {
   provider = function(self)
@@ -71,8 +71,8 @@ local BufBlk = {
   init = function(self)
     self.filepath = vim.api.nvim_buf_get_name(self.bufnr)
     self.extension = vim.fn.fnamemodify(self.filepath, ':e')
-    self.filename = self.filepath == '' and '[No Name]'
-      or vim.fn.fnamemodify(self.filepath, ':t')
+    local name = BufferPoolManager.resolve_bufname(self.bufnr)
+    self.filename = name ~= '' and name or '[No Name]'
     self.modified =
       vim.api.nvim_get_option_value('modified', { buf = self.bufnr })
     local current_width = 4 + #self.filename

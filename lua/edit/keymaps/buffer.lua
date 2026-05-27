@@ -1,5 +1,7 @@
 local map = vim.keymap.set
 local thunk = require 'utils.loader'.thunk
+local bind = require 'utils.loader'.bind
+local BufferPoolManager = require 'core.bpm'
 
 ----------------------------------------------------------------------------
 -- buffer swich
@@ -34,9 +36,23 @@ map(
 ----------------------------------------------------------------------------
 map(
   'n',
+  '<leader>bd',
+  BufferPoolManager.detach,
+  { desc = 'Buffer [D]etach', noremap = true, silent = true }
+)
+
+map(
+  'n',
   '<leader>bc',
-  '<cmd>bp | bd #<CR>',
-  { desc = 'Buffer [C]lose Current', noremap = true, silent = true }
+  BufferPoolManager.evict,
+  { desc = 'Buffer [C]lose', noremap = true, silent = true }
+)
+
+map(
+  'n',
+  '<leader>bv',
+  bind(BufferPoolManager.vacuum, true),
+  { desc = 'Buffer [V]acuum', noremap = true, silent = true }
 )
 
 ----------------------------------------------------------------------------

@@ -50,8 +50,6 @@ local Buffers = Utils.make_buflist({ BufferBlock }, {
   provider = Icons.TruncRight,
   hl = { fg = 'overlay2' },
 }, function()
-  -- TODO: get buflist from buffer pool
-  -- TESTING:
   return buflist_cache
 end, false)
 
