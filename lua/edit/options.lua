@@ -14,7 +14,6 @@ local Opt = {
   clipboard = 'unnamedplus',
   termguicolors = true,
   wildmenu = true,
-  ssop = 'blank,buffers,curdir,folds,help,tabpages,winsize,terminal',
   ignorecase = true,
   undofile = sandbox.undo,
   swapfile = sandbox.swap,

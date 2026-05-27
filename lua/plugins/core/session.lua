@@ -18,7 +18,15 @@ local SessionMgr = {
     need = 1,
   },
   config = function(_, opts)
-    require('persistence').setup(opts)
+    require 'persistence'.setup(opts)
+    vim.api.nvim_create_autocmd('User', {
+      pattern = 'PersistenceLoadPost',
+      command = 'ScopeLoadState',
+    })
+    vim.api.nvim_create_autocmd('User', {
+      pattern = 'PersistenceSavePre',
+      command = 'ScopeSaveState',
+    })
     -- save folds and view (cursor position, etc.)
     vim.api.nvim_create_autocmd('BufWinLeave', {
       pattern = '*',
