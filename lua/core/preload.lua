@@ -30,6 +30,7 @@ function M.setup()
   vim.o.relativenumber = Profile.enable_relative_lnum
   vim.o.cursorline = not Profile.transparent_mode
   vim.o.ssop = 'buffers,tabpages,winsize,globals'
+  vim.o.showtabline = 2 -- always
 
   vim.opt.fillchars = {
     eob = ' ',

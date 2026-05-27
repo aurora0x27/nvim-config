@@ -17,7 +17,9 @@ local Colors = {
   blue = mocha.blue,
   lavender = mocha.lavender,
   black = mocha.crust,
+  subtext0 = mocha.subtext0,
   subtext1 = mocha.subtext1,
+  overlay2 = mocha.overlay2,
 
   -- Mode colors
   normal = mocha.blue,

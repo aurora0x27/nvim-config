@@ -1,6 +1,5 @@
 local map = vim.keymap.set
 local thunk = require 'utils.loader'.thunk
-local bind = require 'utils.loader'.bind
 
 ----------------------------------------------------------------------------
 -- buffer swich
@@ -43,33 +42,6 @@ map(
 ----------------------------------------------------------------------------
 -- Cycle switch buffer
 ----------------------------------------------------------------------------
-map(
-  'n',
-  'H',
-  bind(thunk('bufferline', 'cycle'), -1),
-  { noremap = true, silent = true }
-)
+map('n', 'H', '<cmd>bp<cr>', { noremap = true, silent = true })
 
-map(
-  'n',
-  'L',
-  bind(thunk('bufferline', 'cycle'), 1),
-  { noremap = true, silent = true }
-)
-
-----------------------------------------------------------------------------
--- Move buffer
-----------------------------------------------------------------------------
-map(
-  'n',
-  '<leader>bh',
-  bind(thunk('bufferline', 'move'), -1),
-  { desc = 'Buffer Move Left', noremap = true, silent = true }
-)
-
-map(
-  'n',
-  '<leader>bl',
-  bind(thunk('bufferline', 'move'), 1),
-  { desc = 'Buffer Move Right', noremap = true, silent = true }
-)
+map('n', 'L', '<cmd>bn<cr>', { noremap = true, silent = true })
