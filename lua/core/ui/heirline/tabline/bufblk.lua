@@ -2,7 +2,7 @@
 -- Buffer display element
 --------------------------------------------------------------------------------
 local summary = require 'utils.fs'.summary
-local UIIcons = require 'assets.icons'.get 'ui'
+local UIIcons = require 'assets.icons'.get('ui', true)
 local BufferPoolManager = require 'core.bpm'
 
 -- Identify focus
@@ -42,7 +42,7 @@ local FileIcon = {
 
 local ModifiedIcon = {
   static = {
-    modified_icon = ' ' .. UIIcons.Dot,
+    modified_icon = UIIcons.MiddleDot,
   },
   provider = function(self)
     return self.modified and self.modified_icon or '  '
@@ -76,7 +76,7 @@ local BufBlk = {
     self.modified =
       vim.api.nvim_get_option_value('modified', { buf = self.bufnr })
     local current_width = 4 + #self.filename
-    local padding_needed = math.max(0, self.buffer_min_width - current_width) --[[@as integer]]
+    local padding_needed = math.max(0, self.buffer_min_width - current_width)
     self.buffer_padding = math.floor(padding_needed / 2)
   end,
   on_click = {
