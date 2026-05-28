@@ -102,31 +102,16 @@ local RAW_LAZY_SPECS = require 'utils.loader'.load_data_dir_as_set(
   end
 )
 
-function M.create_lazy_spec_mask_builder()
-  local current_set = vim.deepcopy(RAW_LAZY_SPECS or {})
-  local builder = {}
-
-  --- use callback to process each element
-  ---@param cb fun(name: string, spec: table)
-  function builder:pipe(cb)
-    for name, spec in pairs(current_set) do
-      cb(name, spec)
+function M.get_filtered_opt_specs(filters)
+  local result = {}
+  local specs = vim.deepcopy(RAW_LAZY_SPECS or {})
+  for name, spec in pairs(specs) do
+    for _, filter in ipairs(filters) do
+      filter(name, spec)
     end
-    return self
+    table.insert(result, spec)
   end
-
-  -- Output flattened lazy spec table
-  function builder.unpack()
-    local result = {}
-    for _, spec in pairs(current_set) do
-      if spec then
-        table.insert(result, spec)
-      end
-    end
-    return result
-  end
-
-  return builder
+  return result
 end
 
 ---@return table

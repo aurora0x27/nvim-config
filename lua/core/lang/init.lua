@@ -359,9 +359,7 @@ function M.has_capability(lang, feat)
   end
 end
 
----@param name string
----@param spec LazySpec
-function M.mask_lazy_spec(name, spec)
+function M.plugin_enable_predicate(name, spec)
   if vim.tbl_contains(Data.LazyEnablePlugins, name) then
     spec.enabled = true
   end

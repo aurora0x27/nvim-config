@@ -196,7 +196,7 @@ require('lazy').setup {
   -- all the plugins' configure files should be put under `lua/plugins`
   spec = {
     { import = 'plugins.core' },
-    Profile.create_lazy_spec_mask_builder():pipe(Lang.mask_lazy_spec).unpack(),
+    Profile.get_filtered_opt_specs { Lang.plugin_enable_predicate },
   },
   install = {
     colorscheme = { 'default' },
