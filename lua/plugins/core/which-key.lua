@@ -68,7 +68,6 @@ local KeyMapIntellisense = {
       { '<leader>s', group = '[S]ession', mode = { 'n', 'v' } },
       { '<leader>gh', group = '[H]unk', mode = { 'n', 'v' } },
       { '<leader>gt', group = '[T]oggle', mode = { 'n', 'v' } },
-      { '<leader>;', group = 'Index Pick' },
       { '<leader>w', group = '[W]indow' },
       { '<leader>ws', group = '[S]plit' },
       { '<leader>wsf', group = '[F]ind' },

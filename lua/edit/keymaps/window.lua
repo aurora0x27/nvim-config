@@ -31,13 +31,6 @@ map(
 
 map(
   'n',
-  '<leader>;w',
-  thunk('nvim-window', 'pick'),
-  { desc = 'Pick [W]indows', noremap = true, silent = true }
-)
-
-map(
-  'n',
   '<leader>wss',
   '<cmd>split<cr>',
   { desc = '[S]plit Current Window', noremap = true, silent = true }
