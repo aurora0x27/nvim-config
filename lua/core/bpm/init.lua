@@ -179,16 +179,18 @@ function M.detach(buf, tab, policy)
   end
 
   if vim.bo[buf].modified then
+    local bufname = vim.fn.bufname(buf)
     local ok, choice = pcall(
       vim.fn.confirm,
-      ('Save changes to %q?'):format(vim.fn.bufname(buf)),
+      ('Save changes to %q?'):format(bufname),
       '&Yes\n&No\n&Cancel'
     )
-    if not ok or choice == 0 or choice == 3 or choice == 2 then
+    if not ok or choice == 0 or choice == 3 then
       return
     elseif choice == 1 then -- Yes
       vim.api.nvim_buf_call(buf, vim.cmd.write)
-    end
+      vim.api.nvim_echo({ { 'Written file ' .. bufname } }, false, {})
+    end -- if choose `No` then do nothing. it willbe vacuumed silently
   end
 
   local bufmeta = State.bufs[buf]
@@ -436,7 +438,7 @@ end
 --- Dump current state to json
 ---@return string
 function M.to_json()
-  -- TODO: inject filesystem path for each path
+  M.vacuum(false)
 
   ---@type BufferPoolManagerDumpedState
   local to_dump = {
@@ -450,11 +452,13 @@ function M.to_json()
   -- build buffer path index
   for bufnr, _ in pairs(State.bufs) do
     if vim.api.nvim_buf_is_valid(bufnr) then
-      local path = vim.api.nvim_buf_get_name(bufnr)
-      if path ~= '' then
-        local idx = #to_dump.bufs + 1
-        to_dump.bufs[idx] = path
-        bufnr_index[bufnr] = idx
+      if vim.bo[bufnr].buftype == '' then
+        local path = vim.api.nvim_buf_get_name(bufnr)
+        if path ~= '' then
+          local idx = #to_dump.bufs + 1
+          to_dump.bufs[idx] = path
+          bufnr_index[bufnr] = idx
+        end
       end
     end
   end
@@ -526,6 +530,13 @@ function M.from_json(data)
       local bufnr = vim.fn.bufadd(path)
       if bufnr > 0 then
         vim.fn.bufload(bufnr)
+        -- Manually trigger autocmds
+        vim.api.nvim_buf_call(bufnr, function()
+          vim.cmd(' doautocmd BufReadPre ' .. bufnr)
+          vim.cmd(' doautocmd BufRead ' .. bufnr)
+          vim.cmd(' doautocmd BufReadPost ' .. bufnr)
+          vim.cmd 'filetype detect'
+        end)
         path_index[path] = bufnr
       end
     end
