@@ -14,15 +14,12 @@ local Resolver = require 'core.bpm.resolver'
 ---@field name? string
 ---@field attached_buffers integer[]
 
----@class BufMeta
----@field attached_tabs integer[]
-
 --- BufferPoolManager Global State
 local State = {
   ---@type table<integer, TabMeta>
   tabs = {},
 
-  ---@type table<integer, BufMeta>
+  ---@type table<integer, boolean>
   bufs = {},
 }
 
@@ -137,24 +134,13 @@ function M.attach(buf, tab)
     }
   end
 
-  if not State.bufs[buf] then
-    State.bufs[buf] = {
-      attached_tabs = {},
-    }
-  end
-
+  State.bufs[buf] = true
   local tabmeta = State.tabs[tab]
-  local bufmeta = State.bufs[buf]
 
   local changed = false
 
   if not vim.tbl_contains(tabmeta.attached_buffers, buf) then
     table.insert(tabmeta.attached_buffers, buf)
-    changed = true
-  end
-
-  if not vim.tbl_contains(bufmeta.attached_tabs, tab) then
-    table.insert(bufmeta.attached_tabs, tab)
     changed = true
   end
 
@@ -193,7 +179,6 @@ function M.detach(buf, tab, policy)
     end -- if choose `No` then do nothing. it willbe vacuumed silently
   end
 
-  local bufmeta = State.bufs[buf]
   local tabmeta = State.tabs[tab]
 
   if not tabmeta then
@@ -236,21 +221,8 @@ function M.detach(buf, tab, policy)
     end
   end
 
-  -- Metadata cleanup
-  if bufmeta then
-    remove_value(bufmeta.attached_tabs, tab)
-  else
-    vim.notify(
-      '[Detach] Cannot find buf `' .. buf .. '` meta',
-      vim.log.levels.ERROR,
-      { title = LOG_TITLE }
-    )
-  end
-
   remove_value(tabmeta.attached_buffers, buf)
-
-  -- refresh buflisted
-  refresh_projection(vim.api.nvim_get_current_tabpage())
+  vim.bo[buf].buflisted = false
 
   -- Cache invalid
   BufNameCache = {}
@@ -263,14 +235,11 @@ function M.evict(buf, policy)
   if not buf or buf == 0 then
     buf = vim.api.nvim_get_current_buf()
   end
-  local meta = State.bufs[buf]
-  if not meta then
-    return
-  end
   policy = policy or 'replace'
-  local attached_tabs = vim.deepcopy(meta.attached_tabs)
-  for _, tabnr in ipairs(attached_tabs) do
-    M.detach(buf, tabnr, policy)
+  for tab, meta in pairs(State.tabs) do
+    if vim.tbl_contains(meta.attached_buffers, buf) then
+      M.detach(buf, tab, policy)
+    end
   end
   vim.api.nvim_buf_delete(buf, {})
 end
@@ -311,66 +280,18 @@ function M.get_attached_buf(tab)
   return vim.list_slice(data.attached_buffers)
 end
 
---- Focus on next buffer
-function M.next_buf()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local tabid = vim.api.nvim_get_current_tabpage()
-  local meta = State.tabs[tabid]
-  if not meta then
-    return
-  end
-  local bufs = meta.attached_buffers
-  local idx
-  for i, b in ipairs(bufs) do
-    if b == bufnr then
-      idx = i
-      break
-    end
-  end
-  if not idx then
-    return
-  end
-  local next_idx = idx % #bufs + 1
-  local target = bufs[next_idx]
-  if not target then
-    return
-  end
-  vim.api.nvim_set_current_buf(target)
-end
-
---- Focus on prev buffer
-function M.prev_buf()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local tabid = vim.api.nvim_get_current_tabpage()
-  local meta = State.tabs[tabid]
-  if not meta then
-    return
-  end
-  local bufs = meta.attached_buffers
-  local idx
-  for i, b in ipairs(bufs) do
-    if b == bufnr then
-      idx = i
-      break
-    end
-  end
-  if not idx then
-    return
-  end
-  local next_idx = (idx - 2) % #bufs + 1
-  local target = bufs[next_idx]
-  if not target then
-    return
-  end
-  vim.api.nvim_set_current_buf(target)
-end
-
 --- Get orphaned buffer list
 ---@return integer[]
 function M.get_orphaned_buf()
   local ret = {}
-  for bufnr, info in pairs(State.bufs) do
-    if not info.attached_tabs or #info.attached_tabs == 0 then
+  local attached = {}
+  for _, meta in pairs(State.tabs) do
+    for _, bufnr in ipairs(meta.attached_buffers) do
+      attached[bufnr] = true
+    end
+  end
+  for _, bufnr in ipairs(vim.tbl_keys(State.bufs)) do
+    if not attached[bufnr] then
       table.insert(ret, bufnr)
     end
   end
@@ -423,6 +344,32 @@ function M.rename_tab(tabid, new_name)
   vim.cmd [[ redrawtabline ]]
 end
 
+local function is_valid(buf_num)
+  if not buf_num or buf_num < 1 then
+    return false
+  end
+  local exists = vim.api.nvim_buf_is_valid(buf_num)
+  return vim.bo[buf_num].buflisted and exists
+end
+
+local function get_listed_bufs()
+  local buf_nums = vim.tbl_keys(State.bufs)
+  local ids = {}
+  for _, buf in ipairs(buf_nums) do
+    if is_valid(buf) then
+      ids[#ids + 1] = buf
+    end
+  end
+  return ids
+end
+
+local function on_tab_leave()
+  local listed = get_listed_bufs()
+  local tab = vim.api.nvim_get_current_tabpage()
+  State.tabs[tab].attached_buffers = listed
+  mark_buflisted(false)
+end
+
 ---@class BufferPoolManagerDumpedState
 ---@field tabs {bufs: integer[], name:string?}[] -- store the index of file in array `bufs`
 ---@field bufs string[] -- store paths
@@ -438,6 +385,11 @@ end
 --- Dump current state to json
 ---@return string
 function M.to_json()
+  --- refresh state
+  on_tab_leave()
+  mark_buflisted(true)
+
+  -- force vacuum orphaned buffers
   M.vacuum(false)
 
   ---@type BufferPoolManagerDumpedState
@@ -509,10 +461,6 @@ function M.from_json(data)
   ---@type BufferPoolManagerDumpedState
   local dumped = vim.tbl_deep_extend('force', init, ret)
 
-  --- Sweep old states
-  State.tabs = {}
-  State.bufs = {}
-
   --- path -> bufnr
   local path_index = {}
 
@@ -560,10 +508,7 @@ function M.from_json(data)
         if path and path ~= '' then
           local bufnr = path_index[path]
           if bufnr then
-            if not State.bufs[bufnr] then
-              State.bufs[bufnr] = { attached_tabs = {} }
-            end
-            table.insert(State.bufs[bufnr].attached_tabs, tab_handle)
+            State.bufs[bufnr] = true
             table.insert(meta.attached_buffers, bufnr)
           else
             vim.notify(
@@ -599,23 +544,15 @@ function M.install_hooks()
         return
       end
 
+      if vim.bo[buf].buflisted then
+        M.attach(buf, vim.api.nvim_get_current_tabpage())
+      end
+
       if not State.bufs[buf] then
-        State.bufs[buf] = {
-          attached_tabs = {},
-        }
+        State.bufs[buf] = true
 
         BufNameCache = {}
       end
-    end,
-  })
-
-  -- apply attachment
-  vim.api.nvim_create_autocmd('BufWinEnter', {
-    group = augroup,
-    callback = function(args)
-      local buf = args.buf
-
-      M.attach(buf, vim.api.nvim_get_current_tabpage())
     end,
   })
 
@@ -627,22 +564,7 @@ function M.install_hooks()
     group = augroup,
     callback = function(args)
       local buf = args.buf
-
-      local meta = State.bufs[buf]
-
-      if meta then
-        for _, tab in ipairs(meta.attached_tabs) do
-          local tabmeta = State.tabs[tab]
-
-          if tabmeta then
-            remove_value(tabmeta.attached_buffers, buf)
-          end
-        end
-        State.bufs[buf] = nil
-      else
-        return
-      end
-
+      State.bufs[buf] = nil
       BufNameCache = {}
     end,
   })
@@ -653,26 +575,12 @@ function M.install_hooks()
 
   vim.api.nvim_create_autocmd('TabClosed', {
     group = augroup,
-    callback = function()
-      local valid_tabs = {}
-
-      for _, tab in ipairs(vim.api.nvim_list_tabpages()) do
-        valid_tabs[tab] = true
+    callback = function(args)
+      local closed = tonumber(args.match)
+      if not closed then
+        return
       end
-
-      for tab, meta in pairs(State.tabs) do
-        if not valid_tabs[tab] then
-          for _, buf in ipairs(meta.attached_buffers) do
-            local bufmeta = State.bufs[buf]
-
-            if bufmeta then
-              remove_value(bufmeta.attached_tabs, tab)
-            end
-          end
-
-          State.tabs[tab] = nil
-        end
-      end
+      State.tabs[closed] = nil
     end,
   })
 
@@ -688,20 +596,26 @@ function M.install_hooks()
   })
 
   ------------------------------------------------------------------------------
-  -- Recompute masking
+  -- Recompute masking and sync new buffers
   ------------------------------------------------------------------------------
 
   vim.api.nvim_create_autocmd('TabLeave', {
     group = augroup,
-    callback = function()
-      mark_buflisted(false)
-    end,
+    callback = on_tab_leave,
   })
 
   vim.api.nvim_create_autocmd('TabEnter', {
     group = augroup,
     callback = function()
       mark_buflisted(true)
+    end,
+  })
+
+  vim.api.nvim_create_autocmd('TabNewEntered', {
+    group = augroup,
+    callback = function()
+      local tab = vim.api.nvim_get_current_tabpage()
+      State.tabs[tab] = { attached_buffers = {} }
     end,
   })
 end
@@ -713,7 +627,7 @@ end
 --- Deprecate current internal state
 --- Rebuild via current nvim state -- all buffers attach to first tab
 --- Solve problem for cli args loaded bufs
-function M.sync()
+function M.rebuild()
   State.tabs = {}
   State.bufs = {}
 
@@ -735,12 +649,8 @@ function M.sync()
         and vim.bo[buf].buflisted
         and vim.bo[buf].buftype == ''
       then
-        if not State.bufs[buf] then
-          State.bufs[buf] = {
-            attached_tabs = { tab },
-          }
-          table.insert(tabmeta.attached_buffers, buf)
-        end
+        State.bufs[buf] = true
+        table.insert(tabmeta.attached_buffers, buf)
       end
     end
   end
