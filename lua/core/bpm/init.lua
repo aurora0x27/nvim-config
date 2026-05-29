@@ -306,6 +306,7 @@ function M.resolve_bufname(bufnr)
     return '[Invalid]'
   end
   local name = BufNameCache[bufnr]
+
   if name then
     return name
   else
@@ -318,7 +319,13 @@ function M.resolve_bufname(bufnr)
     end
     BufNameCache = Resolver.shortest_unique_suffix(Map)
   end
-  return BufNameCache[bufnr] or '[Invalid]'
+
+  if not BufNameCache[bufnr] then
+    -- Fallback to filename
+    BufNameCache[bufnr] =
+      vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr), ':t')
+  end
+  return BufNameCache[bufnr]
 end
 
 --- Get resolved tabname
