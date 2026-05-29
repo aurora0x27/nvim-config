@@ -98,6 +98,11 @@ vim.api.nvim_create_autocmd('User', {
     if not Profile.disable_im_switch then
       require 'edit.im-switch'.setup()
     end
+
+    -- This should always initialize also in commandline mode
+    -- should not put in Buf* autocmd
+    require 'edit.pairs'.setup()
+
     require 'edit.keymaps'.setup()
     require 'edit.options'.setup()
     require 'edit.autocmd'.setup()
@@ -113,7 +118,6 @@ vim.api.nvim_create_autocmd({ 'BufReadPost', 'BufNewFile' }, {
   once = true,
   callback = function()
     require 'edit.fold'.setup()
-    require 'edit.pairs'.setup()
     require 'edit.diagnostic'.setup()
   end,
 })
