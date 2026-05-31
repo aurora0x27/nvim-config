@@ -246,6 +246,16 @@ local FsEditor = {
       thunk('oil', 'open'),
       desc = 'Oil',
     },
+    {
+      '<leader>wv-',
+      '<cmd>vsplit|Oil<cr>',
+      desc = '[V]split open Oil',
+    },
+    {
+      '<leader>ws-',
+      '<cmd>split|Oil<cr>',
+      desc = '[S]plit open Oil',
+    },
   },
 }
 
