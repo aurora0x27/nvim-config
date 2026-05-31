@@ -23,9 +23,9 @@ local FsEditor = {
     -- See :help oil-columns
     columns = {
       'icon',
-      -- "permissions",
+      'permissions',
       -- "size",
-      -- "mtime",
+      'mtime',
     },
     -- Buffer-local options to use for oil buffers
     buf_options = {
