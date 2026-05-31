@@ -35,7 +35,7 @@ function M.check()
     local l_stat = get_stat(spec.lsp, feat and feat.lsp)
     local f_stat = get_stat(spec.formatter, feat and feat.fmt)
     local t_stat = get_stat(spec.treesitter, feat and feat.ts)
-    local p_stat = get_stat(spec.plugins, feat ~= nil)
+    local p_stat = get_stat(spec.plugins, feat and feat.plg)
 
     local row = string.format(
       '%s %s %s %s %s',
