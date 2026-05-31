@@ -33,9 +33,9 @@ function M.setup()
   if vim.fn.executable 'fcitx5-remote' == 1 then
     register_autocmd()
   else
-    if require('utils.detect').is_unix() then
+    if require 'utils.detect'.is_unix() then
       vim.schedule(function()
-        require('utils.misc').warn(
+        require 'utils.misc'.warn(
           'Cannot find `fcitx5-remote`',
           { title = 'IM Switch' }
         )

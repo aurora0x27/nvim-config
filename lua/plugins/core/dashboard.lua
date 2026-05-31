@@ -122,7 +122,7 @@ local Dashboard = {
         once = true,
         pattern = 'AlphaReady',
         callback = function()
-          require('lazy').show()
+          require 'lazy'.show()
         end,
       })
     end
@@ -130,7 +130,7 @@ local Dashboard = {
     alpha.setup(dashboard.opts)
 
     local function footer()
-      local lazy_stats = require('lazy').stats()
+      local lazy_stats = require 'lazy'.stats()
       local plugin_load = lazy_stats.loaded
       local plugin_count = lazy_stats.count
       local load_time = lazy_stats.startuptime

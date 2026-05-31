@@ -79,7 +79,7 @@ function M.setup()
     end
   end
 
-  local mocha = require('catppuccin.palettes').get_palette 'mocha'
+  local mocha = require 'catppuccin.palettes'.get_palette 'mocha'
 
   if Profile.transparent_mode then
     vim.api.nvim_set_hl(

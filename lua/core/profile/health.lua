@@ -1,6 +1,6 @@
 local M = {}
 
-local pad = require('utils.misc').pad
+local pad = require 'utils.misc'.pad
 
 function M.check()
   vim.health.start 'Profile Loader'

@@ -196,7 +196,7 @@ local Icons = {
 }
 
 -- import plugins
-require('lazy').setup {
+require 'lazy'.setup {
   -- all the plugins' configure files should be put under `lua/plugins`
   spec = {
     { import = 'plugins.core' },

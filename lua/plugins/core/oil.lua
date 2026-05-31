@@ -97,7 +97,7 @@ local FsEditor = {
         desc = 'Oil toggle detail',
         callback = function()
           vim.b.detail = not vim.b.detail
-          require('oil').set_columns(
+          require 'oil'.set_columns(
             vim.b.detail and { 'permissions', 'size', 'mtime', 'icon' }
               or { 'icon' }
           )

@@ -149,7 +149,7 @@ local function parse_level(tbl, str)
     -- 2. split feat "ts,+lsp,-fmt" -> "ts", "+lsp", "-fmt"
     if lang and feats_str then
       lang = vim.trim(lang)
-      local mask = require('utils.misc').process_feat_mask(
+      local mask = require 'utils.misc'.process_feat_mask(
         feats_str,
         LANG_FEAT_TBL_DEFAULT,
         function(msg)

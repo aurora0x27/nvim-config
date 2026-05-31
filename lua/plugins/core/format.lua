@@ -2,8 +2,8 @@
 -- Formatter
 --------------------------------------------------------------------------------
 
-local bind = require('utils.loader').bind
-local thunk = require('utils.loader').thunk
+local bind = require 'utils.loader'.bind
+local thunk = require 'utils.loader'.thunk
 
 ---@type LazyPluginSpec
 local CodeFormatter = {
@@ -26,7 +26,7 @@ local CodeFormatter = {
     },
   },
   config = function(_, opts)
-    require('conform').setup(opts)
+    require 'conform'.setup(opts)
 
     local do_format =
       bind(thunk('conform', 'format'), { async = true, lsp_fallback = true })

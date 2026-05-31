@@ -4,7 +4,7 @@
 local FileType = {
   provider = function()
     local filename, extension = vim.fn.expand '%:t', vim.fn.expand '%:e'
-    local icon, _ = require('nvim-web-devicons').get_icon_color(
+    local icon, _ = require 'nvim-web-devicons'.get_icon_color(
       filename,
       extension,
       { default = true }
@@ -13,7 +13,7 @@ local FileType = {
       or ('  ' .. vim.bo.filetype .. '  ')
   end,
   hl = function()
-    local _, icon_color = require('nvim-web-devicons').get_icon_color(
+    local _, icon_color = require 'nvim-web-devicons'.get_icon_color(
       vim.fn.expand '%:t',
       vim.fn.expand '%:e',
       { default = true }
