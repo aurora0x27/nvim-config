@@ -29,12 +29,13 @@ vim.g.debug_mode = vim.env.NVIM_CONFIG_DEV
 if vim.g.debug_mode == '1' then
   local project_root = vim.env.NVIM_CONFIG_DEV_CONFIG_ROOT
   local cache_root = vim.env.NVIM_CONFIG_DEV_CACHE_ROOT
+  local LOG_TITLE = 'Debug Sandbox'
 
   if not project_root then
     vim.notify(
       'DEBUG mode is set but config root is missing',
       vim.log.levels.ERROR,
-      { title = 'Config Hack' }
+      { title = LOG_TITLE }
     )
     return
   end
@@ -42,7 +43,7 @@ if vim.g.debug_mode == '1' then
     vim.notify(
       'DEBUG mode is set but cache root is missing',
       vim.log.levels.WARN,
-      { title = 'Config Hack' }
+      { title = LOG_TITLE }
     )
     return
   end
@@ -78,7 +79,7 @@ if vim.g.debug_mode == '1' then
         vim.notify(
           'Entered DEBUG mode',
           vim.log.levels.WARN,
-          { title = 'Config' }
+          { title = LOG_TITLE }
         )
       end, 150)
     end,
@@ -153,10 +154,7 @@ vim.api.nvim_create_autocmd('UIEnter', {
   once = true,
   callback = function()
     -- start BufferPoolManager
-    -- files via commandline args is not recorded. so we sync here
-    local BufferPoolManager = require 'core.bpm'
-    BufferPoolManager.rebuild()
-    BufferPoolManager.install_hooks()
+    require 'core.bpm'.setup()
 
     -- start bus
     require 'core.bus.backend.recorder'.setup()

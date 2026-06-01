@@ -12,6 +12,19 @@ local BufName = require 'core.ui.heirline.statusline.bufname'
 local WorkDir = require 'core.ui.heirline.statusline.workdir'
 local BufInfo = require 'core.ui.heirline.statusline.bufinfo'
 
+local DebugModeFlag = {
+  static = {
+    icon = require 'assets.icons'.get('ui', true).Bug,
+  },
+  condition = function()
+    return vim.g.debug_mode == '1'
+  end,
+  provider = function(self)
+    return self.icon
+  end,
+  hl = { fg = 'yellow' },
+}
+
 local ctrl_v = string.char(22)
 local ctrl_s = string.char(19)
 
@@ -76,6 +89,7 @@ local StatusLine = {
   GitStatus,
   ScrollBar,
   CursorPos,
+  DebugModeFlag,
   { provider = '%=' },
   Diagnostics,
   LSPInfo,
