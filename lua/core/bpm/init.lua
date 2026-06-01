@@ -8,33 +8,33 @@ local BUFFER_POOL_MANAGER_OPTIONS_DEFAULT = {
   buftype_policy = {
     [''] = 'managed',
 
-    ---------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
     -- Active resources
-    ---------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
     terminal = 'external',
 
-    ---------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
     -- Ephemeral UI
-    ---------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
     help = 'ephemeral',
     quickfix = 'ephemeral',
     nofile = 'ephemeral',
     prompt = 'ephemeral',
 
-    ---------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
     -- Write-only buffers
-    ---------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
     acwrite = 'ephemeral',
 
-    ---------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
     -- Plugin generated
-    ---------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
     popup = 'ephemeral',
   },
   default_buftype_policy = 'ephemeral',
 }
 
-local Resolver = require 'core.bpm.resolver'
+local SuffixTrie = require 'core.bpm.resolver'.SuffixTrie
 local Opts = vim.deepcopy(BUFFER_POOL_MANAGER_OPTIONS_DEFAULT)
 
 --- BufferPoolManager Global State
@@ -42,12 +42,17 @@ local State = {
   ---@type table<integer, TabMeta>
   tabs = {},
 
-  ---@type table<integer, boolean>
+  ---@type table<integer, string>
   bufs = {},
 }
 
+local init_trie = function()
+  return SuffixTrie.new(package.config:sub(1, 1), vim.fs.normalize)
+end
+
 --- Resolved unique name cache invalid when buffer add or detach
-local BufNameCache = {}
+---@type SuffixTrie
+local BufNameCache = init_trie()
 
 ---@param value boolean
 ---@param tabid? integer
@@ -151,18 +156,15 @@ function M.attach(buf, tab)
     }
   end
 
-  State.bufs[buf] = true
+  if not State.bufs[buf] then
+    local path = vim.api.nvim_buf_get_name(buf)
+    State.bufs[buf] = path
+    BufNameCache:put(path)
+  end
   local tabmeta = State.tabs[tab]
-
-  local changed = false
 
   if not vim.tbl_contains(tabmeta.attached_buffers, buf) then
     table.insert(tabmeta.attached_buffers, buf)
-    changed = true
-  end
-
-  if changed then
-    BufNameCache = {}
   end
 end
 
@@ -259,9 +261,6 @@ function M.detach(buf, tab, policy)
   elseif buftype_policy == 'ephemeral' then
     vim.api.nvim_buf_delete(buf, { force = true })
   end
-
-  -- Cache invalid
-  BufNameCache = {}
 end
 
 --- Close a buffer, detach from all tabs
@@ -345,27 +344,15 @@ function M.resolve_bufname(bufnr)
   if not vim.api.nvim_buf_is_valid(bufnr) then
     return '[Invalid]'
   end
-  local name = BufNameCache[bufnr]
-
+  local path = State.bufs[bufnr] or vim.api.nvim_buf_get_name(bufnr)
+  if path == '' then
+    return path
+  end
+  local name = BufNameCache:resolve(path)
   if name then
     return name
-  else
-    -- Use resolver to calculate unique shortest name
-    -- Fill BufNameCache
-    local bufs = vim.tbl_keys(State.bufs)
-    local Map = {}
-    for _, buf in ipairs(bufs) do
-      Map[buf] = vim.api.nvim_buf_get_name(buf)
-    end
-    BufNameCache = Resolver.shortest_unique_suffix(Map)
   end
-
-  if not BufNameCache[bufnr] then
-    -- Fallback to filename
-    BufNameCache[bufnr] =
-      vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr), ':t')
-  end
-  return BufNameCache[bufnr]
+  return vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr), ':t')
 end
 
 --- Get resolved tabname
@@ -453,10 +440,9 @@ function M.to_json()
   local bufnr_index = {}
 
   -- build buffer path index
-  for bufnr, _ in pairs(State.bufs) do
+  for bufnr, path in pairs(State.bufs) do
     if vim.api.nvim_buf_is_valid(bufnr) then
       if M.is_managed(bufnr) then
-        local path = vim.api.nvim_buf_get_name(bufnr)
         if path ~= '' then
           local idx = #to_dump.bufs + 1
           to_dump.bufs[idx] = path
@@ -572,7 +558,10 @@ function M.from_json(data)
         if path and path ~= '' then
           local bufnr = path_index[path]
           if bufnr then
-            State.bufs[bufnr] = true
+            if not State.bufs[bufnr] then
+              State.bufs[bufnr] = path
+              BufNameCache:put(path)
+            end
             if not vim.tbl_contains(existing_meta.attached_buffers, bufnr) then
               table.insert(existing_meta.attached_buffers, bufnr)
             end
@@ -612,9 +601,7 @@ local function install_autocmds()
       end
 
       if not State.bufs[buf] then
-        State.bufs[buf] = true
-
-        BufNameCache = {}
+        State.bufs[buf] = vim.api.nvim_buf_get_name(buf)
       end
     end,
   })
@@ -627,11 +614,14 @@ local function install_autocmds()
     group = augroup,
     callback = function(args)
       local buf = args.buf
+      local path = State.bufs[buf]
       State.bufs[buf] = nil
       for _, meta in pairs(State.tabs) do
         remove_value(meta.attached_buffers, buf)
       end
-      BufNameCache = {}
+      if path and path ~= '' then
+        BufNameCache:remove(path)
+      end
     end,
   })
 
@@ -658,8 +648,24 @@ local function install_autocmds()
 
   vim.api.nvim_create_autocmd('BufFilePost', {
     group = augroup,
-    callback = function()
-      BufNameCache = {}
+    callback = function(args)
+      local buf = args.buf
+      local old_path = State.bufs[buf]
+      local new_path = vim.api.nvim_buf_get_name(buf)
+
+      if old_path == new_path then
+        return
+      end
+
+      State.bufs[buf] = new_path
+
+      if old_path and old_path ~= '' then
+        BufNameCache:remove(old_path)
+      end
+
+      if new_path ~= '' then
+        BufNameCache:put(new_path)
+      end
     end,
   })
 
@@ -770,7 +776,7 @@ end
 local function rebuild()
   State.tabs = {}
   State.bufs = {}
-
+  BufNameCache = init_trie()
   local tab = vim.api.nvim_get_current_tabpage()
 
   local tabmeta = {
@@ -779,19 +785,16 @@ local function rebuild()
 
   State.tabs[tab] = tabmeta
 
-  local seen = {}
-
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-    if not seen[buf] then
-      seen[buf] = true
-      if
-        vim.api.nvim_buf_is_valid(buf)
-        and vim.bo[buf].buflisted
-        and M.is_managed(buf)
-      then
-        State.bufs[buf] = true
-        table.insert(tabmeta.attached_buffers, buf)
-      end
+    if
+      vim.api.nvim_buf_is_valid(buf)
+      and vim.bo[buf].buflisted
+      and M.is_managed(buf)
+    then
+      local path = vim.api.nvim_buf_get_name(buf)
+      State.bufs[buf] = path
+      table.insert(tabmeta.attached_buffers, buf)
+      BufNameCache:put(path)
     end
   end
 
@@ -802,8 +805,6 @@ local function rebuild()
   end
 
   mark_buflisted(true, tab)
-
-  BufNameCache = {}
 end
 
 local function install_usercmds()
@@ -835,7 +836,7 @@ local function install_usercmds()
     local bufnrs = {}
 
     local first = fargs[1]
-    local policy_set = { replace = true, idle = true, destroy = 1 }
+    local policy_set = { replace = true, idle = true, destroy = true }
 
     local start = 1
     if first and policy_set[first] then
@@ -865,12 +866,10 @@ local function install_usercmds()
     end
   end, {
     nargs = '*',
-    complete = function(arglead, cmdline, _)
+    complete = function(_, cmdline, _)
       local args = vim.split(cmdline, '%s+')
       if #args == 2 then
-        return vim.tbl_filter(function(p)
-          return p:find(arglead, 1, true)
-        end, { 'replace', 'idle', 'destroy' })
+        return { 'replace', 'idle', 'destroy' }
       end
       return vim.tbl_map(tostring, M.get_attached_buf())
     end,
@@ -914,12 +913,10 @@ local function install_usercmds()
     end
   end, {
     nargs = '*',
-    complete = function(arglead, cmdline, _)
+    complete = function(_, cmdline, _)
       local args = vim.split(cmdline, '%s+')
       if #args == 2 then
-        return vim.tbl_filter(function(p)
-          return p:find(arglead, 1, true)
-        end, { 'replace', 'idle', 'destroy' })
+        return { 'replace', 'idle', 'destroy' }
       end
       return vim.tbl_map(tostring, M.get_attached_buf())
     end,
