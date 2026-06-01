@@ -3,16 +3,39 @@
 --------------------------------------------------------------------------------
 local M = {}
 local LOG_TITLE = 'BufferPoolManager'
+---@type BufferPoolManagerOptions
+local BUFFER_POOL_MANAGER_OPTIONS_DEFAULT = {
+  buftype_policy = {
+    [''] = 'managed',
+
+    ---------------------------------------------------------------------------
+    -- Active resources
+    ---------------------------------------------------------------------------
+    terminal = 'external',
+
+    ---------------------------------------------------------------------------
+    -- Ephemeral UI
+    ---------------------------------------------------------------------------
+    help = 'ephemeral',
+    quickfix = 'ephemeral',
+    nofile = 'ephemeral',
+    prompt = 'ephemeral',
+
+    ---------------------------------------------------------------------------
+    -- Write-only buffers
+    ---------------------------------------------------------------------------
+    acwrite = 'ephemeral',
+
+    ---------------------------------------------------------------------------
+    -- Plugin generated
+    ---------------------------------------------------------------------------
+    popup = 'ephemeral',
+  },
+  default_buftype_policy = 'ephemeral',
+}
+
 local Resolver = require 'core.bpm.resolver'
-
----@alias DetachPolicy
----| 'destroy'  vim native, destroy window
----| 'replace' similar to snacks.bufdelete, replace with other buffers
----| 'idle'    create an empty buffer as placeholder
-
----@class TabMeta
----@field name? string
----@field attached_buffers integer[]
+local Opts = vim.deepcopy(BUFFER_POOL_MANAGER_OPTIONS_DEFAULT)
 
 --- BufferPoolManager Global State
 local State = {
@@ -42,25 +65,6 @@ local function mark_buflisted(value, tabid)
 end
 
 ---@param tab integer
-local function refresh_projection(tab)
-  for _, bufnr in ipairs(vim.tbl_keys(State.bufs)) do
-    if vim.api.nvim_buf_is_valid(bufnr) then
-      vim.bo[bufnr].buflisted = false
-    end
-  end
-
-  local meta = State.tabs[tab]
-
-  if meta then
-    for _, buf in ipairs(meta.attached_buffers) do
-      if vim.api.nvim_buf_is_valid(buf) then
-        vim.bo[buf].buflisted = true
-      end
-    end
-  end
-end
-
----@param tab integer
 ---@param exclude integer
 ---@return integer?
 local function find_replacement(tab, exclude)
@@ -84,6 +88,7 @@ local function create_idle_buffer()
   vim.bo[buf].bufhidden = 'wipe'
   vim.bo[buf].buftype = 'nofile'
   vim.bo[buf].swapfile = false
+  vim.bo[buf].modifiable = false
   return buf
 end
 
@@ -115,6 +120,18 @@ local function remove_value(list, value)
   end
 end
 
+---@param buf integer
+---@return BufTypePolicy
+local function get_buftype_policy(buf)
+  return Opts.buftype_policy[vim.bo[buf].buftype] or Opts.default_buftype_policy
+end
+
+---@param buf integer
+---@return boolean
+function M.is_managed(buf)
+  return get_buftype_policy(buf) == 'managed'
+end
+
 --- Attach buffer to a tab
 ---@param buf integer
 ---@param tab integer
@@ -124,7 +141,7 @@ function M.attach(buf, tab)
   end
 
   -- skip special buffers
-  if vim.bo[buf].buftype ~= '' then
+  if not M.is_managed(buf) then
     return
   end
 
@@ -164,7 +181,7 @@ function M.detach(buf, tab, policy)
     return
   end
 
-  if vim.bo[buf].modified then
+  if vim.bo[buf].modifiable and vim.bo[buf].modified then
     local bufname = vim.fn.bufname(buf)
     local ok, choice = pcall(
       vim.fn.confirm,
@@ -174,55 +191,74 @@ function M.detach(buf, tab, policy)
     if not ok or choice == 0 or choice == 3 then
       return
     elseif choice == 1 then -- Yes
-      vim.api.nvim_buf_call(buf, vim.cmd.write)
+      local ok_write, err = pcall(vim.api.nvim_buf_call, buf, vim.cmd.write)
+      if not ok_write then
+        vim.notify(
+          'Write file `' .. bufname .. '` failed, because' .. err,
+          vim.log.levels.ERROR,
+          { title = LOG_TITLE }
+        )
+        return
+      end
       vim.api.nvim_echo({ { 'Written file ' .. bufname } }, false, {})
-    end -- if choose `No` then do nothing. it willbe vacuumed silently
+    end -- if choose `No` then do nothing. it will be vacuumed silently
   end
+
+  local buftype_policy = get_buftype_policy(buf)
 
   local tabmeta = State.tabs[tab]
 
-  if not tabmeta then
-    vim.notify(
-      '[Detach] Cannot find tab meta :`' .. tab .. '`',
-      vim.log.levels.ERROR,
-      { title = LOG_TITLE }
-    )
-    return
+  if buftype_policy == 'managed' then
+    if not tabmeta then
+      vim.notify(
+        '[Detach] Cannot find tab meta :`' .. tab .. '`',
+        vim.log.levels.ERROR,
+        { title = LOG_TITLE }
+      )
+      return
+    end
+
+    local wins = find_tab_wins(buf, tab)
+
+    -- Window handling
+    if policy == 'destroy' then
+      for _, win in ipairs(wins) do
+        if vim.api.nvim_win_is_valid(win) then
+          pcall(vim.api.nvim_win_close, win, false)
+        end
+      end
+    elseif policy == 'idle' then
+      local idle = create_idle_buffer()
+
+      for _, win in ipairs(wins) do
+        if vim.api.nvim_win_is_valid(win) then
+          vim.api.nvim_win_set_buf(win, idle)
+        end
+      end
+    else -- replace
+      local replacement = find_replacement(tab, buf)
+
+      if not replacement then
+        replacement = create_idle_buffer()
+      end
+
+      for _, win in ipairs(wins) do
+        if vim.api.nvim_win_is_valid(win) then
+          vim.api.nvim_win_set_buf(win, replacement)
+        end
+      end
+    end
+
+    remove_value(tabmeta.attached_buffers, buf)
+    vim.bo[buf].buflisted = false
+  elseif buftype_policy == 'external' then
+    if tabmeta then
+      remove_value(tabmeta.attached_buffers, buf)
+    end
+    vim.bo[buf].buflisted = false
+  elseif buftype_policy == 'ephemeral' then
+    vim.api.nvim_buf_delete(buf, { force = true })
   end
-
-  local wins = find_tab_wins(buf, tab)
-
-  -- Window handling
-  if policy == 'destroy' then
-    for _, win in ipairs(wins) do
-      if vim.api.nvim_win_is_valid(win) then
-        pcall(vim.api.nvim_win_close, win, false)
-      end
-    end
-  elseif policy == 'idle' then
-    local idle = create_idle_buffer()
-
-    for _, win in ipairs(wins) do
-      if vim.api.nvim_win_is_valid(win) then
-        vim.api.nvim_win_set_buf(win, idle)
-      end
-    end
-  else -- replace
-    local replacement = find_replacement(tab, buf)
-
-    if not replacement then
-      replacement = create_idle_buffer()
-    end
-
-    for _, win in ipairs(wins) do
-      if vim.api.nvim_win_is_valid(win) then
-        vim.api.nvim_win_set_buf(win, replacement)
-      end
-    end
-  end
-
-  remove_value(tabmeta.attached_buffers, buf)
-  vim.bo[buf].buflisted = false
 
   -- Cache invalid
   BufNameCache = {}
@@ -241,7 +277,9 @@ function M.evict(buf, policy)
       M.detach(buf, tab, policy)
     end
   end
-  vim.api.nvim_buf_delete(buf, {})
+  if vim.api.nvim_buf_is_valid(buf) then
+    vim.api.nvim_buf_delete(buf, {})
+  end
 end
 
 --- Clean orphaned buffers
@@ -251,20 +289,22 @@ function M.vacuum(verbose)
   local orphaned = M.get_orphaned_buf()
   if verbose then
     if #orphaned == 0 then
-      vim.api.nvim_echo({ { 'No orphaned buffers', 'Directory' } }, false, {})
+      vim.api.nvim_echo({ { 'No orphaned buffers', 'WarningMsg' } }, false, {})
     else
-      vim.api.nvim_echo({ { 'Vacuumed buffers:', 'Directory' } }, false, {})
+      vim.api.nvim_echo({ { 'Vacuumed buffers:', 'MoreMsg' } }, false, {})
     end
   end
   for _, bufnr in ipairs(orphaned) do
     if verbose then
       vim.api.nvim_echo(
-        { { vim.api.nvim_buf_get_name(bufnr), 'Directory' } },
+        { { vim.api.nvim_buf_get_name(bufnr), 'MoreMsg' } },
         false,
         {}
       )
     end
-    vim.api.nvim_buf_delete(bufnr, { force = true })
+    if vim.api.nvim_buf_is_valid(bufnr) then
+      vim.api.nvim_buf_delete(bufnr, { force = true })
+    end
   end
 end
 
@@ -291,7 +331,7 @@ function M.get_orphaned_buf()
     end
   end
   for _, bufnr in ipairs(vim.tbl_keys(State.bufs)) do
-    if not attached[bufnr] then
+    if vim.api.nvim_buf_is_valid(bufnr) and not attached[bufnr] then
       table.insert(ret, bufnr)
     end
   end
@@ -373,7 +413,11 @@ end
 local function on_tab_leave()
   local listed = get_listed_bufs()
   local tab = vim.api.nvim_get_current_tabpage()
-  State.tabs[tab].attached_buffers = listed
+  local meta = State.tabs[tab]
+  if not meta then
+    return
+  end
+  meta.attached_buffers = listed
   mark_buflisted(false)
 end
 
@@ -411,7 +455,7 @@ function M.to_json()
   -- build buffer path index
   for bufnr, _ in pairs(State.bufs) do
     if vim.api.nvim_buf_is_valid(bufnr) then
-      if vim.bo[bufnr].buftype == '' then
+      if M.is_managed(bufnr) then
         local path = vim.api.nvim_buf_get_name(bufnr)
         if path ~= '' then
           local idx = #to_dump.bufs + 1
@@ -445,7 +489,12 @@ function M.to_json()
   return vim.json.encode(to_dump)
 end
 
---- Replace state from given json
+--- Import serialized state into current BPM graph.
+---
+--- Existing managed buffers and tabs are preserved.
+--- Session data is merged into the current runtime state.
+---
+--- This function does NOT replace the current state.
 ---@param data string
 function M.from_json(data)
   ---@type BufferPoolManagerDumpedState
@@ -487,10 +536,10 @@ function M.from_json(data)
         vim.fn.bufload(bufnr)
         -- Manually trigger autocmds
         vim.api.nvim_buf_call(bufnr, function()
-          vim.cmd(' doautocmd BufReadPre ' .. bufnr)
-          vim.cmd(' doautocmd BufRead ' .. bufnr)
-          vim.cmd(' doautocmd BufReadPost ' .. bufnr)
-          vim.cmd 'filetype detect'
+          vim.api.nvim_exec_autocmds('BufReadPre', { buffer = bufnr })
+          vim.api.nvim_exec_autocmds('BufRead', { buffer = bufnr })
+          vim.api.nvim_exec_autocmds('BufReadPost', { buffer = bufnr })
+          vim.api.nvim_exec_autocmds('FileType', { buffer = bufnr })
         end)
         path_index[path] = bufnr
       end
@@ -501,14 +550,22 @@ function M.from_json(data)
   local tabs = dumped.tabs
 
   local curr_tabs = vim.api.nvim_list_tabpages()
-  for i, tab_handle in ipairs(curr_tabs) do
+  for i, tabid in ipairs(curr_tabs) do
     local dumped_meta = tabs[i]
     if dumped_meta then
-      ---@type TabMeta
-      local meta = {
-        name = dumped_meta.name,
-        attached_buffers = {},
-      }
+      -- check if has current state
+      local existing_meta = State.tabs[tabid]
+      if not existing_meta then
+        existing_meta = {
+          attached_buffers = {},
+        }
+        State.tabs[tabid] = existing_meta
+      end
+
+      -- merge tabname: if not renamed current tab, use the tab restored
+      if not existing_meta.name and dumped_meta.name then
+        existing_meta.name = dumped_meta.name
+      end
 
       for _, idx in ipairs(dumped_meta.bufs) do
         local path = bufs[idx]
@@ -516,7 +573,9 @@ function M.from_json(data)
           local bufnr = path_index[path]
           if bufnr then
             State.bufs[bufnr] = true
-            table.insert(meta.attached_buffers, bufnr)
+            if not vim.tbl_contains(existing_meta.attached_buffers, bufnr) then
+              table.insert(existing_meta.attached_buffers, bufnr)
+            end
           else
             vim.notify(
               '`' .. path .. '`not in path index!',
@@ -526,14 +585,11 @@ function M.from_json(data)
           end
         end
       end
-
-      State.tabs[tab_handle] = meta
     end
   end
-  refresh_projection(vim.api.nvim_get_current_tabpage())
 end
 
-function M.install_hooks()
+local function install_autocmds()
   local augroup =
     vim.api.nvim_create_augroup('BufferPoolManager', { clear = true })
 
@@ -547,7 +603,7 @@ function M.install_hooks()
     callback = function(args)
       local buf = args.buf
 
-      if vim.bo[buf].buftype ~= '' then
+      if not M.is_managed(buf) then
         return
       end
 
@@ -572,6 +628,9 @@ function M.install_hooks()
     callback = function(args)
       local buf = args.buf
       State.bufs[buf] = nil
+      for _, meta in pairs(State.tabs) do
+        remove_value(meta.attached_buffers, buf)
+      end
       BufNameCache = {}
     end,
   })
@@ -580,14 +639,16 @@ function M.install_hooks()
   -- Cleanup closed tabs
   ------------------------------------------------------------------------------
 
-  vim.api.nvim_create_autocmd('TabClosed', {
+  vim.api.nvim_create_autocmd('TabClosedPre', {
     group = augroup,
-    callback = function(args)
-      local closed = tonumber(args.match)
-      if not closed then
-        return
-      end
-      State.tabs[closed] = nil
+    callback = function()
+      local to_close = vim.api.nvim_get_current_tabpage()
+      -- HACK: Skip the TabLeave event
+      -- TabClosed only provides tab number, not tab handle.
+      -- Capture handle in TabClosedPre and remove state after close.
+      vim.schedule(function()
+        State.tabs[to_close] = nil
+      end)
     end,
   })
 
@@ -628,13 +689,85 @@ function M.install_hooks()
 end
 
 function M.debug_dump()
-  print(vim.inspect(State))
+  local chunks = {}
+  ---@param str string
+  ---@param hl? string
+  local function append(str, hl)
+    table.insert(chunks, { str, hl or 'Normal' })
+  end
+
+  -- Tabs
+  append('Tabs:\n', 'Title')
+  for tab, meta in pairs(State.tabs) do
+    local tabname = M.resolve_tabname(tab)
+    append(string.format('  tab %-3d ', tab), 'Number')
+    append(tabname .. '\n', 'Title')
+
+    for _, bufnr in ipairs(meta.attached_buffers) do
+      local modified = vim.bo[bufnr].modified
+      append(string.format('    %-3d ', bufnr), 'Number')
+      append(
+        M.resolve_bufname(bufnr),
+        modified and 'DiagnosticWarn' or 'Directory'
+      )
+      append(modified and ' [+]\n' or '\n', 'DiagnosticWarn')
+    end
+
+    if #meta.attached_buffers == 0 then
+      append('    (empty)\n', 'Comment')
+    end
+  end
+
+  -- All tracked bufs
+  append('\nBuffers:\n', 'Title')
+  local attached = {}
+  for _, meta in pairs(State.tabs) do
+    for _, bufnr in ipairs(meta.attached_buffers) do
+      attached[bufnr] = true
+    end
+  end
+
+  for _, bufnr in ipairs(vim.tbl_keys(State.bufs)) do
+    if vim.api.nvim_buf_is_valid(bufnr) then
+      local is_attached = attached[bufnr]
+      local modified = vim.bo[bufnr].modified
+      append(string.format('  %-3d ', bufnr), 'Number')
+      append(M.resolve_bufname(bufnr), is_attached and 'Directory' or 'Comment')
+      if modified then
+        append(' [+]', 'DiagnosticWarn')
+      end
+      if not is_attached then
+        append(' (orphaned)', 'DiagnosticError')
+      end
+      append('\n')
+    end
+  end
+
+  -- Orphaned
+  local orphaned = M.get_orphaned_buf()
+  append('\nOrphaned: ', 'Title')
+  if #orphaned == 0 then
+    append('none\n', 'Comment')
+  else
+    append(tostring(#orphaned) .. '\n', 'DiagnosticError')
+    for _, bufnr in ipairs(orphaned) do
+      local modified = vim.bo[bufnr].modified
+      append(string.format('  %-3d ', bufnr), 'Number')
+      append(M.resolve_bufname(bufnr), 'DiagnosticError')
+      if modified then
+        append(' [+]', 'DiagnosticWarn')
+      end
+      append('\n')
+    end
+  end
+
+  vim.api.nvim_echo(chunks, false, {})
 end
 
 --- Deprecate current internal state
 --- Rebuild via current nvim state -- all buffers attach to first tab
 --- Solve problem for cli args loaded bufs
-function M.rebuild()
+local function rebuild()
   State.tabs = {}
   State.bufs = {}
 
@@ -654,7 +787,7 @@ function M.rebuild()
       if
         vim.api.nvim_buf_is_valid(buf)
         and vim.bo[buf].buflisted
-        and vim.bo[buf].buftype == ''
+        and M.is_managed(buf)
       then
         State.bufs[buf] = true
         table.insert(tabmeta.attached_buffers, buf)
@@ -662,9 +795,185 @@ function M.rebuild()
     end
   end
 
-  refresh_projection(vim.api.nvim_get_current_tabpage())
+  for _, bufnr in ipairs(vim.tbl_keys(State.bufs)) do
+    if vim.api.nvim_buf_is_valid(bufnr) then
+      vim.bo[bufnr].buflisted = false
+    end
+  end
+
+  mark_buflisted(true, tab)
 
   BufNameCache = {}
+end
+
+local function install_usercmds()
+  vim.api.nvim_create_user_command('BpmDumpState', M.debug_dump, {})
+
+  vim.api.nvim_create_user_command('BpmRenameTab', function(opts)
+    local name = opts.args
+    if name == '' then
+      vim.notify(
+        'Usage: BpmRenameTab <name>',
+        vim.log.levels.WARN,
+        { title = LOG_TITLE }
+      )
+      return
+    end
+    M.rename_tab(vim.api.nvim_get_current_tabpage(), name)
+  end, { nargs = 1, desc = 'Rename the current tab' })
+
+  vim.api.nvim_create_user_command('BpmVacuum', function(args)
+    M.vacuum(args.bang)
+  end, {
+    bang = true,
+    desc = 'Delete orphaned buffers (use ! for verbose)',
+  })
+
+  vim.api.nvim_create_user_command('BpmEvict', function(args)
+    local fargs = args.fargs
+    local policy = 'replace'
+    local bufnrs = {}
+
+    local first = fargs[1]
+    local policy_set = { replace = true, idle = true, destroy = 1 }
+
+    local start = 1
+    if first and policy_set[first] then
+      policy = first
+      start = 2
+    end
+
+    for i = start, #fargs do
+      local n = tonumber(fargs[i])
+      if n then
+        table.insert(bufnrs, n)
+      else
+        vim.notify(
+          'Invalid bufnr: ' .. fargs[i],
+          vim.log.levels.ERROR,
+          { title = LOG_TITLE }
+        )
+      end
+    end
+
+    if #bufnrs == 0 then
+      bufnrs = { vim.api.nvim_get_current_buf() }
+    end
+
+    for _, bufnr in ipairs(bufnrs) do
+      M.evict(bufnr, policy)
+    end
+  end, {
+    nargs = '*',
+    complete = function(arglead, cmdline, _)
+      local args = vim.split(cmdline, '%s+')
+      if #args == 2 then
+        return vim.tbl_filter(function(p)
+          return p:find(arglead, 1, true)
+        end, { 'replace', 'idle', 'destroy' })
+      end
+      return vim.tbl_map(tostring, M.get_attached_buf())
+    end,
+    desc = 'Evict buffer(s) all tabs and delete permanently. Usage: BpmEvict [policy] [bufnr...]',
+  })
+
+  vim.api.nvim_create_user_command('BpmDetach', function(args)
+    local fargs = args.fargs
+    local policy = 'replace'
+    local bufnrs = {}
+
+    local first = fargs[1]
+    local policy_set = { replace = true, idle = true, destroy = 1 }
+
+    local start = 1
+    if first and policy_set[first] then
+      policy = first
+      start = 2
+    end
+
+    for i = start, #fargs do
+      local n = tonumber(fargs[i])
+      if n then
+        table.insert(bufnrs, n)
+      else
+        vim.notify(
+          'Invalid bufnr: ' .. fargs[i],
+          vim.log.levels.ERROR,
+          { title = LOG_TITLE }
+        )
+      end
+    end
+
+    if #bufnrs == 0 then
+      bufnrs = { vim.api.nvim_get_current_buf() }
+    end
+
+    local tab = vim.api.nvim_get_current_tabpage()
+    for _, bufnr in ipairs(bufnrs) do
+      M.detach(bufnr, tab, policy)
+    end
+  end, {
+    nargs = '*',
+    complete = function(arglead, cmdline, _)
+      local args = vim.split(cmdline, '%s+')
+      if #args == 2 then
+        return vim.tbl_filter(function(p)
+          return p:find(arglead, 1, true)
+        end, { 'replace', 'idle', 'destroy' })
+      end
+      return vim.tbl_map(tostring, M.get_attached_buf())
+    end,
+    desc = 'Detach buffer(s) from the current tab. Usage: BpmDetach [policy] [bufnr...]',
+  })
+
+  vim.api.nvim_create_user_command('BpmListTab', function()
+    local tab = vim.api.nvim_get_current_tabpage()
+    local bufs = M.get_attached_buf(tab)
+    local lines = {}
+    for _, bufnr in ipairs(bufs) do
+      local name = M.resolve_bufname(bufnr)
+      local modified = vim.bo[bufnr].modified and ' [+]' or ''
+      table.insert(lines, ('%d: %s%s'):format(bufnr, name, modified))
+    end
+    if #lines == 0 then
+      lines = { '(empty)' }
+    end
+    vim.api.nvim_echo(
+      vim.tbl_map(function(l)
+        return { l .. '\n', 'Normal' }
+      end, lines),
+      true,
+      {}
+    )
+  end, { desc = 'List buffers attached to the current tab' })
+
+  vim.api.nvim_create_user_command('BpmDebugRebuild', function()
+    rebuild()
+    vim.notify(
+      'Buffer pool state rebuilt',
+      vim.log.levels.INFO,
+      { title = LOG_TITLE }
+    )
+  end, { desc = 'Rebuild internal state from current buffers (debug)' })
+
+  vim.api.nvim_create_user_command('BpmBufName', function(args)
+    local bufnr = args.count > 0 and args.count
+      or vim.api.nvim_get_current_buf()
+    local name = M.resolve_bufname(bufnr)
+    vim.api.nvim_echo({ { name, 'Normal' } }, false, {})
+  end, {
+    count = true,
+    desc = 'Show resolved name of a buffer. Usage: 42BpmBufName',
+  })
+end
+
+---@param opts? BufferPoolManagerOptions
+function M.setup(opts)
+  Opts = vim.tbl_deep_extend('force', Opts, opts or {})
+  install_autocmds()
+  install_usercmds()
+  -- files via commandline args is not recorded. so we sync here
+  rebuild()
 end
 
 return M
