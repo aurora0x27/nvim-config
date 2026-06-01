@@ -470,12 +470,15 @@ function M.to_json()
   return vim.json.encode(to_dump)
 end
 
---- Import serialized state into current BPM graph.
+--- Restore a previously dumped BPM state.
 ---
---- Existing managed buffers and tabs are preserved.
---- Session data is merged into the current runtime state.
+--- Current BPM graph is replaced by the serialized state.
 ---
---- This function does NOT replace the current state.
+--- Buffers already existing in Neovim are reused when possible.
+--- Missing buffers are loaded lazily via bufadd().
+---
+--- This function reconstructs State.tabs and State.bufs
+--- from the serialized snapshot.
 ---@param data string
 function M.from_json(data)
   ---@type BufferPoolManagerDumpedState
@@ -534,19 +537,11 @@ function M.from_json(data)
   for i, tabid in ipairs(curr_tabs) do
     local dumped_meta = tabs[i]
     if dumped_meta then
-      -- check if has current state
-      local existing_meta = State.tabs[tabid]
-      if not existing_meta then
-        existing_meta = {
-          attached_buffers = {},
-        }
-        State.tabs[tabid] = existing_meta
-      end
-
-      -- merge tabname: if not renamed current tab, use the tab restored
-      if not existing_meta.name and dumped_meta.name then
-        existing_meta.name = dumped_meta.name
-      end
+      ---@type TabMeta
+      local meta = {
+        attached_buffers = {},
+        name = dumped_meta.name,
+      }
 
       for _, idx in ipairs(dumped_meta.bufs) do
         local path = bufs[idx]
@@ -557,8 +552,8 @@ function M.from_json(data)
               State.bufs[bufnr] = path
               BufNameCache:put(path)
             end
-            if not vim.tbl_contains(existing_meta.attached_buffers, bufnr) then
-              table.insert(existing_meta.attached_buffers, bufnr)
+            if not vim.tbl_contains(meta.attached_buffers, bufnr) then
+              table.insert(meta.attached_buffers, bufnr)
             end
           else
             vim.notify(
@@ -569,8 +564,18 @@ function M.from_json(data)
           end
         end
       end
+
+      State.tabs[tabid] = meta
     end
   end
+
+  -- must refresh at once, otherwise some buffers will be orphaned
+  for _, bufnr in ipairs(vim.tbl_keys(State.bufs)) do
+    if vim.api.nvim_buf_is_valid(bufnr) then
+      vim.bo[bufnr].buflisted = false
+    end
+  end
+  mark_buflisted(true)
 end
 
 local function install_autocmds()
