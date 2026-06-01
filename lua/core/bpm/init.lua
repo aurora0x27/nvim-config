@@ -25,11 +25,6 @@ local BUFFER_POOL_MANAGER_OPTIONS_DEFAULT = {
     -- Write-only buffers
     ----------------------------------------------------------------------------
     acwrite = 'ephemeral',
-
-    ----------------------------------------------------------------------------
-    -- Plugin generated
-    ----------------------------------------------------------------------------
-    popup = 'ephemeral',
   },
   default_buftype_policy = 'ephemeral',
 }
@@ -383,7 +378,7 @@ local function is_valid(buf_num)
     return false
   end
   local exists = vim.api.nvim_buf_is_valid(buf_num)
-  return vim.bo[buf_num].buflisted and exists
+  return exists and vim.bo[buf_num].buflisted
 end
 
 local function get_listed_bufs()
@@ -647,9 +642,13 @@ local function install_autocmds()
   ------------------------------------------------------------------------------
 
   vim.api.nvim_create_autocmd('BufFilePost', {
-    group = augroup,
     callback = function(args)
       local buf = args.buf
+
+      if not State.bufs[buf] then
+        return
+      end
+
       local old_path = State.bufs[buf]
       local new_path = vim.api.nvim_buf_get_name(buf)
 
@@ -659,7 +658,7 @@ local function install_autocmds()
 
       State.bufs[buf] = new_path
 
-      if old_path and old_path ~= '' then
+      if old_path ~= '' then
         BufNameCache:remove(old_path)
       end
 
