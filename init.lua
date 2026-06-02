@@ -153,14 +153,14 @@ require 'core.workspace'.setup()
 vim.api.nvim_create_autocmd('UIEnter', {
   once = true,
   callback = function()
-    -- start BufferPoolManager
-    require 'core.bpm'.setup()
-
     -- start bus
     require 'core.bus.backend.recorder'.setup()
     require 'core.bus.backend.fidget'.setup()
     require 'core.bus.backend.notify'.setup()
     Bus.start { bus_backend = 'notify' }
+
+    -- start BufferPoolManager
+    require 'core.bpm'.setup()
   end,
 })
 

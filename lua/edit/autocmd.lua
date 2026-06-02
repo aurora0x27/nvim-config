@@ -125,11 +125,6 @@ function M.setup()
       end)
     end,
   })
-
-  vim.api.nvim_create_autocmd(
-    'QuitPre',
-    { group = AUG, callback = require 'core.bpm'.vacuum }
-  )
 end
 
 return M
