@@ -163,6 +163,42 @@ function M.attach(buf, tab)
   end
 end
 
+---@param buf integer
+---@param tab integer
+---@param policy DetachPolicy
+local function handle_windows(buf, tab, policy)
+  local wins = find_tab_wins(buf, tab)
+
+  -- Window handling
+  if policy == 'destroy' then
+    for _, win in ipairs(wins) do
+      if vim.api.nvim_win_is_valid(win) then
+        pcall(vim.api.nvim_win_close, win, false)
+      end
+    end
+  elseif policy == 'idle' then
+    local idle = create_idle_buffer()
+
+    for _, win in ipairs(wins) do
+      if vim.api.nvim_win_is_valid(win) then
+        vim.api.nvim_win_set_buf(win, idle)
+      end
+    end
+  else -- replace
+    local replacement = find_replacement(tab, buf)
+
+    if not replacement then
+      replacement = create_idle_buffer()
+    end
+
+    for _, win in ipairs(wins) do
+      if vim.api.nvim_win_is_valid(win) then
+        vim.api.nvim_win_set_buf(win, replacement)
+      end
+    end
+  end
+end
+
 --- Detach a buffer from a tab
 ---@param buf?  integer
 ---@param tab?  integer
@@ -214,47 +250,18 @@ function M.detach(buf, tab, policy)
       )
       return
     end
-
-    local wins = find_tab_wins(buf, tab)
-
-    -- Window handling
-    if policy == 'destroy' then
-      for _, win in ipairs(wins) do
-        if vim.api.nvim_win_is_valid(win) then
-          pcall(vim.api.nvim_win_close, win, false)
-        end
-      end
-    elseif policy == 'idle' then
-      local idle = create_idle_buffer()
-
-      for _, win in ipairs(wins) do
-        if vim.api.nvim_win_is_valid(win) then
-          vim.api.nvim_win_set_buf(win, idle)
-        end
-      end
-    else -- replace
-      local replacement = find_replacement(tab, buf)
-
-      if not replacement then
-        replacement = create_idle_buffer()
-      end
-
-      for _, win in ipairs(wins) do
-        if vim.api.nvim_win_is_valid(win) then
-          vim.api.nvim_win_set_buf(win, replacement)
-        end
-      end
-    end
-
+    handle_windows(buf, tab, policy)
     remove_value(tabmeta.attached_buffers, buf)
     vim.bo[buf].buflisted = false
   elseif buftype_policy == 'external' then
+    handle_windows(buf, tab, policy)
     if tabmeta then
       remove_value(tabmeta.attached_buffers, buf)
     end
     vim.bo[buf].buflisted = false
   elseif buftype_policy == 'ephemeral' then
-    vim.api.nvim_buf_delete(buf, { force = true })
+    handle_windows(buf, tab, policy)
+    vim.bo[buf].buflisted = false
   end
 end
 
@@ -272,7 +279,7 @@ function M.evict(buf, policy)
     end
   end
   if vim.api.nvim_buf_is_valid(buf) then
-    vim.api.nvim_buf_delete(buf, {})
+    vim.api.nvim_buf_delete(buf, { force = true })
   end
 end
 
