@@ -28,12 +28,12 @@ map(
 )
 
 map({ 'n' }, '<leader>tnN', function()
-  local name = vim.fn.input('File name: ', '', 'file')
+  local name = vim.fn.input('Tab name: ')
+  vim.cmd 'tabnew'
   if name ~= '' then
-    vim.cmd('tabnew ' .. name)
+    require 'core.bpm'.rename_tab(vim.api.nvim_get_current_tabpage(), name)
   else
-    vim.cmd 'tabnew'
-    misc.warn 'Warn: Filename not assigned, opening an anonymous buffer'
+    misc.warn 'Warn: Tabname not assigned, opening an anonymous buffer'
   end
 end, { noremap = true, silent = true, desc = 'Tab [N]ew with name' })
 
