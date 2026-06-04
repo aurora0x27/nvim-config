@@ -74,23 +74,23 @@ local GitUtils = {
       end
 
       -- Navigation
-      map('n', ']c', function()
+      map('n', ']h', function()
         if vim.wo.diff then
           vim.cmd.normal { ']c', bang = true }
         else
           ---@diagnostic disable:param-type-mismatch
           gitsigns.nav_hunk 'next'
         end
-      end)
+      end, { desc = 'Next [H]unk' })
 
-      map('n', '[c', function()
+      map('n', '[h', function()
         if vim.wo.diff then
           vim.cmd.normal { '[c', bang = true }
         else
           ---@diagnostic disable:param-type-mismatch
           gitsigns.nav_hunk 'prev'
         end
-      end)
+      end, { desc = 'Prev [H]unk' })
 
       -- Actions
       map('n', '<leader>ghs', function()
