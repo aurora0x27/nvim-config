@@ -278,21 +278,6 @@ local function mark_buflisted(value, tabid)
   end
 end
 
----@param tab integer
----@param exclude integer
----@return integer?
-local function find_replacement(tab, exclude)
-  local bufs = get_listed_bufs(tab)
-
-  for _, buf in ipairs(bufs) do
-    if buf ~= exclude and vim.api.nvim_buf_is_valid(buf) then
-      return buf
-    end
-  end
-
-  return nil
-end
-
 ---@return integer
 local function create_idle_buffer()
   local buf = vim.api.nvim_create_buf(false, true)
@@ -301,6 +286,27 @@ local function create_idle_buffer()
   vim.bo[buf].swapfile = false
   vim.bo[buf].modifiable = false
   return buf
+end
+
+---@param tab integer
+---@param exclude integer
+---@return integer
+local function find_replacement(tab, exclude)
+  local best
+  local best_lastused = -1
+
+  for _, buf in ipairs(get_listed_bufs(tab)) do
+    if buf ~= exclude and vim.api.nvim_buf_is_valid(buf) then
+      local bi = vim.fn.getbufinfo(buf)[1]
+
+      if bi and bi.lastused > best_lastused then
+        best = buf
+        best_lastused = bi.lastused
+      end
+    end
+  end
+
+  return best or create_idle_buffer()
 end
 
 ---@param buf integer
@@ -354,10 +360,6 @@ local function handle_windows(buf, tab, policy)
     end
   else -- replace
     local replacement = find_replacement(tab, buf)
-
-    if not replacement then
-      replacement = create_idle_buffer()
-    end
 
     for _, win in ipairs(wins) do
       if vim.api.nvim_win_is_valid(win) then
