@@ -458,7 +458,8 @@ end
 function M.rename_tab(tabid, new_name)
   local meta = State.tabs[tabid]
   if not meta then
-    return
+    meta = { attached_buffers = get_listed_bufs() }
+    State.tabs[tabid] = meta
   end
   meta.name = new_name
   vim.cmd [[ redrawtabline ]]
