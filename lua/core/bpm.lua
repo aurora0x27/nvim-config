@@ -36,11 +36,10 @@ end
 ---@param path string
 ---@param sep string
 local function split_path(path, sep)
-  local parts = vim.split(path, sep, { plain = true })
-  if parts[1] == '' then
-    table.remove(parts, 1)
+  if path:sub(1, #sep) == sep then
+    path = path:sub(#sep + 1)
   end
-  return parts
+  return vim.split(path, sep, { plain = true })
 end
 
 ---@param s string
@@ -188,7 +187,9 @@ local function is_valid(buf_num)
   return exists and vim.bo[buf_num].buflisted
 end
 
+--- Zero copy return listed tab
 ---@param tab? integer
+---@return integer[]
 local function get_listed_bufs(tab)
   local curr = vim.api.nvim_get_current_tabpage()
   tab = tab or curr
@@ -205,7 +206,7 @@ local function get_listed_bufs(tab)
     return ids
   else
     local meta = State.tabs[tab]
-    return meta and vim.list_slice(meta.attached_buffers) or {}
+    return meta and meta.attached_buffers or {}
   end
 end
 
@@ -421,14 +422,10 @@ end
 function M.get_attached_buf(tab)
   local curr = vim.api.nvim_get_current_tabpage()
   tab = tab or curr
-  if tab == 0 or tab == curr then
-    return get_listed_bufs()
+  if tab == 0 then
+    return vim.list_slice(get_listed_bufs())
   end
-  local data = State.tabs[tab]
-  if not data then
-    return {}
-  end
-  return vim.list_slice(data.attached_buffers)
+  return vim.list_slice(get_listed_bufs(tab))
 end
 
 --- Resolve unique buffer name
