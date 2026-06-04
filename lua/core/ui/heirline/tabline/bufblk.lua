@@ -76,7 +76,7 @@ local BufBlk = {
     self.modified =
       vim.api.nvim_get_option_value('modified', { buf = self.bufnr })
     local current_width = 4 + #self.filename
-    local padding_needed = math.max(0, self.buffer_min_width - current_width)
+    local padding_needed = math.max(2, self.buffer_min_width - current_width)
     self.buffer_padding = math.floor(padding_needed / 2)
   end,
   on_click = {
