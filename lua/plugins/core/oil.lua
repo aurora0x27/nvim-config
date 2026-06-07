@@ -4,6 +4,17 @@
 local border = require 'assets.theme'.border
 local thunk = require 'utils.loader'.thunk
 
+function _G.oil_get_winbar()
+  local bufnr = vim.api.nvim_win_get_buf(vim.g.statusline_winid)
+  local dir = require('oil').get_current_dir(bufnr)
+  if dir then
+    return vim.fn.fnamemodify(dir, ':~')
+  else
+    -- If there is no current directory (e.g. over ssh), just show the buffer name
+    return vim.api.nvim_buf_get_name(0)
+  end
+end
+
 ---@type LazyPluginSpec
 local FsEditor = {
   'stevearc/oil.nvim',
@@ -32,6 +43,7 @@ local FsEditor = {
       buflisted = false,
       bufhidden = 'hide',
     },
+
     -- Window-local options to use for oil buffers
     win_options = {
       wrap = false,
@@ -42,7 +54,11 @@ local FsEditor = {
       list = false,
       conceallevel = 3,
       concealcursor = 'nvic',
+      number = false,
+      relativenumber = false,
+      winbar = '%!v:lua.oil_get_winbar()',
     },
+
     -- Send deleted files to the trash instead of permanently deleting them (:help oil-trash)
     delete_to_trash = false,
     -- Skip the confirmation popup for simple operations (:help oil.skip_confirm_for_simple_edits)
@@ -68,6 +84,7 @@ local FsEditor = {
     constrain_cursor = 'editable',
     -- Set to true to watch the filesystem for changes and reload oil
     watch_for_changes = false,
+
     -- Keymaps in oil buffer. Can be any value that `vim.keymap.set` accepts OR a table of keymap
     -- options with a `callback` (e.g. { callback = function() ... end, desc = "", mode = "n" })
     -- Additionally, if it is a string that matches "actions.<name>",
@@ -77,10 +94,10 @@ local FsEditor = {
     keymaps = {
       ['g?'] = { 'actions.show_help', mode = 'n' },
       ['<CR>'] = { 'actions.select', mode = 'n' },
-      ['='] = { 'actions.select', mode = 'n' },
-      ['-'] = { 'actions.parent', mode = 'n' },
+      [']]'] = { 'actions.select', mode = 'n' },
+      ['[['] = { 'actions.parent', mode = 'n' },
       ['|'] = { 'actions.select', opts = { vertical = true } },
-      ['_'] = { 'actions.select', opts = { horizontal = true } },
+      ['-'] = { 'actions.select', opts = { horizontal = true } },
       ['<C-t>'] = { 'actions.select', opts = { tab = true } },
       ['<C-p>'] = 'actions.preview',
       ['q'] = { 'actions.close', mode = 'n' },
@@ -104,6 +121,7 @@ local FsEditor = {
         end,
       },
     },
+
     -- Set to false to disable all of the above keymaps
     use_default_keymaps = false,
     view_options = {
