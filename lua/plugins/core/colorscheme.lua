@@ -66,21 +66,22 @@ local ColorScheme = {
     default_integrations = true,
     highlight_overrides = {
       mocha = function(mocha)
+        local replace = {}
         if transparent_mode then
-          return {
-            LineNr = { fg = mocha.overlay2 },
-            BufferLineBufferVisible = { fg = mocha.overlay2 },
-            BufferLineDuplicateVisible = { fg = mocha.overlay2 },
-            BufferLineDuplicate = { fg = mocha.overlay2 },
-            NoiceCmdlinePopupBorder = { fg = mocha.teal },
-          }
+          replace.LineNr = { fg = mocha.overlay2 }
+          replace.BufferLineBufferVisible = { fg = mocha.overlay2 }
+          replace.BufferLineDuplicateVisible = { fg = mocha.overlay2 }
+          replace.BufferLineDuplicate = { fg = mocha.overlay2 }
+          replace.NoiceCmdlinePopupBorder = { fg = mocha.teal }
         else
-          return {
-            NormalFloat = { bg = mocha.base },
-            FloatBorder = { bg = mocha.base },
-            NoiceCmdlinePopupBorder = { fg = mocha.teal },
-          }
+          replace.NormalFloat = { bg = mocha.base }
+          replace.FloatBorder = { bg = mocha.base }
+          replace.NoiceCmdlinePopupBorder = { fg = mocha.teal }
         end
+        replace.NeogitFloatBorder = { fg = mocha.blue }
+        replace.NeogitDiffAddInline = { bg = mocha.green, fg = mocha.crust }
+        replace.NeogitDiffDeleteInline = { bg = mocha.red, fg = mocha.crust }
+        return replace
       end,
     },
   },
