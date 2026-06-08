@@ -6,7 +6,8 @@ local bind = require 'utils.loader'.bind
 
 ---@type LazyPluginSpec
 local Neogit = {
-  'NeogitOrg/neogit',
+  -- TODO: Use official repo after pr merged
+  'aurora0x27/neogit',
   enabled = Profile.use_neogit,
   lazy = true,
   dependencies = {
@@ -73,7 +74,7 @@ local Neogit = {
     process_spinner = false,
 
     -- Change the default way of opening neogit
-    kind = 'tab',
+    kind = 'replace',
     -- Floating window style
     floating = {
       relative = 'editor',
