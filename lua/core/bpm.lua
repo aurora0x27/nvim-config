@@ -643,6 +643,8 @@ function M.from_json(data)
       State.tabs[tabid] = meta
     end
   end
+
+  mark_buflisted(true, vim.api.nvim_get_current_tabpage())
   BufNameCache.expire()
 end
 
