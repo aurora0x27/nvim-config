@@ -89,7 +89,7 @@ nvim # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
 
 ## 可选特性
 
-某些功能是可选的，由一个json文件——`nvimrc.json`——控制，该文件应放置在您的配置目录下。
+某些功能是可选的，由一个json文件——`nvimrc.json` 控制，该文件应放置在您的配置目录下。
 以下是可自定义项目：
 
 - 用户界面
@@ -105,6 +105,10 @@ nvim # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
   - _`enable_current_line_blame`_ 启用行尾的虚拟文本行错误信息显示
   - _`enable_sticky_buffer`_ 为每个窗口启用粘性缓冲区
   - _`use_ufo_as_fold_provider`_ 使用 `nvim-ufo` 作为默认的折叠提供来源, 获得更好的代码折叠体验.
+
+- 生活质量(QOL)
+  - _`use_neogit`_ 使用 [`neogit`](https://github.com/neogitorg/neogit) 作为增强的 git 客户端.
+  - _`use_ufo_as_fold_provider`_ 使用 [`nvim-ufo`](https://github.com/kevinhwang91/nvim-ufo) 作为默认的折叠提供来源, 获得更好的代码折叠体验.
 
 - 语言模块
   - _`lang_blacklist`_ 禁用语言配置，默认禁用，以逗号分隔
@@ -147,6 +151,7 @@ local defaults = {
   workspace_inject_vim_rt = true,
   workspace_inject_plugin_path = false,
   use_emmylua_ls = false,
+  use_neogit = false,
   use_ufo_as_fold_provider = false,
   disable_im_switch = false,
   enable_lsp = vim.fn.has 'nvim-0.11' == 1,

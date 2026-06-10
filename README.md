@@ -111,7 +111,10 @@ dir. Here're customizable items:
   - _`diagnose_with_fancy_underline`_ whether to use fancy undercurl line, **need terminal and tmux support**
   - _`enable_current_line_blame`_ enable virtual text line blame at the end of line
   - _`enable_sticky_buffer`_ enable sticky buffer for each window
-  - _`use_ufo_as_fold_provider`_ use `nvim-ufo` as fold provider to get better code fold experience
+
+- QOL
+  - _`use_neogit`_ use [`neogit`](https://github.com/neogitorg/neogit) as enhanced git client
+  - _`use_ufo_as_fold_provider`_ use [`nvim-ufo`](https://github.com/kevinhwang91/nvim-ufo) as fold provider to get better code fold experience
 
 - Lang module
   - _`lang_blacklist`_ disabled lang configs, default none, split by ','
@@ -155,6 +158,7 @@ local defaults = {
   workspace_inject_vim_rt = true,
   workspace_inject_plugin_path = false,
   use_emmylua_ls = false,
+  use_neogit = false,
   use_ufo_as_fold_provider = false,
   disable_im_switch = false,
   enable_lsp = vim.fn.has 'nvim-0.11' == 1,
