@@ -5,8 +5,8 @@ return {
   diagnose_level = 'hint', -- 'hint'|'info'|'warn'|'error'
   diagnose_with_fancy_underline = false,
   dashboard_art_name = 'Ayanami Rei',
-  workspace_inject_vim_rt = true,
-  workspace_inject_plugin_path = false,
+  emmy_inject_vim_rt = true,
+  emmy_inject_plugin_path = false,
   use_emmylua_ls = false,
   use_neogit = false,
   use_ufo_as_fold_provider = false,

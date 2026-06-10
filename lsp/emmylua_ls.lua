@@ -54,10 +54,10 @@ local emmylua_ls = {
     '.git',
   },
   on_init = function(client)
-    -- FIXME: Always load vim api ?
+    -- FIXME: Should apdat to lazydev, not manually add libs
     local workspace_config = load_workspace_emmyrc_config()
 
-    if Profile.inject_vim_rt then
+    if Profile.emmy_inject_vim_rt then
       local default_data_home = vim.env.HOME .. '/.local/share/nvim/lazy'
       local xdg_data_home = vim.env.XDG_DATA_HOME
           and (vim.env.XDG_DATA_HOME .. '/nvim/lazy')
@@ -68,7 +68,7 @@ local emmylua_ls = {
         '${3rd}/luv/library',
         '${3rd}/busted/library',
       }
-      if Profile.inject_plugin_path then
+      if Profile.emmy_inject_plugin_path then
         table.insert(injected_libs, xdg_data_home)
       end
       client.config.settings.Lua =

@@ -119,8 +119,8 @@ nvim # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
 - LSP
   - _`enable_lsp`_ 启用 LSP **如果 nvim 版本 <= 0.11，则禁用 LSP**
   - _`use_emmylua_ls`_ 使用 `emmylua_ls` 作为 Lua 语言服务器
-  - _`workspace_inject_plugin_path`_ 将插件路径注入到 `emmylua_ls` 工作区配置中
-  - _`workspace_inject_vim_rt`_ 将 Vim 运行时注入到 `emmylua_ls` 工作区配置中
+  - _`emmy_inject_plugin_path`_ 将插件路径注入到 `emmylua_ls` 工作区配置中
+  - _`emmy_inject_vim_rt`_ 将 Vim 运行时注入到 `emmylua_ls` 工作区配置中
   - _`clang_format_path`_ 指定 `clang-format` 二进制文件路径
   - _`clangd_path`_ 指定 `clangd` 二进制文件路径
 
@@ -148,8 +148,8 @@ local defaults = {
   diagnose_level = 'hint', -- 'hint'|'info'|'warn'|'error'
   diagnose_with_fancy_underline = false,
   dashboard_art_name = 'Ayanami Rei',
-  workspace_inject_vim_rt = true,
-  workspace_inject_plugin_path = false,
+  emmy_inject_vim_rt = true,
+  emmy_inject_plugin_path = false,
   use_emmylua_ls = false,
   use_neogit = false,
   use_ufo_as_fold_provider = false,

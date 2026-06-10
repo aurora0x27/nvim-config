@@ -126,8 +126,8 @@ dir. Here're customizable items:
   - _`enable_lsp`_ enable lsp **Disable LSP if nvim version <= 0.11**
   - _`enable_inlay_hint`_ default enable lsp inlay hint if has capability
   - _`use_emmylua_ls`_ use `emmylua_ls` as lua language server
-  - _`workspace_inject_plugin_path`_ inject plugin path to `emmylua_ls` workspace config
-  - _`workspace_inject_vim_rt`_ inject vim runtime to `emmylua_ls` workspace config
+  - _`emmy_inject_plugin_path`_ inject plugin path to `emmylua_ls` workspace config
+  - _`emmy_inject_vim_rt`_ inject vim runtime to `emmylua_ls` workspace config
   - `clang_format_path` assign `clang-format` binary path
   - `clangd_path` assign `clangd` binary path
 
@@ -155,8 +155,8 @@ local defaults = {
   diagnose_level = 'hint', -- 'hint'|'info'|'warn'|'error'
   diagnose_with_fancy_underline = false,
   dashboard_art_name = 'Ayanami Rei',
-  workspace_inject_vim_rt = true,
-  workspace_inject_plugin_path = false,
+  emmy_inject_vim_rt = true,
+  emmy_inject_plugin_path = false,
   use_emmylua_ls = false,
   use_neogit = false,
   use_ufo_as_fold_provider = false,
