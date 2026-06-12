@@ -10,6 +10,7 @@ local misc = require 'utils.misc'
 local thunk = require 'utils.loader'.thunk
 local bind = require 'utils.loader'.bind
 local AUG = api.nvim_create_augroup('lsp-module', { clear = true })
+local BORDER = require 'assets.theme'.border
 
 local lsp_list = Lang.get_lsp_enable_list()
 
@@ -23,6 +24,7 @@ local LOG_TITLE = 'LSP Module'
 -- Override lsp.hover
 --------------------------------------------------------------------------------
 local hover_impl = lsp.buf.hover
+local signature_help_impl = lsp.buf.signature_help
 
 local function lsp_buf_setup(event)
   local bufnr = event.buf
@@ -201,8 +203,15 @@ function M.setup()
   end
 
   lsp.buf.hover = bind(hover_impl, {
-    border = 'rounded',
+    border = BORDER,
     focus_id = methods.textDocument_hover,
+    max_width = 80,
+    max_height = 20,
+  })
+
+  lsp.buf.signature_help = bind(signature_help_impl, {
+    border = BORDER,
+    focus_id = methods.textDocument_signatureHelp,
     max_width = 80,
     max_height = 20,
   })
