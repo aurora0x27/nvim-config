@@ -16,9 +16,6 @@ local KIND_TITLE = {
   wmsg = 'Warning',
   bufwrite = 'Write',
   quickfix = 'Quickfix',
-  shell_cmd = 'Shell Cmd',
-  shell_err = 'Shell Error',
-  shell_ret = 'Shell Ret',
   progress = 'Progress',
 }
 
@@ -132,16 +129,11 @@ function M.setup()
   Bus.register_subscriber(ID, {
     exact = {
       'notify',
-      'bus',
       'msg.clear',
       'msg.show.emsg',
       'msg.show.echoerr',
       'msg.show.lua_error',
       'msg.show.rpc_error',
-      'msg.show.shell_cmd',
-      'msg.show.shell_err',
-      'msg.show.shell_out',
-      'msg.show.shell_ret',
     },
   }, vim.log.levels.TRACE, handler)
 end

@@ -155,6 +155,7 @@ vim.api.nvim_create_autocmd('UIEnter', {
     -- start bus
     require 'core.bus.backend.recorder'.setup()
     require 'core.bus.backend.fidget'.setup()
+    require 'core.bus.backend.shell-log'.setup()
     require 'core.bus.backend.notify'.setup()
     Bus.start()
 
