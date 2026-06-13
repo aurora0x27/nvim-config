@@ -128,7 +128,6 @@ vim.api.nvim_create_autocmd({ 'BufReadPost', 'BufNewFile' }, {
 --          workspace patch
 --------------------------------------------------------------------------------
 require 'core.adapter'.setup {
-  bus_init = { bus_backend = 'fidget' },
   popup = {
     cursor_hack = false,
     no_register = true,
@@ -157,7 +156,7 @@ vim.api.nvim_create_autocmd('UIEnter', {
     require 'core.bus.backend.recorder'.setup()
     require 'core.bus.backend.fidget'.setup()
     require 'core.bus.backend.notify'.setup()
-    Bus.start { bus_backend = 'notify' }
+    Bus.start()
 
     -- start BufferPoolManager
     require 'core.bpm'.setup()

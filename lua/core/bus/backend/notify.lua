@@ -5,6 +5,8 @@ local toast = require 'core.ui.toast' -- toast.notify, toast.dismiss_all
 
 local M = {}
 
+local ID = 'notify'
+
 -- Titles for known message kinds (fallback: 'Messages')
 local KIND_TITLE = {
   emsg = 'Error',
@@ -111,8 +113,23 @@ local function handler(msg)
 end
 
 function M.setup()
+  Bus.register_observer(ID, function(msg)
+    assert(msg.tag == 'bus')
+    local content = msg.content
+    if not content then
+      error('msg ' .. msg.id .. ' has no content')
+    end
+
+    --- Resolve notification options
+    ---@type ToastNotifyOpts
+    local toast_opts = { anchor = 'NE' }
+
+    -- level: used for icon & default highlights
+    toast_opts.level = msg.level
+    toast.notify(content, toast_opts)
+  end)
   -- Subscribe to all message events we want to display as toasts
-  Bus.register_subscriber('notify', {
+  Bus.register_subscriber(ID, {
     exact = {
       'notify',
       'bus',

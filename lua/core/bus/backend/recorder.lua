@@ -161,46 +161,43 @@ function M.clear()
   RecordedMessages = {}
 end
 
+local function handler(msg)
+  if msg.tag == 'msg.clear' then
+    M.clear()
+    return false
+  end
+  if msg.meta.no_record then
+    return false
+  end
+  if #RecordedMessages >= Opt.max_msg_limit then
+    table.remove(RecordedMessages, 1)
+  end
+  table.insert(RecordedMessages, msg)
+  return false
+end
+
 ---@param opts? MsgRecorderOpt
 function M.setup(opts)
   Opt = vim.tbl_deep_extend('force', Opt, opts or {})
-  Bus.register_subscriber(
-    'recorder',
-    {
-      exact = {
-        'notify',
-        'bus',
-        'msg.clear',
-        'msg.show.emsg',
-        'msg.show.echo',
-        'msg.show.echoerr',
-        'msg.show.echomsg',
-        'msg.show.list_cmd',
-        'msg.show.lua_error',
-        'msg.show.lua_print',
-        'msg.show.rpc_error',
-        'msg.show.shell_out',
-        'msg.show.shell_ret',
-        'msg.show.shell_err',
-        'msg.show.quickfix',
-      },
+  Bus.register_observer('recorder', handler)
+  Bus.register_subscriber('recorder', {
+    exact = {
+      'notify',
+      'msg.clear',
+      'msg.show.emsg',
+      'msg.show.echo',
+      'msg.show.echoerr',
+      'msg.show.echomsg',
+      'msg.show.list_cmd',
+      'msg.show.lua_error',
+      'msg.show.lua_print',
+      'msg.show.rpc_error',
+      'msg.show.shell_out',
+      'msg.show.shell_ret',
+      'msg.show.shell_err',
+      'msg.show.quickfix',
     },
-    vim.log.levels.TRACE,
-    function(msg)
-      if msg.tag == 'msg.clear' then
-        M.clear()
-        return false
-      end
-      if msg.meta.no_record then
-        return false
-      end
-      if #RecordedMessages >= Opt.max_msg_limit then
-        table.remove(RecordedMessages, 1)
-      end
-      table.insert(RecordedMessages, msg)
-      return false
-    end
-  )
+  }, vim.log.levels.TRACE, handler)
 
   vim.api.nvim_create_user_command('MessageClear', M.clear, {})
 end

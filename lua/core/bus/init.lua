@@ -5,7 +5,6 @@ local M = {}
 
 ---@class BusInitOpt
 ---@field cache_max? integer
----@field bus_backend? string
 
 ---@class BusSubscriber
 ---@field id string
@@ -28,9 +27,10 @@ local M = {}
 ---@field min_level vim.log.levels
 ---@field handler BusSubscriberMessageConsumer
 
+---@alias BusObserverCb fun(msg: Message)
+
 ---@class BusOpt
 ---@field subscribers? BusSubscriberDecl[]
----@field bus_backend string assign a subscriber to handle bus internal log
 
 ---@class Message
 ---@field id        integer        unique message id (stable for replace_last)
@@ -40,6 +40,11 @@ local M = {}
 ---@field timestamp number         vim.uv.now()
 ---@field meta      table          meta flags
 ---@field data      table?         source-defined metadata, opaque to bus
+
+---@class BusPanicRecord
+---@field time      number
+---@field level     integer
+---@field msg       string
 
 ---@type BusInitOpt
 local BUS_INIT_OPT_DEFAULT = {
@@ -54,18 +59,28 @@ local BUS_OPT_DEFAULT = { handlers = {}, subscribers = {} }
 ---@type BusOpt
 local Opt = vim.deepcopy(BUS_OPT_DEFAULT)
 
----@type BusSubscriber[]
-local Subscribers = {}
-
 ---@class BusStat
+---@field IsInitialized  boolean
+---@field Ready          boolean cache message when ui not ready
+---@field Queue          Message[] fifo message buffer
+---@field Busy           boolean is dispatching message?
+---@field QueueEnd       integer end(head) of message, point to the message to emit
+---@field FlushDepth     integer
+---@field Subscribers    table<string, BusSubscriber>
+---@field Observers      table<string, BusObserverCb>
+---@field RouteCache     table<string, table<string, boolean>>
+---@field PanicBuffer    BusPanicRecord[]
+
+---@class BusStatView readonly view of BusStat, Queue and Route cache are not copied
 ---@field IsInitialized boolean
----@field Ready boolean cache message when ui not ready
----@field Queue Message[] fifo message buffer
----@field Busy boolean is dispatching message?
----@field Backend string
----@field QueueEnd integer end(head) of message, point to the message to emit
----@field FlushDepth integer
----@field RouteCache table<string, table<string, boolean>>
+---@field Ready         boolean cache message when ui not ready
+---@field QueueCapacity integer
+---@field Busy          boolean is dispatching message?
+---@field QueueEnd      integer end(head) of message, point to the message to emit
+---@field FlushDepth    integer
+---@field Subscribers   string[]
+---@field Observers     string[]
+---@field PanicBuffer   BusPanicRecord[]
 
 ---@type BusStat
 local Stat = {
@@ -75,9 +90,40 @@ local Stat = {
   Busy = false,
   QueueEnd = 1,
   FlushDepth = 0,
-  Backend = '',
+  Subscribers = {},
+  Observers = {},
   RouteCache = {},
+  PanicBuffer = {},
 }
+
+---@type table<string, BusSubscriber>
+local Subscribers = Stat.Subscribers
+
+--- Used to boardcast internal logs
+---@type table<string, BusObserverCb>
+local Observers = Stat.Observers
+
+---@return BusStat
+function M.snapshot()
+  return vim.deepcopy(Stat)
+end
+
+---@return BusStatView
+function M.inspect()
+  ---@type BusStatView
+  local ret = {
+    Busy = Stat.Busy,
+    Ready = Stat.Ready,
+    FlushDepth = Stat.FlushDepth,
+    IsInitialized = Stat.IsInitialized,
+    Observers = vim.tbl_keys(Stat.Observers),
+    Subscribers = vim.tbl_keys(Stat.Subscribers),
+    PanicBuffer = vim.deepcopy(Stat.PanicBuffer),
+    QueueEnd = Stat.QueueEnd,
+    QueueCapacity = #Stat.Queue - Stat.QueueEnd,
+  }
+  return ret
+end
 
 ---@param id string
 ---@param interested BusSubscriberInterestedTagDecl patterns to match interested tags
@@ -103,6 +149,14 @@ function M.register_subscriber(id, interested, min_level, handler)
     handler = handler,
   }
   return true
+end
+
+---@param id string
+---@param cb BusObserverCb
+function M.register_observer(id, cb)
+  if not Observers[id] then
+    Observers[id] = cb
+  end
 end
 
 ---@param id string
@@ -144,12 +198,37 @@ local function build_msg(tag, level, content, data, cover_id)
   }
 end
 
--- Pipe internal message to specified subscriber
+---@param msg string
+---@param lvl vim.log.levels
+local function bus_panic(msg, lvl)
+  ---@type BusPanicRecord
+  local rec = { msg = msg, level = lvl, time = vim.uv.now() }
+  table.insert(Stat.PanicBuffer, rec)
+end
+
+-- Pipe internal message to observers
 ---@param msg string
 ---@param lvl? vim.log.levels
-local function _bus_log(msg, lvl)
+local function bus_log(msg, lvl)
   local built_msg = build_msg('bus', lvl or vim.log.levels.INFO, msg)
-  Subscribers[Stat.Backend].handler(built_msg)
+  local has_sent = false
+  for id, cb in pairs(Observers) do
+    local ok, err = pcall(cb, built_msg)
+    if not ok then
+      bus_panic(
+        '[Bus Log] callback `' .. id .. '` panic for `' .. err .. '`',
+        vim.log.levels.ERROR
+      )
+    else
+      has_sent = true
+    end
+  end
+  if not has_sent then
+    bus_panic(
+      '[Bus Log] log message: `' .. msg .. '`',
+      lvl or vim.log.levels.WARN
+    )
+  end
 end
 
 ---@param tag        string
@@ -208,12 +287,12 @@ local function bus_dispatch(msg)
   Stat.Busy = true
 
   for _, backend in pairs(Subscribers) do
-    if matches(backend, msg.tag) then
+    if matches(backend, msg.tag) and msg.level >= backend.min_level then
       -- protected call handler
       if type(backend.handler) == 'function' then
         local ok, should_stop = pcall(backend.handler, msg)
         if not ok then
-          _bus_log(
+          bus_log(
             string.format(
               "[Dispatcher] Handler '%s' panic for: '%s'",
               backend.id,
@@ -245,7 +324,7 @@ function M.flush_queue()
   end
   if Stat.FlushDepth >= FLUSH_MAX_DEPTH then
     -- force empty queue
-    _bus_log(
+    bus_log(
       string.format(
         '[Queue Flusher] flush_queue exceeded max depth (%d), queue dropped (%d msgs)',
         FLUSH_MAX_DEPTH,
@@ -276,7 +355,7 @@ function M.flush_queue()
     if not ok then
       -- release lock
       Stat.Busy = false
-      _bus_log(
+      bus_log(
         '[Queue Flusher] dispatcher panic for `' .. err .. '`',
         vim.log.levels.ERROR
       )
@@ -309,7 +388,7 @@ local function emit_impl(msg)
   if not ok then
     -- unlock dispatcher avoid locked forever
     Stat.Busy = false
-    _bus_log(
+    bus_log(
       '[Emitter] dispatcher panic for `' .. err .. '`',
       vim.log.levels.ERROR
     )
@@ -364,14 +443,11 @@ end
 ---@param opts? BusOpt
 function M.start(opts)
   if Stat.Ready then
-    _bus_log('Should not start bus more than once !', vim.log.levels.WARN)
+    bus_log('Should not start bus more than once !', vim.log.levels.WARN)
     return
   end
   ---@type BusOpt
   Opt = vim.tbl_extend('force', Opt, opts or {})
-  if Opt.bus_backend then
-    Stat.Backend = Opt.bus_backend
-  end
   for _, decl in ipairs(Opt.subscribers) do
     M.register_subscriber(
       decl.id,
@@ -380,7 +456,9 @@ function M.start(opts)
       decl.handler
     )
   end
-  assert(type(Opt.bus_backend) == 'string' and Subscribers[Opt.bus_backend])
+  if vim.tbl_count(Observers) == 0 then
+    bus_panic('[Bus Init] No observers, start silently', vim.log.levels.WARN)
+  end
   Stat.Ready = true
   M.flush_queue()
 end
@@ -392,10 +470,8 @@ function M.init(opts)
     return
   end
   InitOpt = vim.tbl_extend('force', InitOpt, opts or {})
-  if InitOpt.bus_backend then
-    Stat.Backend = InitOpt.bus_backend
-  end
   _G.Bus = M
+  Stat.IsInitialized = true
 end
 
 return M
