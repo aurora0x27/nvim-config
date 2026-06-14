@@ -109,6 +109,8 @@ vim.api.nvim_create_autocmd('User', {
     require 'edit.autocmd'.setup()
     require 'edit.ssh-mode'.setup()
 
+    require 'edit.repl'.setup()
+
     -- dofile init.lua
     require 'core.workspace'.load_main()
   end),

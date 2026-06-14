@@ -61,3 +61,50 @@ map(
 map('n', 'H', '<cmd>bp<cr>', { noremap = true, silent = true })
 
 map('n', 'L', '<cmd>bn<cr>', { noremap = true, silent = true })
+
+-- TODO: each buffer has a repl env
+local buf
+
+---@return integer
+local function create_idle_buffer()
+  local new_buf = vim.api.nvim_create_buf(false, true)
+  vim.bo[new_buf].buftype = 'nofile'
+  vim.bo[new_buf].bufhidden = 'hide'
+  vim.bo[new_buf].filetype = 'scratch'
+  vim.bo[new_buf].swapfile = false
+  vim.keymap.set('n', 'q', function()
+    vim.cmd 'close'
+  end, {
+    buf = new_buf,
+    silent = true,
+    desc = 'Quit buffer',
+  })
+  return new_buf
+end
+
+local function ensure_idle_buffer()
+  if not buf or not vim.api.nvim_buf_is_valid(buf) then
+    buf = create_idle_buffer()
+  end
+  return buf
+end
+
+map('n', '<leader>wvbi', function()
+  vim.api.nvim_open_win(ensure_idle_buffer(), true, { split = 'right' })
+end, { desc = '[I]dle buffer', noremap = true, silent = true })
+
+map('n', '<leader>wsbi', function()
+  vim.api.nvim_open_win(
+    ensure_idle_buffer(),
+    true,
+    { split = 'below', height = 10 }
+  )
+end, { desc = '[I]dle buffer', noremap = true, silent = true })
+
+map('n', '<leader>bi', function()
+  vim.api.nvim_open_win(
+    ensure_idle_buffer(),
+    true,
+    { split = 'below', height = 10 }
+  )
+end, { desc = '[I]dle buffer(split below)', noremap = true, silent = true })
