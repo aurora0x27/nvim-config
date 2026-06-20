@@ -1,3 +1,5 @@
+local StdConfigDir = vim.fn.stdpath 'config'
+
 -- install with yarn or npm
 ---@type LazyPluginSpec
 local MarkdownPreview = {
@@ -88,11 +90,11 @@ local MarkdownPreview = {
 
     -- use a custom Markdown style. Must be an absolute path
     -- like '/Users/username/markdown.css' or expand('~/markdown.css')
-    vim.g.mkdp_markdown_css = ''
+    vim.g.mkdp_markdown_css = StdConfigDir .. '/assets/mkdp_markdown.css'
 
     -- use a custom highlight style. Must be an absolute path
     -- like '/Users/username/highlight.css' or expand('~/highlight.css')
-    vim.g.mkdp_highlight_css = ''
+    vim.g.mkdp_highlight_css = StdConfigDir .. '/assets/mkdp_highlight.css'
 
     -- use a custom port to start server or empty for random
     vim.g.mkdp_port = ''
