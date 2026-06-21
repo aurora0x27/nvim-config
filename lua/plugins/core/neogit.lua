@@ -31,13 +31,13 @@ local Neogit = {
 
     {
       '<leader>wsgg',
-      bind(thunk('neogit', 'open'), { kind = 'split_below' }),
+      bind(thunk('neogit', 'open'), { kind = 'split_below_all' }),
       desc = 'Show Neogit UI',
     },
 
     {
       '<leader>wvgg',
-      bind(thunk('neogit', 'open'), { kind = 'tab' }),
+      bind(thunk('neogit', 'open'), { kind = 'vsplit' }),
       desc = 'Show Neogit UI',
     },
   },
@@ -342,7 +342,7 @@ local Neogit = {
         ['$'] = 'CommandHistory',
         ['Y'] = 'YankSelected',
         ['gp'] = 'GoToParentRepo',
-        ['<c-r>'] = 'RefreshBuffer',
+        ['<c-l>'] = 'RefreshBuffer',
         ['<cr>'] = 'GoToFile',
         ['<s-cr>'] = 'PeekFile',
         ['<leader>wvo'] = 'VSplitOpen',
