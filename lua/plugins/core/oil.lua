@@ -10,10 +10,18 @@ function _G.oil_get_winbar()
   if dir then
     return vim.fn.fnamemodify(dir, ':~')
   else
-    -- If there is no current directory (e.g. over ssh), just show the buffer name
+    -- If there is no current directory (e.g. over ssh),
+    -- just show the buffer name
     return vim.api.nvim_buf_get_name(0)
   end
 end
+
+local OilColumns = {
+  'icon',
+  'permissions',
+  'size',
+  'mtime',
+}
 
 ---@type LazyPluginSpec
 local FsEditor = {
@@ -28,16 +36,13 @@ local FsEditor = {
   ---@module 'oil'
   opts = {
     -- Oil will take over directory buffers (e.g. `vim .` or `:e src/`)
-    -- Set to false if you want some other plugin (e.g. netrw) to open when you edit directories.
+    -- Set to false if you want some other plugin (e.g. netrw) to open when
+    -- you edit directories.
     default_file_explorer = true,
     -- Id is automatically added at the beginning, and name at the end
     -- See :help oil-columns
-    columns = {
-      'icon',
-      'permissions',
-      -- "size",
-      'mtime',
-    },
+    columns = OilColumns,
+
     -- Buffer-local options to use for oil buffers
     buf_options = {
       buflisted = false,
@@ -59,16 +64,19 @@ local FsEditor = {
       winbar = '%!v:lua.oil_get_winbar()',
     },
 
-    -- Send deleted files to the trash instead of permanently deleting them (:help oil-trash)
+    -- Send deleted files to the trash instead of permanently deleting them
+    -- (:help oil-trash)
     delete_to_trash = false,
-    -- Skip the confirmation popup for simple operations (:help oil.skip_confirm_for_simple_edits)
+    -- Skip the confirmation popup for simple operations
+    -- (:help oil.skip_confirm_for_simple_edits)
     skip_confirm_for_simple_edits = false,
-    -- Selecting a new/moved/renamed file or directory will prompt you to save changes first
-    -- (:help prompt_save_on_select_new_entry)
+    -- Selecting a new/moved/renamed file or directory will prompt you
+    -- to save changes first (:help prompt_save_on_select_new_entry)
     prompt_save_on_select_new_entry = true,
     -- Oil will automatically delete hidden buffers after this delay
     -- You can set the delay to false to disable cleanup entirely
-    -- Note that the cleanup process only starts when none of the oil buffers are currently displayed
+    -- Note that the cleanup process only starts when none of the oil buffers
+    -- are currently displayed
     cleanup_delay_ms = 2000,
     lsp_file_methods = {
       -- Enable or disable LSP file operations
@@ -81,31 +89,29 @@ local FsEditor = {
     },
     -- Constrain the cursor to the editable parts of the oil buffer
     -- Set to `false` to disable, or "name" to keep it on the file names
+    -- 'editable'|'name'|false
     constrain_cursor = 'editable',
     -- Set to true to watch the filesystem for changes and reload oil
     watch_for_changes = false,
 
-    -- Keymaps in oil buffer. Can be any value that `vim.keymap.set` accepts OR a table of keymap
-    -- options with a `callback` (e.g. { callback = function() ... end, desc = "", mode = "n" })
+    -- Keymaps in oil buffer. Can be any value that `vim.keymap.set` accepts OR
+    -- a table of keymap options with a `callback`
+    -- (e.g. { callback = function() ... end, desc = "", mode = "n" })
     -- Additionally, if it is a string that matches "actions.<name>",
     -- it will use the mapping at require("oil.actions").<name>
     -- Set to `false` to remove a keymap
     -- See :help oil-actions for a list of all available actions
     keymaps = {
       ['g?'] = { 'actions.show_help', mode = 'n' },
-      ['<CR>'] = { 'actions.select', mode = 'n' },
-      [']]'] = { 'actions.select', mode = 'n' },
-      ['[['] = { 'actions.parent', mode = 'n' },
+      ['<cr>'] = { 'actions.select', mode = 'n' },
+      ['<bs>'] = { 'actions.parent', mode = 'n' },
       ['|'] = { 'actions.select', opts = { vertical = true } },
       ['-'] = { 'actions.select', opts = { horizontal = true } },
-      ['<C-t>'] = { 'actions.select', opts = { tab = true } },
-      ['<C-p>'] = 'actions.preview',
+      ['<c-t>'] = { 'actions.select', opts = { tab = true } },
       ['q'] = { 'actions.close', mode = 'n' },
-      ['<C-l>'] = 'actions.refresh',
+      ['<c-l>'] = 'actions.refresh',
       ['<leader>y'] = { 'actions.yank_entry' },
       ['<leader>Y'] = { 'actions.yank_entry', opts = { modify = ':.' } },
-      ['`'] = { 'actions.cd', mode = 'n' },
-      ['~'] = { 'actions.cd', opts = { scope = 'tab' }, mode = 'n' },
       ['gs'] = { 'actions.change_sort', mode = 'n' },
       ['gx'] = 'actions.open_external',
       ['g.'] = { 'actions.toggle_hidden', mode = 'n' },
@@ -114,16 +120,13 @@ local FsEditor = {
         desc = 'Oil toggle detail',
         callback = function()
           vim.b.detail = not vim.b.detail
-          require 'oil'.set_columns(
-            vim.b.detail and { 'permissions', 'size', 'mtime', 'icon' }
-              or { 'icon' }
-          )
+          require 'oil'.set_columns(vim.b.detail and OilColumns or { 'icon' })
         end,
       },
     },
 
-    -- Set to false to disable all of the above keymaps
     use_default_keymaps = false,
+
     view_options = {
       -- Show files and directories that start with "."
       show_hidden = false,
@@ -179,14 +182,16 @@ local FsEditor = {
     float = {
       -- Padding around the floating window
       padding = 2,
-      -- max_width and max_height can be integers or a float between 0 and 1 (e.g. 0.4 for 40%)
+      -- max_width and max_height can be integers or a float between 0 and 1
+      -- (e.g. 0.4 for 40%)
       max_width = 0.8,
       max_height = 0.8,
       border = border,
       win_options = {
         winblend = 0,
       },
-      -- optionally override the oil buffers window title with custom function: fun(winid: integer): string
+      -- optionally override the oil buffers window title with
+      -- custom function: fun(winid: integer): string
       get_win_title = nil,
       -- preview_split: Split direction: "auto", "left", "right", "above", "below".
       preview_split = 'right',
@@ -198,11 +203,13 @@ local FsEditor = {
     },
     -- Configuration for the file preview window
     preview_win = {
-      -- Whether the preview window is automatically updated when the cursor is moved
+      -- Whether the preview window is automatically updated when the cursor
+      -- is moved
       update_on_cursor_moved = true,
       -- How to open the preview window "load"|"scratch"|"fast_scratch"
       preview_method = 'fast_scratch',
-      -- A function that returns true to disable preview on a file e.g. to avoid lag
+      -- A function that returns true to disable preview on a file
+      -- e.g. to avoid lag
       disable_preview = function(_filename)
         return false
       end,
@@ -211,21 +218,26 @@ local FsEditor = {
     },
     -- Configuration for the floating action confirmation window
     confirmation = {
-      -- Width dimensions can be integers or a float between 0 and 1 (e.g. 0.4 for 40%)
-      -- min_width and max_width can be a single value or a list of mixed integer/float types.
-      -- max_width = {100, 0.8} means "the lesser of 100 columns or 80% of total"
+      -- Width dimensions can be integers or a float between 0 and 1
+      -- (e.g. 0.4 for 40%) min_width and max_width can be a single value or a
+      -- list of mixed integer/float types.
+      -- max_width = {80, 0.8} means "the lesser of 80 columns or 80% of total"
       max_width = 0.9,
       -- min_width = {40, 0.4} means "the greater of 40 columns or 40% of total"
       min_width = { 40, 0.4 },
-      -- optionally define an integer/float for the exact width of the preview window
+      -- optionally define an integer/float for the exact width of the
+      -- preview window
       width = nil,
-      -- Height dimensions can be integers or a float between 0 and 1 (e.g. 0.4 for 40%)
-      -- min_height and max_height can be a single value or a list of mixed integer/float types.
+      -- Height dimensions can be integers or a float between 0 and 1
+      -- (e.g. 0.4 for 40%)
+      -- min_height and max_height can be a single value or a list of
+      -- mixed integer/float types.
       -- max_height = {80, 0.9} means "the lesser of 80 columns or 90% of total"
       max_height = 0.9,
       -- min_height = {5, 0.1} means "the greater of 5 columns or 10% of total"
       min_height = { 5, 0.1 },
-      -- optionally define an integer/float for the exact height of the preview window
+      -- optionally define an integer/float for the exact height of the
+      -- preview window
       height = nil,
       border = border,
       win_options = {
@@ -240,19 +252,19 @@ local FsEditor = {
       max_height = { 10, 0.9 },
       min_height = { 5, 0.1 },
       height = nil,
-      border = nil,
-      minimized_border = 'none',
+      border = border,
+      minimized_border = border,
       win_options = {
         winblend = 0,
       },
     },
     -- Configuration for the floating SSH window
     ssh = {
-      border = nil,
+      border = border,
     },
     -- Configuration for the floating keymaps help window
     keymaps_help = {
-      border = nil,
+      border = border,
     },
   },
 
