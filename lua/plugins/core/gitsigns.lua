@@ -16,9 +16,6 @@ local GitUtils = {
       topdelete = { text = '┃' },
       changedelete = { text = '┃' },
       untracked = { text = '┃' },
-      -- topdelete    = { text = '‾' },
-      -- changedelete = { text = '~' },
-      -- untracked    = { text = '┆' },
     },
     signs_staged = {
       add = { text = '┃' },
@@ -27,9 +24,6 @@ local GitUtils = {
       topdelete = { text = '┃' },
       changedelete = { text = '┃' },
       untracked = { text = '┃' },
-      -- topdelete    = { text = '‾' },
-      -- changedelete = { text = '~' },
-      -- untracked    = { text = '┆' },
     },
     signcolumn = true, -- Toggle with `:Gitsigns toggle_signs`
     numhl = false, -- Toggle with `:Gitsigns toggle_numhl`
