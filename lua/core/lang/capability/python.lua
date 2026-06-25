@@ -2,5 +2,5 @@
 return {
   treesitter = true,
   lsp = { name = 'pyright' },
-  formatter = { name = 'ruff' },
+  formatter = { name = 'ruff_format', packname = 'ruff' },
 }
