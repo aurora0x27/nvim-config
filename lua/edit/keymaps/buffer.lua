@@ -59,8 +59,19 @@ map(
 -- Cycle switch buffer
 ----------------------------------------------------------------------------
 map('n', 'H', '<cmd>bp<cr>', { noremap = true, silent = true })
-
+map(
+  'n',
+  '[b',
+  '<cmd>bp<cr>',
+  { noremap = true, silent = true, desc = 'Previous Buffer' }
+)
 map('n', 'L', '<cmd>bn<cr>', { noremap = true, silent = true })
+map(
+  'n',
+  ']b',
+  '<cmd>bn<cr>',
+  { noremap = true, silent = true, desc = 'Next Buffer' }
+)
 
 -- TODO: each buffer has a repl env
 local buf
