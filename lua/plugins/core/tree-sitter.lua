@@ -2,8 +2,6 @@
 -- TreeSitter and related
 --------------------------------------------------------------------------------
 
--- if true then return {} end   -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
-
 local TSEnsureInstalled = Lang.get_ts_install_list()
 local bind = require 'utils.loader'.bind
 local thunk = require 'utils.loader'.thunk
@@ -51,6 +49,11 @@ local function safe_ts_start(args)
   end)
 end
 
+--------------------------------------------------------------------------------
+--- Parser installer
+--------------------------------------------------------------------------------
+
+-- TODO: archived, replace with a new fork?
 ---@type LazyPluginSpec
 local TreeSitter = {
   'nvim-treesitter/nvim-treesitter',
@@ -75,6 +78,10 @@ local TreeSitter = {
     TS.install(TSEnsureInstalled)
   end,
 }
+
+--------------------------------------------------------------------------------
+--- Textobjects provided by treesitter
+--------------------------------------------------------------------------------
 
 ---@type LazyPluginSpec
 local TreeSitterTextObject = {
@@ -480,4 +487,18 @@ local TreeSitterTextObject = {
   },
 }
 
-return { TreeSitter, TreeSitterTextObject }
+--------------------------------------------------------------------------------
+-- Annotions the scope for current cursor pos context by treesitter
+-- Implements sticky buffer
+--------------------------------------------------------------------------------
+
+local TreesitterContext = {
+  'nvim-treesitter/nvim-treesitter-context',
+  enabled = Profile.enable_sticky_buffer,
+  event = { 'BufReadPost', 'BufNewFile' },
+  opts = {
+    multiwindow = true,
+  },
+}
+
+return { TreeSitter, TreeSitterTextObject, TreesitterContext }
