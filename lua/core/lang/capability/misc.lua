@@ -32,6 +32,7 @@ return {
       'luadoc',
       'ninja',
       'query',
+      'ron',
       'scheme',
       'tablegen',
       'typescript',
