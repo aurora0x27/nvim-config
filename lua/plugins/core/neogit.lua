@@ -6,8 +6,7 @@ local bind = require 'utils.loader'.bind
 
 ---@type LazyPluginSpec
 local Neogit = {
-  -- TODO: Use official repo after pr merged
-  'aurora0x27/neogit',
+  'NeogitOrg/neogit',
   enabled = Profile.use_neogit,
   lazy = true,
   dependencies = {
