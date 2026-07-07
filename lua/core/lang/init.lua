@@ -24,6 +24,7 @@ local M = {}
 ---@field lsp? ToolSpec
 ---@field formatter? ToolSpec|ToolSpec[]
 ---@field treesitter string|string[]|boolean
+---@field ts_alias? string
 ---@field plugins? string|string[]
 
 ---@class LangOpt
@@ -56,6 +57,9 @@ local Data = {
 
   ---@type string[]
   TSEnableLangs = {},
+
+  ---@type {[1]: string, [2]: string}[]
+  TSAliasList = {},
 
   ---@type string[]
   LazyEnablePlugins = {},
@@ -176,6 +180,7 @@ end
 local function generate_lists()
   local mason_set = {}
   local ts_set = {}
+  local ts_alias_set = {}
 
   ---@param lang string
   ---@param spec LangSpec
@@ -239,18 +244,19 @@ local function generate_lists()
       Data.FormatterMap[lang] = tbl
     end
 
-    local handle_ts = function(name)
-      if type(name) ~= 'string' then
+    local function handle_ts(item)
+      if type(item) ~= 'string' then
         err(
           string.format(
-            'Unknown treesitter decl type: `%s`, expected string',
-            type(name)
+            'Unknown treesitter decl type: `%s`, expected string | table',
+            type(item)
           )
         )
         return
       end
-      if not ts_set[name] then
-        table.insert(Data.TSInstallList, name)
+      if not ts_set[item] then
+        table.insert(Data.TSInstallList, item)
+        ts_set[item] = true
       end
     end
 
@@ -258,9 +264,8 @@ local function generate_lists()
       local ty = type(spec.treesitter)
       if ty == 'table' then
         table.insert(Data.TSEnableLangs, lang)
-        ---@diagnostic disable:param-type-mismatch
-        for _, name in ipairs(spec.treesitter) do
-          handle_ts(name)
+        for _, item in ipairs(spec.treesitter) do
+          handle_ts(item)
         end
       elseif ty == 'boolean' then
         if spec.treesitter then
@@ -277,6 +282,28 @@ local function generate_lists()
             ty
           )
         )
+      end
+    end
+
+    if feat.ts and type(spec.ts_alias) ~= 'nil' then
+      local ty = type(spec.ts_alias)
+      if ty == 'string' then
+        local alias_to = spec.ts_alias
+        if not ts_alias_set[lang] then
+          table.insert(Data.TSAliasList, { lang, alias_to })
+          ts_alias_set[lang] = alias_to
+        else
+          warn(
+            string.format(
+              'Duplicate ts_alias for `%s`: keeping `%s`, ignoring `%s`',
+              lang,
+              ts_alias_set[lang],
+              alias_to
+            )
+          )
+        end
+      else
+        err(string.format('Unknown ts_alias type `%s`, expected string', ty))
       end
     end
   end
@@ -406,6 +433,11 @@ end
 ---@return string[] langs
 function M.lsp_get_ft(lsp)
   return Data.LspLangMap[lsp] or {}
+end
+
+---@return {[1]: string, [2]: string}[]
+function M.get_treesitter_alias_list()
+  return Data.TSAliasList
 end
 
 -- export as global

@@ -63,10 +63,14 @@ function M.setup()
   })
 
   -- register new filetypes
-  vim.api.nvim_create_autocmd({ 'BufRead', 'BufNewFile' }, {
+  vim.api.nvim_create_autocmd({ 'BufReadPre', 'BufNewFile' }, {
     once = true,
     callback = function(_)
-      vim.treesitter.language.register('lua', 'xmake')
+      local aliases = Lang.get_treesitter_alias_list()
+      for _, item in ipairs(aliases) do
+        local from, to = unpack(item)
+        vim.treesitter.language.register(to, from)
+      end
     end,
   })
 

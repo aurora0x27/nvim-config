@@ -95,6 +95,13 @@ function M.check()
       vim.health.start(list.name .. ': (Empty)')
     end
   end
+
+  vim.health.start('Treesitter Alias')
+  local aliased = Lang.get_treesitter_alias_list()
+  for _, item in ipairs(aliased) do
+    local from, to = unpack(item)
+    vim.health.info(string.format('%s -> %s', from, to))
+  end
 end
 
 return M
