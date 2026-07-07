@@ -11,6 +11,7 @@ return {
   {
     ft = 'xmake',
     treesitter = 'lua',
+    ts_alias = 'lua',
     lsp = { name = 'xmake_ls', source = 'sys' },
   },
 }

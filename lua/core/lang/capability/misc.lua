@@ -45,6 +45,12 @@ return {
   },
 
   {
+    ft = 'jsonc',
+    treesitter = 'json',
+    ts_alias = 'json',
+  },
+
+  {
     ft = { 'json', 'css', 'html', 'astro' },
     treesitter = true,
     formatter = { name = 'prettier' },
