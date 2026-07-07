@@ -326,7 +326,7 @@ local function remove_at(anchor, index)
   ID_MAP[anchor] = {}
   for i, e in ipairs(STACK[anchor]) do
     if e.id then
-      ID_MAP[e.id] = i
+      ID_MAP[anchor][e.id] = i
     end
   end
   reflow(anchor)
