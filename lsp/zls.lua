@@ -6,7 +6,7 @@
 ---@type vim.lsp.Config
 return {
   cmd = { 'zls' },
-  filetypes = { 'zig', 'zir' },
+  filetypes = Lang.lsp_get_ft 'zls',
   root_markers = { 'zls.json', 'build.zig', '.git' },
   workspace_required = false,
 }
