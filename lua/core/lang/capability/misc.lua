@@ -31,6 +31,7 @@ return {
       'llvm',
       'luadoc',
       'ninja',
+      'nim',
       'query',
       'ron',
       'scheme',
