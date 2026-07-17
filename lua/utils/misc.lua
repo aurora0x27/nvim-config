@@ -222,12 +222,10 @@ function M.process_feat_mask(feat_s, defaults, on_error)
       for k, v in pairs(defaults) do
         mask[k] = v
       end
-      return mask
     elseif feat_item == 'none' then
       for k, v in pairs(defaults) do
         mask[k] = not v
       end
-      return mask
     else
       local feat_name = (first_char == '+' or first_char == '-')
           and feat_item:sub(2)
