@@ -123,7 +123,6 @@ dir. Here're customizable items:
     feature for c, disable all features for cpp, enable tree-sitter and lsp, disable formatter for rust.
 
 - Lsp
-  - _`enable_lsp`_ enable lsp **Disable LSP if nvim version <= 0.11**
   - _`enable_inlay_hint`_ default enable lsp inlay hint if has capability
   - _`use_emmylua_ls`_ use `emmylua_ls` as lua language server
   - _`emmy_inject_plugin_path`_ inject plugin path to `emmylua_ls` workspace config
@@ -161,7 +160,6 @@ local defaults = {
   use_neogit = false,
   use_ufo_as_fold_provider = false,
   disable_im_switch = false,
-  enable_lsp = vim.fn.has 'nvim-0.11' == 1,
   enable_inlay_hint = false,
   enable_current_line_blame = false,
   enable_relative_lnum = false,

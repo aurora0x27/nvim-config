@@ -117,7 +117,6 @@ nvim # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
     禁用 C++ 的所有功能，启用 tree-sitter 和 lsp，禁用 Rust 的格式化程序。
 
 - LSP
-  - _`enable_lsp`_ 启用 LSP **如果 nvim 版本 <= 0.11，则禁用 LSP**
   - _`use_emmylua_ls`_ 使用 `emmylua_ls` 作为 Lua 语言服务器
   - _`emmy_inject_plugin_path`_ 将插件路径注入到 `emmylua_ls` 工作区配置中
   - _`emmy_inject_vim_rt`_ 将 Vim 运行时注入到 `emmylua_ls` 工作区配置中
@@ -154,7 +153,6 @@ local defaults = {
   use_neogit = false,
   use_ufo_as_fold_provider = false,
   disable_im_switch = false,
-  enable_lsp = vim.fn.has 'nvim-0.11' == 1,
   enable_inlay_hint = false,
   enable_current_line_blame = false,
   enable_relative_lnum = false,

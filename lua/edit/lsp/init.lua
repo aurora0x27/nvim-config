@@ -194,7 +194,7 @@ end
 local is_setup = false
 
 function M.setup()
-  if not Profile.enable_lsp or is_setup then
+  if is_setup then
     return
   end
 
@@ -309,6 +309,7 @@ function M.setup()
       end, 100)
     end
   end, {})
+
   is_setup = true
 end
 
