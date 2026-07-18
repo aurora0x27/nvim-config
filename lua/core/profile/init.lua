@@ -92,7 +92,7 @@ local function write_json(path, data)
   return true
 end
 
-local SCHEMA = require 'core.profile.schema'
+local DEFAULTS = require 'core.profile.schema'
 local RAW_LAZY_SPECS = require 'utils.loader'.load_data_dir_as_set(
   'plugins.opt',
   err,
@@ -118,14 +118,14 @@ end
 local function try_load_nvimrc(config_path)
   if not uv.fs_stat(config_path) then
     warn 'Cannot stat nvimrc.json, write in default config...'
-    write_json(config_path, SCHEMA)
-    return SCHEMA
+    write_json(config_path, DEFAULTS)
+    return DEFAULTS
   end
 
   local res = read_json(config_path)
   if not res then
     err 'Fail to read nvimrc.json, fall back to default'
-    return SCHEMA
+    return DEFAULTS
   end
   ---@type table
   return res
@@ -152,7 +152,7 @@ local function schema_check(tbl)
   local ok = true
   local errmsg = {}
   for k, v in pairs(tbl) do
-    local ty_s = type(SCHEMA[k])
+    local ty_s = type(DEFAULTS[k])
     local ty_v = type(v)
     if ty_s == 'nil' then
       warn(string.format('`%s` is not expected to appear in config', k))
@@ -194,7 +194,7 @@ end
 function M.setup(opts)
   opts = opts or {}
   nvimrc_path = opts.config_path or vim.fn.stdpath 'config' .. '/nvimrc.json'
-  nvimrc = vim.deepcopy(SCHEMA)
+  nvimrc = vim.deepcopy(DEFAULTS)
 
   local data_to_merge = {}
 
@@ -264,7 +264,7 @@ function M.get_raw_tbl()
 end
 
 function M.get_defaults()
-  return SCHEMA
+  return DEFAULTS
 end
 
 function M.debug_info()
@@ -273,7 +273,7 @@ function M.debug_info()
     values = nvimrc,
     masks = {},
   }
-  for k, _ in pairs(SCHEMA) do
+  for k, _ in pairs(DEFAULTS) do
     if vim.env['NVIM_' .. k:upper()] then
       table.insert(info.masks, k)
     end
@@ -283,10 +283,11 @@ end
 
 local Profile = setmetatable(M, {
   __index = function(_, key)
-    return rawget(M, key) or (nvimrc and nvimrc[key])
+    return nvimrc and nvimrc[key]
   end,
 })
 
+---@type Profile
 _G.Profile = Profile
 
-return Profile
+return M

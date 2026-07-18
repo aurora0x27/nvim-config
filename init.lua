@@ -138,7 +138,9 @@ require 'core.adapter'.setup {
 
 local PatchDir, Nvimrc = require 'core.workspace'.probe()
 
-require 'core.profile'.setup {
+local ProfileApi = require 'core.profile'
+
+ProfileApi.setup {
   files_to_merge = Nvimrc and { Nvimrc } or {},
 }
 
@@ -200,7 +202,7 @@ require 'lazy'.setup {
   -- all the plugins' configure files should be put under `lua/plugins`
   spec = {
     { import = 'plugins.core' },
-    Profile.get_filtered_opt_specs { Lang.plugin_enable_predicate },
+    ProfileApi.get_filtered_opt_specs { Lang.plugin_enable_predicate },
   },
   install = {
     colorscheme = { 'default' },
