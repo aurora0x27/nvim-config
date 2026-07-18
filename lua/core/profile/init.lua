@@ -92,7 +92,7 @@ local function write_json(path, data)
   return true
 end
 
-local DEFAULTS = require 'core.profile.schema'
+local DEFAULTS = require 'core.profile.defaults'
 local RAW_LAZY_SPECS = require 'utils.loader'.load_data_dir_as_set(
   'plugins.opt',
   err,
