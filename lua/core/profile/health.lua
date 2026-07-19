@@ -1,6 +1,8 @@
 local M = {}
 
-local pad = require 'utils.misc'.pad
+local function pad(s, width)
+  return s .. string.rep(' ', width - #s)
+end
 
 function M.check()
   vim.health.start 'Profile Loader'

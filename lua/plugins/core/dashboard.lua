@@ -2,6 +2,22 @@
 -- Dash board config
 --------------------------------------------------------------------------------
 
+---Sets a global highlight group.
+---@param name string @Highlight group name, e.g. "ErrorMsg"
+---@param foreground? string @The foreground color
+---@param background? string @The background color
+---@param bold? boolean
+---@param italic? boolean
+local function set_global_hl(name, foreground, background, bold, italic)
+  vim.api.nvim_set_hl(0, name, {
+    fg = foreground,
+    bg = background,
+    italic = italic == true,
+    bold = bold == true,
+    default = not vim.g.colors_name:find('catppuccin'),
+  })
+end
+
 ---@type LazyPluginSpec
 local Dashboard = {
   'goolord/alpha-nvim',
@@ -9,7 +25,6 @@ local Dashboard = {
   config = function()
     local alpha = require 'alpha'
     local dashboard = require 'alpha.themes.dashboard'
-    local set_global_hl = require 'utils.misc'.set_global_hl
     local colors = require 'assets.theme'.ColorAlias
 
     vim.cmd [[ autocmd FileType alpha setlocal nofoldenable ]]

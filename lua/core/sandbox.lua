@@ -18,13 +18,11 @@ local SANDBOX_MODE_DEFAULT = {
   wb = false,
 }
 
-local misc = require 'utils.misc'
-
-local Mask = misc.process_feat_mask(
+local Mask = require 'utils.featstr'.parse(
   Profile.sandbox_mode,
   SANDBOX_MODE_DEFAULT,
   function(msg)
-    misc.err(msg, { title = 'Sandbox option' })
+    require 'utils.misc'.error(msg, { title = 'Sandbox option' })
   end
 )
 
