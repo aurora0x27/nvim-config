@@ -6,6 +6,8 @@
 --------------------------------------------------------------------------------
 local M = {}
 
+local LOG_TITLE = 'Workspace Patch'
+
 local workspace_nvim
 local workspace_nvimrc
 local has_probed = false
@@ -79,27 +81,27 @@ local function is_ignored(path)
 end
 
 local function trust_path(path)
-  local misc = require 'utils.misc'
+  local log = require 'utils.logger'.new(LOG_TITLE)
   local fd = uv.fs_open(trust_file, 'a', 438)
   if not fd then
-    misc.err('Cannot open trust file `' .. trust_file .. '`')
+    log.error('Cannot open trust file `' .. trust_file .. '`')
     return
   end
   uv.fs_write(fd, get_hash(path) .. '\n')
   uv.fs_close(fd)
-  misc.info 'Trusted workspace, allow dofile'
+  log.info 'Trusted workspace, allow dofile'
 end
 
 local function ignore_path(path)
-  local misc = require 'utils.misc'
+  local log = require 'utils.logger'.new(LOG_TITLE)
   local fd = uv.fs_open(ignore_file, 'a', 438)
   if not fd then
-    misc.err('Cannot open ignore file `' .. ignore_file .. '`')
+    log.error('Cannot open ignore file `' .. ignore_file .. '`')
     return
   end
   uv.fs_write(fd, get_hash(path) .. '\n')
   uv.fs_close(fd)
-  misc.info 'Ignored workspace patch, never notice again'
+  log.info 'Ignored workspace patch, never notice again'
 end
 
 function M.load_main()
@@ -119,11 +121,9 @@ function M.load_main()
     -- Load module execute main
     local ok, err = pcall(dofile, init_lua)
     if not ok then
-      vim.notify(
-        'Cannot dofile `' .. init_lua .. '`,\nbecause ' .. err,
-        vim.log.levels.ERROR,
-        { title = 'Workspace Patch' }
-      )
+      require 'utils.logger'
+        .new(LOG_TITLE)
+        .error('Cannot dofile `' .. init_lua .. '`,\nbecause ' .. err)
     end
     restrict_mode = false
   elseif is_ignored(init_lua) then

@@ -5,6 +5,8 @@ local M = {}
 
 local detect = require 'utils.detect'
 local sandbox = require 'core.sandbox'.get_mask()
+local LOG_TITLE = 'Options'
+local log = require 'utils.logger'.new(LOG_TITLE)
 
 local Opt = {
   numberwidth = 1,
@@ -29,8 +31,6 @@ local Opt = {
   guicursor = 'n-v-c-sm:block,i-ci-ve:ver25,r-cr-o:hor20,t:block-blinkon0-TermCursor',
   tabclose = 'uselast',
 }
-
-local misc = require 'utils.misc'
 
 function M.setup()
   -- An ungracefull way to fix neovide terminal color render bug
@@ -59,7 +59,7 @@ function M.setup()
       vim.o.shellcmdflag = '-c'
       vim.o.shellquote = ''
       vim.o.shellxquote = ''
-      misc.info('Run windows clipboard settings', { title = 'Options' })
+      log.info 'Run windows clipboard settings'
       vim.g.clipboard = {
         name = 'win32yank',
         copy = {
@@ -73,10 +73,7 @@ function M.setup()
         cache_enabled = 0,
       }
     else
-      misc.warn(
-        'Under windows cannot find win32yank.exe, please install',
-        { title = 'Clipboard' }
-      )
+      log.warn 'Cannot find win32yank.exe, please install'
     end
   end
 

@@ -1,5 +1,80 @@
 --------------------------------------------------------------------------------
 -- Message Bus -- Tag based message router
+--
+-- The message bus provides a lightweight event routing layer for the editor
+-- runtime. It decouples message producers from consumers by transforming
+-- runtime events into tagged, identifiable messages and dispatching them to
+-- registered subscribers.
+--
+-- The bus itself is intentionally stateless. Stateful behaviors such as
+-- rendering, notification display, persistence, or message history are
+-- implemented as independent adapters/backends that subscribe to the bus.
+--
+-- This design allows different UI components (for example toast, progress
+-- indicator, notification window, or log recorder) to consume the same message
+-- stream without coupling producers to a specific presentation layer.
+--
+-- NOTE: LogQueue is a temporary logging infrastructure used during the preload
+-- stage, before the message bus and notification backends are initialized.
+-- It buffers early runtime messages and flushes them after the normal message
+-- pipeline becomes available.
+--
+-- ```lua
+--
+-- ---@class LogItem
+-- ---@field lvl number
+-- ---@field msg string
+-- ---@field time number
+--
+-- ---@class LogQueue
+-- ---@field data LogItem[]
+-- ---@field info fun(msg: string)
+-- ---@field warn fun(msg: string)
+-- ---@field error fun(msg: string)
+-- ---@field debug fun(msg: string)
+--
+-- local levels = vim.log.levels
+--
+-- ---@param title string
+-- ---@return LogQueue
+-- function M.make_log_queue(title)
+--   local instance = {
+--     title = title,
+--     data = {},
+--   }
+--
+--   return setmetatable(instance, {
+--     __index = function(self, key)
+--       local lvl = levels[key:upper()]
+--       if lvl then
+--         return function(msg)
+--           table.insert(self.data, {
+--             lvl = lvl,
+--             msg = msg,
+--             time = vim.uv.now(),
+--           })
+--         end
+--       end
+--       return rawget(self, key)
+--     end,
+--   })
+-- end
+--
+-- function M.flush_log_queue(queue)
+--   if #queue.data == 0 then
+--     return
+--   end
+--
+--   vim.schedule(function()
+--     for _, item in ipairs(queue.data) do
+--       vim.notify(item.msg, item.lvl, {
+--         title = queue.title or 'Preload',
+--       })
+--     end
+--     queue.data = {}
+--   end)
+-- end
+-- ```
 --------------------------------------------------------------------------------
 local M = {}
 

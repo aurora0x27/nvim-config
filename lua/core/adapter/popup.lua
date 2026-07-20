@@ -2,6 +2,8 @@
 -- Cmdline and InputBox
 --------------------------------------------------------------------------------
 local Win = require 'core.ui.window'
+local LOG_TITLE = 'Popup'
+local log = require 'utils.logger'.new(LOG_TITLE)
 local M = {}
 
 ---@class MatchDecl
@@ -326,7 +328,7 @@ function M.on_cmdline_show(content, pos, firstc, prompt, indent, level)
 
   local view = Opt.views[route.view]
   if not view then
-    vim.notify('Cannot find view ' .. route.view, vim.log.levels.ERROR)
+    log.error('Cannot find view ' .. route.view)
     return
   end
 

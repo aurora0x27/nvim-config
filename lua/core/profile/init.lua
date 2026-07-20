@@ -6,18 +6,11 @@
 -- env > nvimrc.json > default(schema)
 --------------------------------------------------------------------------------
 local M = {}
-
+local LOG_TITLE = 'Profile Module'
+local log = require 'utils.logger'.new(LOG_TITLE)
+local warn = log.warn
+local err = log.error
 local uv = vim.uv or vim.loop
-
----@param msg string
-local function err(msg)
-  vim.notify(msg, vim.log.levels.ERROR, { title = 'Profile Module' })
-end
-
----@param msg string
-local function warn(msg)
-  vim.notify(msg, vim.log.levels.WARN, { title = 'Profile Module' })
-end
 
 --- Read json without expecption
 ---@param path string
@@ -30,7 +23,7 @@ local function read_json(path)
 
   local stat = uv.fs_fstat(fd)
   if not stat then
-    err(string.format('Cannot stat file `%s`', path))
+    err('Cannot stat file `%s`', path)
     uv.fs_close(fd)
     return nil
   end
@@ -64,7 +57,7 @@ local function write_json(path, data)
 
   local fd = uv.fs_open(path, 'w', 438)
   if not fd then
-    err(string.format('Cannot write file `%s`', path))
+    err('Cannot write file `%s`', path)
     return false
   end
 
@@ -78,14 +71,7 @@ local function write_json(path, data)
   end
 
   if bytes ~= #res then
-    err(
-      string.format(
-        'Partial write: %d/%d bytes written to `%s`',
-        bytes,
-        #res,
-        path
-      )
-    )
+    err('Partial write: %d/%d bytes written to `%s`', bytes, #res, path)
     return false
   end
 
@@ -155,7 +141,7 @@ local function schema_check(tbl)
     local ty_s = type(DEFAULTS[k])
     local ty_v = type(v)
     if ty_s == 'nil' then
-      warn(string.format('`%s` is not expected to appear in config', k))
+      warn('`%s` is not expected to appear in config', k)
     elseif ty_s ~= ty_v then
       ok = false
       table.insert(
@@ -248,7 +234,7 @@ function M.setup(opts)
           ---@type number
           nvimrc[k] = num
         else
-          warn(string.format('Env %s is not a valid number', env_name))
+          warn('Env %s is not a valid number', env_name)
         end
       elseif ty == 'string' then
         -- `$@` is replaced with current value of the option

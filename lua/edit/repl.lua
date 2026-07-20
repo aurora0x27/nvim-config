@@ -7,6 +7,7 @@
 --------------------------------------------------------------------------------
 local M = {}
 local LOG_TITLE = 'Repl'
+local log = require 'utils.logger'.new(LOG_TITLE)
 
 local bind = require 'utils.loader'.bind
 
@@ -104,18 +105,14 @@ local function get_lines(bufnr, from, to)
   local ok, ret =
     pcall(vim.api.nvim_buf_get_text, bufnr, from[1], from[2], to[1], to[2], {})
   if not ok then
-    vim.notify(
-      string.format(
-        'Cannot get text of buffer %d, [%d:%d]-[%d:%d] because `%s`',
-        bufnr,
-        from[1],
-        from[2],
-        to[1],
-        to[2],
-        ret
-      ),
-      vim.log.levels.ERROR,
-      { title = LOG_TITLE }
+    log.error(
+      'Cannot get text of buffer %d, [%d:%d]-[%d:%d] because `%s`',
+      bufnr,
+      from[1],
+      from[2],
+      to[1],
+      to[2],
+      ret
     )
     return
   end
@@ -191,11 +188,7 @@ local function visual_wrapper(fn)
   fn = fn or M.exec
   local mode = vim.fn.mode()
   if not (mode == 'v' or mode == 'V') then
-    vim.notify(
-      'Unsupported mode: should not start repl on modes except `vV`',
-      vim.log.levels.ERROR,
-      { title = LOG_TITLE }
-    )
+    log.error 'Unsupported mode: should not start repl on modes except `vV`'
     return
   end
   -- HACK: switch to normal mode, wait a tick and read selected range

@@ -5,6 +5,9 @@
 --------------------------------------------------------------------------------
 local M = {}
 
+local LOG_TITLE = 'Preload'
+local log = require 'utils.logger'.new(LOG_TITLE)
+
 function M.setup()
   -- set global leader
   vim.g.mapleader = ' '
@@ -88,7 +91,7 @@ function M.setup()
           callback = function()
             vim.defer_fn(
               require 'utils.loader'.bind(
-                require 'utils.misc'.info,
+                log.info,
                 'Large file detected, some features are disabled'
               ),
               1000

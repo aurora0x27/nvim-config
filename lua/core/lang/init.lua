@@ -32,15 +32,10 @@ local M = {}
 ---@field whitelist string
 ---@field levels string
 
----@param msg string
-local function err(msg)
-  vim.notify(msg, vim.log.levels.ERROR, { title = 'Lang Loader' })
-end
-
----@param msg string
-local function warn(msg)
-  vim.notify(msg, vim.log.levels.WARN, { title = 'Lang Loader' })
-end
+local LOG_TITLE = 'Lang Loader'
+local log = require 'utils.logger'.new(LOG_TITLE)
+local err = log.error
+local warn = log.warn
 
 local Data = {
   ---@type table<string,LangFeatTbl>
@@ -82,10 +77,8 @@ local CAPABILITY = require 'utils.loader'.load_data_dir_as_set(
       if ty == 'string' then
         if set[ft] then
           warn(
-            string.format(
-              '[Lang]: CAPABILITY[%s] is filled before, origin value will be over written',
-              ft
-            )
+            '[Lang]: CAPABILITY[%s] is filled before, origin value will be over written',
+            ft
           )
         end
         set[ft] = subtbl
@@ -96,17 +89,15 @@ local CAPABILITY = require 'utils.loader'.load_data_dir_as_set(
           copy.ft = single_ft
 
           if set[single_ft] then
-            warn(string.format('[Lang]: CAPABILITY[%s] overwritten', single_ft))
+            warn('[Lang]: CAPABILITY[%s] overwritten', single_ft)
           end
 
           set[single_ft] = copy
         end
       else
         err(
-          string.format(
-            '[Lang]: Item in file `%s` has a bad `ft` type, expected string or string[]',
-            table.concat(k, '/')
-          )
+          '[Lang]: Item in file `%s` has a bad `ft` type, expected string or string[]',
+          table.concat(k, '/')
         )
       end
     end
@@ -118,11 +109,9 @@ local CAPABILITY = require 'utils.loader'.load_data_dir_as_set(
           process_ft(ft, subtbl)
         else
           err(
-            string.format(
-              '[Lang]: Item %d in file `%s` does not have field `ft`',
-              table.concat(k, '/'),
-              i
-            )
+            '[Lang]: Item %d in file `%s` does not have field `ft`',
+            table.concat(k, '/'),
+            i
           )
         end
       end
@@ -157,7 +146,7 @@ local function parse_level(tbl, str)
         feats_str,
         LANG_FEAT_TBL_DEFAULT,
         function(msg)
-          warn(string.format('[%s]: %s', lang, msg))
+          warn('[%s]: %s', lang, msg)
         end
       )
       if lang == 'all' then
@@ -195,13 +184,7 @@ local function generate_lists()
           table.insert(Data.LazyEnablePlugins, i)
         end
       else
-        err(
-          string.format(
-            '%s.plugins is %s, expected string',
-            lang,
-            type(spec.plugins)
-          )
-        )
+        err('%s.plugins is %s, expected string', lang, type(spec.plugins))
       end
     end
 
@@ -247,10 +230,8 @@ local function generate_lists()
     local function handle_ts(item)
       if type(item) ~= 'string' then
         err(
-          string.format(
-            'Unknown treesitter decl type: `%s`, expected string | table',
-            type(item)
-          )
+          'Unknown treesitter decl type: `%s`, expected string | table',
+          type(item)
         )
         return
       end
@@ -277,10 +258,8 @@ local function generate_lists()
         handle_ts(spec.treesitter)
       else
         err(
-          string.format(
-            'Unknown treesitter spec type: `%s`, expected string or boolean or string[]',
-            ty
-          )
+          'Unknown treesitter spec type: `%s`, expected string or boolean or string[]',
+          ty
         )
       end
     end
@@ -294,16 +273,14 @@ local function generate_lists()
           ts_alias_set[lang] = alias_to
         else
           warn(
-            string.format(
-              'Duplicate ts_alias for `%s`: keeping `%s`, ignoring `%s`',
-              lang,
-              ts_alias_set[lang],
-              alias_to
-            )
+            'Duplicate ts_alias for `%s`: keeping `%s`, ignoring `%s`',
+            lang,
+            ts_alias_set[lang],
+            alias_to
           )
         end
       else
-        err(string.format('Unknown ts_alias type `%s`, expected string', ty))
+        err('Unknown ts_alias type `%s`, expected string', ty)
       end
     end
   end
@@ -313,7 +290,7 @@ local function generate_lists()
     if spec then
       process_spec(lang, spec, feat)
     else
-      warn(string.format('Language `%s` is not in CAPABILITY', lang))
+      warn('Language `%s` is not in CAPABILITY', lang)
     end
   end
 end
@@ -328,7 +305,7 @@ local function parse_to_set(s)
   for item in string.gmatch(s, '([^,]+)') do
     local name = vim.trim(item)
     if name ~= 'all' and CAPABILITY[name] == nil then
-      warn(string.format('Item `%s` is not in CAPABILITY', name))
+      warn('Item `%s` is not in CAPABILITY', name)
     end
     res[name] = true
   end

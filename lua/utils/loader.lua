@@ -1,6 +1,6 @@
 local M = {}
-
-local misc = require 'utils.misc'
+local LOG_TITLE = 'Loader Utils'
+local log = require 'utils.logger'.new(LOG_TITLE)
 
 local uv = vim.uv or vim.loop
 
@@ -16,7 +16,7 @@ function M.load_data_dir_as_list(module_root, cb, on_error)
   cb = cb or function(tbl)
     return tbl
   end
-  on_error = on_error or misc.err
+  on_error = on_error or log.error
 
   ---@param dir string
   local function scan_dir(dir)
@@ -78,7 +78,7 @@ function M.load_data_dir_as_set(module_root, on_error, cb)
   cb = cb or function(s, k, v)
     s[table.concat(k, '.')] = v
   end
-  on_error = on_error or misc.err
+  on_error = on_error or log.error
 
   local lua_root = vim.fn.stdpath 'config' .. '/lua/'
   local base_dir = lua_root .. module_root:gsub('%.', '/')

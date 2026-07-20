@@ -1,7 +1,5 @@
-local misc = require 'utils.misc'
 local map = vim.keymap.set
 local bind = require 'utils.loader'.bind
-local LOG_TITLE = 'Tabline'
 
 ----------------------------------------------------------------------------
 -- Tab related
@@ -32,8 +30,6 @@ map({ 'n' }, '<leader>tnN', function()
   vim.cmd 'tabnew'
   if name ~= '' then
     require 'core.bpm'.rename_tab(vim.api.nvim_get_current_tabpage(), name)
-  else
-    misc.warn 'Warn: Tabname not assigned, opening an anonymous buffer'
   end
 end, { noremap = true, silent = true, desc = 'Tab [N]ew with name' })
 
@@ -49,8 +45,6 @@ map(
   bind(vim.ui.input, { prompt = 'New Tab Name' }, function(input)
     if input or input == '' then
       require 'core.bpm'.rename_tab(vim.api.nvim_get_current_tabpage(), input)
-    else
-      vim.notify('Empty input', vim.log.levels.INFO, { title = LOG_TITLE })
     end
   end),
   {

@@ -4,6 +4,8 @@
 -- Only work for fcitx5, require fcitx5-remote binary
 --------------------------------------------------------------------------------
 local M = {}
+local LOG_TITLE = 'Im Switch'
+local log = require 'utils.logger'.new(LOG_TITLE)
 
 local fcitx5_state
 
@@ -35,10 +37,7 @@ function M.setup()
   else
     if require 'utils.detect'.is_unix() then
       vim.schedule(function()
-        require 'utils.misc'.warn(
-          'Cannot find `fcitx5-remote`',
-          { title = 'IM Switch' }
-        )
+        log.warn('Cannot find `fcitx5-remote`')
       end)
     end
   end

@@ -1,6 +1,8 @@
 --------------------------------------------------------------------------------
 -- Lsp installer
 --------------------------------------------------------------------------------
+local LOG_TITLE = 'Mason'
+local log = require 'utils.logger'.new(LOG_TITLE)
 
 local pip_args
 local proxy = os.getenv 'PIP_PROXY'
@@ -12,8 +14,6 @@ end
 
 local LspEnsuredList = Lang.get_mason_install_list()
 
-local misc = require 'utils.misc'
-
 local function ensure_installed(list)
   local registry = require 'mason-registry'
 
@@ -21,19 +21,19 @@ local function ensure_installed(list)
     local ok, pkg = pcall(registry.get_package, pkg_name)
     ---@cast pkg Package
     if not ok then
-      misc.warn(('Package %s not found'):format(pkg_name), { title = 'Mason' })
+      log.warn('Package %s not found', pkg_name)
       return
     end
     if not pkg:is_installed() then
-      misc.info('Installing LSP: ' .. pkg_name, { title = 'Mason' })
+      log.info('Installing LSP: ' .. pkg_name)
       pkg:install():once('closed', function()
         if pkg:is_installed() then
           vim.schedule(function()
-            misc.info('LSP installed: ' .. pkg_name, { title = 'Mason' })
+            log.info('LSP installed: ' .. pkg_name)
           end)
         else
           vim.schedule(function()
-            misc.err('Failed to install LSP: ' .. pkg_name, { title = 'Mason' })
+            log.error('Failed to install LSP: ' .. pkg_name)
           end)
         end
       end)

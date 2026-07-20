@@ -17,6 +17,8 @@ local PREVIEW_TITLE = ' RecordedMsg '
 
 local LOG_TITLE = 'Message Recorder'
 
+local log = require 'utils.logger'.new(LOG_TITLE)
+
 ---@type MsgRecorderOpt
 local MSG_RECORDER_OPT_DEFAULT = {
   max_msg_limit = 1024,
@@ -153,11 +155,7 @@ function M.fzf_messages()
 end
 
 function M.clear()
-  vim.notify(
-    'All the messages cleared',
-    vim.log.levels.INFO,
-    { title = 'Message Recorder' }
-  )
+  log.info 'All the messages cleared'
   RecordedMessages = {}
 end
 

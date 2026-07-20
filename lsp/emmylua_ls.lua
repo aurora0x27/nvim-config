@@ -1,3 +1,6 @@
+local LOG_TITLE = 'EmmyLuaLs'
+local log = require 'utils.logger'.new(LOG_TITLE)
+
 --- @return string|nil
 local function detect_config_file()
   if vim.fn.filereadable '.emmyrc.json' == 1 then
@@ -20,10 +23,7 @@ local function load_workspace_emmyrc_config()
     local ok, ret = pcall(vim.json.decode, data)
     if not ok or ret == vim.NIL or type(ret) ~= 'table' then
       vim.defer_fn(function()
-        vim.notify(
-          ('Failed to parse %s:\n%s'):format(ws_cfg, ret),
-          vim.log.levels.WARN
-        )
+        log.warn('Failed to parse %s:\n%s', ws_cfg, ret)
       end, 100)
       return {}
     end

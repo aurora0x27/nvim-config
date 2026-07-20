@@ -3,6 +3,7 @@
 --------------------------------------------------------------------------------
 local M = {}
 local LOG_TITLE = 'BufferPoolManager'
+local log = require 'utils.logger'.new(LOG_TITLE)
 
 ---@alias DetachPolicy
 ---| 'destroy'  vim native, destroy window
@@ -385,11 +386,7 @@ function M.detach(buf, tab, policy)
   end
 
   if vim.bo[buf].modifiable and vim.bo[buf].modified then
-    vim.notify(
-      'Cannot detach unsaved buffer !',
-      vim.log.levels.ERROR,
-      { title = LOG_TITLE }
-    )
+    log.error 'Cannot detach unsaved buffer !'
     return
   end
 
@@ -570,11 +567,7 @@ function M.from_json(data)
   local ok, ret = pcall(vim.json.decode, data)
 
   if not ok then
-    vim.notify(
-      'Cannot decode recover data because\n' .. ret,
-      vim.log.levels.ERROR,
-      { title = LOG_TITLE }
-    )
+    log.error('Cannot decode recover data because\n' .. ret)
     return
   end
 
@@ -632,11 +625,7 @@ function M.from_json(data)
               table.insert(meta.attached_buffers, bufnr)
             end
           else
-            vim.notify(
-              '`' .. path .. '`not in path index!',
-              vim.log.levels.WARN,
-              { title = LOG_TITLE }
-            )
+            log.warn('`' .. path .. '`not in path index!')
           end
         end
       end
@@ -751,11 +740,7 @@ local function install_usercmds()
   vim.api.nvim_create_user_command('BpmRenameTab', function(opts)
     local name = opts.args
     if name == '' then
-      vim.notify(
-        'Usage: BpmRenameTab <name>',
-        vim.log.levels.WARN,
-        { title = LOG_TITLE }
-      )
+      log.warn 'Usage: BpmRenameTab <name>'
       return
     end
     M.rename_tab(vim.api.nvim_get_current_tabpage(), name)
@@ -780,11 +765,7 @@ local function install_usercmds()
       if n then
         table.insert(bufnrs, n)
       else
-        vim.notify(
-          'Invalid bufnr: ' .. fargs[i],
-          vim.log.levels.ERROR,
-          { title = LOG_TITLE }
-        )
+        log.error('Invalid bufnr: ' .. fargs[i])
       end
     end
 
@@ -826,11 +807,7 @@ local function install_usercmds()
       if n then
         table.insert(bufnrs, n)
       else
-        vim.notify(
-          'Invalid bufnr: ' .. fargs[i],
-          vim.log.levels.ERROR,
-          { title = LOG_TITLE }
-        )
+        log.error('Invalid bufnr: ' .. fargs[i])
       end
     end
 

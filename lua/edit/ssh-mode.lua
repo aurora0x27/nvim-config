@@ -4,7 +4,9 @@
 
 local M = {}
 
-local misc = require 'utils.misc'
+local LOG_TITLE = 'SSH Mode'
+local log = require 'utils.logger'.new(LOG_TITLE)
+
 local on = false
 local old_clipboard = vim.g.clipboard
 local auto_enable = true
@@ -13,7 +15,7 @@ local switch_mode = function()
   if on then
     vim.g.clipboard = old_clipboard
     on = false
-    misc.info('Clipboard ssh mode OFF', { title = 'SSH Mode' })
+    log.info 'Clipboard ssh mode OFF'
   else
     vim.g.clipboard = {
       name = 'OSC 52',
@@ -28,7 +30,7 @@ local switch_mode = function()
       cache_enabled = false,
     }
     on = true
-    misc.info('Clipboard ssh mode ON', { title = 'SSH Mode' })
+    log.info('Clipboard ssh mode ON')
   end
 end
 
@@ -39,7 +41,7 @@ M.setup = function()
 
   vim.api.nvim_create_user_command('ClipboardSshModeInfo', function()
     local message = 'Clipboard ssh mode ' .. (on and 'ON' or 'OFF')
-    misc.info(message, { title = 'SSH Mode' })
+    log.info(message)
   end, { desc = 'Check ssh mode status' })
 
   -- Automatically enable ssh mode

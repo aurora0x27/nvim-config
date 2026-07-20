@@ -1,8 +1,9 @@
+local LOG_TITLE = 'Session'
 local map = vim.keymap.set
-local misc = require 'utils.misc'
 local thunk = require 'utils.loader'.thunk
 local bind = require 'utils.loader'.bind
 local sandbox = require 'core.sandbox'.get_mask()
+local log = require 'utils.logger'.new(LOG_TITLE)
 
 ----------------------------------------------------------------------------
 -- Sandbox sessions
@@ -16,10 +17,7 @@ if sandbox.session then
       if vim.fn.filereadable(cache) ~= 0 then
         sm.load()
       else
-        misc.warn(
-          'No session in ' .. vim.fn.getcwd(),
-          { title = 'Session Manager' }
-        )
+        log.warn('No session in ' .. vim.fn.getcwd())
       end
     end)
   end, {
@@ -60,7 +58,7 @@ else
         return
       end
     end
-    misc.warn 'No previous file found in v:oldfiles'
+    log.warn 'No previous file found in v:oldfiles'
   end, {
     noremap = true,
     silent = true,

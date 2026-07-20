@@ -6,6 +6,9 @@
 --------------------------------------------------------------------------------
 local M = {}
 
+local LOG_TITLE = 'Diagnose'
+local log = require 'utils.logger'.new(LOG_TITLE)
+
 ---@enum DiagnosticMode
 local DIAGNOSE_MODE = {
   detailed = 1,
@@ -22,11 +25,7 @@ local function resolve_mode(s)
   if mode then
     return mode
   end
-  vim.notify(
-    '`' .. s .. '` is not valid diagnose mode, fallback to `inline`',
-    vim.log.levels.ERROR,
-    { title = 'Diagnose' }
-  )
+  log.error('`' .. s .. '` is not valid diagnose mode, fallback to `inline`')
   return DIAGNOSE_MODE.inline
 end
 

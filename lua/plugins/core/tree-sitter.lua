@@ -5,8 +5,8 @@
 local TSEnsureInstalled = Lang.get_ts_install_list()
 local bind = require 'utils.loader'.bind
 local thunk = require 'utils.loader'.thunk
-local misc = require 'utils.misc'
-local LOGTITLE = 'TreeSitter'
+local LOG_TITLE = 'TreeSitter'
+local log = require 'utils.logger'.new(LOG_TITLE)
 
 ---@param args vim.api.keyset.create_autocmd.callback_args
 local function safe_ts_start(args)
@@ -17,14 +17,7 @@ local function safe_ts_start(args)
   end
 
   if ft == '' then
-    vim.defer_fn(
-      bind(
-        misc.err,
-        'Cannot start parser, ft not assigned',
-        { title = LOGTITLE }
-      ),
-      500
-    )
+    vim.defer_fn(bind(log.error, 'Cannot start parser, ft not assigned'), 500)
     return
   end
 
@@ -36,14 +29,7 @@ local function safe_ts_start(args)
   vim.schedule(function()
     local ok1 = pcall(vim.treesitter.start, buf, lang)
     if not ok1 then
-      vim.defer_fn(
-        bind(
-          misc.err,
-          string.format('Cannot start parser for `%s`', lang),
-          { title = LOGTITLE }
-        ),
-        500
-      )
+      vim.defer_fn(bind(log.error, 'Cannot start parser for `%s`', lang), 500)
     end
     vim.bo.indentexpr = [[v:lua.require'nvim-treesitter'.indentexpr()]]
   end)
