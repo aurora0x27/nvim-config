@@ -2,7 +2,7 @@
 -- Filesystem editor
 --------------------------------------------------------------------------------
 local border = require 'assets.theme'.border
-local thunk = require 'utils.loader'.thunk
+local thunk = require 'utils.fnx'.thunk
 
 function _G.oil_get_winbar()
   local bufnr = vim.api.nvim_win_get_buf(vim.g.statusline_winid)

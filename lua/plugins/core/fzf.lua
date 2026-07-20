@@ -3,7 +3,7 @@
 --------------------------------------------------------------------------------
 
 local WinBorder = require 'assets.theme'.border
-local thunk = require 'utils.loader'.thunk
+local thunk = require 'utils.fnx'.thunk
 
 local FzfLua = {
   'ibhagwan/fzf-lua',

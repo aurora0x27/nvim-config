@@ -1,7 +1,7 @@
 --------------------------------------------------------------------------------
 -- Buffer display element
 --------------------------------------------------------------------------------
-local summary = require 'utils.fs'.summary
+local summary = require 'utils.strx'.summary
 local UIIcons = require 'assets.icons'.get('ui', true)
 local BufferPoolManager = require 'core.bpm'
 

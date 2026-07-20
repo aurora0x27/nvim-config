@@ -1,5 +1,5 @@
 local map = vim.keymap.set
-local thunk = require 'utils.loader'.thunk
+local thunk = require 'utils.fnx'.thunk
 
 ----------------------------------------------------------------------------
 -- resize window

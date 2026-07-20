@@ -1,5 +1,5 @@
 local map = vim.keymap.set
-local bind = require 'utils.loader'.bind
+local bind = require 'utils.fnx'.bind
 
 ----------------------------------------------------------------------------
 -- Tab related

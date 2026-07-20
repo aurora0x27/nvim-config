@@ -4,8 +4,8 @@
 
 local M = {}
 
-local thunk = require 'utils.loader'.thunk
-local bind = require 'utils.loader'.bind
+local thunk = require 'utils.fnx'.thunk
+local bind = require 'utils.fnx'.bind
 local map = vim.keymap.set
 
 function M.setup()

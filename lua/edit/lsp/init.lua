@@ -6,8 +6,8 @@ local M = {}
 local lsp = vim.lsp
 local api = vim.api
 local methods = lsp.protocol.Methods
-local thunk = require 'utils.loader'.thunk
-local bind = require 'utils.loader'.bind
+local thunk = require 'utils.fnx'.thunk
+local bind = require 'utils.fnx'.bind
 local AUG = api.nvim_create_augroup('lsp-module', { clear = true })
 local BORDER = require 'assets.theme'.border
 local LOG_TITLE = 'LSP Module'

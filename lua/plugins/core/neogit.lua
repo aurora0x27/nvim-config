@@ -1,8 +1,8 @@
 --------------------------------------------------------------------------------
 -- Enhanced git client
 --------------------------------------------------------------------------------
-local thunk = require 'utils.loader'.thunk
-local bind = require 'utils.loader'.bind
+local thunk = require 'utils.fnx'.thunk
+local bind = require 'utils.fnx'.bind
 
 ---@type LazyPluginSpec
 local Neogit = {

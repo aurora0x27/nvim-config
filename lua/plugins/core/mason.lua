@@ -85,7 +85,7 @@ local Mason = {
   cmd = { 'Mason' },
   config = function()
     require 'mason'.setup(MasonOpt)
-    vim.schedule(require 'utils.loader'.bind(ensure_installed, LspEnsuredList))
+    vim.schedule(require 'utils.fnx'.bind(ensure_installed, LspEnsuredList))
     require 'edit.lsp'.setup()
   end,
 }

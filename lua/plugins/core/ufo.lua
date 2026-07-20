@@ -1,7 +1,7 @@
 --------------------------------------------------------------------------------
 -- Enhanced fold provider
 --------------------------------------------------------------------------------
-local thunk = require 'utils.loader'.thunk
+local thunk = require 'utils.fnx'.thunk
 
 ---@type LazyPluginSpec
 local Ufo = {

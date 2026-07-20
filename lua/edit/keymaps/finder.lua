@@ -1,6 +1,6 @@
 local map = vim.keymap.set
-local thunk = require 'utils.loader'.thunk
-local bind = require 'utils.loader'.bind
+local thunk = require 'utils.fnx'.thunk
+local bind = require 'utils.fnx'.bind
 
 ----------------------------------------------------------------------------
 -- Fzflua related, prefix is leader-t

@@ -1,7 +1,7 @@
 local LOG_TITLE = 'Session'
 local map = vim.keymap.set
-local thunk = require 'utils.loader'.thunk
-local bind = require 'utils.loader'.bind
+local thunk = require 'utils.fnx'.thunk
+local bind = require 'utils.fnx'.bind
 local sandbox = require 'core.sandbox'.get_mask()
 local log = require 'utils.logger'.new(LOG_TITLE)
 

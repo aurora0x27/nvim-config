@@ -1,8 +1,14 @@
+--------------------------------------------------------------------------------
+-- Detect -- environment and runtime capability detection
+--------------------------------------------------------------------------------
 local M = {}
 
 ---@return boolean
 function M.is_unix()
-  return jit.os == 'POSIX' or jit.os == 'BSD' or jit.os == 'OSX'
+  return jit.os == 'Linux'
+    or jit.os == 'BSD'
+    or jit.os == 'OSX'
+    or jit.os == 'POSIX'
 end
 
 ---@return boolean

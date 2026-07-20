@@ -3,8 +3,8 @@
 --------------------------------------------------------------------------------
 
 local TSEnsureInstalled = Lang.get_ts_install_list()
-local bind = require 'utils.loader'.bind
-local thunk = require 'utils.loader'.thunk
+local bind = require 'utils.fnx'.bind
+local thunk = require 'utils.fnx'.thunk
 local LOG_TITLE = 'TreeSitter'
 local log = require 'utils.logger'.new(LOG_TITLE)
 

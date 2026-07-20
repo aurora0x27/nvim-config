@@ -66,7 +66,7 @@ local Data = {
   LspLangMap = {},
 }
 
-local CAPABILITY = require 'utils.loader'.load_data_dir_as_set(
+local CAPABILITY = require 'utils.datadir'.load_set(
   'core.lang.capability',
   err,
   function(set, k, v)

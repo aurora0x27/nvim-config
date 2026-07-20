@@ -26,7 +26,7 @@ local RawIconSpec = {
   },
 }
 
-local thunk = require 'utils.loader'.thunk
+local thunk = require 'utils.fnx'.thunk
 
 local IconTable = (function()
   local ret = {}

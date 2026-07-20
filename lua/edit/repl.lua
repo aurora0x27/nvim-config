@@ -9,7 +9,7 @@ local M = {}
 local LOG_TITLE = 'Repl'
 local log = require 'utils.logger'.new(LOG_TITLE)
 
-local bind = require 'utils.loader'.bind
+local bind = require 'utils.fnx'.bind
 
 ---@class ReplContext
 ---@field id?  string keep, not used now

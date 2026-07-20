@@ -2,7 +2,7 @@
 -- UI Event Adapter: hijack nvim ui-event system and send messages to bus
 --------------------------------------------------------------------------------
 local M = {}
-local bind = require 'utils.loader'.bind
+local bind = require 'utils.fnx'.bind
 
 ---@class ExtHandlerDecl for use config
 ---@field event string

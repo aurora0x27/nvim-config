@@ -5,7 +5,7 @@ local M = {}
 
 local AUG = vim.api.nvim_create_augroup('UserCustomed', { clear = true })
 local CWD
-local summary = require 'utils.fs'.summary
+local summary = require 'utils.strx'.summary
 
 function M.setup()
   -- Highlight yanked text

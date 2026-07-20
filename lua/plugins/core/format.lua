@@ -2,8 +2,8 @@
 -- Formatter
 --------------------------------------------------------------------------------
 
-local bind = require 'utils.loader'.bind
-local thunk = require 'utils.loader'.thunk
+local bind = require 'utils.fnx'.bind
+local thunk = require 'utils.fnx'.thunk
 
 ---@type LazyPluginSpec
 local CodeFormatter = {

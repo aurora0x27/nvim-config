@@ -90,7 +90,7 @@ function M.setup()
           once = true,
           callback = function()
             vim.defer_fn(
-              require 'utils.loader'.bind(
+              require 'utils.fnx'.bind(
                 log.info,
                 'Large file detected, some features are disabled'
               ),
