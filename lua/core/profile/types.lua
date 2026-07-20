@@ -55,7 +55,9 @@
 ---       feature for c, disable all features for cpp, enable tree-sitter and lsp,
 ---       disable formatter for rust.
 ---@field lang_whitelist string enabled lang configs, default all, split by ','
----@field sandbox_mode string control sanbox features `sesson|undo|shada|swap|wb`, `wb` for writebackup
+---@field persist_local_dir string Workspace-relative directory used to store local persistence data.
+---@field persist_local_mode string Store selected persistence features in the current workspace. Supported items: `session|undo|shada|swap`.
+---@field persist_mode string Enable persistence features. Supported items: `session|undo|shada|swap`
 ---@field statline_scrollbar_style StatusScrollbarStyle heirline scroll bar style, which displays cursor position
 ---@field transparent_mode boolean enable transparent mode
 ---@field use_emmylua_ls boolean use `emmylua_ls` as lua language server

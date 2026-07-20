@@ -125,6 +125,24 @@ function M.setup()
       end)
     end,
   })
+
+  local bpm = require 'core.bpm'
+
+  vim.api.nvim_create_autocmd('User', {
+    pattern = 'PersistLoadPost',
+    callback = function()
+      if type(vim.g.BufferPoolState) == 'string' then
+        bpm.from_json(vim.g.BufferPoolState)
+      end
+    end,
+  })
+
+  vim.api.nvim_create_autocmd('User', {
+    pattern = 'PersistSavePre',
+    callback = function()
+      vim.g.BufferPoolState = bpm.to_json()
+    end,
+  })
 end
 
 return M

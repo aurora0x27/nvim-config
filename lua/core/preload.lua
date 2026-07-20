@@ -49,8 +49,6 @@ function M.setup()
   vim.o.shiftwidth = 4
   vim.o.expandtab = true
   vim.o.autoindent = true
-  vim.o.shada = require 'core.sandbox'.get_mask().shada and [[!,'100,<50,s10,h]]
-    or ''
 
   -- filetype alias
   vim.filetype.add({
@@ -100,6 +98,27 @@ function M.setup()
         })
         vim.cmd 'syntax off'
         vim.bo.filetype = 'bigfile'
+      end
+    end,
+  })
+
+  -- save folds and view (cursor position, etc.)
+  vim.api.nvim_create_autocmd('BufWinLeave', {
+    pattern = '*',
+    callback = function()
+      if vim.bo.buftype == '' then
+        ---@diagnostic disable:param-type-mismatch
+        pcall(vim.cmd, 'mkview')
+      end
+    end,
+  })
+  -- restore view on reenter buffer
+  vim.api.nvim_create_autocmd('BufWinEnter', {
+    pattern = '*',
+    callback = function()
+      if vim.bo.buftype == '' then
+        ---@diagnostic disable:param-type-mismatch
+        pcall(vim.cmd, 'silent! loadview')
       end
     end,
   })

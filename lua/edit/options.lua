@@ -4,7 +4,6 @@
 local M = {}
 
 local detect = require 'utils.detect'
-local sandbox = require 'core.sandbox'.get_mask()
 local LOG_TITLE = 'Options'
 local log = require 'utils.logger'.new(LOG_TITLE)
 
@@ -17,10 +16,6 @@ local Opt = {
   termguicolors = true,
   wildmenu = true,
   ignorecase = true,
-  undofile = sandbox.undo,
-  swapfile = sandbox.swap,
-  writebackup = sandbox.wb,
-  undodir = vim.fn.stdpath 'state' .. '/undo',
   scrolloff = 5,
   virtualedit = 'block',
   showmode = false,

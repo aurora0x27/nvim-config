@@ -160,6 +160,22 @@ nvim # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
     - **ENV:** `NVIM_BLINK_USE_BINARY`
     - **Defaults:** `true`
 
+- 持久化
+  - _`persist_local_dir`_ — 用于存放工作区本地持久化数据的目录（相对于工作区根目录）。
+    - **Type:** `string`
+    - **ENV:** `NVIM_PERSIST_LOCAL_DIR`
+    - **Defaults:** `'.cache/nvim/'`
+
+  - _`persist_local_mode`_ — 将指定的持久化功能存储到当前工作区。支持：`session|undo|shada|swap`。
+    - **Type:** `string`
+    - **ENV:** `NVIM_PERSIST_LOCAL_MODE`
+    - **Defaults:** `'none'`
+
+  - _`persist_mode`_ — 启用持久化功能。支持：`session|undo|shada|swap`
+    - **Type:** `string`
+    - **ENV:** `NVIM_PERSIST_MODE`
+    - **Defaults:** `'none'`
+
 - 生活质量(QoL)
   - _`disable_im_switch`_ — 禁用自动输入法切换
     - **Type:** `boolean`
@@ -236,11 +252,6 @@ nvim # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
     - **Type:** `boolean`
     - **ENV:** `NVIM_ALLOW_WORKSPACE_PATCH`
     - **Defaults:** `false`
-
-  - _`sandbox_mode`_ — 控制沙盒功能 `sesson|undo|shada|swap|wb`，其中 `wb` 用于写回功能
-    - **Type:** `string`
-    - **ENV:** `NVIM_SANDBOX_MODE`
-    - **Defaults:** `'none'`
 
   - _`workspace_patch_always_restrict`_ — 始终启用限制模式. 禁用 `dofile` 以防止 **任意代码执行**
     - **Type:** `boolean`

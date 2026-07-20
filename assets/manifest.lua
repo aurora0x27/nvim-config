@@ -5,16 +5,6 @@
 
 ---@type table<string, ProfileManifestDecl>
 local Decls = {
-  sandbox_mode = {
-    type = 'string',
-    default = 'none',
-    category = 'workspace',
-    desc = 'control sanbox features `sesson|undo|shada|swap|wb`, `wb` for writebackup',
-    i18n = {
-      zh_CN = '控制沙盒功能 `sesson|undo|shada|swap|wb`，其中 `wb` 用于写回功能',
-    },
-  },
-
   transparent_mode = {
     type = 'boolean',
     default = false,
@@ -316,6 +306,36 @@ local Decls = {
       zh_CN = '为集成终端设置 shell, 默认为 zsh',
     },
   },
+
+  persist_mode = {
+    type = 'string',
+    default = 'none',
+    category = 'persist',
+    desc = 'Enable persistence features. Supported items: `session|undo|shada|swap`',
+    i18n = {
+      zh_CN = '启用持久化功能。支持：`session|undo|shada|swap`',
+    },
+  },
+
+  persist_local_mode = {
+    type = 'string',
+    default = 'none',
+    category = 'persist',
+    desc = 'Store selected persistence features in the current workspace. Supported items: `session|undo|shada|swap`.',
+    i18n = {
+      zh_CN = '将指定的持久化功能存储到当前工作区。支持：`session|undo|shada|swap`。',
+    },
+  },
+
+  persist_local_dir = {
+    type = 'string',
+    default = '.cache/nvim/',
+    category = 'persist',
+    desc = 'Workspace-relative directory used to store local persistence data.',
+    i18n = {
+      zh_CN = '用于存放工作区本地持久化数据的目录（相对于工作区根目录）。',
+    },
+  },
 }
 
 local Category = {
@@ -350,6 +370,10 @@ local Category = {
   misc = {
     en = 'Misc',
     zh_CN = '其他',
+  },
+  persist = {
+    en = 'Persistence',
+    zh_CN = '持久化',
   },
 }
 

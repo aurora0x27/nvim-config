@@ -125,6 +125,14 @@ vim.api.nvim_create_autocmd({ 'BufReadPost', 'BufNewFile' }, {
   end,
 })
 
+vim.api.nvim_create_autocmd('User', {
+  pattern = 'VeryLazy',
+  once = true,
+  callback = function()
+    require 'core.persist'.activate()
+  end,
+})
+
 --------------------------------------------------------------------------------
 -- Phase 1: Initialize UI event adapter, load preload module and detect
 --          workspace patch
@@ -151,6 +159,7 @@ require 'core.lang'.setup {
 }
 
 require 'core.preload'.setup()
+require 'core.persist'.setup()
 require 'core.workspace'.setup()
 
 vim.api.nvim_create_autocmd('UIEnter', {

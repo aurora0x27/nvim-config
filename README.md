@@ -168,6 +168,22 @@ dir. Here're customizable items:
     - **ENV:** `NVIM_BLINK_USE_BINARY`
     - **Defaults:** `true`
 
+- Persistence
+  - _`persist_local_dir`_ — Workspace-relative directory used to store local persistence data.
+    - **Type:** `string`
+    - **ENV:** `NVIM_PERSIST_LOCAL_DIR`
+    - **Defaults:** `'.cache/nvim/'`
+
+  - _`persist_local_mode`_ — Store selected persistence features in the current workspace. Supported items: `session|undo|shada|swap`.
+    - **Type:** `string`
+    - **ENV:** `NVIM_PERSIST_LOCAL_MODE`
+    - **Defaults:** `'none'`
+
+  - _`persist_mode`_ — Enable persistence features. Supported items: `session|undo|shada|swap`
+    - **Type:** `string`
+    - **ENV:** `NVIM_PERSIST_MODE`
+    - **Defaults:** `'none'`
+
 - QoL
   - _`disable_im_switch`_ — disable auto im switcher
     - **Type:** `boolean`
@@ -244,11 +260,6 @@ dir. Here're customizable items:
     - **Type:** `boolean`
     - **ENV:** `NVIM_ALLOW_WORKSPACE_PATCH`
     - **Defaults:** `false`
-
-  - _`sandbox_mode`_ — control sanbox features `sesson|undo|shada|swap|wb`, `wb` for writebackup
-    - **Type:** `string`
-    - **ENV:** `NVIM_SANDBOX_MODE`
-    - **Defaults:** `'none'`
 
   - _`workspace_patch_always_restrict`_ — always enable restrict mode, disable _dofile_ to prevent **ACE**
     - **Type:** `boolean`

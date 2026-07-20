@@ -13,7 +13,7 @@ function M.setup()
   require 'edit.keymaps.window'
   require 'edit.keymaps.tab'
   require 'edit.keymaps.finder'
-  require 'edit.keymaps.sandbox'
+  require 'edit.keymaps.persist'
 
   ----------------------------------------------------------------------------
   -- insert mode move cursor
