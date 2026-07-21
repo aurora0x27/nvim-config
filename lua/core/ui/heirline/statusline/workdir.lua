@@ -9,19 +9,20 @@ local WorkDir = {
   init = function(self)
     local cwd = get_logical_cwd()
     self.cwd = vim.fn.fnamemodify(cwd, ':~')
-    self.mode = vim.fn.mode()
     self.icon = require 'core.workspace'.is_restrict() and '   ' or '   '
   end,
   provider = function(self)
     if vim.o.columns < 80 then
-      return '  '
+      return ' '
     end
-    return self.icon .. shorten_path(self.cwd) .. ' '
+    if vim.o.columns < 100 then
+      return self.icon
+    end
+    return self.icon .. shorten_path(self.cwd)
   end,
-  hl = function(self)
+  hl = function()
     return {
       fg = 'black',
-      bg = self.mode_hl[self.mode] or 'replace',
       bold = true,
     }
   end,

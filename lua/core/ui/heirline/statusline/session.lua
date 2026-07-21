@@ -4,21 +4,17 @@
 local SM = require 'core.persist'
 
 local SessionInfo = {
-  init = function(self)
-    self.mode = vim.fn.mode()
-  end,
   provider = function()
-    return '@' .. (SM.current() == '_' and '*anonymous*' or SM.current()) .. ' '
+    return '@' .. (SM.current() == '_' and '*anonymous*' or SM.current())
   end,
-  hl = function(self)
+  hl = function()
     return {
       fg = 'black',
-      bg = self.mode_hl[self.mode] or 'blue',
       bold = true,
     }
   end,
   condition = function()
-    return SM.get_modes().persist_mode.session
+    return SM.get_modes().persist_mode.session and vim.o.columns >= 80
   end,
   update = true,
 }

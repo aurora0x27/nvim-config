@@ -13,6 +13,20 @@ local WorkDir = require 'core.ui.heirline.statusline.workdir'
 local BufInfo = require 'core.ui.heirline.statusline.bufinfo'
 local SessionInfo = require 'core.ui.heirline.statusline.session'
 
+local RightCornerBlock = {
+  init = function(self)
+    self.mode = vim.fn.mode()
+  end,
+  hl = function(self)
+    return {
+      bg = self.mode_hl[self.mode] or 'blue',
+    }
+  end,
+  WorkDir,
+  SessionInfo,
+  { provider = ' ' },
+}
+
 local DebugModeFlag = {
   static = {
     icon = require 'assets.icons'.get('ui', true).Bug,
@@ -96,8 +110,7 @@ local StatusLine = {
   LSPInfo,
   BufInfo,
   Incline,
-  WorkDir,
-  SessionInfo,
+  RightCornerBlock,
 }
 
 return StatusLine
