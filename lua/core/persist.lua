@@ -215,7 +215,7 @@ function M.deactivate()
   Activate = false
 end
 
-function M.is_activate()
+function M.is_active()
   return Activate
 end
 
@@ -317,6 +317,11 @@ function M.select()
     return
   end
 
+  if not PersistLocalMode.session then
+    log.warn 'Workspace scope persistence is not enabled\nNeither does named session feature'
+    return
+  end
+
   local dir = PersistLocalMode.session and local_session_dir()
     or GLOBAL_SESSION_DIR
 
@@ -404,6 +409,14 @@ function M.select()
       end,
     },
   })
+end
+
+---@return {persist_mode: table<string,boolean>, local_mode: table<string, boolean>}
+function M.get_modes()
+  return {
+    persist_mode = PersistMode,
+    local_mode = PersistLocalMode,
+  }
 end
 
 --------------------------------------------------------------------------------
