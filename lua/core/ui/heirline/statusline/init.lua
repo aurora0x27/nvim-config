@@ -8,9 +8,10 @@ local ScrollBar = require 'core.ui.heirline.statusline.scroll-bar'
 local CursorPos = require 'core.ui.heirline.statusline.cursor-pos'
 local Diagnostics = require 'core.ui.heirline.statusline.diagnostics'
 local LSPInfo = require 'core.ui.heirline.statusline.lsp-info'
-local BufName = require 'core.ui.heirline.statusline.bufname'
+local Incline = require 'core.ui.heirline.statusline.incline'
 local WorkDir = require 'core.ui.heirline.statusline.workdir'
 local BufInfo = require 'core.ui.heirline.statusline.bufinfo'
+local SessionInfo = require 'core.ui.heirline.statusline.session'
 
 local DebugModeFlag = {
   static = {
@@ -94,8 +95,9 @@ local StatusLine = {
   Diagnostics,
   LSPInfo,
   BufInfo,
-  BufName,
+  Incline,
   WorkDir,
+  SessionInfo,
 }
 
 return StatusLine

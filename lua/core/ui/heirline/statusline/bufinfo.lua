@@ -21,11 +21,11 @@ local BufInfo = {
       .. vim.bo.tabstop
       .. ' '
   end,
-  hl = { fg = 'text_fg', italic = true },
   condition = function()
     return vim.o.columns >= 120
   end,
-  update = { 'BufEnter' },
+  hl = { fg = 'text_fg', italic = true },
+  update = true,
 }
 
 return BufInfo

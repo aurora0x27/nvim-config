@@ -56,7 +56,7 @@ end, false)
 local Tabs = Utils.make_tablist(TabBlock)
 
 local Tabline = {
-  conditions = function()
+  condition = function()
     return vim.bo.filetype ~= 'alpha'
   end,
   --- Add an Offset component if use neo-tree
