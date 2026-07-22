@@ -32,6 +32,13 @@ function M.is_executable(cmd)
   return vim.fn.executable(cmd) == 1
 end
 
+---@param path string
+---@return boolean
+function M.is_dir(path)
+  local stat = vim.uv.fs_stat(path)
+  return stat and stat.type == 'directory' or false
+end
+
 ---@param bufnr integer
 ---@return boolean
 function M.is_bigfile(bufnr)
