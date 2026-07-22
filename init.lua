@@ -159,7 +159,11 @@ require 'core.lang'.setup {
 }
 
 require 'core.preload'.setup()
-require 'core.persist'.setup()
+require 'core.persist'.setup {
+  persist_mode = Profile.persist_mode,
+  persist_local_mode = Profile.persist_local_mode,
+  persist_local_dir = Profile.persist_local_dir,
+}
 require 'core.workspace'.setup()
 
 vim.api.nvim_create_autocmd('UIEnter', {
