@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------
--- Display current workspace dir path with a summay string
+-- Display current workspace dir path with a summary string
 --------------------------------------------------------------------------------
 local tools = require 'utils.fs'
 local get_logical_cwd = tools.get_logical_cwd
