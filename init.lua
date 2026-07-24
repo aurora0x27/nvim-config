@@ -17,11 +17,6 @@ if vim.g.vscode then
   return
 end
 
--- Enable aot bytecode
-if vim.loader then
-  vim.loader.enable()
-end
-
 --------------------------------------------------------------------------------
 -- Phase 0: DEBUG MODE
 --------------------------------------------------------------------------------
@@ -88,6 +83,12 @@ end
 --------------------------------------------------------------------------------
 -- END DEBUG MODE
 --------------------------------------------------------------------------------
+
+-- Enable aot bytecode
+-- Place here because vim.loader uses vim.fn.stdpath for bytecode cache path
+if vim.loader then
+  vim.loader.enable()
+end
 
 --------------------------------------------------------------------------------
 -- Phase 3: Load user defined settings after Lazy initialization
