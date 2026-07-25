@@ -289,7 +289,7 @@ function M.load(opt)
     for _, spath in ipairs(sessions) do
       local ok, data = pcall(mangling.decode, session_name(spath))
       if ok then
-        if br and data['branch'] and br == data['branch'] then
+        if not br or (data['branch'] and br == data['branch']) then
           file = spath
           name = data['name']
           break
