@@ -67,7 +67,7 @@ local PERSIST_LOCAL_MODE_DEFAULTS = {
   swap = true,
 }
 
-local CWD = vim.fn.getcwd()
+local CWD = require 'utils.fs'.cwd()
 local PERSIST_LOCAL_DIR_DEFAULT = CWD .. '/.cache/nvim'
 local GLOBAL_SESSION_ROOT = vim.fn.stdpath('state') .. '/sessions/'
 local AUGROUP_NAME = 'Persistence'

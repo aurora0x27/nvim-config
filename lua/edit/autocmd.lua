@@ -24,7 +24,7 @@ function M.setup()
     group = AUG,
     callback = function(ev)
       if not CWD then
-        CWD = vim.fn.getcwd()
+        CWD = require 'utils.fs'.cwd()
       end
 
       local buf = ev.buf

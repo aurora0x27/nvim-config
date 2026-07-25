@@ -30,13 +30,20 @@ function M.shorten_path(dir, lvl, sep)
   end
 end
 
+function M.cwd()
+  return assert(vim.uv.cwd(), 'Cannot get cwd!')
+end
+
 -- Resolve cwd
 --
 -- Process path like /Volumes/Workspace -> ~/Workspace
--- vim.fn.getcwd(0) always returns physical path `/Volumes/Workspace`
+-- uv.cwd() always returns physical path `/Volumes/Workspace`
 -- but we expect `~/Workspace`
 function M.get_logical_cwd()
-  local physical_cwd = vim.fn.getcwd(0)
+  -- uv.cwd() intentionally returns the process working directory.
+  -- This is equivalent to getcwd(0) here because we never rely on
+  -- window-local or tab-local cwd.
+  local physical_cwd = M.cwd()
   local logical_cwd = os.getenv('PWD')
 
   if logical_cwd and logical_cwd ~= '' then

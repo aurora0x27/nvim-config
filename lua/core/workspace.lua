@@ -154,8 +154,9 @@ function M.probe()
   if has_probed then
     return workspace_nvim, workspace_nvimrc
   end
-  local workspace_patch_dir = vim.fn.getcwd() .. '/.nvim'
-  local secondary = vim.fn.getcwd() .. '/.vscode/nvim'
+  local CWD = require 'utils.fs'.cwd()
+  local workspace_patch_dir = CWD .. '/.nvim'
+  local secondary = CWD .. '/.vscode/nvim'
   local has_ws = false
   if vim.fn.isdirectory(workspace_patch_dir) == 1 then
     has_ws = true
