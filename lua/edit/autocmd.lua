@@ -140,6 +140,11 @@ function M.setup()
   vim.api.nvim_create_autocmd('User', {
     pattern = 'PersistSavePre',
     callback = function()
+      -- Session snapshots represent the current working set, not
+      -- how this editor instance was started. Drop the argument
+      -- list before writing the session.
+      vim.cmd [[silent! %argdel]]
+
       vim.g.BufferPoolState = bpm.to_json()
     end,
   })
