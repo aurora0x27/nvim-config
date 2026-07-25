@@ -273,7 +273,7 @@ function M.load(opt)
 
   local dir = get_session_dir()
   if not is_dir(dir) then
-    log.warn 'No sessions for current working set'
+    log.warn 'Session dir does not exist'
     return
   end
 
@@ -306,7 +306,7 @@ function M.load(opt)
     end
     emit 'LoadPost'
   else
-    log.warn 'No session for current working set'
+    log.warn 'No sessions for current working set'
   end
 end
 
