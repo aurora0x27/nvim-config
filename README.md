@@ -37,7 +37,7 @@ A **Modular & High-performance** set of configurations for Nvim which is written
 
 - Well organized code(also well annotioned) for beginners to understand -- good code is the best document 😈😈😈
 
-## Dependency
+## Requirements
 
 Some binaries should be installed before launch the configuration.
 
@@ -60,6 +60,10 @@ Some binaries should be installed before launch the configuration.
 - `win32yank.exe` _Windows_ for system clipboard support
 
 - `cargo` full rust toolchain, **optionally** required by blink.cmp
+
+> [!CAUTION]
+>
+> This configuration only work for **nvim >= 0.12**
 
 ## Try it now
 

@@ -41,6 +41,8 @@
 
 - `yarn` 用于 Markdown 预览器
 
+- `websocat` 用于typst 预览器
+
 - `rg` 用于模糊查找器
 
 - `fzf` 用于模糊查找器
@@ -54,6 +56,10 @@
 - `win32yank.exe`（Windows 系统）用于系统剪贴板支持
 
 - `cargo` 完整的 `rust` 工具鏈, 是 `blink.cmp` 的可選依賴
+
+> [!CAUTION]
+>
+> 本配置要求 **nvim >= 0.12**
 
 ## 立即尝试
 
