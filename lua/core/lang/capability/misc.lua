@@ -18,6 +18,7 @@ return {
       'awk',
       'bash',
       'diff',
+      'make',
       'dockerfile',
       'editorconfig',
       'fish',
