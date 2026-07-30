@@ -17,7 +17,7 @@ local function safe_ts_start(args)
   end
 
   if ft == '' then
-    vim.defer_fn(bind(log.error, 'Cannot start parser, ft not assigned'), 500)
+    log.error 'Cannot start parser, ft not assigned'
     return
   end
 
@@ -26,10 +26,20 @@ local function safe_ts_start(args)
     return
   end
 
+  -- Perf: Some parsers (notably C/C++) have expensive startup cost.
+  -- Starting them synchronously during FileType blocks the UI for ~100-200ms.
+  -- Defer to the next event loop tick so the buffer opens responsively.
   vim.schedule(function()
-    local ok1 = pcall(vim.treesitter.start, buf, lang)
+    if
+      not vim.api.nvim_buf_is_valid(buf)
+      or not vim.api.nvim_buf_is_loaded(buf)
+    then
+      return
+    end
+    local ok1, e = pcall(vim.treesitter.start, buf, lang)
     if not ok1 then
-      vim.defer_fn(bind(log.error, 'Cannot start parser for `%s`', lang), 500)
+      log.error('Cannot start parser for `%s`, because\n%s', lang, e)
+      return
     end
     vim.bo.indentexpr = [[v:lua.require'nvim-treesitter'.indentexpr()]]
   end)
