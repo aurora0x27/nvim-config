@@ -1,4 +1,4 @@
-#!/bin/env -S nvim --headless -l
+#!/bin/env -S nvim --clean --headless -l
 --------------------------------------------------------------------------------
 -- This script automatically generate defaults and type hint of Profile options
 --------------------------------------------------------------------------------
