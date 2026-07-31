@@ -30,8 +30,10 @@ local FsEditor = {
   -- Optional dependencies
   dependencies = 'nvim-tree/nvim-web-devicons',
 
-  -- if dry startup, don't load it in early stage
+  -- Perf: Don't load it in early stage if no file in arglist
   lazy = vim.fn.argc(-1) == 0,
+
+  event = { 'BufReadPre' },
 
   ---@module 'oil'
   opts = {
