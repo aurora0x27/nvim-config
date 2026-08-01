@@ -51,17 +51,14 @@ function M.setup()
   vim.o.autoindent = true
 
   -- filetype alias
-  vim.filetype.add({
+  vim.filetype.add {
     extension = {
       mdx = 'markdown',
-      tmpl = function(path)
-        return path:match('%.([%w_]+)%.tmpl$') or 'template'
-      end,
     },
     pattern = {
       ['xmake.lua'] = 'xmake',
     },
-  })
+  }
 
   -- register new filetypes
   vim.api.nvim_create_autocmd({ 'BufReadPre', 'BufNewFile' }, {
