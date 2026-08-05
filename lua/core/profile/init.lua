@@ -1,9 +1,138 @@
 --------------------------------------------------------------------------------
 -- Profile Module
 --
--- Parse `nvimrc.json` and mask the values with environment variables.
+-- Provide runtime profile resolution for the editor environment.
+--
+-- Profile is the configuration input layer used during runtime construction.
+-- It collects configuration values from multiple sources, validates them
+-- against the default schema, resolves precedence, and exposes a readonly
+-- runtime profile object.
+--
+-- Configuration sources:
+--
+--   1. Environment variables
+--      Highest priority. Intended for temporary overrides, debug sessions,
+--      CI/testing environments, and externally managed deployment settings.
+--
+--   2. User configuration files
+--      Default location:
+--
+--          stdpath("config") .. "/nvimrc.json"
+--
+--      User configuration overrides schema defaults.
+--
+--   3. Default schema
+--      Built-in fallback values generated from:
+--
+--          core.profile.defaults
+--
 -- Priority:
--- env > nvimrc.json > default(schema)
+--
+--      ENV > nvimrc.json > merged config files > defaults
+--
+-- Configuration values are resolved once during startup. After setup(), the
+-- profile should be treated as immutable runtime metadata.
+--
+--
+-- Configuration files
+--
+-- Profile accepts JSON objects whose keys must exist in the default schema.
+-- Unknown keys are allowed with warnings, while type mismatches invalidate
+-- the corresponding configuration source.
+--
+-- Multiple configuration files may be merged through `files_to_merge`.
+-- Later sources override earlier sources.
+--
+-- String values support placeholder expansion:
+--
+--      "$@"
+--
+-- represents the current resolved value.
+--
+-- Example:
+--
+--      {
+--          "cache_dir": "$@/extra"
+--      }
+--
+--
+-- Environment overrides
+--
+-- Every profile key can be overridden through:
+--
+--      NVIM_<KEY>
+--
+-- Environment values are converted according to the type defined by defaults:
+--
+--   boolean:
+--       "1" or "true" => true
+--
+--   number:
+--       parsed through tonumber()
+--
+--   string:
+--       supports "$@" replacement
+--
+-- Environment variables are applied after all configuration files have been
+-- merged.
+--
+--
+-- Runtime interface
+--
+-- The module exposes a readonly global profile object:
+--
+--      _G.Profile
+--
+-- Example:
+--
+--      Profile.lang_levels
+--      Profile.persist_local
+--
+-- Direct mutation is rejected:
+--
+--      Profile.foo = value
+--
+-- Profiles are intended to describe the runtime construction parameters, not
+-- act as mutable application state.
+--
+--
+-- Generated metadata
+--
+-- Default values are loaded from:
+--
+--      core.profile.defaults
+--
+-- Manifest file: assets/manifest.lua
+--
+-- This file acts as the schema source for:
+--
+--   * option defaults
+--   * type validation
+--   * environment variable conversion
+--   * generated documentation
+--
+-- Run `make autogen` to generate everything
+--
+--
+-- Debugging
+--
+-- `debug_info()` provides:
+--
+--   * resolved configuration path
+--   * final resolved values
+--   * environment variables currently masking values
+--
+--
+-- Design notes
+--
+-- Profile intentionally separates configuration resolution from runtime
+-- initialization.
+--
+-- Other subsystems should consume resolved profile values instead of reading
+-- environment variables or configuration files directly.
+--
+-- This keeps runtime construction deterministic and allows the same editor
+-- configuration to be instantiated under different environments.
 --------------------------------------------------------------------------------
 local M = {}
 local LOG_TITLE = 'Profile Module'
@@ -269,7 +398,14 @@ end
 
 local Profile = setmetatable(M, {
   __index = function(_, key)
-    return nvimrc and nvimrc[key]
+    local ret = nvimrc[key]
+    if ret == nil then
+      log.error('unknown key `%s`', key)
+    end
+    return ret
+  end,
+  __newindex = function(_, key)
+    log.error('attempt to modify key `%s`', key)
   end,
 })
 
