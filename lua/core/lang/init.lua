@@ -1,15 +1,202 @@
 --------------------------------------------------------------------------------
 -- Language module
 --
--- Orchestrates the parsing of LangSpecs and Environment-driven options.
+-- Resolve language capabilities and generate runtime-consumable language
+-- configuration.
 --
--- Designed as a functional data pipeline: each transformation
--- (aggregate/project) generates a new view of the underlying Schema without
--- mutating the original source. This ensures a predictable, idempotent
--- configuration state.
+-- This module acts as a functional data pipeline between language capability
+-- declarations and runtime subsystems. It does not directly configure LSP,
+-- formatter, Treesitter, or language plugins. Instead, it aggregates language
+-- metadata and produces derived datasets consumed by other modules.
 --
--- Initialization options are all strings, which makes them very easy to
--- concatenate and interface with environment variables.
+--
+-- Data flow:
+--
+--      CAPABILITY
+--          |
+--          | language capability declarations
+--          v
+--      EnabledLangs
+--          |
+--          | apply whitelist / blacklist / feature masks
+--          v
+--      Runtime artifacts
+--
+-- Generated artifacts include:
+--
+--   * LSP enable list
+--   * Mason installation list
+--   * Treesitter parser installation list
+--   * Treesitter enabled language list
+--   * Treesitter alias declarations
+--   * Formatter mapping
+--   * Language -> LSP mapping
+--   * Language plugin activation list
+--
+--
+-- Design model
+--
+-- The module treats language configuration as data transformation rather than
+-- imperative setup.
+--
+-- Each transformation creates a derived view from the source schema instead of
+-- mutating the original capability declaration. This keeps configuration
+-- resolution predictable and idempotent.
+--
+-- CAPABILITY is the source of truth.
+--
+-- EnabledLangs represents user-selected language support after applying:
+--
+--      whitelist
+--      blacklist
+--      feature level masks
+--
+-- Generated lists are runtime projections of EnabledLangs.
+--
+--
+-- Language capability schema
+--
+-- A language declaration describes available capabilities:
+--
+--      LangSpec
+--
+-- Supported capabilities:
+--
+--   lsp:
+--       Language server declaration.
+--
+--   formatter:
+--       Formatter declaration(s).
+--
+--   treesitter:
+--       Treesitter parser declaration.
+--
+--   ts_alias:
+--       Treesitter language alias.
+--
+--   plugins:
+--       Optional language-specific plugins.
+--
+--
+-- Feature selection
+--
+-- Language features can be controlled through LangOpt:
+--
+--   blacklist:
+--       Disable selected languages.
+--
+--   whitelist:
+--       Enable only selected languages.
+--
+--   levels:
+--       Apply per-language feature masks.
+--
+--
+-- `levels` uses the following syntax:
+--
+--      lang:feature,feature;lang:feature
+--
+-- Example:
+--
+--      c:full;cpp:none;rust:lsp,+ts,-fmt
+--
+-- Meaning:
+--
+--      c:
+--          enable all features
+--
+--      cpp:
+--          disable all features
+--
+--      rust:
+--          enable LSP and Treesitter
+--          disable formatter
+--
+-- Available feature names:
+--
+--      lsp
+--      fmt
+--      ts
+--      plg
+--
+--
+-- Configuration priority
+--
+-- Language capability describes what is available.
+--
+-- LangOpt describes what should be enabled.
+--
+-- The final enabled state is determined by:
+--
+--      CAPABILITY
+--          +
+--      whitelist / blacklist
+--          +
+--      feature masks
+--
+-- Invalid references are reported through warnings and ignored where
+-- possible.
+--
+--
+-- Integration boundary
+--
+-- This module intentionally does not own subsystem initialization.
+--
+-- Consumers should query generated data:
+--
+--      LSP module:
+--          get_lsp_enable_list()
+--          lsp_get_ft()
+--
+--      Formatter module:
+--          get_formatter_map()
+--
+--      Treesitter module:
+--          get_ts_install_list()
+--          get_ts_enable_langs()
+--          get_treesitter_alias_list()
+--
+--      Plugin loader:
+--          get_lazy_enable_lists()
+--
+--
+-- Runtime behaviour
+--
+-- setup() performs all resolution steps and generates immutable runtime data.
+--
+-- After initialization:
+--
+--      CAPABILITY
+--      EnabledLangs
+--      generated lists
+--
+-- should be treated as resolved runtime metadata.
+--
+-- The module exposes query functions rather than allowing arbitrary mutation.
+--
+--
+-- Environment integration
+--
+-- Initialization options are string based to simplify interaction with profile
+-- values and environment variables.
+--
+-- Example:
+--
+--      NVIM_LANG_LEVELS="rust:lsp,+ts,-fmt"
+--
+-- can be passed directly into the profile layer and resolved here.
+--
+--
+-- Design notes
+--
+-- Language configuration is intentionally separated from language tooling.
+--
+-- A language definition describes capabilities.
+--
+-- This module decides which capabilities participate in the current runtime.
+--
+-- This separation allows the same language schema to produce different editor
+-- instances depending on profile and environment.
 --------------------------------------------------------------------------------
 local M = {}
 
@@ -32,7 +219,7 @@ local M = {}
 ---@field whitelist string
 ---@field levels string
 
-local LOG_TITLE = 'Lang Loader'
+local LOG_TITLE = 'Lang'
 local log = require 'utils.logger'.new(LOG_TITLE)
 local err = log.error
 local warn = log.warn
