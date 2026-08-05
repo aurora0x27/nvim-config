@@ -130,22 +130,21 @@ function M.load_main()
     restrict_mode = true
   else
     -- Popup ui to trust workspace, load fzf to override vim.ui.select
-    require 'lazy'.load { plugins = { 'fzf-lua' } }
-    vim.ui.select({ 'yes', 'no', 'check' }, {
-      prompt = 'Found workspace patch with `init.lua`, trust? ',
-    }, function(choice)
-      if choice == 'yes' then
-        trust_path(init_lua)
-        dofile(init_lua)
-        restrict_mode = false
-        return
-      elseif choice == 'no' then
-        ignore_path(init_lua)
-      elseif choice == 'check' then
-        vim.cmd('edit ' .. init_lua)
-      end
-      restrict_mode = true
-    end)
+    local choice = vim.fn.confirm(
+      'Found workspace patch with `init.lua`, trust?',
+      '&Yes\n&No\n&Edit'
+    )
+    if choice == 1 then
+      trust_path(init_lua)
+      dofile(init_lua)
+      restrict_mode = false
+      return
+    elseif choice == 2 then
+      ignore_path(init_lua)
+    elseif choice == 3 then
+      vim.cmd('edit ' .. init_lua)
+    end
+    restrict_mode = true
   end
 end
 
