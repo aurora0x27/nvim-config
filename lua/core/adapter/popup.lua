@@ -81,7 +81,7 @@ local POPUP_OPT_DEFAULT = {
       view = 'cmdline',
     },
     {
-      match = { firstc = ':', pattern = { '%s*lua%s+', '%s*lua%=' } },
+      match = { firstc = ':', pattern = { '^%s*lua%s+', '^%s*lua%=' } },
       prefix = ' ',
       title = 'Lua',
       hl = 'CmdlineLua',
@@ -92,7 +92,7 @@ local POPUP_OPT_DEFAULT = {
       match = {
         firstc = ':',
         pattern = {
-          '%s+%!',
+          '^%s+%!',
           '^%!',
         },
       },
