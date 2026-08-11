@@ -130,6 +130,7 @@ function M.setup()
 
   vim.api.nvim_create_autocmd('User', {
     pattern = 'PersistLoadPost',
+    group = AUG,
     callback = function()
       if type(vim.g.BufferPoolState) == 'string' then
         bpm.from_json(vim.g.BufferPoolState)
@@ -139,6 +140,7 @@ function M.setup()
 
   vim.api.nvim_create_autocmd('User', {
     pattern = 'PersistSavePre',
+    group = AUG,
     callback = function()
       -- Session snapshots represent the current working set, not
       -- how this editor instance was started. Drop the argument
