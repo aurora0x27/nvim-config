@@ -61,7 +61,49 @@ fzf_mux_map('fo', 'oldfiles', '[O]ld Files')
 fzf_mux_map('fw', 'live_grep', '[W]ildcard Grep')
 fzf_mux_map('fb', 'buffers', '[B]uffers')
 fzf_mux_map('fgs', 'git_status', '[G]it [S]tatus')
-fzf_mux_map('fH', 'helptags', '[H]elp Tags')
+
+----------------------------------------------------------------------------
+-- BEGIN Help tags -- cannot use `file_* actions`, should use specified
+-- actions
+----------------------------------------------------------------------------
+map(
+  'n',
+  '<leader>fH',
+  thunk('fzf-lua', 'helptags'),
+  { desc = '[H]elp Tags', noremap = true, silent = true }
+)
+map(
+  'n',
+  '<leader>tnfH',
+  bind(thunk('fzf-lua', 'helptags'), {
+    actions = {
+      ['default'] = thunk('fzf-lua.actions', 'help_tab'),
+    },
+  }),
+  { desc = '[H]elp Tags with [N]ew [T]ab', noremap = true, silent = true }
+)
+map('n', '<leader>wsfH', thunk('fzf-lua', 'helptags'), {
+  desc = '[W]indow [S]plit [H]elp Tags',
+  noremap = true,
+  silent = true,
+})
+map(
+  'n',
+  '<leader>wvfH',
+  bind(thunk('fzf-lua', 'helptags'), {
+    actions = {
+      ['default'] = thunk('fzf-lua.actions', 'help_vert'),
+    },
+  }),
+  {
+    desc = '[W]indow [V]split [H]elp Tags',
+    noremap = true,
+    silent = true,
+  }
+)
+----------------------------------------------------------------------------
+-- END Help tags
+----------------------------------------------------------------------------
 
 map(
   'n',
