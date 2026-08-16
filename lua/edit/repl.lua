@@ -1,9 +1,5 @@
 --------------------------------------------------------------------------------
--- Emacs style repl env
---
--- TODO:
--- 1. multi env
--- 2. multi language
+-- Emacs style repl infrastructure
 --------------------------------------------------------------------------------
 local M = {}
 local LOG_TITLE = 'Repl'
@@ -11,34 +7,9 @@ local log = require 'utils.logger'.new(LOG_TITLE)
 
 local bind = require 'utils.fnx'.bind
 
----@class ReplContext
----@field id?  string keep, not used now
----@field env  table
-
 ---@alias ReplSrcLoc {[1]: integer, [2]: integer} 0 based range
 
-local CurrCtx
-
----@return table
-local function new_env()
-  return setmetatable({}, { __index = _G })
-end
-
----@return ReplContext
-local function ensure_ctx()
-  if not CurrCtx then
-    CurrCtx = { env = new_env() }
-  end
-  return CurrCtx
-end
-
-function M.reset_current_ctx()
-  if CurrCtx then
-    CurrCtx.env = new_env()
-  else
-    CurrCtx = { env = new_env() }
-  end
-end
+local COMMENT_PREFIX = '-- '
 
 ---@param lines string[]
 ---@return string[]
@@ -47,12 +18,13 @@ local function repl_impl(lines)
 
   ---@param err string?
   local function on_error(err)
-    table.insert(out, '[ERROR]')
-    if err then
-      table.insert(out, err)
+    table.insert(out, COMMENT_PREFIX .. '[ERROR]')
+    local trace_back = debug.traceback(err, 2)
+    local trace_lines = vim.split(trace_back, '\n', { plain = true })
+    for i = 1, #trace_lines do
+      trace_lines[i] = COMMENT_PREFIX .. trace_lines[i]
     end
-    local trace_back = debug.traceback()
-    vim.list_extend(out, vim.split(trace_back, '\n', { plain = true }))
+    vim.list_extend(out, trace_lines)
   end
 
   local function on_print(...)
@@ -63,35 +35,32 @@ local function repl_impl(lines)
       ' '
     )
     local output_lines = vim.split(str, '\n', { plain = true })
+    for i = 1, #output_lines do
+      output_lines[i] = COMMENT_PREFIX .. output_lines[i]
+    end
     vim.list_extend(out, output_lines)
   end
 
-  local chunk, err = load(table.concat(lines, '\n'), 'main@repl')
+  local env = setmetatable({ print = on_print }, { __index = _G })
+  local chunk, err = load(table.concat(lines, '\n'), 'main@repl', 't', env)
 
   if not chunk then
     on_error(err)
     return out
   end
 
-  local ctx = ensure_ctx()
-  local env = ctx.env
-  setfenv(chunk, env)
-  env.print = on_print
   local results = { xpcall(chunk, on_error) }
   local ok = table.remove(results, 1)
   if ok then
     local vals = vim.tbl_map(vim.inspect, results)
 
     if #vals > 0 then
-      local ret = '=> ' .. vals[1]
-
+      local ret = '=> ' .. table.concat(vals, ', ')
       local ret_lines = vim.split(ret, '\n', { plain = true })
-      vim.list_extend(out, ret_lines)
-
-      for i = 2, #vals do
-        table.insert(out, ',')
-        vim.list_extend(out, vim.split(vals[i], '\n', { plain = true }))
+      for j = 1, #ret_lines do
+        ret_lines[j] = COMMENT_PREFIX .. ret_lines[j]
       end
+      vim.list_extend(out, ret_lines)
     end
   end
   return out
@@ -122,29 +91,12 @@ end
 ---@param bufnr integer
 ---@param from  ReplSrcLoc
 ---@param to    ReplSrcLoc
-function M.exec(bufnr, from, to)
-  local lines = get_lines(bufnr, from, to)
-  if not lines then
-    return
-  end
-  local out = repl_impl(lines)
-  local line_to_insert = to[1]
-  vim.api.nvim_buf_set_lines(
-    bufnr,
-    line_to_insert + 1,
-    line_to_insert + 1,
-    false,
-    out
-  )
-end
-
----@param bufnr integer
----@param from  ReplSrcLoc
----@param to    ReplSrcLoc
 --- Evaluate region.
 ---
---- The last line *MUST* be a Lua expression.
---- All preceding lines are treated as setup statements.
+--- If last line starts with '=', it will be treated as
+--- a Lua expression. All preceding lines are treated
+--- as setup statements.
+---
 --- Similar to Emacs eval-last-sexp:
 --- the last line is rewritten as `return <expr>`.
 function M.eval(bufnr, from, to)
@@ -152,7 +104,7 @@ function M.eval(bufnr, from, to)
   if not lines then
     return
   end
-  lines[#lines] = 'return ' .. lines[#lines]
+  lines[#lines] = string.gsub(lines[#lines], '^%s*=', 'return ')
   local out = repl_impl(lines)
   local line_to_insert = to[1]
   vim.api.nvim_buf_set_lines(
@@ -185,7 +137,6 @@ end
 
 -- for keymap
 local function visual_wrapper(fn)
-  fn = fn or M.exec
   local mode = vim.fn.mode()
   if not (mode == 'v' or mode == 'V') then
     log.error 'Unsupported mode: should not start repl on modes except `vV`'
@@ -197,16 +148,11 @@ local function visual_wrapper(fn)
 end
 
 function M.setup()
-  vim.api.nvim_create_user_command('ReplExec', exec_wrapper, { range = true })
-  vim.keymap.set(
-    -- XXX: don't support visual block because cannot get exact range
-    'v',
-    '<leader>rr',
-    bind(visual_wrapper, M.exec),
-    { silent = true, desc = 'Exec selected code' }
+  vim.api.nvim_create_user_command(
+    'ReplEval',
+    bind(exec_wrapper, M.eval),
+    { range = true }
   )
-
-  vim.api.nvim_create_user_command('ReplExec', exec_wrapper, { range = true })
   vim.keymap.set(
     -- XXX: don't support visual block because cannot get exact range
     'v',

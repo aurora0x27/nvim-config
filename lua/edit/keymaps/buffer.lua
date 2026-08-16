@@ -74,14 +74,15 @@ map(
 )
 
 -- TODO: each buffer has a repl env
-local buf
+local idle_buf
 
 ---@return integer
 local function create_idle_buffer()
   local new_buf = vim.api.nvim_create_buf(false, true)
   vim.bo[new_buf].buftype = 'nofile'
   vim.bo[new_buf].bufhidden = 'hide'
-  vim.bo[new_buf].filetype = 'scratch'
+  vim.bo[new_buf].filetype = 'scratch-lua'
+  vim.bo[new_buf].commentstring = '-- %s'
   vim.bo[new_buf].swapfile = false
   vim.keymap.set('n', 'q', function()
     vim.cmd 'close'
@@ -90,14 +91,15 @@ local function create_idle_buffer()
     silent = true,
     desc = 'Quit buffer',
   })
+  pcall(vim.treesitter.start, new_buf, 'lua')
   return new_buf
 end
 
 local function ensure_idle_buffer()
-  if not buf or not vim.api.nvim_buf_is_valid(buf) then
-    buf = create_idle_buffer()
+  if not idle_buf or not vim.api.nvim_buf_is_valid(idle_buf) then
+    idle_buf = create_idle_buffer()
   end
-  return buf
+  return idle_buf
 end
 
 map('n', '<leader>wvbi', function()
@@ -108,7 +110,7 @@ map('n', '<leader>wsbi', function()
   vim.api.nvim_open_win(
     ensure_idle_buffer(),
     true,
-    { split = 'below', height = 10 }
+    { split = 'below', height = 10, style = 'minimal' }
   )
 end, { desc = '[I]dle buffer', noremap = true, silent = true })
 
@@ -116,6 +118,26 @@ map('n', '<leader>bi', function()
   vim.api.nvim_open_win(
     ensure_idle_buffer(),
     true,
-    { split = 'below', height = 10 }
+    { split = 'below', height = 10, style = 'minimal' }
   )
 end, { desc = '[I]dle buffer(split below)', noremap = true, silent = true })
+
+map('n', '<leader>wvbs', function()
+  vim.api.nvim_open_win(create_idle_buffer(), true, { split = 'right' })
+end, { desc = '[S]cratch buffer', noremap = true, silent = true })
+
+map('n', '<leader>wsbs', function()
+  vim.api.nvim_open_win(
+    create_idle_buffer(),
+    true,
+    { split = 'below', height = 10, style = 'minimal' }
+  )
+end, { desc = '[S]cratch buffer', noremap = true, silent = true })
+
+map('n', '<leader>bs', function()
+  vim.api.nvim_open_win(
+    create_idle_buffer(),
+    true,
+    { split = 'below', height = 10, style = 'minimal' }
+  )
+end, { desc = '[S]cratch buffer(split below)', noremap = true, silent = true })
