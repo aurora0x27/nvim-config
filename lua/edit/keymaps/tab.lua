@@ -8,21 +8,21 @@ map(
   { 'n' },
   ']t',
   '<cmd>tabnext<cr>',
-  { noremap = true, silent = true, desc = '[T]ab shif[T]' }
+  { noremap = true, silent = true, desc = '[T]ab Next' }
 )
 
 map(
   { 'n' },
   '[t',
   '<cmd>tabprevious<cr>',
-  { noremap = true, silent = true, desc = '[T]ab switch [P]revious' }
+  { noremap = true, silent = true, desc = '[T]ab Previous' }
 )
 
 map(
   { 'n' },
   '<leader>tnn',
   '<cmd>tabnew<cr>',
-  { noremap = true, silent = true, desc = 'Tab [N]ew' }
+  { noremap = true, silent = true, desc = '[N]ew' }
 )
 
 map({ 'n' }, '<leader>tnN', function()
@@ -31,12 +31,12 @@ map({ 'n' }, '<leader>tnN', function()
   if name ~= '' then
     require 'core.bpm'.rename_tab(vim.api.nvim_get_current_tabpage(), name)
   end
-end, { noremap = true, silent = true, desc = 'Tab [N]ew with name' })
+end, { noremap = true, silent = true, desc = '[N]ew with name' })
 
 map({ 'n' }, '<leader>ta', '<cmd>tabnew %<cr>', {
   noremap = true,
   silent = true,
-  desc = 'Tab [A]dd With Current Buffer',
+  desc = '[A]dd With Current Buffer',
 })
 
 map(
@@ -50,7 +50,7 @@ map(
   {
     noremap = true,
     silent = true,
-    desc = 'Tab [R]ename',
+    desc = '[R]ename',
   }
 )
 
@@ -58,5 +58,5 @@ map(
   { 'n' },
   '<leader>tc',
   '<cmd>tabclose<cr>',
-  { noremap = true, silent = true, desc = 'Tab [C]lose' }
+  { noremap = true, silent = true, desc = '[C]lose' }
 )

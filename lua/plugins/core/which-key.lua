@@ -53,6 +53,7 @@ local KeyMapIntellisense = {
     spec = {
       { '<leader>f', group = '[F]ind' },
       { '<leader>fg', group = '[G]it' },
+      { '<leader>fgb', group = '[B]uffer' },
       { '<leader>e', group = '[E]xplorer' },
       { '<leader>l', group = '[L]ang', mode = { 'n', 'v' } },
       { '<leader>lp', group = '[P]eek' },
@@ -60,6 +61,7 @@ local KeyMapIntellisense = {
       { '<leader>tn', group = '[N]ew' },
       { '<leader>tnf', group = '[F]ind' },
       { '<leader>tng', group = '[G]oto' },
+      { '<leader>tnl', group = '[L]ang' },
       { '<leader>tnfg', group = '[G]it' },
       { '<leader>p', group = '[P]review' },
       { '<leader>b', group = '[B]uffer' },
@@ -70,6 +72,7 @@ local KeyMapIntellisense = {
       { '<leader>gt', group = '[T]oggle', mode = { 'n', 'v' } },
       { '<leader>w', group = '[W]indow' },
       { '<leader>ws', group = '[S]plit' },
+      { '<leader>wsb', group = '[B]uffer' },
       { '<leader>wsf', group = '[F]ind' },
       { '<leader>wsg', group = '[G]oto' },
       { '<leader>wsl', group = '[L]ang' },

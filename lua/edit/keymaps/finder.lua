@@ -35,7 +35,7 @@ local function fzf_mux_map(suffix, callee, desc)
       },
     }),
     {
-      desc = '[W]indow [S]plit ' .. desc,
+      desc = desc,
       noremap = true,
       silent = true,
     }
@@ -49,7 +49,7 @@ local function fzf_mux_map(suffix, callee, desc)
       },
     }),
     {
-      desc = '[W]indow [V]split ' .. desc,
+      desc = desc,
       noremap = true,
       silent = true,
     }
@@ -60,7 +60,7 @@ fzf_mux_map('ff', 'files', '[F]iles')
 fzf_mux_map('fo', 'oldfiles', '[O]ld Files')
 fzf_mux_map('fw', 'live_grep', '[W]ildcard Grep')
 fzf_mux_map('fb', 'buffers', '[B]uffers')
-fzf_mux_map('fgs', 'git_status', '[G]it [S]tatus')
+fzf_mux_map('fgs', 'git_status', '[S]tatus')
 
 ----------------------------------------------------------------------------
 -- BEGIN Help tags -- cannot use `file_* actions`, should use specified
@@ -83,7 +83,7 @@ map(
   { desc = '[H]elp Tags with [N]ew [T]ab', noremap = true, silent = true }
 )
 map('n', '<leader>wsfH', thunk('fzf-lua', 'helptags'), {
-  desc = '[W]indow [S]plit [H]elp Tags',
+  desc = '[H]elp Tags',
   noremap = true,
   silent = true,
 })
@@ -96,7 +96,7 @@ map(
     },
   }),
   {
-    desc = '[W]indow [V]split [H]elp Tags',
+    desc = '[H]elp Tags',
     noremap = true,
     silent = true,
   }
@@ -151,20 +151,20 @@ map(
   'n',
   '<leader>fgc',
   thunk('fzf-lua', 'git_commits'),
-  { desc = '[G]it [C]ommits', noremap = true, silent = true }
+  { desc = '[C]ommits', noremap = true, silent = true }
 )
 
 map('n', '<leader>fgbc', thunk('fzf-lua', 'git_bcommits'), {
-  desc = '[G]it [B]uffer [C]ommits',
+  desc = '[C]ommits',
   noremap = true,
   silent = true,
 })
 
 map(
   'n',
-  '<leader>fgbr',
+  '<leader>fgr',
   thunk('fzf-lua', 'git_branches'),
-  { desc = '[G]it [BR]anches', noremap = true, silent = true }
+  { desc = 'B[R]anches', noremap = true, silent = true }
 )
 
 map(
