@@ -1,23 +1,25 @@
 --------------------------------------------------------------------------------
--- Recorder backend -- for fzf support
+-- Message Recorder
+-- Record, browse, replay, and render Neovim messages.
 --------------------------------------------------------------------------------
 
 ---@class MsgRecorderOpt
 ---@field max_msg_limit? integer
 
-local calculate_layout = require 'utils.render'.calculate_layout
-
 local M = {}
 
 local RecordedMessages = {}
-
 local MessagePreviewer = nil
-
 local PREVIEW_TITLE = ' RecordedMsg '
-
 local LOG_TITLE = 'Message Recorder'
-
+local MESSAGES_BUF_NAMESPACE = 'messages_buffer'
 local log = require 'utils.logger'.new(LOG_TITLE)
+
+local Render = require 'utils.render'
+local calculate_layout = Render.calculate_layout
+local bind = require 'utils.fnx'.bind
+
+local sprintf = string.format
 
 ---@type MsgRecorderOpt
 local MSG_RECORDER_OPT_DEFAULT = {
@@ -97,7 +99,7 @@ function M.fzf_messages()
 
     table.insert(
       contents,
-      string.format(
+      sprintf(
         '[%d] %s │ %-10s │ %s',
         i,
         time_str,
@@ -154,15 +156,172 @@ function M.fzf_messages()
   })
 end
 
+local MsgBuf
+local MsgBufNs = vim.api.nvim_create_namespace(MESSAGES_BUF_NAMESPACE)
+
+local TITLE_OF_LEVEL = {
+  [vim.log.levels.TRACE] = 'Trace',
+  [vim.log.levels.DEBUG] = 'Debug',
+  [vim.log.levels.INFO] = 'Info',
+  [vim.log.levels.WARN] = 'Warn',
+  [vim.log.levels.ERROR] = 'Error',
+}
+
+---@param name string
+---@param level? vim.log.levels
+local function hl(name, level)
+  return 'Recorder' .. name .. (TITLE_OF_LEVEL[level] or '')
+end
+
+local function make_messages_buf()
+  local buf = vim.api.nvim_create_buf(false, true)
+  local o = vim.bo[buf]
+  o.buftype = 'nofile'
+  o.filetype = 'messages'
+  o.modifiable = false
+  o.swapfile = false
+  o.buflisted = false
+  vim.keymap.set(
+    'n',
+    'q',
+    vim.schedule_wrap(function()
+      vim.cmd 'close'
+    end),
+    { buf = buf }
+  )
+  return buf
+end
+
+local function ensure_messages_buf()
+  if not MsgBuf or not vim.api.nvim_buf_is_valid(MsgBuf) then
+    MsgBuf = make_messages_buf()
+  end
+  return MsgBuf, MsgBufNs
+end
+
+---@param msg Message
+---@return NvimMsgTuple[]
+local function parse_msg(msg)
+  local tuples = {}
+  ---@param str      string
+  ---@param hl_s     string
+  ---@param attr_id? integer
+  local function append_tuple(str, hl_s, attr_id)
+    table.insert(
+      tuples,
+      { attr_id or 0, str, vim.api.nvim_get_hl_id_by_name(hl_s) }
+    )
+  end
+  local function append_sep()
+    table.insert(tuples, { 0, ' ', 0 })
+  end
+  local function append_empty_line()
+    table.insert(tuples, Render.NEWLINE_CHUNK)
+  end
+  local time = os.date('%H:%M:%S', math.floor(msg.timestamp / 1000))--[[@as string]]
+  append_tuple(time, hl('MessagesBufferDateTime'))
+  append_sep()
+  append_tuple(
+    TITLE_OF_LEVEL[msg.level] or 'Info',
+    hl('Title', msg.level or vim.log.levels.INFO)
+  )
+  append_sep()
+  append_tuple(msg.data.title or 'Notify', hl('MessagesBufferTitle'))
+  append_sep()
+  if type(msg.content) == 'string' then
+    local lines = vim.split(msg.content, '\n', { plain = true })
+    for i = 1, #lines do
+      append_tuple(lines[i], hl(''))
+      if i ~= #lines then
+        append_empty_line()
+      end
+    end
+  else
+    tuples = vim.list_extend(tuples, msg.content)
+  end
+  return tuples
+end
+
+local function modify_messages_buf(buf, fn)
+  vim.bo[buf].modifiable = true
+  local ok, err = pcall(fn)
+  vim.bo[buf].modifiable = false
+
+  if not ok then
+    error(err)
+  end
+end
+
+---@param msg Message
+local function messages_buf_append_msg(msg)
+  local buf, ns = ensure_messages_buf()
+  local tuples = parse_msg(msg)
+  local layout = calculate_layout(tuples)
+  local line_count = vim.api.nvim_buf_line_count(buf)
+  local base_row = line_count
+
+  -- An empty buffer always has one empty line.
+  if
+    line_count == 1 and vim.api.nvim_buf_get_lines(buf, 0, 1, false)[1] == ''
+  then
+    base_row = 0
+    modify_messages_buf(
+      buf,
+      bind(vim.api.nvim_buf_set_lines, buf, 0, 1, false, layout.lines)
+    )
+  else
+    modify_messages_buf(
+      buf,
+      bind(
+        vim.api.nvim_buf_set_lines,
+        buf,
+        line_count,
+        line_count,
+        false,
+        layout.lines
+      )
+    )
+  end
+
+  for _, mark in ipairs(layout.marks) do
+    vim.api.nvim_buf_set_extmark(buf, ns, base_row + mark.row, mark.col_start, {
+      end_row = base_row + mark.row,
+      end_col = mark.col_end,
+      hl_group = mark.hl,
+    })
+  end
+end
+
 function M.clear()
   log.info 'All the messages cleared'
   RecordedMessages = {}
+
+  local buf, ns = ensure_messages_buf()
+  vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
+  modify_messages_buf(
+    buf,
+    bind(vim.api.nvim_buf_set_lines, buf, 0, -1, false, {})
+  )
+end
+
+-- TODO: vertical split
+function M.view_messages_buffer()
+  local buf = ensure_messages_buf()
+  vim.api.nvim_open_win(
+    buf,
+    true,
+    { split = 'below', height = 10, style = 'minimal' }
+  )
 end
 
 local function handler(msg)
   if msg.tag == 'msg.clear' then
     M.clear()
     return false
+  end
+  if msg.tag == 'msg.history_show' then
+    M.view_messages_buffer()
+    return
   end
   if msg.meta.no_record then
     return false
@@ -171,7 +330,28 @@ local function handler(msg)
     table.remove(RecordedMessages, 1)
   end
   table.insert(RecordedMessages, msg)
+  messages_buf_append_msg(msg)
   return false
+end
+
+local function init_hl()
+  local links = {
+    [hl('MessagesBuffer')] = 'Normal',
+    [hl('MessagesBufferTitle')] = 'Title',
+    [hl('MessagesBufferDateTime')] = 'Special',
+  }
+  for lvl, Level in pairs(TITLE_OF_LEVEL) do
+    local link = vim.tbl_contains({ 'Trace', 'Debug' }, Level) and 'NonText'
+      or nil
+    links[hl('', lvl)] = 'Normal'
+    links[hl('Icon', lvl)] = link or ('DiagnosticSign' .. Level)
+    links[hl('Border', lvl)] = link or ('Diagnostic' .. Level)
+    links[hl('Title', lvl)] = link or ('Diagnostic' .. Level)
+    links[hl('Footer', lvl)] = link or ('Diagnostic' .. Level)
+  end
+  for from, to in pairs(links) do
+    vim.api.nvim_set_hl(0, from, { link = to })
+  end
 end
 
 ---@param opts? MsgRecorderOpt
@@ -194,10 +374,22 @@ function M.setup(opts)
       'msg.show.shell_ret',
       'msg.show.shell_err',
       'msg.show.quickfix',
+      'msg.history_show',
     },
   }, vim.log.levels.TRACE, handler)
-
+  init_hl()
   vim.api.nvim_create_user_command('MessageClear', M.clear, {})
+  vim.api.nvim_create_user_command(
+    'MessageBufferView',
+    M.view_messages_buffer,
+    {}
+  )
+  vim.keymap.set(
+    'n',
+    'g<',
+    M.view_messages_buffer,
+    { desc = 'View Messages Buffer', noremap = true, silent = true }
+  )
 end
 
 return M

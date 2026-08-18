@@ -161,6 +161,31 @@ local function batch_emit(kind, level, content, id)
   )
 end
 
+-- Titles for known message kinds (fallback: 'Messages')
+local KIND_TITLE = {
+  emsg = 'Error',
+  lua_error = 'Lua Error',
+  rpc_error = 'RPC Error',
+  echoerr = 'Error',
+  wmsg = 'Warning',
+  bufwrite = 'Write',
+  quickfix = 'Quickfix',
+  progress = 'Progress',
+}
+
+local KIND_TO_LEVEL = {
+  emsg = vim.log.levels.ERROR,
+  lua_error = vim.log.levels.ERROR,
+  rpc_error = vim.log.levels.ERROR,
+  echoerr = vim.log.levels.ERROR,
+  wmsg = vim.log.levels.WARN,
+  echo = vim.log.levels.INFO,
+  echomsg = vim.log.levels.INFO,
+  lua_print = vim.log.levels.INFO,
+  progress = vim.log.levels.INFO,
+  verbose = vim.log.levels.DEBUG,
+}
+
 function Handlers.on_msg_show(
   kind,
   content,
@@ -184,19 +209,7 @@ function Handlers.on_msg_show(
     return false
   end
 
-  local kind_to_level = {
-    emsg = vim.log.levels.ERROR,
-    lua_error = vim.log.levels.ERROR,
-    rpc_error = vim.log.levels.ERROR,
-    echoerr = vim.log.levels.ERROR,
-    wmsg = vim.log.levels.WARN,
-    echo = vim.log.levels.INFO,
-    echomsg = vim.log.levels.INFO,
-    lua_print = vim.log.levels.INFO,
-    progress = vim.log.levels.INFO,
-    verbose = vim.log.levels.DEBUG,
-  }
-  local level = kind_to_level[kind] or vim.log.levels.INFO
+  local level = KIND_TO_LEVEL[kind] or vim.log.levels.INFO
   local tag = 'msg.show.' .. (kind ~= '' and kind or 'unknown')
 
   -- batch-able kinds: debounce and merge within window
@@ -211,12 +224,23 @@ function Handlers.on_msg_show(
 
   emit_wrap(tag, level, content, {
     kind = kind,
+    title = KIND_TITLE[kind] or 'Messages',
     offsets = { 1 },
     replace_last = replace_last,
     history = history,
     append = append,
     trigger = trigger,
   }, replace_last and id or nil)
+end
+
+---@param entries {[1]: string, [2]: string, [3]: string}[]
+---@param prev_cmd boolean
+function Handlers.on_msg_history_show(entries, prev_cmd)
+  Bus.emit(
+    'msg.history_show',
+    vim.log.levels.INFO,
+    { entries = entries, prev_cmd = prev_cmd }
+  )
 end
 
 function Handlers.on_msg_clear()

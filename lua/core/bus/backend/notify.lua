@@ -7,18 +7,6 @@ local M = {}
 
 local ID = 'notify'
 
--- Titles for known message kinds (fallback: 'Messages')
-local KIND_TITLE = {
-  emsg = 'Error',
-  lua_error = 'Lua Error',
-  rpc_error = 'RPC Error',
-  echoerr = 'Error',
-  wmsg = 'Warning',
-  bufwrite = 'Write',
-  quickfix = 'Quickfix',
-  progress = 'Progress',
-}
-
 -- Kinds to skip – already handled elsewhere (statusline, cmdline, etc.)
 local SKIP_KIND = {
   search_count = true,
@@ -101,7 +89,7 @@ local function handler(msg)
   end
 
   -- title
-  toast_opts.title = KIND_TITLE[msg.data.kind] or 'Messages'
+  toast_opts.title = msg.data.title or 'Messages'
 
   -- Show the toast (string or chunk list accepted)
   toast.notify(content, toast_opts)

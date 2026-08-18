@@ -24,16 +24,16 @@ end
 ---@field lines  string[]               plain text lines for notify
 ---@field marks  {row:integer, col_start:integer, col_end:integer, hl:string}[]
 
---- Convert NvimMsgChunk[] to plain lines + extmark specs
+--- Convert NvimMsgTuple[] to plain lines + extmark specs
 --- Handles \n splits within chunks correctly
----@param chunks NvimMsgTuple[]
+---@param tuples NvimMsgTuple[]
 ---@return ChunkLayout
-function M.calculate_layout(chunks)
+function M.calculate_layout(tuples)
   local lines = { '' }
   local marks = {}
   local row = 0
 
-  for _, tuple in ipairs(chunks) do
+  for _, tuple in ipairs(tuples) do
     ---@type NvimMsgChunk
     local chunk = {
       attr_id = tuple[1],

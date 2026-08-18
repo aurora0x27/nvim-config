@@ -9,21 +9,7 @@ local M = {}
 local confirm_win = nil
 local ns_id = vim.api.nvim_create_namespace('ConfirmUIHighlights')
 
-local hl_name_cache = {}
-
----@param hl_id integer
----@return string|nil
-local function resolve_hl(hl_id)
-  if hl_id == 0 then
-    return nil
-  end
-  if hl_name_cache[hl_id] ~= nil then
-    return hl_name_cache[hl_id] or nil
-  end
-  local name = vim.fn.synIDattr(hl_id, 'name')
-  hl_name_cache[hl_id] = (name ~= '' and name) or false
-  return hl_name_cache[hl_id] or nil
-end
+local resolve_hl = require 'utils.render'.resolve_hl
 
 ---@param chunks NvimMsgTuple[]
 ---@return ChunkLayout
