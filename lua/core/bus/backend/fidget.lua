@@ -21,7 +21,6 @@ local MODE_OF_TAG = {
   ['msg.show.bufwrite'] = 'append',
   ['msg.show.lua_print'] = 'append',
   ['msg.show.echo'] = 'append',
-  ['msg.show.wmsg'] = 'append',
   ['msg.show.echomsg'] = 'replace',
   ['msg.show.undo'] = 'replace',
   ['msg.show.list_cmd'] = 'replace',
@@ -59,7 +58,6 @@ function M.setup()
   Bus.register_subscriber('fidget', {
     exact = {
       'msg.clear',
-      'msg.show.wmsg',
       'msg.show.undo',
       'msg.show.echo',
       'msg.show.echomsg',

@@ -374,6 +374,7 @@ function M.setup(opts)
       'msg.show.shell_ret',
       'msg.show.shell_err',
       'msg.show.quickfix',
+      'msg.show.wmsg',
       'msg.history_show',
     },
   }, vim.log.levels.TRACE, handler)

@@ -25,6 +25,7 @@ local Opt = {
   splitbelow = true,
   guicursor = 'n-v-c-sm:block,i-ci-ve:ver25,r-cr-o:hor20,t:block-blinkon0-TermCursor',
   tabclose = 'uselast',
+  confirm = true, -- confirm before quitting unsaved changes
 }
 
 function M.setup()
