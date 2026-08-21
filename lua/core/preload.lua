@@ -32,7 +32,7 @@ function M.setup()
   vim.o.number = true
   vim.o.relativenumber = Profile.enable_relative_lnum
   vim.o.cursorline = not Profile.transparent_mode
-  vim.o.ssop = 'buffers,tabpages,winsize,globals'
+  vim.o.ssop = 'buffers,tabpages,winsize,globals,help'
   vim.o.showtabline = 2 -- always
 
   vim.opt.fillchars = {
@@ -95,27 +95,6 @@ function M.setup()
         })
         vim.cmd 'syntax off'
         vim.bo.filetype = 'bigfile'
-      end
-    end,
-  })
-
-  -- save folds and view (cursor position, etc.)
-  vim.api.nvim_create_autocmd('BufWinLeave', {
-    pattern = '*',
-    callback = function()
-      if vim.bo.buftype == '' then
-        ---@diagnostic disable:param-type-mismatch
-        pcall(vim.cmd, 'mkview')
-      end
-    end,
-  })
-  -- restore view on reenter buffer
-  vim.api.nvim_create_autocmd('BufWinEnter', {
-    pattern = '*',
-    callback = function()
-      if vim.bo.buftype == '' then
-        ---@diagnostic disable:param-type-mismatch
-        pcall(vim.cmd, 'silent! loadview')
       end
     end,
   })
