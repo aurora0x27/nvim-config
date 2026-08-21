@@ -140,16 +140,6 @@ nvim # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
     - **ENV:** `NVIM_CLANGD_PATH`
     - **Defaults:** `'clangd'`
 
-  - _`emmy_inject_plugin_path`_ — 将插件路径注入到 `emmylua_ls` 工作区配置中
-    - **Type:** `boolean`
-    - **ENV:** `NVIM_EMMY_INJECT_PLUGIN_PATH`
-    - **Defaults:** `false`
-
-  - _`emmy_inject_vim_rt`_ — 将 Vim 运行时注入到 `emmylua_ls` 工作区配置中
-    - **Type:** `boolean`
-    - **ENV:** `NVIM_EMMY_INJECT_VIM_RT`
-    - **Defaults:** `true`
-
   - _`enable_inlay_hint`_ — 默认开启 lsp 的 inlay hint 特性如果有此能力
     - **Type:** `boolean`
     - **ENV:** `NVIM_ENABLE_INLAY_HINT`

@@ -42,8 +42,6 @@
 ---       `pretty` means use extra plugin -- `tiny-inline-diagnostic` to display
 ---@field diagnose_with_fancy_underline boolean use fancy curl underline. **need terminal and tmux support**
 ---@field disable_im_switch boolean disable auto im switcher
----@field emmy_inject_plugin_path boolean inject plugin path to `emmylua_ls` workspace config
----@field emmy_inject_vim_rt boolean inject vim runtime to `emmylua_ls` workspace config
 ---@field enable_current_line_blame boolean enable virtual text line blame at the end of line
 ---@field enable_inlay_hint boolean default enable lsp inlay hint if has capability
 ---@field enable_relative_lnum boolean use relative number

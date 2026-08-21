@@ -146,16 +146,6 @@ dir. Here're customizable items:
     - **ENV:** `NVIM_CLANGD_PATH`
     - **Defaults:** `'clangd'`
 
-  - _`emmy_inject_plugin_path`_ — inject plugin path to `emmylua_ls` workspace config
-    - **Type:** `boolean`
-    - **ENV:** `NVIM_EMMY_INJECT_PLUGIN_PATH`
-    - **Defaults:** `false`
-
-  - _`emmy_inject_vim_rt`_ — inject vim runtime to `emmylua_ls` workspace config
-    - **Type:** `boolean`
-    - **ENV:** `NVIM_EMMY_INJECT_VIM_RT`
-    - **Defaults:** `true`
-
   - _`enable_inlay_hint`_ — default enable lsp inlay hint if has capability
     - **Type:** `boolean`
     - **ENV:** `NVIM_ENABLE_INLAY_HINT`

@@ -14,8 +14,6 @@ return {
   diagnose_mode = 'inline',
   diagnose_with_fancy_underline = false,
   disable_im_switch = false,
-  emmy_inject_plugin_path = false,
-  emmy_inject_vim_rt = true,
   enable_current_line_blame = false,
   enable_inlay_hint = false,
   enable_relative_lnum = false,

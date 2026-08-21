@@ -81,26 +81,6 @@ local Decls = {
     },
   },
 
-  emmy_inject_vim_rt = {
-    type = 'boolean',
-    default = true,
-    desc = 'inject vim runtime to `emmylua_ls` workspace config',
-    category = 'lsp',
-    i18n = {
-      zh_CN = '将 Vim 运行时注入到 `emmylua_ls` 工作区配置中',
-    },
-  },
-
-  emmy_inject_plugin_path = {
-    type = 'boolean',
-    default = false,
-    desc = 'inject plugin path to `emmylua_ls` workspace config',
-    category = 'lsp',
-    i18n = {
-      zh_CN = '将插件路径注入到 `emmylua_ls` 工作区配置中',
-    },
-  },
-
   use_emmylua_ls = {
     type = 'boolean',
     default = false,
