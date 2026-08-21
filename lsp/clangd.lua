@@ -56,18 +56,10 @@ local function symbol_info()
   end, bufnr)
 end
 
+---@type vim.lsp.Config
 local clangd = {
   filetypes = Lang.lsp_get_ft 'clangd',
-  root_markers = {
-    '.git/',
-    'clice.toml',
-    '.clang-tidy',
-    '.clang-format',
-    'compile_commands.json',
-    'compile_flags.txt',
-    'configure.ac', -- AutoTools
-  },
-
+  root_dir = require 'utils.fs'.cwd(),
   cmd = {
     Profile.clangd_path,
     '--background-index',

@@ -7,6 +7,6 @@
 return {
   cmd = { 'zls' },
   filetypes = Lang.lsp_get_ft 'zls',
-  root_markers = { 'zls.json', 'build.zig', '.git' },
+  root_dir = require 'utils.fs'.cwd(),
   workspace_required = false,
 }

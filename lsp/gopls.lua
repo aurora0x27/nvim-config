@@ -92,7 +92,8 @@ local function get_root_dir(fname)
     or vim.fs.root(fname, '.git')
 end
 
-return {
+---@type vim.lsp.Config
+local Gopls = {
   cmd = { 'gopls' },
   filetypes = Lang.lsp_get_ft 'gopls',
   root_dir = function(bufnr, on_dir)
@@ -116,3 +117,5 @@ return {
     },
   },
 }
+
+return Gopls

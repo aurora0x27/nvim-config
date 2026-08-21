@@ -50,7 +50,7 @@ end
 return {
   cmd = { 'tinymist' },
   filetypes = Lang.lsp_get_ft 'tinymist',
-  root_markers = { '.git' },
+  root_dir = require 'utils.fs'.cwd(),
   on_attach = function(client, bufnr)
     for _, command in ipairs {
       'tinymist.exportSvg',

@@ -1,5 +1,7 @@
+---@type vim.lsp.Config
 local rust_analyzer = {
   filetypes = Lang.lsp_get_ft 'rust_analyzer',
+  root_dir = require 'utils.fs'.cwd(),
   settings = {
     ['rust_analyzer'] = {
       diagnostics = {

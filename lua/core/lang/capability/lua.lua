@@ -4,7 +4,7 @@ return {
     ft = 'lua',
     treesitter = true,
     formatter = { name = 'stylua' },
-    lsp = Profile.use_emmylua_ls and { name = 'emmylua_ls', source = 'sys' }
+    lsp = Profile.use_emmylua_ls and { name = 'emmylua_ls' }
       or { name = 'lua_ls', packname = 'lua-language-server' },
     plugins = 'lazydev',
   },
