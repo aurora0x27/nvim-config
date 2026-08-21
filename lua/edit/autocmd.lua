@@ -50,6 +50,19 @@ function M.setup()
     end,
   })
 
+  vim.api.nvim_create_autocmd('DirChangedPre', {
+    group = AUG,
+    callback = function()
+      local v = vim.v.event
+      local dir = v['directory'] or '??'
+      local scope = v['scope'] or '??'
+      vim.notify(
+        string.format('Trying to change `%s` cwd to `%s`', scope, dir),
+        vim.log.levels.ERROR
+      )
+    end,
+  })
+
   vim.api.nvim_create_autocmd('BufReadPost', {
     group = AUG,
     callback = function(ev)
