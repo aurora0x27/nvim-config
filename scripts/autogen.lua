@@ -188,7 +188,7 @@ local function serialize_impl(v, lvl)
 
     return '{\n'
       .. table.concat(parts, ',\n')
-      .. '\n'
+      .. ',\n'
       .. string.rep('  ', lvl)
       .. '}'
   else
@@ -415,7 +415,7 @@ local function gen_types(ofile)
     end
   end
 
-  local content = BANNER .. table.concat(lines, '\n')
+  local content = BANNER .. table.concat(lines, '\n') .. '\n'
   vlogf('TYPE FILE:\n' .. content .. '\n')
   uv.fs_write(fd, content, 0)
   uv.fs_close(fd)
