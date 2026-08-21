@@ -1,5 +1,59 @@
 --------------------------------------------------------------------------------
--- BufferPoolManager -- calculate buffer to display per tab
+-- BufferPoolManager
+--
+-- Manage the relationship between tabpages and buffers.
+--
+-- BufferPoolManager introduces a workflow-level abstraction over Neovim's
+-- native tabpage/window/buffer model:
+--
+--   tabpage  -> thread / working context
+--   buffer   -> shared editing resource
+--   window   -> view of a buffer inside a thread
+--
+-- Buffers are globally reusable, while each tabpage maintains its own set of
+-- attached buffers. A buffer may therefore belong to multiple threads without
+-- duplicating its underlying editor state.
+--
+-- The current tab exposes its attached buffers through Neovim's buffer-list
+-- interface, while buffers attached to other tabs are temporarily masked from
+-- that interface. This allows existing buffer-oriented commands and UI
+-- components to operate on the current thread without requiring them to know
+-- about the BufferPoolManager abstraction.
+--
+-- Tabs may optionally be named and persisted as part of the editor's workflow
+-- state. Buffer membership is maintained independently from window layout,
+-- allowing a thread to be treated as a working set rather than merely a
+-- collection of windows.
+--
+-- Detach policies:
+--   * replace  replace affected windows with another attached buffer
+--   * idle     replace affected windows with an empty placeholder buffer
+--   * destroy  close affected windows
+--
+-- Operations:
+--   * detach   remove a buffer from the current tab
+--   * evict    remove a buffer from all tabs and delete it
+--   * rename   assign a name to a tab / thread
+--   * resolve  generate a unique, suffix-based display name for a buffer
+--
+-- Persistence:
+--   * Tab/thread membership can be serialized independently of Neovim's
+--     native buffer numbers.
+--   * Buffers are identified by path during persistence and restored into the
+--     runtime when necessary.
+--
+-- User commands:
+--   * BpmDetach
+--   * BpmEvict
+--   * BpmRenameTab
+--   * BpmListTab
+--   * BpmBufName
+--   * BpmDumpState
+--
+-- The module intentionally treats tabpages as workflow threads rather than
+-- workspaces. Workspace/process identity remains outside of Neovim, while
+-- BufferPoolManager provides the thread-local working-set semantics inside
+-- the editor instance.
 --------------------------------------------------------------------------------
 local M = {}
 local LOG_TITLE = 'BufferPoolManager'
