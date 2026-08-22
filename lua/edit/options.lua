@@ -73,20 +73,6 @@ function M.setup()
     end
   end
 
-  local mocha = require 'catppuccin.palettes'.get_palette 'mocha'
-
-  if Profile.transparent_mode then
-    vim.api.nvim_set_hl(
-      0,
-      '@variable',
-      vim.tbl_extend(
-        'force',
-        vim.api.nvim_get_hl(0, { name = '@variable' }),
-        { italic = true, fg = mocha.lavender }
-      )
-    )
-  end
-
   vim.fn.mkdir(vim.opt.undodir:get()[1], 'p')
 
   for k, v in pairs(Opt) do
