@@ -26,9 +26,6 @@ local BufName = {
     if #filename > 0 then
       filename = filename .. ' '
     end
-    if vim.o.columns < 120 then
-      return (vim.bo.modified and '%m' or '') .. icon .. ' '
-    end
     local symbols = {}
     if vim.bo.modified then
       table.insert(symbols, '[+]')
@@ -43,6 +40,9 @@ local BufName = {
       table.insert(symbols, '[New]')
     end
     local prefix = #symbols > 0 and (table.concat(symbols, '') .. ' ') or ''
+    if vim.o.columns < 120 then
+      return prefix
+    end
     return prefix .. icon .. filename
   end,
   hl = function(self)
