@@ -265,21 +265,3 @@ dir. Here're customizable items:
 > [!NOTE]
 >
 > Environment variables are still available. They have higher priority than JSON configured values.
-
-## Maybe wanted features
-
-- Markdown Table Format
-
-- Image preview in markdown(Partly support)
-
-- Search enhance
-
-- Fold range highlighting on unfolding
-
-- AsciiMode -- No nerd font
-
-## TODO List
-
-- Latex preview
-
-- Collect assets and remove some hard coded options
