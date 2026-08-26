@@ -129,7 +129,6 @@ function M.load_main()
   elseif is_ignored(init_lua) then
     restrict_mode = true
   else
-    -- Popup ui to trust workspace, load fzf to override vim.ui.select
     local choice = vim.fn.confirm(
       'Found workspace patch with `init.lua`, trust?',
       '&Yes\n&No\n&Edit'
