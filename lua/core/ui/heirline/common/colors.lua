@@ -29,6 +29,7 @@ local Colors = {
   command = mocha.teal,
   terminal = mocha.yellow,
   select = mocha.rosewater,
+  confirm = mocha.pink,
   text_fg = mocha.text,
   bg = mocha.base,
 }

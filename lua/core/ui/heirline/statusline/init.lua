@@ -90,9 +90,9 @@ local StatusLine = {
       ce = 'command',
 
       -- EX mode (still command-like)
-      r = 'replace', -- "hit-enter" / replace-like prompt
-      rm = 'replace', -- "more"
-      ['r?'] = 'replace', -- confirm query
+      r = 'confirm', -- "hit-enter" / confirm popup
+      rm = 'confirm', -- "more"
+      ['r?'] = 'confirm', -- confirm query
       ['!'] = 'command', -- shell-command mode in cmdline
 
       -- TERMINAL
