@@ -9,7 +9,6 @@ local bind = require 'utils.fnx'.bind
 ---@field callback fun(event: string, ...): any
 
 ---@class AdapterOpt
----@field enable_ui2? boolean
 ---@field bus_init? BusInitOpt
 ---@field popup? PopupOpt
 ---@field customed_handlers? ExtHandlerDecl[]
@@ -315,43 +314,31 @@ function M.setup(opts)
     require 'core.bus'.init(Opt.bus_init)
   end
   require 'core.adapter.popup'.setup(Opt.popup)
-  if Opt.enable_ui2 then
-    local ui2 = require 'vim._core.ui2'
-    for name, handler in pairs(Handlers) do
-      if vim.startswith(name, 'on_') then
-        local cover = name:sub(4)
-        if ui2[cover] then
-          ui2[cover] = handler
-        end
-      end
-    end
-  else
-    local ns = vim.api.nvim_create_namespace 'UIEventAdapter'
-    vim.ui_attach(
-      ns,
-      { ext_messages = true, ext_cmdline = true },
-      function(event, ...)
-        -- identify messages and dispatch to handlers
-        local is_cmdline_event = vim.startswith(event, 'cmdline_')
+  local ns = vim.api.nvim_create_namespace 'UIEventAdapter'
+  vim.ui_attach(
+    ns,
+    { ext_messages = true, ext_cmdline = true },
+    function(event, ...)
+      -- identify messages and dispatch to handlers
+      local is_cmdline_event = vim.startswith(event, 'cmdline_')
 
-        if Stat.IsConfirm and is_cmdline_event then
-          local handler = ConfirmHandlers['on_' .. event]
-          if type(handler) == 'function' then
-            return handler(...)
-          end
-          return false
-        end
-
-        local handler = Handlers['on_' .. event]
+      if Stat.IsConfirm and is_cmdline_event then
+        local handler = ConfirmHandlers['on_' .. event]
         if type(handler) == 'function' then
           return handler(...)
         end
-
-        -- unhandled event
         return false
       end
-    )
-  end
+
+      local handler = Handlers['on_' .. event]
+      if type(handler) == 'function' then
+        return handler(...)
+      end
+
+      -- unhandled event
+      return false
+    end
+  )
   vim.notify = notify_impl
 end
 

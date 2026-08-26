@@ -143,12 +143,7 @@ vim.api.nvim_create_autocmd('User', {
 -- Phase 1: Initialize UI event adapter, load preload module and detect
 --          workspace patch
 --------------------------------------------------------------------------------
-require 'core.adapter'.setup {
-  popup = {
-    cursor_hack = false,
-    no_register = true,
-  },
-}
+require 'core.adapter'.setup()
 
 local PatchDir, Nvimrc = require 'core.workspace'.probe()
 
