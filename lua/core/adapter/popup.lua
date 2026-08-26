@@ -220,6 +220,7 @@ function M.on_cmdline_hide(level, _)
   if not last() and NeedCursorHack then
     show_cursor()
   end
+  return true
 end
 
 local ns_id = vim.api.nvim_create_namespace('FakeCmdline')
@@ -323,13 +324,13 @@ function M.on_cmdline_show(content, pos, firstc, prompt, indent, level)
   end
 
   if not route then
-    return
+    return false
   end
 
   local view = Opt.views[route.view]
   if not view then
     log.error('Cannot find view ' .. route.view)
-    return
+    return false
   end
 
   local screen_w = vim.o.columns
@@ -391,15 +392,17 @@ function M.on_cmdline_show(content, pos, firstc, prompt, indent, level)
     end
   end
   redraw_ui(level)
+  return true
 end
 
 function M.on_cmdline_pos(pos, level)
   local stat = StatStack[level]
   if not stat then
-    return
+    return false
   end
   stat.pos = pos
   redraw_ui(level)
+  return true
 end
 
 ---@param opts PopupOpt|nil

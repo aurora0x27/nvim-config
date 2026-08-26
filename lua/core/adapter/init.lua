@@ -218,7 +218,7 @@ function Handlers.on_msg_show(
     -- replace_last=true means nvim wants to update a specific msg → emit directly
     if not replace_last and #content > 0 then
       batch_emit(kind, level, content, id)
-      return
+      return true
     end
   end
 
@@ -231,6 +231,7 @@ function Handlers.on_msg_show(
     append = append,
     trigger = trigger,
   }, replace_last and id or nil)
+  return true
 end
 
 ---@param entries {[1]: string, [2]: string, [3]: string}[]
@@ -241,11 +242,13 @@ function Handlers.on_msg_history_show(entries, prev_cmd)
     vim.log.levels.INFO,
     { entries = entries, prev_cmd = prev_cmd }
   )
+  return true
 end
 
 function Handlers.on_msg_clear()
   -- Notify subscribers so renderers can wipe their display
   Bus.emit('msg.clear', vim.log.levels.INFO, '', {})
+  return true
 end
 
 ---@type uv.uv_timer_t|nil
@@ -256,8 +259,9 @@ function ConfirmHandlers.on_cmdline_show(...)
     on_close_timer:stop()
   end
   if ConfirmData then
-    bind(require 'core.adapter.confirm'.on_cmdline_show, ConfirmData, ...)()
+    require 'core.adapter.confirm'.on_cmdline_show(ConfirmData, ...)
   end
+  return true
 end
 
 function ConfirmHandlers.on_cmdline_hide(level, abort)
@@ -278,17 +282,12 @@ function ConfirmHandlers.on_cmdline_hide(level, abort)
 
   if abort then
     actual_abort()
-    return
+    return true
   end
 
   on_close_timer = assert(vim.uv.new_timer())
-  on_close_timer:start(
-    50,
-    0,
-    vim.schedule_wrap(function()
-      actual_abort()
-    end)
-  )
+  on_close_timer:start(50, 0, vim.schedule_wrap(actual_abort))
+  return true
 end
 
 --- Pipe notify message to bus
@@ -338,16 +337,18 @@ function M.setup(opts)
         if Stat.IsConfirm and is_cmdline_event then
           local handler = ConfirmHandlers['on_' .. event]
           if type(handler) == 'function' then
-            handler(...)
+            return handler(...)
           end
           return false
         end
 
         local handler = Handlers['on_' .. event]
         if type(handler) == 'function' then
-          handler(...)
+          return handler(...)
         end
-        return true
+
+        -- unhandled event
+        return false
       end
     )
   end
