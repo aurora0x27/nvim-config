@@ -82,7 +82,7 @@ local POPUP_OPT_DEFAULT = {
     },
     {
       match = { firstc = ':', pattern = { '^%s*lua%s+', '^%s*lua%=' } },
-      prefix = ' ',
+      prefix = '',
       title = 'Lua',
       hl = 'CmdlineLua',
       ft = 'lua',
@@ -104,7 +104,7 @@ local POPUP_OPT_DEFAULT = {
     },
     {
       match = { firstc = '', prompt = 'New Name' },
-      prefix = '󰥻 ',
+      prefix = '󰥻',
       hl = 'LspRenameInput',
       view = 'lsp_rename',
     },
@@ -118,7 +118,7 @@ local POPUP_OPT_DEFAULT = {
     },
     {
       match = { firstc = '' },
-      prefix = '󰥻 ',
+      prefix = '󰥻',
       hl = 'CmdlineInput',
       view = 'input',
     },
