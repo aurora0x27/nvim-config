@@ -47,6 +47,9 @@
 --   * PersistSavePost
 --   * PersistLoadPre
 --   * PersistLoadPost
+--
+-- Credits:
+--   Inspired by / originally from github.com/folke/persistence.nvim
 --------------------------------------------------------------------------------
 local M = {}
 

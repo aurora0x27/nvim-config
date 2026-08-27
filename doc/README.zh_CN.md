@@ -1,6 +1,6 @@
 # 又一个 NVIM 配置
 
-[English](../README.md) | 中文
+[English](../README.md) | 中文 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 一套**模块化且高性能**的 Nvim 配置，全部***手工***编写
 
@@ -259,5 +259,7 @@ nvim # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
 > [!NOTE]
 >
 > 环境变量仍然可用，且优先级高于 JSON 配置值。
+
+## 许可证 [MIT](../LICENSE)
 
 > **該簡體中文版本完全由谷歌翻譯生成**

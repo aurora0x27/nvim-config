@@ -2,6 +2,9 @@
 -- Input Method Auto Switch Module
 --
 -- Only work for fcitx5, require fcitx5-remote binary
+--
+-- Credits:
+--   Inspired by https://github.com/www9song/fcitx5-nvim-zh
 --------------------------------------------------------------------------------
 local M = {}
 local LOG_TITLE = 'Im Switch'

@@ -54,6 +54,9 @@
 -- workspaces. Workspace/process identity remains outside of Neovim, while
 -- BufferPoolManager provides the thread-local working-set semantics inside
 -- the editor instance.
+--
+-- Credits:
+--   Inspired by / originally from github.com/tiagovla/scope.nvim
 --------------------------------------------------------------------------------
 local M = {}
 local LOG_TITLE = 'BufferPoolManager'

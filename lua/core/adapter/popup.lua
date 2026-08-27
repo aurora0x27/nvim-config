@@ -1,5 +1,8 @@
 --------------------------------------------------------------------------------
 -- Cmdline and InputBox
+--
+-- Credits:
+--   Inspired by / originally from github.com/folke/noice.nvim
 --------------------------------------------------------------------------------
 local Win = require 'core.ui.window'
 local LOG_TITLE = 'Popup'

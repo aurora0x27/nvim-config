@@ -18,6 +18,9 @@
 --   more_format? string               printf-style footer when lines truncated
 --   border?      'rounded'|'single'|'none'|false
 --   hl?          ToastNotifyHL        override highlight groups
+--
+-- Credits:
+--   Inspired by / originally from github.com/abel2333
 --------------------------------------------------------------------------------
 
 local Win = require 'core.ui.window'

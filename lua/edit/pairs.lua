@@ -1,5 +1,9 @@
 --------------------------------------------------------------------------------
 -- Auto complete pairs
+--
+-- Credits:
+--   Inspired by / originally from: github.com/Kicamon (MIT License)
+--   Improved together with: github.com/abel2333, merged back
 --------------------------------------------------------------------------------
 local M = {}
 

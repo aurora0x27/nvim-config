@@ -1,6 +1,6 @@
 # YET ANOTHER NVIM CONFIG
 
-English | [中文](./doc/README.zh_CN.md)
+English | [中文](./doc/README.zh_CN.md) ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 A **Modular & High-performance** set of configurations for Nvim which is written all **_by hand_**
 
@@ -265,3 +265,5 @@ dir. Here're customizable items:
 > [!NOTE]
 >
 > Environment variables are still available. They have higher priority than JSON configured values.
+
+## License [MIT](./LICENSE)
