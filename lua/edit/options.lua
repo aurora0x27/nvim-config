@@ -20,7 +20,6 @@ local Opt = {
   virtualedit = 'block',
   showmode = false,
   cmdheight = 0,
-  inccommand = '',
   splitright = true,
   splitbelow = true,
   guicursor = 'n-v-c-sm:block,i-ci-ve:ver25,r-cr-o:hor20,t:block-blinkon0-TermCursor',

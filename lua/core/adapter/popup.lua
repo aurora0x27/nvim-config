@@ -150,7 +150,7 @@ local POPUP_WIN_OPT_DEFAULT = {
     relativenumber = false,
     foldcolumn = '0',
     signcolumn = 'no',
-    statuscolumn = ' ',
+    statuscolumn = '',
   },
 }
 
@@ -234,7 +234,7 @@ local function redraw_marks(bufnr, prefix, hl, pos, content)
   vim.api.nvim_buf_clear_namespace(bufnr, ns_id, 0, -1)
 
   vim.api.nvim_buf_set_extmark(bufnr, ns_id, 0, 0, {
-    virt_text = { { prefix .. ' ', hl } },
+    virt_text = { { ' ' .. prefix .. ' ', hl } },
     virt_text_pos = 'inline',
     right_gravity = false,
     priority = 100,
