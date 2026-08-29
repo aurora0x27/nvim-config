@@ -11,7 +11,6 @@ local Opt = {
   numberwidth = 1,
   spell = false,
   signcolumn = 'auto',
-  wrap = false,
   clipboard = 'unnamedplus',
   termguicolors = true,
   wildmenu = true,
