@@ -266,7 +266,7 @@ local function resolve_readme(lang)
   if lang == '_' then
     return 'README.md'
   end
-  return 'doc/README.' .. lang .. '.md'
+  return 'README.' .. lang .. '.md'
 end
 
 ---@param manifest table<string, ProfileManifestDecl>

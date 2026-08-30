@@ -1,37 +1,35 @@
-# 又一个 NVIM 配置
+<p align="center">
+  <h2 align="center">又一个 Nvim 配置</h2>
+</p>
 
-[English](../README.md) | 中文 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+<p align="center">一套<b>模块化且高性能</b>的 Nvim 配置,全部<b><i>手工</i></b>编写</p>
 
-一套**模块化且高性能**的 Nvim 配置，全部***手工***编写
+<p align="center">
+  <a href="https://github.com/aurora0x27/nvim-config">
+    <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/aurora0x27/nvim-config?style=for-the-badge&logo=github&logoColor=D9E0EE&label=github&labelColor=302D41&color=C9CBFF">
+  </a>
+  <a href="https://codeberg.org/aurora0x27/nvim-config">
+    <img alt="Gitea Stars" src="https://img.shields.io/gitea/stars/aurora0x27/nvim-config?gitea_url=https%3A%2F%2Fcodeberg.org&style=for-the-badge&logo=Codeberg&logoColor=D9E0EE&label=codeberg&labelColor=302D41&color=C9CBFF">
+  </a>
+  <a href="https://codeberg.org/aurora0x27/nvim-config/src/branch/main/LICENSE">
+    <img alt="Static Badge" src="https://img.shields.io/badge/license-mit-DDB6F2?style=for-the-badge&logo=opensourceinitiative&logoColor=D9E0EE&label=license&labelColor=302D41">
+  </a>
+</p>
 
-> [!NOTE]
->
-> 这套配置原本是“精简版”的，为什么现在变得复杂了呢？
-> 随着配置的不断增长，扁平化的结构变得难以维护。
-> 新的模块化架构将策略（启用哪些功能）与实现（插件设置）分离。
-> 现在，它是一种**数据驱动的**配置。
->
-> - `lua/modules/profile/` 定义编辑器的行为方式。
-> - `lua/modules/lang/` 定义每种语言提供的功能。
->   这使得该配置成为一个框架，而不仅仅是一组点文件。
+## 与众不同之处
+
+大多数配置都是插件列表加上选项。而这个配置是**围绕工作流程**进行优化的：
+
+- **以数据而非代码的形式进行配置。** 一个 `nvimrc.json` 文件加上环境变量即可驱动所有功能——特性、语言、诊断。无需费力地在 Lua 代码中摸索。
+- **插件更少，行为经过精心调校。** 通知、消息、命令行、标签页和会话功能都经过重新实现，以适应这种工作流程。
+
+此外，还有一些常用功能——代码补全、模糊查找、Treesitter、LSP、格式化、状态栏。没有什么特别之处。
 
 ## 示例展示
 
-![仪表盘](./img/Dashboard.webp)
+![仪表盘](./doc/img/Dashboard.webp)
 
-![工作区](./img/Workspace.webp)
-
-## 功能
-
-- 模块化配置文件系统：在不同配置配置文件之间无缝切换。只需修改 JSON 表，即可自定义编辑器在不同设备/操作系统上的行为。
-
-- 细粒度语言控制：通过环境变量，对 LSP、Treesitter 和 Formatter 进行精细控制，
-
-- 完全由自行实现的运行时层构成：摒弃了 `noice` 和 `snacks`，用简单易懂的代码实现提升用户体验的功能，完全不需要任何理解能力。
-
-- 动态功能：根据环境自动调整功能（例如，Neovim 版本、环境变量）。
-
-- 代码组织良好(注释也很详细), 便于初学者理解——良好的代码就是最好的文档😈😈😈
+![工作区](./doc/img/Workspace.webp)
 
 ## 依赖项
 
@@ -71,27 +69,6 @@ nvim # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
 ```
 
 或者，您可以将仓库下载到 `~/.config/<name>`, 然后运行 `NVIM_APPNAME=<name> nvim` 来启动它。
-
-## 基本功能
-
-- [x] 自动补全
-- [x] 状态栏
-- [x] 颜色和注释高亮
-- [x] 文件系统资源管理器
-- [x] Markdown 预览
-- [x] Markdown 渲染器
-- [x] 大纲
-- [x] 集成终端
-- [x] 模糊查找器
-- [x] LSP 支持
-- [x] 格式化程序
-- [x] SSH 剪贴板支持（**需要 tmux 额外配置**）
-- [x] 输入法自动切换（**仅限 Linux 和 macOS**）
-- [x] 工作区补丁
-- [x] Typst 支持
-- [x] Windows 支持
-- [x] 集中式语言特性开关
-- [x] Json-env 组合配置文件系统
 
 ## 可选特性
 

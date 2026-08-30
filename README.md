@@ -1,41 +1,35 @@
-# YET ANOTHER NVIM CONFIG
+<p align="center">
+  <h2 align="center">Yet Another Nvim Config</h2>
+</p>
 
-English | [中文](./doc/README.zh_CN.md) ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+<p align="center">A <b>Modular & High-performance</b> set of configurations for Nvim which is written all <b><i>by hand</i></b></p>
 
-A **Modular & High-performance** set of configurations for Nvim which is written all **_by hand_**
+<p align="center">
+  <a href="https://github.com/aurora0x27/nvim-config">
+    <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/aurora0x27/nvim-config?style=for-the-badge&logo=github&logoColor=D9E0EE&label=github&labelColor=302D41&color=C9CBFF">
+  </a>
+  <a href="https://codeberg.org/aurora0x27/nvim-config">
+    <img alt="Gitea Stars" src="https://img.shields.io/gitea/stars/aurora0x27/nvim-config?gitea_url=https%3A%2F%2Fcodeberg.org&style=for-the-badge&logo=Codeberg&logoColor=D9E0EE&label=codeberg&labelColor=302D41&color=C9CBFF">
+  </a>
+  <a href="https://codeberg.org/aurora0x27/nvim-config/src/branch/main/LICENSE">
+    <img alt="Static Badge" src="https://img.shields.io/badge/license-mit-DDB6F2?style=for-the-badge&logo=opensourceinitiative&logoColor=D9E0EE&label=license&labelColor=302D41">
+  </a>
+</p>
 
-> [!NOTE]
->
-> This config is used to be `streamlined`, why the complexity now?
-> As the configuration grew, a flat structure became hard to maintain.
-> The new Modular Architecture separates Policy (what to enable) from Implementation (plugin setup).
-> It is now a **data driven** configuration.
->
-> - `lua/core/profile/` Defines how the editor behaves.
-> - `lua/core/lang/` Defines what each language provides.
->   This makes the config a framework rather than just a set of dotfiles.
+## Why this is different
+
+Most configs are a list of plugins plus options. This one is **tuned around a workflow**:
+
+- **Configurable as data, not code.** A single `nvimrc.json` plus env vars drive everything — features, languages, diagnostics. No hunting through Lua.
+- **Fewer plugins, hand-tuned behavior.** Notifications, messages, the command line, tabs, and sessions are reimplemented from scratch to fit this workflow.
+
+Plus the usual — completion, fuzzy finder, Treesitter, LSP, formatting, statusline. Nothing exotic to list.
 
 ## Showcase
 
 ![Dashboard](./doc/img/Dashboard.webp)
 
 ![Workspace](./doc/img/Workspace.webp)
-
-## Feature
-
-- Modular Profile System: Switch between different configuration profiles seamlessly. Customize editor behavior on
-  different device/os just by modify a JSON table.
-
-- Granular Language Control: Fine-grained control over LSP, Treesitter, and Formatter on a
-  per-language basis via environment variables.
-
-- Filled with self-implemented runtime layers: Throw away `noice` and `snacks`, implement qol functionalities with
-  simple and easy-to-understand code, requiring absolutely no comprehension.
-
-- Dynamic Capabilities: Automatic adjustment of features based on the environment
-  (e.g., Neovim version, environment variables).
-
-- Well organized code(also well annotioned) for beginners to understand -- good code is the best document 😈😈😈
 
 ## Requirements
 
@@ -76,27 +70,6 @@ nvim     # Launch neovim on this config, without making changes to your ~/.local
 ```
 
 Or, you may download the repo to `~/.config/<name>`, and run `NVIM_APPNAME=<name> nvim` to launch
-
-## Implemented functionalities
-
-- [x] Auto completion
-- [x] Status line
-- [x] Color and comment highlight
-- [x] File system explorer
-- [x] Markdown preview
-- [x] Markdown renderer
-- [x] Outline
-- [x] Integrated terminal
-- [x] Fuzzy finder
-- [x] LSP support
-- [x] Formatter
-- [x] SSH clipboard support(**Need tmux extra config**)
-- [x] Input method auto switch (**On Linux and MacOS**)
-- [x] Workspace patch
-- [x] Typst support
-- [x] Windows Support
-- [x] Centralized lang feature switch
-- [x] JSON-env combined profile system
 
 ## Profile Options
 
