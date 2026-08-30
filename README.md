@@ -69,6 +69,10 @@ You can try it immediately without replacing your origin configurations.
 nvim     # Launch neovim on this config, without making changes to your ~/.local/share
 ```
 
+- `venv` usage:
+  - Use `NVIM_BINARY` to assign _absolute path_ for nvim binary `NVIM_BINARY=/opt/nvim@fresh/bin/nvim ./venv`
+  - Use `--fish` to launch a debug fish shell.
+
 Or, you may download the repo to `~/.config/<name>`, and run `NVIM_APPNAME=<name> nvim` to launch
 
 ## Profile Options

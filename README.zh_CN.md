@@ -68,6 +68,10 @@
 nvim # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
 ```
 
+- `venv` 使用:
+  - 使用 `NVIM_BINARY` 来指定 nvim 二进制的 _绝对路径_ `NVIM_BINARY=/opt/nvim@fresh/bin/nvim ./venv`
+  - 使用 `--fish` 来启动一个 fish shell 调试环境
+
 或者，您可以将仓库下载到 `~/.config/<name>`, 然后运行 `NVIM_APPNAME=<name> nvim` 来启动它。
 
 ## 可选特性
