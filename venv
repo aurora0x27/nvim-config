@@ -14,23 +14,25 @@ RESET='\033[0m'
 export NVIM_CONFIG_DEV_CONFIG_ROOT=$(dirname "$(realpath "$0")")
 export NVIM_CONFIG_DEV_CACHE_ROOT=$NVIM_CONFIG_DEV_CONFIG_ROOT/nvim-cache
 mkdir -p $NVIM_CONFIG_DEV_CACHE_ROOT/{share,state/log,cache,run,zdotdir}
-# export PATH="$SCRIPT_DIR:$PATH"
 export VIRTUAL_ENV=nvim-dev
+
+export NVIM_CONFIG_DEV_BINARY=${NVIM_BINARY:-$(command -v nvim)}
+# expand `~`
+NVIM_CONFIG_DEV_BINARY="${NVIM_CONFIG_DEV_BINARY/#\~/$HOME}"
+
 echo ""
+[ -n "$NVIM_CONFIG_DEV_BINARY" ] || { echo -e $RED $BOLD "[!] nvim not found in PATH (set NVIM_BINARY)" $RESET; exit 1; }
+[[ "$NVIM_CONFIG_DEV_BINARY" != /* ]] && { echo -e $RED $BOLD "[!] NVIM_BINARY must be an absolute path (got: \`$NVIM_CONFIG_DEV_BINARY\`)" $RESET; exit 1; }
 echo -e $CYAN $BOLD "[Note]: Please run \`nvim\` to launch nvim and enter \`exit\` to exit debug shell" $RESET
 
 if [[ $1 == '--fish' ]]; then
-    fish -C "function nvim --desc 'debug launch nvim'; NVIM_CONFIG_DEV=1 command nvim --clean -u $NVIM_CONFIG_DEV_CONFIG_ROOT/init.lua \$argv; end"
+    fish -C "function nvim --desc 'debug launch nvim'; NVIM_CONFIG_DEV=1 command \"$NVIM_CONFIG_DEV_BINARY\" --clean -u \"$NVIM_CONFIG_DEV_CONFIG_ROOT\"/init.lua \$argv; end"
 else
     ZDOTDIR=$NVIM_CONFIG_DEV_CACHE_ROOT/zdotdir
-    [[ -f "$ZDOTDIR/.zshrc" ]] || {
-
 cat > "$ZDOTDIR/.zshrc" <<EOF
 [[ -f ~/.zshrc ]] && source ~/.zshrc
-alias nvim="NVIM_CONFIG_DEV=1 command nvim --clean -u $NVIM_CONFIG_DEV_CONFIG_ROOT/init.lua"
+alias nvim="NVIM_CONFIG_DEV=1 command \"$NVIM_CONFIG_DEV_BINARY\" --clean -u \"$NVIM_CONFIG_DEV_CONFIG_ROOT\"/init.lua"
 EOF
-
-    }
     ZDOTDIR="$ZDOTDIR" zsh
 fi
 
