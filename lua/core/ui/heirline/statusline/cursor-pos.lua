@@ -7,7 +7,7 @@ local CursorPos = {
   end,
   hl = { fg = 'text_fg', bold = true },
   condition = function()
-    return vim.o.columns >= 120
+    return vim.o.columns >= 80
   end,
 }
 
