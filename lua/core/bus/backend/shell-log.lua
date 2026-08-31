@@ -45,6 +45,12 @@ function M.show_popup()
   vim.api.nvim_win_set_cursor(win, { last_line, 0 })
 end
 
+local function strip_ansi(str)
+  -- Matches the ESC character followed by '[' and
+  -- any sequence of parameters up to 'm'
+  return string.gsub(str, '%^%[%[[0-9;]*m', '')
+end
+
 function M.setup()
   Bus.register_subscriber(
     'shell-log',
@@ -60,7 +66,8 @@ function M.setup()
       for _, segment in ipairs(content) do
         str = str .. segment[2]
       end
-      local lines = vim.split(str, '\n', { plain = true, trimempty = false })
+      str = strip_ansi(str)
+      local lines = vim.split(str, '\n', { plain = true, trimempty = true })
       local bufnr = ensure_buf()
       vim.api.nvim_buf_set_lines(bufnr, -1, -1, false, lines)
       local win = ensure_win(bufnr)
