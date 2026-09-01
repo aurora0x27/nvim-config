@@ -5,9 +5,6 @@
 --------------------------------------------------------------------------------
 local M = {}
 
-local LOG_TITLE = 'Preload'
-local log = require 'utils.logger'.new(LOG_TITLE)
-
 function M.setup()
   -- set global leader
   vim.g.mapleader = ' '
@@ -84,17 +81,15 @@ function M.setup()
         vim.api.nvim_create_autocmd('FileType', {
           buffer = buf,
           once = true,
-          callback = function()
-            vim.defer_fn(
-              require 'utils.fnx'.bind(
-                log.info,
-                'Large file detected, some features are disabled'
-              ),
-              1000
+          callback = vim.schedule_wrap(
+            require 'utils.fnx'.bind(
+              vim.notify,
+              'Large file detected, some features are disabled',
+              vim.log.levels.INFO,
+              { title = 'Bigfile Mode' }
             )
-          end,
+          ),
         })
-        vim.cmd 'syntax off'
         vim.bo.filetype = 'bigfile'
       end
     end,

@@ -59,6 +59,10 @@ local GitUtils = {
     },
 
     on_attach = function(bufnr)
+      if vim.b[bufnr].bigfile then
+        return false
+      end
+
       local gitsigns = require 'gitsigns'
 
       local function map(mode, l, r, opts)

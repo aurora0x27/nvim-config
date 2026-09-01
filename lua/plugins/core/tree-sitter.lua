@@ -12,7 +12,7 @@ local log = require 'utils.logger'.new(LOG_TITLE)
 local function safe_ts_start(args)
   local buf = args.buf
   local ft = vim.bo[buf].filetype
-  if require 'utils.detect'.is_bigfile(buf) then
+  if vim.b[buf].bigfile then
     return
   end
 
