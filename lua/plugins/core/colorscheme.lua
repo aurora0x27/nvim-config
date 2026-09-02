@@ -82,6 +82,7 @@ local ColorScheme = {
         replace.NeogitDiffAddInline = { bg = mocha.green, fg = mocha.crust }
         replace.NeogitDiffDeleteInline = { bg = mocha.red, fg = mocha.crust }
         replace['@variable'] = { italic = true, fg = mocha.lavender }
+        replace['@keyword.operator.lua'] = { link = 'Operator' }
         return replace
       end,
     },
