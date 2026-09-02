@@ -14,5 +14,3 @@ vim.keymap.set('n', '<leader>p', '<cmd>MarkdownPreviewToggle<CR>', {
   silent = true,
   buffer = true,
 })
-
-vim.b.did_ftplugin = 1
