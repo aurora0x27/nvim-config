@@ -86,6 +86,30 @@ function M.setup()
     thunk('mason.ui', 'open'),
     { noremap = true, silent = true, desc = 'Launch Lsp [M]anager' }
   )
+
+  map(
+    { 'n' },
+    'U',
+    vim.cmd.redo,
+    { noremap = true, silent = true, desc = 'Redo' }
+  )
+
+  ----------------------------------------------------------------------------
+  -- Helix style navigation
+  ----------------------------------------------------------------------------
+  map(
+    { 'n' },
+    'gh',
+    '0',
+    { noremap = true, silent = true, desc = 'Line start' }
+  )
+  map(
+    { 'n' },
+    'g-',
+    '^',
+    { noremap = true, silent = true, desc = 'Line start(non-space)' }
+  )
+  map({ 'n' }, 'gl', '$', { noremap = true, silent = true, desc = 'Line end' })
 end
 
 return M
