@@ -180,7 +180,9 @@ function M.setup()
     M.probe()
   end
 
-  vim.opt.runtimepath:prepend(workspace_nvim)
+  if workspace_nvim then
+    vim.opt.runtimepath:prepend(workspace_nvim)
+  end
 end
 
 return M
