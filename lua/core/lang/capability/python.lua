@@ -1,6 +1,6 @@
 ---@type LangSpec
 return {
   treesitter = true,
-  lsp = { name = 'pyright' },
+  lsp = { name = 'pyrefly' },
   formatter = { name = 'ruff_format', packname = 'ruff' },
 }
