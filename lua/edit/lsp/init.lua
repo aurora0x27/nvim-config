@@ -229,7 +229,7 @@ local function can_start(bufnr, config, logging)
   local config_ok, err = pcall(validate_config, config)
   if not config_ok then
     if logging then
-      M.error(('invalid "%s" config: %s'):format(config.name, err))
+      log.error('invalid "%s" config: %s', config.name, err)
     end
     return false
   end
@@ -272,7 +272,7 @@ local function lsp_buf_startup(bufnr)
   for name in vim.spairs(lsp._enabled_configs) do
     local config = lsp.config[name]
     if config and can_start(bufnr, config, true) then
-      M.info('Started LSP: [' .. name .. ']', { title = 'Info' })
+      log.info('Started LSP: [' .. name .. ']', { title = 'Info' })
 
       -- Deepcopy config so changes done in the client
       -- do not propagate back to the enabled configs.
