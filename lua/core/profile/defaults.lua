@@ -27,6 +27,7 @@ return {
   persist_mode = 'none',
   statline_scrollbar_style = 'moon',
   transparent_mode = false,
+  use_clice = false,
   use_emmylua_ls = false,
   use_neogit = false,
   use_ufo_as_fold_provider = false,

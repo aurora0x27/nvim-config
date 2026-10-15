@@ -126,6 +126,11 @@ nvim # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
     - **ENV:** `NVIM_ENABLE_INLAY_HINT`
     - **Defaults:** `false`
 
+  - _`use_clice`_ — 使用 `clice` 作为 cpp 语言服务器
+    - **Type:** `boolean`
+    - **ENV:** `NVIM_USE_CLICE`
+    - **Defaults:** `false`
+
   - _`use_emmylua_ls`_ — 使用 `emmylua_ls` 作为 Lua 语言服务器
     - **Type:** `boolean`
     - **ENV:** `NVIM_USE_EMMYLUA_LS`

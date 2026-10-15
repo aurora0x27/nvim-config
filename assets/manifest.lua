@@ -91,6 +91,16 @@ local Decls = {
     },
   },
 
+  use_clice = {
+    type = 'boolean',
+    default = false,
+    desc = 'use `clice` as cpp language server',
+    category = 'lsp',
+    i18n = {
+      zh_CN = '使用 `clice` 作为 cpp 语言服务器',
+    },
+  },
+
   use_neogit = {
     type = 'boolean',
     default = false,

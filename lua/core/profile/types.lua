@@ -58,6 +58,7 @@
 ---@field persist_mode string Enable persistence features. Supported items: `session|undo|shada|swap`
 ---@field statline_scrollbar_style StatusScrollbarStyle heirline scroll bar style, which displays cursor position
 ---@field transparent_mode boolean enable transparent mode
+---@field use_clice boolean use `clice` as cpp language server
 ---@field use_emmylua_ls boolean use `emmylua_ls` as lua language server
 ---@field use_neogit boolean use [`neogit`](https://github.com/neogitorg/neogit) as enhanced git client
 ---@field use_ufo_as_fold_provider boolean use [`nvim-ufo`](https://github.com/kevinhwang91/nvim-ufo) as fold provider to get better code fold experience

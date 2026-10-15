@@ -2,7 +2,8 @@
 return {
   {
     ft = { 'c', 'cpp', 'objc' },
-    lsp = { name = 'clangd', source = 'sys' },
+    lsp = Profile.use_clice and { name = 'clice', source = 'sys' }
+      or { name = 'clangd', source = 'sys' },
     formatter = { name = 'clang-format', source = 'sys' },
     treesitter = true,
   },

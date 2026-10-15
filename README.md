@@ -128,6 +128,11 @@ dir. Here're customizable items:
     - **ENV:** `NVIM_ENABLE_INLAY_HINT`
     - **Defaults:** `false`
 
+  - _`use_clice`_ — use `clice` as cpp language server
+    - **Type:** `boolean`
+    - **ENV:** `NVIM_USE_CLICE`
+    - **Defaults:** `false`
+
   - _`use_emmylua_ls`_ — use `emmylua_ls` as lua language server
     - **Type:** `boolean`
     - **ENV:** `NVIM_USE_EMMYLUA_LS`
