@@ -76,8 +76,10 @@ plugin configs:
   queries them instead of reading env vars or JSON directly.
 - The workspace patch (`.nvim` / `.vscode/nvim`) is a per-project extension point,
   guarded by a trust model to avoid arbitrary code execution.
-- A self-hosted module loader is in progress, aiming to replace the plugin manager
-  with a scheme/provider abstraction (where a module comes from vs. how it's fetched).
+- A self-hosted module loader is **no longer in development**, and its draft has been
+  removed. lazy.nvim already provides a good enough experience; replacing it would
+  mean spending a lot of effort maintaining a new plugin manager to squeeze out
+  marginal startup gains, which is not worth it.
 
 This part is still aspirational rather than settled; the rest of the config already
 reflects it.
