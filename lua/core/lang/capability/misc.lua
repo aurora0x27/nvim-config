@@ -34,6 +34,7 @@ return {
       'ninja',
       'nim',
       'query',
+      'rst',
       'ron',
       'scheme',
       'tablegen',
