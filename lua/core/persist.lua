@@ -132,6 +132,15 @@ local function local_undo_dir()
   return _local_undo_dir
 end
 
+local _local_backup_dir
+---@return string
+local function local_backup_dir()
+  if not _local_backup_dir then
+    _local_backup_dir = PersistLocalDir .. '/backup'
+  end
+  return _local_backup_dir
+end
+
 local _local_session_dir
 ---@return string
 local function local_session_dir()
@@ -551,6 +560,11 @@ local function setup_options()
   vim.o.undofile = PersistMode.undo
   if PersistMode.undo and PersistLocalMode.undo then
     vim.o.undodir = local_undo_dir()
+  end
+
+  vim.o.wb = PersistMode.wb
+  if PersistMode.wb and PersistLocalMode.wb then
+    vim.o.backupdir = local_backup_dir()
   end
 end
 
