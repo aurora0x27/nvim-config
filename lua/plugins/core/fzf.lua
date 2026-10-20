@@ -5,11 +5,12 @@
 local WinBorder = require 'assets.theme'.border
 local thunk = require 'utils.fnx'.thunk
 
+---@type LazyPluginSpec
 local FzfLua = {
   'ibhagwan/fzf-lua',
   -- optional for icon support
   dependencies = { 'nvim-tree/nvim-web-devicons' },
-  lazy = true,
+  event = 'VeryLazy',
   cmd = { 'FzfLua' },
   ---@module "fzf-lua"
   ---@type fzf-lua.Config|{}
