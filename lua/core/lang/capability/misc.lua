@@ -7,7 +7,7 @@ return {
     formatter = { name = 'nginxfmt', packname = 'nginx-config-formatter' },
   },
 
-  { ft = 'dosini', treesitter = 'ini' },
+  { ft = { 'ini', 'dosini' }, treesitter = 'ini' },
   { ft = 'gitconfig', treesitter = 'git_config' },
   { ft = 'gitrebase', treesitter = 'git_rebase' },
   { ft = 'toml', treesitter = true, formatter = { name = 'taplo' } },
