@@ -178,7 +178,7 @@ end
 ---@param data table
 ---@return boolean success
 local function write_json(path, data)
-  local ok, res = pcall(vim.json.encode, data)
+  local ok, res = pcall(vim.json.encode, data, { indent = '  ' })
   if not ok then
     err(res)
     return false
