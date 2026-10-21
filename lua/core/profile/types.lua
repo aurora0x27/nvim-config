@@ -62,4 +62,3 @@
 ---@field use_emmylua_ls boolean use `emmylua_ls` as lua language server
 ---@field use_neogit boolean use [`neogit`](https://github.com/neogitorg/neogit) as enhanced git client
 ---@field use_ufo_as_fold_provider boolean use [`nvim-ufo`](https://github.com/kevinhwang91/nvim-ufo) as fold provider to get better code fold experience
----@field workspace_patch_always_restrict boolean always enable restrict mode, disable _dofile_ to prevent **ACE**

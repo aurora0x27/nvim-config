@@ -116,9 +116,6 @@ vim.api.nvim_create_autocmd('User', {
     require 'edit.ssh-mode'.setup()
 
     require 'edit.repl'.setup()
-
-    -- dofile init.lua
-    require 'core.workspace'.load_main()
   end),
 })
 
@@ -173,7 +170,6 @@ require 'core.persist'.setup {
   persist_local_mode = Profile.persist_local_mode,
   persist_local_dir = Profile.persist_local_dir,
 }
-require 'core.workspace'.setup()
 
 vim.api.nvim_create_autocmd('UIEnter', {
   once = true,
@@ -220,11 +216,16 @@ local Icons = {
 }
 
 local function make_rtp_keep()
-  local RtpKeep = {}
+  local rtp_keep = {}
   if Profile.allow_workspace_patch and PatchDir then
-    table.insert(RtpKeep, PatchDir)
+    table.insert(rtp_keep, PatchDir)
+    local after_path = PatchDir .. '/after'
+    local stat = vim.uv.fs_stat(after_path)
+    if stat and stat.type == 'directory' then
+      table.insert(rtp_keep, after_path)
+    end
   end
-  return RtpKeep
+  return rtp_keep
 end
 
 -- import plugins

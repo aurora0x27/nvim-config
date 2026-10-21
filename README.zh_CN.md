@@ -235,11 +235,6 @@ nvim # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
     - **ENV:** `NVIM_ALLOW_WORKSPACE_PATCH`
     - **Defaults:** `false`
 
-  - _`workspace_patch_always_restrict`_ — 始终启用限制模式. 禁用 `dofile` 以防止 **任意代码执行**
-    - **Type:** `boolean`
-    - **ENV:** `NVIM_WORKSPACE_PATCH_ALWAYS_RESTRICT`
-    - **Defaults:** `true`
-
     <!-- enddoc@profile -->
 
 > [!NOTE]

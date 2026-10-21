@@ -247,16 +247,6 @@ local Decls = {
     },
   },
 
-  workspace_patch_always_restrict = {
-    type = 'boolean',
-    default = true,
-    category = 'workspace',
-    desc = 'always enable restrict mode, disable _dofile_ to prevent **ACE**',
-    i18n = {
-      zh_CN = '始终启用限制模式. 禁用 `dofile` 以防止 **任意代码执行**',
-    },
-  },
-
   enable_sticky_buffer = {
     type = 'boolean',
     default = false,

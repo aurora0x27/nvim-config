@@ -9,7 +9,7 @@ local WorkDir = {
   init = function(self)
     local cwd = get_logical_cwd()
     self.cwd = vim.fn.fnamemodify(cwd, ':~')
-    self.icon = require 'core.workspace'.is_restrict() and '   ' or '   '
+    self.icon = Profile.allow_workspace_patch and '   ' or '   '
   end,
   provider = function(self)
     if vim.o.columns < 80 then

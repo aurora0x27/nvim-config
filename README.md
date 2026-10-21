@@ -237,11 +237,6 @@ dir. Here're customizable items:
     - **ENV:** `NVIM_ALLOW_WORKSPACE_PATCH`
     - **Defaults:** `false`
 
-  - _`workspace_patch_always_restrict`_ — always enable restrict mode, disable _dofile_ to prevent **ACE**
-    - **Type:** `boolean`
-    - **ENV:** `NVIM_WORKSPACE_PATCH_ALWAYS_RESTRICT`
-    - **Defaults:** `true`
-
 <!-- enddoc@profile -->
 
 > [!NOTE]

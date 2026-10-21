@@ -31,5 +31,4 @@ return {
   use_emmylua_ls = false,
   use_neogit = false,
   use_ufo_as_fold_provider = false,
-  workspace_patch_always_restrict = true,
 }
