@@ -219,6 +219,14 @@ local Icons = {
   Misc = require 'assets.icons'.get('misc'),
 }
 
+local function make_rtp_keep()
+  local RtpKeep = {}
+  if Profile.allow_workspace_patch and PatchDir then
+    table.insert(RtpKeep, PatchDir)
+  end
+  return RtpKeep
+end
+
 -- import plugins
 require 'lazy'.setup {
   -- all the plugins' configure files should be put under `lua/plugins`
@@ -260,7 +268,7 @@ require 'lazy'.setup {
     rtp = {
       reset = true,
       -- keep workspace patch dir in rtp
-      paths = { PatchDir },
+      paths = make_rtp_keep(),
       -- disable some rtp plugins, add more to your liking
       disabled_plugins = {
         'gzip',

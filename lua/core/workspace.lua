@@ -8,8 +8,10 @@ local M = {}
 
 local LOG_TITLE = 'Workspace Patch'
 
-local workspace_nvim
-local workspace_nvimrc
+local uv = assert(vim.uv)
+
+local patch_dir
+local local_nvimrc
 local has_probed = false
 local trust_file = vim.fn.stdpath('data') .. '/trusted_workspaces'
 local ignore_file = vim.fn.stdpath('data') .. '/ignored_workspaces'
@@ -18,8 +20,6 @@ local restrict_mode = true
 function M.is_restrict()
   return restrict_mode
 end
-
-local uv = vim.uv or vim.loop
 
 local function get_hash(path)
   local stat = uv.fs_stat(path)
@@ -105,10 +105,10 @@ local function ignore_path(path)
 end
 
 function M.load_main()
-  if not workspace_nvim then
+  if not Profile.allow_workspace_patch or not patch_dir then
     return
   end
-  local init_lua = workspace_nvim .. '/init.lua'
+  local init_lua = patch_dir .. '/init.lua'
   if Profile.workspace_patch_always_restrict then
     restrict_mode = vim.fn.filereadable(init_lua) == 1
     return
@@ -141,34 +141,38 @@ function M.load_main()
     elseif choice == 2 then
       ignore_path(init_lua)
     elseif choice == 3 then
-      vim.cmd('edit ' .. init_lua)
+      vim.cmd.edit { args = { init_lua } }
     end
     restrict_mode = true
   end
 end
 
----@return string? workspace_nvim, string? workspace_nvimrc
+---@return string? patch_dir, string? local_nvimrc
 function M.probe()
   if has_probed then
-    return workspace_nvim, workspace_nvimrc
+    return patch_dir, local_nvimrc
   end
   local CWD = require 'utils.fs'.cwd()
-  local workspace_patch_dir = CWD .. '/.nvim'
-  local secondary = CWD .. '/.vscode/nvim'
-  local has_ws = false
-  if vim.fn.isdirectory(workspace_patch_dir) == 1 then
-    has_ws = true
-  elseif vim.fn.isdirectory(secondary) == 1 then
-    workspace_patch_dir = secondary
-    has_ws = true
+  local patch_dir_candidates = {
+    CWD .. '/.nvim',
+    CWD .. '/.vscode/nvim',
+  }
+  for _, cand in ipairs(patch_dir_candidates) do
+    local stat = uv.fs_stat(cand)
+    if stat and stat.type == 'directory' then
+      patch_dir = cand
+      break
+    end
   end
-  workspace_nvim = workspace_patch_dir
-  local nvimrc_path = workspace_patch_dir .. '/nvimrc.json'
-  if has_ws and vim.fn.filereadable(nvimrc_path) == 1 then
-    workspace_nvimrc = nvimrc_path
+  if patch_dir then
+    local nvimrc_path = patch_dir .. '/nvimrc.json'
+    local stat = uv.fs_stat(nvimrc_path)
+    if stat and stat.type == 'directory' then
+      local_nvimrc = nvimrc_path
+    end
   end
   has_probed = true
-  return workspace_nvim, workspace_nvimrc
+  return patch_dir, local_nvimrc
 end
 
 function M.setup()
@@ -180,8 +184,8 @@ function M.setup()
     M.probe()
   end
 
-  if workspace_nvim then
-    vim.opt.runtimepath:prepend(workspace_nvim)
+  if patch_dir then
+    vim.opt.runtimepath:prepend(patch_dir)
   end
 end
 
