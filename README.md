@@ -20,7 +20,7 @@
 
 Most configs are a list of plugins plus options. This one is **tuned around a workflow**:
 
-- **Configurable as data, not code.** A single `nvimrc.json` plus env vars drive everything — features, languages, diagnostics. No hunting through Lua.
+- **Configurable as data, not code.** A single user-level `nvimrc.json` plus env vars drive everything — features, languages, diagnostics. A workspace may optionally merge its own patch config and runtime files. No hunting through Lua.
 - **Fewer plugins, hand-tuned behavior.** Notifications, messages, the command line, tabs, and sessions are reimplemented from scratch to fit this workflow.
 
 Plus the usual — completion, fuzzy finder, Treesitter, LSP, formatting, statusline. Nothing exotic to list.
@@ -33,11 +33,9 @@ Plus the usual — completion, fuzzy finder, Treesitter, LSP, formatting, status
 
 ## Requirements
 
-Some binaries should be installed before launch the configuration.
+Some binaries should be installed before launching the configuration.
 
-- `make` for markdown previewer
-
-- `yarn` for markdown previewer
+- `node` and `yarn` for markdown previewer
 
 - `websocat` for typst previewer
 
@@ -57,7 +55,7 @@ Some binaries should be installed before launch the configuration.
 
 > [!CAUTION]
 >
-> This configuration only work for **nvim >= 0.12**
+> This configuration only works with **nvim >= 0.12**
 
 ## Try it now
 
@@ -83,12 +81,12 @@ dir. Here're customizable items:
 <!-- docgen@profile -->
 
 - Big File
-  - _`bigfile_size_byte`_ — average byte size
+  - _`bigfile_size_byte`_ — buffer byte size that triggers bigfile mode
     - **Type:** `number`
     - **ENV:** `NVIM_BIGFILE_SIZE_BYTE`
     - **Defaults:** `2097152`
 
-  - _`bigfile_size_line`_ — average line length (useful for minified files)
+  - _`bigfile_size_line`_ — line count that triggers bigfile mode
     - **Type:** `number`
     - **ENV:** `NVIM_BIGFILE_SIZE_LINE`
     - **Defaults:** `100000`
@@ -232,7 +230,7 @@ dir. Here're customizable items:
     - **Defaults:** `false`
 
 - Workspace
-  - _`allow_workspace_patch`_ — allow editor patch its behavior according to workspace config
+  - _`allow_workspace_patch`_ — load executable runtime files from the workspace patch
     - **Type:** `boolean`
     - **ENV:** `NVIM_ALLOW_WORKSPACE_PATCH`
     - **Defaults:** `false`
@@ -242,5 +240,13 @@ dir. Here're customizable items:
 > [!NOTE]
 >
 > Environment variables are still available. They have higher priority than JSON configured values.
+
+## Workspace patch
+
+A workspace can extend the runtime from `.nvim/` or `.vscode/nvim/`. When
+`allow_workspace_patch` is enabled, its `plugin/`, `after/plugin/`, and other
+runtime files are loaded normally. Workspace patch code is executable: only
+enable it for trusted workspaces. See
+[doc/arch/workspace.md](./doc/arch/workspace.md).
 
 ## License [MIT](./LICENSE)

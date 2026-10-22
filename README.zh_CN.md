@@ -20,7 +20,7 @@
 
 大多数配置都是插件列表加上选项。而这个配置是**围绕工作流程**进行优化的：
 
-- **以数据而非代码的形式进行配置。** 一个 `nvimrc.json` 文件加上环境变量即可驱动所有功能——特性、语言、诊断。无需费力地在 Lua 代码中摸索。
+- **以数据而非代码的形式进行配置。** 一个用户级 `nvimrc.json` 文件加上环境变量即可驱动主要功能——特性、语言、诊断。工作区可以选择合并自己的 patch 配置和运行时文件，无需费力地在 Lua 代码中摸索。
 - **插件更少，行为经过精心调校。** 通知、消息、命令行、标签页和会话功能都经过重新实现，以适应这种工作流程。
 
 此外，还有一些常用功能——代码补全、模糊查找、Treesitter、LSP、格式化、状态栏。没有什么特别之处。
@@ -35,11 +35,9 @@
 
 在运行配置之前，需要安装一些二进制文件。
 
-- `make` 用于 Markdown 预览器
+- `node` 和 `yarn` 用于 Markdown 预览器
 
-- `yarn` 用于 Markdown 预览器
-
-- `websocat` 用于typst 预览器
+- `websocat` 用于 typst 预览器
 
 - `rg` 用于模糊查找器
 
@@ -82,12 +80,12 @@ nvim # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
 <!-- docgen@profile -->
 
 - 大文件支持
-  - _`bigfile_size_byte`_ — 平均字节大小
+  - _`bigfile_size_byte`_ — 触发大文件模式的缓冲区字节数
     - **Type:** `number`
     - **ENV:** `NVIM_BIGFILE_SIZE_BYTE`
     - **Defaults:** `2097152`
 
-  - _`bigfile_size_line`_ — 平均行长度（适用于压缩文件）
+  - _`bigfile_size_line`_ — 触发大文件模式的行数
     - **Type:** `number`
     - **ENV:** `NVIM_BIGFILE_SIZE_LINE`
     - **Defaults:** `100000`
@@ -230,17 +228,24 @@ nvim # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
     - **Defaults:** `false`
 
 - 工作区
-  - _`allow_workspace_patch`_ — 允许编辑器根据工作区配置修改其行为
+  - _`allow_workspace_patch`_ — 允许从工作区 patch 加载可执行运行时文件
     - **Type:** `boolean`
     - **ENV:** `NVIM_ALLOW_WORKSPACE_PATCH`
     - **Defaults:** `false`
 
-    <!-- enddoc@profile -->
+<!-- enddoc@profile -->
 
 > [!NOTE]
 >
 > 环境变量仍然可用，且优先级高于 JSON 配置值。
 
-## 许可证 [MIT](../LICENSE)
+## 工作区 patch
+
+工作区可以通过 `.nvim/` 或 `.vscode/nvim/` 扩展运行时。启用
+`allow_workspace_patch` 后，其中的 `plugin/`、`after/plugin/` 等运行时文件会按
+Neovim 的正常规则加载。工作区 patch 是可执行代码，请只在信任的工作区中启用。
+详见 [doc/arch/workspace.md](./doc/arch/workspace.md)。
+
+## 许可证 [MIT](./LICENSE)
 
 > **該簡體中文版本完全由谷歌翻譯生成**

@@ -28,9 +28,9 @@
 ---|'moon'
 
 ---@class Profile
----@field allow_workspace_patch boolean allow editor patch its behavior according to workspace config
----@field bigfile_size_byte number average byte size
----@field bigfile_size_line number average line length (useful for minified files)
+---@field allow_workspace_patch boolean load executable runtime files from the workspace patch
+---@field bigfile_size_byte number buffer byte size that triggers bigfile mode
+---@field bigfile_size_line number line count that triggers bigfile mode
 ---@field blink_use_binary boolean blink.cmp use prebuild binary instead of building
 ---@field clang_format_path string assign `clang-format` binary path
 ---@field clangd_path string assign `clangd` binary path

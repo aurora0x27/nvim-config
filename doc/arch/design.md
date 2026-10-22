@@ -9,9 +9,10 @@ details live in their own files under `doc/arch/`.
 In this config, nvim is not treated as a daemon you keep alive — it's an editing task
 spawned by a workspace. This single assumption drives most of the design:
 
-- **State is externalized, not accumulated.** Everything that matters is written to
-  disk: sessions, undo history, shaDa, swap files, and the buffer-pool layout
-  (which tab holds which buffers). Memory is a scratchpad, not the source of truth.
+- **State is externalized, not accumulated.** When persistence is enabled,
+  everything that matters is written to disk: sessions, undo history, shaDa, swap
+  files, and the buffer-pool layout (which tab holds which buffers). Memory is a
+  scratchpad, not the source of truth.
 - **Startup is cheap on purpose.** Bytecode is cached (`vim.loader`), the runtimepath
   is reset to a minimal set, and plugins load lazily. Restart is the recovery
   mechanism, so it must be fast and lossless.
@@ -55,7 +56,7 @@ Policy ("what to enable") is separated from implementation ("how a plugin is set
 
 - `lua/core/profile/` resolves editor behavior from `nvimrc.json` + environment
   variables, validated against a schema and merged with fixed precedence
-  (ENV > JSON > defaults).
+  (ENV > workspace nvimrc.json > user nvimrc.json > defaults).
 - `lua/core/lang/` turns language capability declarations into concrete lists —
   which LSPs to install, which Treesitter parsers, which formatters map to which
   filetype.
@@ -74,8 +75,11 @@ plugin configs:
 
 - Runtime globals (`Profile`, `Lang`, `Bus`) are the current API surface — other code
   queries them instead of reading env vars or JSON directly.
-- The workspace patch (`.nvim` / `.vscode/nvim`) is a per-project extension point,
-  guarded by a trust model to avoid arbitrary code execution.
+- The workspace patch (`.nvim` / `.vscode/nvim`) is a per-project extension point.
+  When `allow_workspace_patch` is enabled, its runtime directories are added to
+  the rtp and its `plugin/` and `after/plugin/` scripts are executed. There is no
+  trust prompt: only enable this for workspaces you trust. See
+  [`workspace.md`](./workspace.md).
 - A self-hosted module loader is **no longer in development**, and its draft has been
   removed. lazy.nvim already provides a good enough experience; replacing it would
   mean spending a lot of effort maintaining a new plugin manager to squeeze out

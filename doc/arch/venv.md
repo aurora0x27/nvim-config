@@ -17,9 +17,9 @@ The sandbox is what makes the current complexity survivable:
 - **Plugin upgrades.** Trying a new plugin version or a replacement is a sandbox run,
   not a production gamble.
 
-It was originally built for isolated debugging in the early days, before the config
-could reload itself. It is now the standard workflow for feature work, refactors,
-and upgrades.
+It was originally built for isolated debugging in the early days, before the
+current sandbox workflow existed. It is now the standard workflow for feature
+work, refactors, and upgrades.
 
 ## How it works
 

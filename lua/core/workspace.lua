@@ -1,8 +1,11 @@
 --------------------------------------------------------------------------------
 -- Workspace Patch
 --
--- Read workspace settings from `.nvim` or `.vscode/nvim`. Propose for the
--- secondary directory is that most projects have `.vscode/` in their gitignores
+-- Discover the workspace patch directory and its `nvimrc.json`. Runtime
+-- directories are injected into lazy's rtp by `init.lua`.
+--
+-- `.nvim` is preferred; `.vscode/nvim` is the fallback because most projects
+-- already gitignore `.vscode/`.
 --------------------------------------------------------------------------------
 local M = {}
 

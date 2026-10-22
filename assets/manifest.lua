@@ -220,30 +220,30 @@ local Decls = {
   bigfile_size_byte = {
     type = 'number',
     default = 2097152,
-    desc = 'average byte size',
+    desc = 'buffer byte size that triggers bigfile mode',
     category = 'bigfile',
     i18n = {
-      zh_CN = '平均字节大小',
+      zh_CN = '触发大文件模式的缓冲区字节数',
     },
   },
 
   bigfile_size_line = {
     type = 'number',
     default = 100000,
-    desc = 'average line length (useful for minified files)',
+    desc = 'line count that triggers bigfile mode',
     category = 'bigfile',
     i18n = {
-      zh_CN = '平均行长度（适用于压缩文件）',
+      zh_CN = '触发大文件模式的行数',
     },
   },
 
   allow_workspace_patch = {
     type = 'boolean',
     default = false,
-    desc = 'allow editor patch its behavior according to workspace config',
+    desc = 'load executable runtime files from the workspace patch',
     category = 'workspace',
     i18n = {
-      zh_CN = '允许编辑器根据工作区配置修改其行为',
+      zh_CN = '允许从工作区 patch 加载可执行运行时文件',
     },
   },
 

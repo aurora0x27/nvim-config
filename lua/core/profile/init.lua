@@ -14,21 +14,25 @@
 --      Highest priority. Intended for temporary overrides, debug sessions,
 --      CI/testing environments, and externally managed deployment settings.
 --
---   2. User configuration files
+--   2. Merged configuration files
+--      Passed through `files_to_merge`, normally the workspace patch's
+--      `nvimrc.json`. These override the user configuration.
+--
+--   3. User configuration files
 --      Default location:
 --
 --          stdpath("config") .. "/nvimrc.json"
 --
 --      User configuration overrides schema defaults.
 --
---   3. Default schema
+--   4. Default schema
 --      Built-in fallback values generated from:
 --
 --          core.profile.defaults
 --
 -- Priority:
 --
---      ENV > nvimrc.json > merged config files > defaults
+--      ENV > files_to_merge > user nvimrc.json > defaults
 --
 -- Configuration values are resolved once during startup. After setup(), the
 -- profile should be treated as immutable runtime metadata.

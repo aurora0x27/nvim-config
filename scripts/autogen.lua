@@ -71,7 +71,7 @@ Options:
         Documentation languages.
 
         '_'      -> README.md
-        'zh_CN'  -> doc/README.zh_CN.md
+        'zh_CN'  -> README.zh_CN.md
 
     -h, --help
         Show this help message.
