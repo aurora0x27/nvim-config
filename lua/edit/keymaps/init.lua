@@ -98,18 +98,23 @@ function M.setup()
   -- Helix style navigation
   ----------------------------------------------------------------------------
   map(
-    { 'n' },
+    { 'n', 'x' },
     'gh',
     '0',
     { noremap = true, silent = true, desc = 'Line start' }
   )
   map(
-    { 'n' },
+    { 'n', 'x' },
     'g-',
     '^',
     { noremap = true, silent = true, desc = 'Line start(non-space)' }
   )
-  map({ 'n' }, 'gl', '$', { noremap = true, silent = true, desc = 'Line end' })
+  map(
+    { 'n', 'x' },
+    'gl',
+    '$',
+    { noremap = true, silent = true, desc = 'Line end' }
+  )
 end
 
 return M
