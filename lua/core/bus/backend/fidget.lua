@@ -18,7 +18,7 @@ local function get_title(msg)
 end
 
 local MODE_OF_TAG = {
-  ['msg.show.bufwrite'] = 'append',
+  ['msg.show.progress'] = 'append',
   ['msg.show.lua_print'] = 'append',
   ['msg.show.echo'] = 'append',
   ['msg.show.echomsg'] = 'replace',
@@ -62,7 +62,6 @@ function M.setup()
       'msg.show.echo',
       'msg.show.echomsg',
       'msg.show.unknown',
-      'msg.show.bufwrite',
       'msg.show.progress',
       'msg.show.list_cmd',
       'msg.show.lua_print',

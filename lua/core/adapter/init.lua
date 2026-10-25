@@ -167,7 +167,6 @@ local KIND_TITLE = {
   rpc_error = 'RPC Error',
   echoerr = 'Error',
   wmsg = 'Warning',
-  bufwrite = 'Write',
   quickfix = 'Quickfix',
   progress = 'Progress',
 }
