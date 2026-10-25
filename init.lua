@@ -99,6 +99,23 @@ end
 -- Phase 3: Load user defined settings after Lazy initialization
 --------------------------------------------------------------------------------
 vim.api.nvim_create_autocmd('User', {
+  pattern = 'LazyDone',
+  once = true,
+  callback = function()
+    require 'edit.fold'.setup()
+    require 'edit.diagnostic'.setup()
+  end,
+})
+
+vim.api.nvim_create_autocmd('User', {
+  pattern = 'VeryLazy',
+  once = true,
+  callback = function()
+    require 'core.persist'.activate()
+  end,
+})
+
+vim.api.nvim_create_autocmd('User', {
   pattern = 'LazyVimStarted',
   once = true,
   callback = vim.schedule_wrap(function()
@@ -114,34 +131,10 @@ vim.api.nvim_create_autocmd('User', {
     require 'edit.options'.setup()
     require 'edit.autocmd'.setup()
     require 'edit.ssh-mode'.setup()
+    require 'edit.punc-conv'.setup()
 
     require 'edit.repl'.setup()
   end),
-})
-
--- This should be initialized when buffer enter
--- NOTE: `nvim_create_autocmd` with multiple events, and `once` flag
--- creats one-shot autocmds for each event.
-local _done1 = false
-vim.api.nvim_create_autocmd({ 'BufReadPost', 'BufNewFile' }, {
-  once = true,
-  callback = function()
-    if _done1 then
-      return
-    end
-    require 'edit.fold'.setup()
-    require 'edit.punc-conv'.setup()
-    require 'edit.diagnostic'.setup()
-    _done1 = true
-  end,
-})
-
-vim.api.nvim_create_autocmd('User', {
-  pattern = 'VeryLazy',
-  once = true,
-  callback = function()
-    require 'core.persist'.activate()
-  end,
 })
 
 --------------------------------------------------------------------------------
