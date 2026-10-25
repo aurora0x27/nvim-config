@@ -68,8 +68,10 @@ nvim     # Launch neovim on this config, without making changes to your ~/.local
 ```
 
 - `venv` usage:
+  - Run `./venv -h` to see all options.
   - Use `NVIM_BINARY` to assign _absolute path_ for nvim binary `NVIM_BINARY=/opt/nvim@fresh/bin/nvim ./venv`
-  - Use `--fish` to launch a debug fish shell.
+  - The sandbox launches fish by default; use `-sh zsh` to launch a zsh shell instead.
+  - Use `-prof-count` and `-prof-warmup` to configure the `prof-startup` command.
 
 Or, you may download the repo to `~/.config/<name>`, and run `NVIM_APPNAME=<name> nvim` to launch
 

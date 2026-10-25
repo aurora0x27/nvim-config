@@ -37,16 +37,27 @@ caching also stays inside the sandbox.
 ## Usage
 
 ```sh
-./venv    # enter the sandbox shell (zsh)
+./venv    # enter the sandbox shell (fish)
 nvim      # launch the sandboxed nvim
 exit      # leave; all state remains in nvim-cache/
 
+./venv -h                                   # show help
+./venv -sh zsh                              # use zsh instead of fish
+./venv -sh zsh -prof-count 50 -prof-warmup 2  # customize startup profiling
 NVIM_BINARY=/absolute/path/to/nvim ./venv   # use a specific binary
-./venv --fish                                # fish instead of zsh
 ```
 
-`nvim` is aliased inside the shell. `NVIM_BINARY` overrides the binary and must be
-an absolute path (`~` is expanded). Nesting `./venv` inside itself is rejected.
+| option           | default | purpose                            |
+| ---------------- | ------- | ---------------------------------- |
+| `-sh`, `--shell` | `fish`  | shell to launch (`fish` or `zsh`)  |
+| `-prof-count`    | `100`   | iteration count for `prof-startup` |
+| `-prof-warmup`   | `3`     | warmup runs for `prof-startup`     |
+| `-h`, `--help`   |         | print help and exit                |
+
+`nvim` and `prof-startup` are available inside the shell in both fish and zsh.
+`prof-startup` requires the `vim-startuptime` binary. `NVIM_BINARY` overrides the
+binary and must be an absolute path (`~` is expanded). Nesting `./venv` inside
+itself is rejected.
 
 ## Environment
 
@@ -57,5 +68,7 @@ an absolute path (`~` is expanded). Nesting `./venv` inside itself is rejected.
 | `NVIM_CONFIG_DEV_BINARY`      | resolved binary, forced absolute                               |
 | `VIRTUAL_ENV`                 | sentinel reused to reject nested shells                        |
 
-There is no state beyond `nvim-cache/`; the shell only prints a `[Note]` banner and
-guard errors (missing binary, non-absolute `NVIM_BINARY`).
+There is no state beyond `nvim-cache/`. On launch, `venv` prints a summary of the
+resolved config root, cache root, binary, shell, and profiling settings. Guard
+errors cover a missing binary, a non-absolute `NVIM_BINARY`, unsupported shells,
+invalid numeric options, and nested shells.

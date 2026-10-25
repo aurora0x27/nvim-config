@@ -67,8 +67,10 @@ nvim # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
 ```
 
 - `venv` 使用:
+  - 运行 `./venv -h` 查看全部选项。
   - 使用 `NVIM_BINARY` 来指定 nvim 二进制的 _绝对路径_ `NVIM_BINARY=/opt/nvim@fresh/bin/nvim ./venv`
-  - 使用 `--fish` 来启动一个 fish shell 调试环境
+  - 沙盒默认启动 fish；使用 `-sh zsh` 可改为启动 zsh。
+  - 使用 `-prof-count` 和 `-prof-warmup` 配置 `prof-startup` 命令。
 
 或者，您可以将仓库下载到 `~/.config/<name>`, 然后运行 `NVIM_APPNAME=<name> nvim` 来启动它。
 

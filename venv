@@ -1,40 +1,241 @@
 #! /bin/bash
 
-RED='\033[0;31m'
-CYAN='\033[36m'
-BOLD='\033[1m'
-RESET='\033[0m'
+# ------------------------------------------------------------------------------
+# venv - isolated Neovim debug shell
+# ------------------------------------------------------------------------------
 
-[ -z ${VIRTUAL_ENV+x} ] || {
-    echo ""
-    echo -e $RED $BOLD "[!] Entering nested debug shell is not allowed" $RESET
+if [[ -t 1 && -z ${NO_COLOR:-} && ${TERM:-dumb} != dumb ]]; then
+    RED=$'\033[0;31m'
+    YELLOW=$'\033[0;33m'
+    CYAN=$'\033[36m'
+    BOLD=$'\033[1m'
+    DIM=$'\033[2m'
+    RESET=$'\033[0m'
+else
+    RED=''
+    YELLOW=''
+    CYAN=''
+    BOLD=''
+    DIM=''
+    RESET=''
+fi
+
+# Defaults ---------------------------------------------------------------------
+DEFAULT_SHELL='fish'
+DEFAULT_PROF_COUNT=100
+DEFAULT_PROF_WARMUP=3
+
+LAUNCH_SHELL=$DEFAULT_SHELL
+PROF_COUNT=$DEFAULT_PROF_COUNT
+PROF_WARMUP=$DEFAULT_PROF_WARMUP
+
+say() {
+    printf '%s\n' "$*"
+}
+
+warn() {
+    printf '%s\n' "${YELLOW}${BOLD}[!]${RESET} $*" >&2
+}
+
+die() {
+    printf '%s\n' "${RED}${BOLD}[!]${RESET} $*" >&2
+    printf '%s\n' "${DIM}Try \`$(basename "$0") -h\` for help.${RESET}" >&2
     exit 1
 }
 
-export NVIM_CONFIG_DEV_CONFIG_ROOT=$(dirname "$(realpath "$0")")
-export NVIM_CONFIG_DEV_CACHE_ROOT=$NVIM_CONFIG_DEV_CONFIG_ROOT/nvim-cache
-mkdir -p $NVIM_CONFIG_DEV_CACHE_ROOT/{share,state/log,cache,run,zdotdir}
+usage() {
+    cat <<EOF
+${BOLD}${CYAN}venv${RESET} - isolated Neovim debug shell
+
+${BOLD}USAGE${RESET}
+  $(basename "$0") [options]
+
+${BOLD}OPTIONS${RESET}
+  -sh, --shell <fish|zsh>   Shell to launch                  (default: ${DEFAULT_SHELL})
+  -prof-count <n>           Startup profile iterations       (default: ${DEFAULT_PROF_COUNT})
+  -prof-warmup <n>          Startup profile warmup runs      (default: ${DEFAULT_PROF_WARMUP})
+  -h, --help                Show this help and exit
+
+${BOLD}ENVIRONMENT${RESET}
+  NVIM_BINARY               Absolute path to the nvim binary
+                            (default: nvim found in PATH)
+
+${BOLD}INSIDE THE SHELL${RESET}
+  nvim                      Launch the sandboxed Neovim
+  prof-startup              Profile startup with vim-startuptime
+  exit                      Leave the sandbox
+
+${BOLD}EXAMPLES${RESET}
+  $(basename "$0")
+  $(basename "$0") -sh zsh
+  $(basename "$0") -sh zsh -prof-count 50 -prof-warmup 2
+
+${DIM}Sandbox state lives in nvim-cache/; the production config is never touched.${RESET}
+EOF
+}
+
+is_number() {
+    [[ $1 =~ ^[0-9]+$ ]]
+}
+
+# Parse arguments --------------------------------------------------------------
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -h | --help)
+            usage
+            exit 0
+            ;;
+        -sh | --shell)
+            [[ $# -ge 2 && $2 != -* ]] || die "option '$1' requires a value (fish or zsh)"
+            LAUNCH_SHELL=$2
+            shift 2
+            ;;
+        --shell=*)
+            LAUNCH_SHELL=${1#*=}
+            shift
+            ;;
+        -prof-count | --prof-count)
+            [[ $# -ge 2 ]] || die "option '$1' requires a number"
+            PROF_COUNT=$2
+            shift 2
+            ;;
+        --prof-count=*)
+            PROF_COUNT=${1#*=}
+            shift
+            ;;
+        -prof-warmup | --prof-warmup)
+            [[ $# -ge 2 ]] || die "option '$1' requires a number"
+            PROF_WARMUP=$2
+            shift 2
+            ;;
+        --prof-warmup=*)
+            PROF_WARMUP=${1#*=}
+            shift
+            ;;
+        # Backwards compatible shortcuts
+        --fish)
+            LAUNCH_SHELL=fish
+            shift
+            ;;
+        --zsh)
+            LAUNCH_SHELL=zsh
+            shift
+            ;;
+        -*)
+            die "unknown option: '$1'"
+            ;;
+        *)
+            die "unexpected argument: '$1'"
+            ;;
+    esac
+done
+
+# Validate ---------------------------------------------------------------------
+case $LAUNCH_SHELL in
+    fish | zsh) ;;
+    *) die "unsupported shell '$LAUNCH_SHELL' (choose fish or zsh)" ;;
+esac
+
+is_number "$PROF_COUNT" || {
+    die "profile count must be a positive integer (got: '$PROF_COUNT')"
+}
+is_number "$PROF_WARMUP" || {
+    die "profile warmup must be a non-negative integer (got: '$PROF_WARMUP')"
+}
+((PROF_COUNT > 0)) || {
+    die "profile count must be greater than 0 (got: '$PROF_COUNT')"
+}
+
+command -v "$LAUNCH_SHELL" >/dev/null 2>&1 ||
+    die "shell '$LAUNCH_SHELL' not found in PATH"
+
+[ -z ${VIRTUAL_ENV+x} ] || {
+    say ""
+    say "${RED}${BOLD}[!] Entering a nested debug shell is not allowed${RESET}"
+    exit 1
+}
+
+# Environment ------------------------------------------------------------------
+CONFIG_ROOT=$(dirname "$(realpath "$0")")
+CACHE_ROOT=$CONFIG_ROOT/nvim-cache
+mkdir -p "$CACHE_ROOT"/{share,state/log,cache,run,zdotdir}
+
+export NVIM_CONFIG_DEV_CONFIG_ROOT=$CONFIG_ROOT
+export NVIM_CONFIG_DEV_CACHE_ROOT=$CACHE_ROOT
 export VIRTUAL_ENV=nvim-dev
 
 export NVIM_CONFIG_DEV_BINARY=${NVIM_BINARY:-$(command -v nvim)}
 # expand `~`
 NVIM_CONFIG_DEV_BINARY="${NVIM_CONFIG_DEV_BINARY/#\~/$HOME}"
 
-echo ""
-[ -n "$NVIM_CONFIG_DEV_BINARY" ] || { echo -e $RED $BOLD "[!] nvim not found in PATH (set NVIM_BINARY)" $RESET; exit 1; }
-[[ "$NVIM_CONFIG_DEV_BINARY" != /* ]] && { echo -e $RED $BOLD "[!] NVIM_BINARY must be an absolute path (got: \`$NVIM_CONFIG_DEV_BINARY\`)" $RESET; exit 1; }
-echo -e $CYAN $BOLD "[Note]: Please run \`nvim\` to launch nvim and enter \`exit\` to exit debug shell" $RESET
+say ""
+[ -n "$NVIM_CONFIG_DEV_BINARY" ] || {
+    say "${RED}${BOLD}[!] nvim not found in PATH (set NVIM_BINARY)${RESET}"
+    exit 1
+}
+[[ $NVIM_CONFIG_DEV_BINARY == /* ]] || {
+    say "${RED}${BOLD}[!] NVIM_BINARY must be an absolute path \
+(got: \`$NVIM_CONFIG_DEV_BINARY\`)${RESET}"
+    exit 1
+}
 
-if [[ $1 == '--fish' ]]; then
-    fish -C "function nvim --desc 'debug launch nvim'; NVIM_CONFIG_DEV=1 command \"$NVIM_CONFIG_DEV_BINARY\" --clean -u \"$NVIM_CONFIG_DEV_CONFIG_ROOT\"/init.lua \$argv; end"
+# Banner -----------------------------------------------------------------------
+say " ${CYAN}${BOLD}[venv]${RESET}${DIM}·${RESET}Neovim debug sandbox"
+say ""
+printf '  %b%-8s%b %s\n' "$DIM" "config" "$RESET" "$NVIM_CONFIG_DEV_CONFIG_ROOT"
+printf '  %b%-8s%b %s\n' "$DIM" "cache" "$RESET" "$NVIM_CONFIG_DEV_CACHE_ROOT"
+printf '  %b%-8s%b %s\n' "$DIM" "binary" "$RESET" "$NVIM_CONFIG_DEV_BINARY"
+printf '  %b%-8s%b %s\n' "$DIM" "shell" "$RESET" "$LAUNCH_SHELL"
+printf '  %b%-8s%b %s iterations (%s warmup)\n' "$DIM" "profile" \
+"$RESET" "$PROF_COUNT" "$PROF_WARMUP"
+say ""
+
+if ! command -v vim-startuptime >/dev/null 2>&1; then
+    warn "vim-startuptime not found in PATH; \`prof-startup\` will be unavailable"
+fi
+
+say "${CYAN}${BOLD} [Note]${RESET} Use \`nvim\` as usual \
+and enter \`exit\` to leave the debug shell."
+say ""
+
+# Shell init -------------------------------------------------------------------
+if [[ $LAUNCH_SHELL == 'fish' ]]; then
+    read -r -d '' FISH_INIT <<EOF
+function nvim --desc 'debug launch nvim'
+    NVIM_CONFIG_DEV=1 command "$NVIM_CONFIG_DEV_BINARY" \
+    --clean \
+    -u "$NVIM_CONFIG_DEV_CONFIG_ROOT/init.lua" \
+    \$argv
+end
+function prof-startup --desc 'profile startup, require binary vim-startuptime'
+    NVIM_CONFIG_DEV=1 vim-startuptime -vimpath "$NVIM_CONFIG_DEV_BINARY" \
+    -count $PROF_COUNT \
+    -warmup $PROF_WARMUP \
+    -- --clean -u "$NVIM_CONFIG_DEV_CONFIG_ROOT/init.lua" \
+    \$argv
+end
+EOF
+    fish -C "$FISH_INIT"
 else
     ZDOTDIR=$NVIM_CONFIG_DEV_CACHE_ROOT/zdotdir
-cat > "$ZDOTDIR/.zshrc" <<EOF
+    cat >"$ZDOTDIR/.zshrc" <<EOF
 [[ -f ~/.zshrc ]] && source ~/.zshrc
-alias nvim="NVIM_CONFIG_DEV=1 command \"$NVIM_CONFIG_DEV_BINARY\" --clean -u \"$NVIM_CONFIG_DEV_CONFIG_ROOT\"/init.lua"
+nvim() {
+    NVIM_CONFIG_DEV=1 command "$NVIM_CONFIG_DEV_BINARY" \
+    --clean \
+    -u "$NVIM_CONFIG_DEV_CONFIG_ROOT/init.lua" \
+    "\$@"
+}
+prof-startup() {
+    NVIM_CONFIG_DEV=1 vim-startuptime -vimpath "$NVIM_CONFIG_DEV_BINARY" \
+    -count $PROF_COUNT \
+    -warmup $PROF_WARMUP \
+    -- --clean -u "$NVIM_CONFIG_DEV_CONFIG_ROOT/init.lua" \
+    "\$@"
+}
 EOF
     ZDOTDIR="$ZDOTDIR" zsh
 fi
 
-echo ""
-echo -e $CYAN $BOLD "[OK] Leaving debug shell..." $RESET
+say ""
+say "${CYAN}${BOLD}[OK]${RESET} Leaving debug shell..."
