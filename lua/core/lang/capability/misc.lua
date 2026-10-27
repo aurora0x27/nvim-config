@@ -56,7 +56,7 @@ return {
   },
 
   {
-    ft = { 'json', 'css', 'html', 'astro' },
+    ft = { 'json', 'scss', 'css', 'html', 'astro' },
     treesitter = true,
     formatter = { name = 'prettier' },
   },
