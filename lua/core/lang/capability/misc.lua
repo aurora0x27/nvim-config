@@ -17,6 +17,7 @@ return {
       'asm',
       'awk',
       'bash',
+      'bpftrace',
       'diff',
       'make',
       'dockerfile',
