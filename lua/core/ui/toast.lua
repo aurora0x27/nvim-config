@@ -272,6 +272,22 @@ local function layout_col(anchor)
   return vim.o.columns - LAYOUT[anchor].margin_right
 end
 
+local HAS_NVIM_REDRAW = vim.api.nvim__redraw ~= nil
+
+-- Force flush and redraw screen when waiting for input on cmdline mode
+local function flush_if_waiting()
+  if vim.fn.getcmdtype() == '' then
+    return
+  end
+
+  if HAS_NVIM_REDRAW then
+    pcall(vim.api.nvim__redraw, { flush = true })
+  else
+    ---@diagnostic disable-next-line
+    pcall(vim.cmd, 'redraw')
+  end
+end
+
 -- Reflow all toasts after any add / remove / resize.
 -- Toasts are stacked upward from the bottom; STACK[1] is bottommost.
 ---@param anchor ToastAnchor
@@ -297,6 +313,8 @@ local function reflow(anchor)
       cursor = cursor + step * (total + cfg.gap)
     end
   end
+
+  flush_if_waiting()
 end
 
 --------------------------------------------------------------------------------
