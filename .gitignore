@@ -1,3 +1,5 @@
+.cache/
+.vscode/
 nvim-cache/
 nvimrc.json
 *.log
