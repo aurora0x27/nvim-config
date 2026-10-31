@@ -139,20 +139,24 @@ local Opt = vim.deepcopy(BUS_OPT_DEFAULT)
 ---@field Ready          boolean cache message when ui not ready
 ---@field Queue          Message[] fifo message buffer
 ---@field Busy           boolean is dispatching message?
----@field QueueEnd       integer end(head) of message, point to the message to emit
+---@field QueueEnd       integer end(head) of the message queue,
+---                              point to the message to emit
 ---@field FlushDepth     integer
+---@field FlushScheduled boolean has scheduled a flush operation
 ---@field Subscribers    table<string, BusSubscriber>
 ---@field Observers      table<string, BusObserverCb>
 ---@field RouteCache     table<string, table<string, boolean>>
 ---@field PanicBuffer    BusPanicRecord[]
 
----@class BusStatView readonly view of BusStat, Queue and Route cache are not copied
+---@class BusStatView readonly view of BusStat, Queue and Route cache
+---                   are *not* copied
 ---@field IsInitialized boolean
 ---@field Ready         boolean cache message when ui not ready
 ---@field QueueCapacity integer
 ---@field Busy          boolean is dispatching message?
----@field QueueEnd      integer end(head) of message, point to the message to emit
+---@field QueueEnd      integer
 ---@field FlushDepth    integer
+---@field FlushScheduled boolean
 ---@field Subscribers   string[]
 ---@field Observers     string[]
 ---@field PanicBuffer   BusPanicRecord[]
@@ -165,6 +169,7 @@ local Stat = {
   Busy = false,
   QueueEnd = 1,
   FlushDepth = 0,
+  FlushScheduled = false,
   Subscribers = {},
   Observers = {},
   RouteCache = {},
@@ -190,6 +195,7 @@ function M.inspect()
     Busy = Stat.Busy,
     Ready = Stat.Ready,
     FlushDepth = Stat.FlushDepth,
+    FlushScheduled = Stat.FlushScheduled,
     IsInitialized = Stat.IsInitialized,
     Observers = vim.tbl_keys(Stat.Observers),
     Subscribers = vim.tbl_keys(Stat.Subscribers),
@@ -350,12 +356,27 @@ local function matches(backend, tag)
   return false
 end
 
+-- Request for a deferred flush operation
+local function schedule_flush()
+  if not Stat.Ready or Stat.FlushScheduled then
+    return
+  end
+  Stat.FlushScheduled = true
+  vim.schedule(function()
+    Stat.FlushScheduled = false
+    M.flush_queue()
+  end)
+end
+
+local sprintf = string.format
+
 ---@param msg Message
 local function bus_dispatch(msg)
-  if Stat.Busy then
+  if vim.in_fast_event() or Stat.Busy then
     if #Stat.Queue < InitOpt.cache_max then
       table.insert(Stat.Queue, msg)
     end
+    schedule_flush()
     return
   end
 
@@ -368,7 +389,7 @@ local function bus_dispatch(msg)
         local ok, should_stop = pcall(backend.handler, msg)
         if not ok then
           bus_log(
-            string.format(
+            sprintf(
               "[Dispatcher] Handler '%s' panic for: '%s'",
               backend.id,
               should_stop
@@ -392,15 +413,36 @@ local function clear_queue()
   Stat.QueueEnd = 1
 end
 
+---@return boolean
+local function has_pending()
+  return Stat.QueueEnd <= #Stat.Queue
+end
+
+---@param msg Message
+local function safe_dispatch(msg)
+  local ok, err = pcall(bus_dispatch, msg)
+  if not ok then
+    bus_log(
+      '[Dispatcher] caused a panic for `' .. err .. '`',
+      vim.log.levels.ERROR
+    )
+    -- NOTE: keep Busy held while notifying observers; release after
+    Stat.Busy = false
+  end
+end
+
 function M.flush_queue()
-  if not Stat.Ready or Stat.Busy then
-    vim.schedule(M.flush_queue)
+  if not Stat.Ready then
+    return
+  end
+  if vim.in_fast_event() or Stat.Busy then
+    schedule_flush()
     return
   end
   if Stat.FlushDepth >= FLUSH_MAX_DEPTH then
     -- force empty queue
     bus_log(
-      string.format(
+      sprintf(
         '[Queue Flusher] flush_queue exceeded max depth (%d), queue dropped (%d msgs)',
         FLUSH_MAX_DEPTH,
         #Stat.Queue
@@ -426,15 +468,7 @@ function M.flush_queue()
   for i = batch_start, batch_end do
     local msg = Stat.Queue[i]
     Stat.QueueEnd = i + 1
-    local ok, err = pcall(bus_dispatch, msg)
-    if not ok then
-      -- release lock
-      Stat.Busy = false
-      bus_log(
-        '[Queue Flusher] dispatcher panic for `' .. err .. '`',
-        vim.log.levels.ERROR
-      )
-    end
+    safe_dispatch(msg)
   end
 
   if #Stat.Queue > batch_end then
@@ -448,28 +482,28 @@ function M.flush_queue()
 end
 
 ---@param msg Message
+local function push(msg)
+  if #Stat.Queue < InitOpt.cache_max then
+    table.insert(Stat.Queue, msg)
+  end
+end
+
+---@param msg Message
 ---@return integer id
 local function emit_impl(msg)
   local id = msg.id
-  if not Stat.Ready or Stat.Busy then
-    -- push when ui not ready or busy
-    if #Stat.Queue < InitOpt.cache_max then
-      table.insert(Stat.Queue, msg)
-    end
+  if vim.in_fast_event() or not Stat.Ready or Stat.Busy then
+    push(msg)
+    schedule_flush()
     return id
   end
-  -- dispatch
-  local ok, err = pcall(bus_dispatch, msg)
-  if not ok then
-    -- unlock dispatcher avoid locked forever
-    Stat.Busy = false
-    bus_log(
-      '[Emitter] dispatcher panic for `' .. err .. '`',
-      vim.log.levels.ERROR
-    )
+  if has_pending() then
+    push(msg)
+  else
+    safe_dispatch(msg)
   end
-  if Stat.Ready and #Stat.Queue > 0 then
-    vim.schedule(M.flush_queue)
+  if has_pending() then
+    M.flush_queue()
   end
   return id
 end
