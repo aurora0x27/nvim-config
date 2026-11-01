@@ -79,22 +79,6 @@ local BATCH_KINDS = {
 
 local BATCH_DELAY_MS = 20 -- flush after 20ms idle
 
---- Emit a message to bus, Wrapper function
---- if in confirm mode, handle it carefully, use sync mode
---- in normal cases just schedule it to next loop, do not block
----@param tag string
----@param level integer
----@param content string|table
----@param data? table
----@param cover_id? integer
-local function emit_wrap(tag, level, content, data, cover_id)
-  if Stat.IsConfirm then
-    Bus.emit(tag, level, content, data, cover_id)
-  else
-    vim.schedule(bind(Bus.emit, tag, level, content, data, cover_id))
-  end
-end
-
 ---@param kind string
 local function flush_batch(kind)
   local b = MsgBatches[kind]
@@ -116,7 +100,7 @@ local function flush_batch(kind)
     batched = true,
   }
 
-  emit_wrap('msg.show.' .. kind, b.level, b.content, data, nil)
+  Bus.emit('msg.show.' .. kind, b.level, b.content, data, nil)
 end
 
 ---@type NvimMsgTuple
@@ -220,7 +204,7 @@ function Handlers.on_msg_show(
     end
   end
 
-  emit_wrap(tag, level, content, {
+  Bus.emit(tag, level, content, {
     kind = kind,
     title = KIND_TITLE[kind] or 'Messages',
     offsets = { 1 },
