@@ -446,11 +446,82 @@ local function safe_dispatch(msg)
   Stat.Busy = false
 end
 
+---@param path string
+---@param summary string
+local function dump_state_summary(path, summary)
+  local fd, err = vim.uv.fs_open(path, 'w', tonumber('644', 8))
+  assert(fd, 'Cannot open `' .. path .. (err and '` because ' .. err or ''))
+  vim.uv.fs_write(fd, summary, 0)
+  vim.uv.fs_close(fd)
+end
+
+local PANIC_FMT = [[
+[Queue Flusher] drain loop exceeded limit (%d), queue dropped (%d msgs)
+Bus core state is dumped to `%s`
+]]
+
+local function panic_stat_dump(epoch)
+  local path = vim.fn.stdpath('log')
+    .. sprintf(
+      '/bus_state_dump-%d-%s-%d.log',
+      vim.uv.os_getpid(),
+      os.date '%H-%M-%S',
+      vim.uv.now()
+    )
+  local summary = {
+    IsInitialized = Stat.IsInitialized,
+    Ready = Stat.Ready,
+    Busy = Stat.Busy,
+    LastEmitted = Stat.LastEmitted,
+    Flushing = Stat.Flushing,
+    FlushScheduled = Stat.FlushScheduled,
+    QueueSize = #Stat.Queue,
+    QueuePending = #Stat.Queue - Stat.LastEmitted,
+    QueueLimit = InitOpt.queue_limit,
+    RouteCache = Stat.RouteCache,
+    MaxEpoch = InitOpt.max_epoch,
+    Epoch = epoch,
+    Subscribers = vim.tbl_keys(Stat.Subscribers),
+    Observers = vim.tbl_keys(Stat.Observers),
+    Queue = Stat.Queue,
+  }
+  local data = vim.inspect(summary)
+  local ok, err = pcall(dump_state_summary, path, data)
+  if ok then
+    local panic_msg = sprintf(
+      PANIC_FMT,
+      InitOpt.max_epoch,
+      #Stat.Queue - Stat.LastEmitted,
+      path
+    )
+    bus_log(panic_msg, vim.log.levels.ERROR)
+    bus_panic(panic_msg, vim.log.levels.ERROR)
+  else
+    bus_panic(
+      sprintf(
+        'Log would write to `%s` but failed because %s\n%s',
+        path,
+        err,
+        data
+      ),
+      vim.log.levels.ERROR
+    )
+    bus_log(
+      sprintf(
+        'Cannot dump panic message to `%s`! Summary is in PanicBuffer',
+        path
+      ),
+      vim.log.levels.ERROR
+    )
+  end
+end
+
 local function loop_drain()
   local epoch = 0
   while has_pending() do
     if epoch >= InitOpt.max_epoch then
-      -- TODO: panic, dump bus state
+      -- panic, dump bus state
+      panic_stat_dump(epoch)
       clear_queue()
       break
     end
