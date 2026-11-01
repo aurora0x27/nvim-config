@@ -28,7 +28,7 @@ local ALWAYS_REPLACE_CURRENT_KIND = {
 -- Mode mapping: some message types naturally append content
 local MODE_OF_TAG = {
   ['notify'] = 'replace',
-  ['bus'] = 'replace',
+  ['bus'] = 'append',
   ['msg.show.emsg'] = 'append',
   ['msg.show.wmsg'] = 'append',
   ['msg.show.echoerr'] = 'append',
@@ -108,7 +108,8 @@ function M.setup()
 
     --- Resolve notification options
     ---@type ToastNotifyOpts
-    local toast_opts = { anchor = 'NE' }
+    local toast_opts =
+      { anchor = 'NE', title = msg.data and msg.data.title or 'Bus' }
 
     -- level: used for icon & default highlights
     toast_opts.level = msg.level
@@ -117,6 +118,7 @@ function M.setup()
   -- Subscribe to all message events we want to display as toasts
   Bus.register_subscriber(ID, {
     exact = {
+      'bus',
       'notify',
       'msg.clear',
       'msg.show.emsg',

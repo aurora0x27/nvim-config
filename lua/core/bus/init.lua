@@ -302,7 +302,8 @@ end
 ---@param msg string
 ---@param lvl? vim.log.levels
 local function bus_log(msg, lvl)
-  local built_msg = build_msg('bus', lvl or vim.log.levels.INFO, msg)
+  local built_msg =
+    build_msg('bus', lvl or vim.log.levels.INFO, msg, { title = 'Bus' })
   local has_sent = false
   for id, cb in pairs(Observers) do
     local ok, err = pcall(cb, built_msg)
@@ -441,9 +442,9 @@ local function safe_dispatch(msg)
       '[Dispatcher] caused a panic for `' .. err .. '`',
       vim.log.levels.ERROR
     )
+    -- NOTE: keep Busy held while notifying observers; release after
+    Stat.Busy = false
   end
-  -- NOTE: keep Busy held while notifying observers; release after
-  Stat.Busy = false
 end
 
 ---@param path string
