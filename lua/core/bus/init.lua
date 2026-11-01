@@ -118,17 +118,21 @@ local M = {}
 ---@class BusOpt
 ---@field subscribers? BusSubscriberDecl[]
 
+---@class BusTimestamp
+---@field real number? Unix epoch in milliseconds; nil when wall clock is unavailable
+---@field mono number  uv.hrtime() nanoseconds, monotonic and never fails
+
 ---@class Message
 ---@field id        integer        unique message id (stable for replace_last)
 ---@field tag       string         routing tag e.g. "msg.show.echomsg", "notify"
 ---@field level     integer
 ---@field content   any            payload, format defined by tag convention
----@field timestamp number         vim.uv.now()
+---@field timestamp BusTimestamp
 ---@field meta      table          meta flags
 ---@field data      table?         source-defined metadata, opaque to bus
 
 ---@class BusPanicRecord
----@field time      number
+---@field time      BusTimestamp
 ---@field level     integer
 ---@field msg       string
 
@@ -258,6 +262,23 @@ function M.unsubscribe(id)
   Stat.RouteCache = {}
 end
 
+local Clock = require 'utils.clock'
+local _clock_now, _calibrate_clock = Clock.create_clock()
+
+---@return BusTimestamp
+local function get_time()
+  local real, mono = _clock_now()
+  return { real = real, mono = mono }
+end
+
+---@param msg string
+---@param lvl vim.log.levels
+local function bus_panic(msg, lvl)
+  ---@type BusPanicRecord
+  local rec = { msg = msg, level = lvl, time = get_time() }
+  table.insert(Stat.PanicBuffer, rec)
+end
+
 local _id_counter = 0
 ---@return integer
 local function new_id()
@@ -284,18 +305,10 @@ local function build_msg(tag, level, content, data, cover_id)
     tag = tag,
     level = level,
     content = content,
-    timestamp = vim.uv.now(),
+    timestamp = get_time(),
     data = data,
     meta = {},
   }
-end
-
----@param msg string
----@param lvl vim.log.levels
-local function bus_panic(msg, lvl)
-  ---@type BusPanicRecord
-  local rec = { msg = msg, level = lvl, time = vim.uv.now() }
-  table.insert(Stat.PanicBuffer, rec)
 end
 
 -- Pipe internal message to observers
@@ -462,14 +475,12 @@ Bus core state is dumped to `%s`
 ]]
 
 local function panic_stat_dump(epoch)
+  local time = get_time()
   local path = vim.fn.stdpath('log')
-    .. sprintf(
-      '/bus_state_dump-%d-%s-%d.log',
-      vim.uv.os_getpid(),
-      os.date '%H-%M-%S',
-      vim.uv.now()
-    )
+    .. sprintf('/bus_state_dump-%d-%d.log', vim.uv.os_getpid(), time.mono)
   local summary = {
+    Time = time,
+    TimeRendered = Clock.render(time, '%Y-%m-%d %H:%M:%S'),
     IsInitialized = Stat.IsInitialized,
     Ready = Stat.Ready,
     Busy = Stat.Busy,
@@ -521,8 +532,16 @@ local function loop_drain()
   local epoch = 0
   while has_pending() do
     if epoch >= InitOpt.max_epoch then
-      -- panic, dump bus state
-      panic_stat_dump(epoch)
+      -- panic, dump bus state; a failing dump must not leave the queue behind,
+      -- otherwise the next flush retries the same cascade forever
+      local ok, err = pcall(panic_stat_dump, epoch)
+      if not ok then
+        pcall(
+          bus_panic,
+          'state dump failed: ' .. tostring(err),
+          vim.log.levels.ERROR
+        )
+      end
       clear_queue()
       break
     end
@@ -599,7 +618,7 @@ function M.dup(msg, overrides)
   local new = vim.deepcopy(msg)
 
   new.id = new_id()
-  new.timestamp = vim.uv.now()
+  new.timestamp = get_time()
 
   new.meta = vim.tbl_extend('force', new.meta or {}, {
     derived_from = msg.id,
@@ -659,6 +678,13 @@ function M.init(opts)
     return
   end
   InitOpt = vim.tbl_extend('force', InitOpt, opts or {})
+  _calibrate_clock()
+  -- hrtime() is CLOCK_MONOTONIC and does not advance during suspend; NTP can
+  -- also step the wall clock. Re-anchor whenever the editor resumes.
+  vim.api.nvim_create_autocmd({ 'VimResume', 'FocusGained' }, {
+    group = vim.api.nvim_create_augroup('BusClock', { clear = true }),
+    callback = _calibrate_clock,
+  })
   _G.Bus = M
   Stat.IsInitialized = true
 end

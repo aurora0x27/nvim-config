@@ -63,7 +63,7 @@ synchronously or queue.
 | `level`     | `vim.log.levels` value, filtered by subscriber `min_level`  |
 | `content`   | `string` or `NvimMsgTuple[]`; renderers branch on the type  |
 | `data`      | producer metadata, treated as opaque by the bus             |
-| `timestamp` | `vim.uv.now()`                                              |
+| `timestamp` | `BusTimestamp { real, mono }`, see below                    |
 | `meta`      | flags such as `no_record` and `derived_from`                |
 
 Tags are string literals repeated in the producer and in each consumer:
@@ -80,6 +80,15 @@ Tags are string literals repeated in the producer and in each consumer:
 `content` is either a string or `NvimMsgTuple[]`; renderers branch on it. `data`
 is nominally opaque, but in practice it is `NvimMsgShowData`, which only `notify`
 fully reads.
+
+`timestamp` keeps two clocks apart. `real` is Unix epoch milliseconds and is
+best effort: `vim.uv.gettimeofday()` and `os.time()` can both fail, so it may be
+nil. `mono` is `uv.hrtime()` nanoseconds, monotonic and infallible; it is used
+for ordering and durations, and always identifies a message even when the wall
+clock is unavailable. Render through `utils.clock.render`: when `real` is nil
+the output is `??-??-??-<mono>`. `BusPanicRecord.time` has the same shape, and
+the bus re-anchors the wall clock on `VimResume`/`FocusGained` because the
+monotonic clock does not advance during suspend.
 
 Subscribers declare `exact`, `prefix`, or `fuzzy` matchers plus `min_level`;
 results are cached. Once a message is dispatched, handlers run synchronously;

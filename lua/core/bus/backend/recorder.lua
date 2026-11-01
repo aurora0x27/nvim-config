@@ -18,6 +18,7 @@ local log = require 'utils.logger'.new(LOG_TITLE)
 local Render = require 'utils.render'
 local calculate_layout = Render.calculate_layout
 local bind = require 'utils.fnx'.bind
+local Clock = require 'utils.clock'
 
 local sprintf = string.format
 
@@ -87,7 +88,7 @@ function M.fzf_messages()
   local contents = {}
 
   for i, msg in ipairs(RecordedMessages) do
-    local time_str = os.date('%H:%M:%S', math.floor(msg.timestamp / 1000))
+    local time_str = Clock.render(msg.timestamp, '%H:%M:%S')
 
     local summary
     if type(msg.content) == 'string' then
@@ -218,7 +219,7 @@ local function parse_msg(msg)
   local function append_empty_line()
     table.insert(tuples, Render.NEWLINE_CHUNK)
   end
-  local time = os.date('%H:%M:%S', math.floor(msg.timestamp / 1000))--[[@as string]]
+  local time = Clock.render(msg.timestamp, '%H:%M:%S')
   append_tuple(time, hl('MessagesBufferDateTime'))
   append_sep()
   append_tuple(
