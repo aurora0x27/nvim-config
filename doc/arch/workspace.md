@@ -10,15 +10,19 @@ The workspace patch is not discovered from parent directories.
 
 ## Configuration
 
-If `<patch>/nvimrc.json` exists, it is merged into `Profile` after the user-level
-`nvimrc.json` and before environment variables. The effective precedence is:
+If `<patch>/nvimrc.json` exists, it is passed to `Profile` as the workspace-local
+configuration (`local`) level. It is merged after the global user-level
+`nvimrc.json` (`global`) and before environment variables (`env`). The effective
+precedence is:
 
 ```text
-ENV > workspace nvimrc.json > user nvimrc.json > defaults
+env > local > global > default
 ```
 
 This means a workspace can override user-level values for the current workspace.
-Unknown keys produce warnings; type mismatches reject the workspace file.
+Unknown keys are ignored with a warning; type mismatches reject the workspace
+file, leaving the global value in effect. A string value may use `$@` to inherit
+the value resolved so far, which is useful for list-like options.
 
 `allow_workspace_patch` controls the executable part of the patch:
 

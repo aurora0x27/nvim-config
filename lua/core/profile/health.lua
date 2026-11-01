@@ -26,13 +26,13 @@ function M.check()
     vim.health.start 'The following fields are MASKED by environment variables:'
     for _, key in ipairs(info.masks) do
       local env_name = 'NVIM_' .. key:upper()
-      vim.health.info(string.format('  - %s (source: %s)', key, env_name))
+      vim.health.info(string.format('  * %s (source: %s)', key, env_name))
     end
   else
     vim.health.ok 'No environment variable masks detected.'
   end
 
-  vim.health.info 'Detailed Settings Strategy:'
+  vim.health.start 'Detailed Settings Strategy:'
 
   local max_key_len = 0
   for k, _ in pairs(defaults) do
@@ -65,10 +65,10 @@ function M.check()
     return s
   end
 
+  local rc_source = info.rc_source
+
   for _, k in ipairs(keys) do
-    local is_masked = vim.tbl_contains(info.masks, k)
-    local status = is_masked and '[MASKED]'
-      or (raw_values[k] == defaults[k] and '[DEFAULT]' or '[JSON]')
+    local status = string.format('[%s]', rc_source[k] or 'unknown')
 
     local line = string.format(
       '  %s | %s | %s | %s',

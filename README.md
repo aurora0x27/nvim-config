@@ -78,7 +78,9 @@ Or, you may download the repo to `~/.config/<name>`, and run `NVIM_APPNAME=<name
 ## Profile Options
 
 Some features are optional, controlled by a JSON file -- `nvimrc.json`, this file should be placed under your config
-dir. Here're customizable items:
+dir. Values are resolved in this order: built-in defaults → global `nvimrc.json` → workspace patch `nvimrc.json` →
+`NVIM_*` environment variables. Keys absent from a file fall back to the previous level, and a string may use `$@` to
+inherit the value resolved so far. Here're customizable items:
 
 <!-- docgen@profile -->
 

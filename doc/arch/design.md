@@ -56,7 +56,8 @@ Policy ("what to enable") is separated from implementation ("how a plugin is set
 
 - `lua/core/profile/` resolves editor behavior from `nvimrc.json` + environment
   variables, validated against a schema and merged with fixed precedence
-  (ENV > workspace nvimrc.json > user nvimrc.json > defaults).
+  (`env > local > global > default`, where `local` is the optional workspace
+  patch and `global` is the user configuration).
 - `lua/core/lang/` turns language capability declarations into concrete lists —
   which LSPs to install, which Treesitter parsers, which formatters map to which
   filetype.

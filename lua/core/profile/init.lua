@@ -10,29 +10,31 @@
 --
 -- Configuration sources:
 --
---   1. Environment variables
+--   1. Environment variables (`env`)
 --      Highest priority. Intended for temporary overrides, debug sessions,
 --      CI/testing environments, and externally managed deployment settings.
+--      Read from `NVIM_<KEY>`.
 --
---   2. Merged configuration files
---      Passed through `files_to_merge`, normally the workspace patch's
---      `nvimrc.json`. These override the user configuration.
+--   2. Workspace-local configuration (`local`)
+--      An optional file passed through `opts.local_nvimrc`, normally the
+--      workspace patch's `nvimrc.json`. It overrides the global configuration
+--      for the current workspace only.
 --
---   3. User configuration files
+--   3. Global user configuration (`global`)
 --      Default location:
 --
 --          stdpath("config") .. "/nvimrc.json"
 --
---      User configuration overrides schema defaults.
+--      Overrides the schema defaults.
 --
---   4. Default schema
+--   4. Default schema (`default`)
 --      Built-in fallback values generated from:
 --
 --          core.profile.defaults
 --
 -- Priority:
 --
---      ENV > files_to_merge > user nvimrc.json > defaults
+--      env > local > global > default
 --
 -- Configuration values are resolved once during startup. After setup(), the
 -- profile should be treated as immutable runtime metadata.
@@ -41,17 +43,22 @@
 -- Configuration files
 --
 -- Profile accepts JSON objects whose keys must exist in the default schema.
--- Unknown keys are allowed with warnings, while type mismatches invalidate
--- the corresponding configuration source.
+-- Unknown keys are ignored with a warning. A type mismatch rejects the whole
+-- configuration source, so the previous level stays in effect.
 --
--- Multiple configuration files may be merged through `files_to_merge`.
--- Later sources override earlier sources.
+-- At most one workspace-local file is supported. It is merged after the global
+-- user file and before environment variables.
+--
+-- Every key reports the level that last supplied it (`default`, `global`,
+-- `local` or `env`); see `debug_info()`.
 --
 -- String values support placeholder expansion:
 --
 --      "$@"
 --
--- represents the current resolved value.
+-- represents the current resolved value. This makes list-like options (for
+-- example `lang_levels` and `lang_blacklist`) inheritable between levels:
+-- a workspace file can extend the global value instead of replacing it.
 --
 -- Example:
 --
@@ -90,7 +97,7 @@
 -- Example:
 --
 --      Profile.lang_levels
---      Profile.persist_local
+--      Profile.persist_local_mode
 --
 -- Direct mutation is rejected:
 --
@@ -122,9 +129,17 @@
 --
 -- `debug_info()` provides:
 --
---   * resolved configuration path
---   * final resolved values
---   * environment variables currently masking values
+--   * resolved configuration path (`path`)
+--   * final resolved values (`values`)
+--   * keys overridden by environment variables (`masks`)
+--   * the level that last supplied each key (`rc_source`)
+--
+-- `rc_source[key]` is one of:
+--
+--   * `default` — built-in schema value
+--   * `global`  — global user `nvimrc.json`
+--   * `local`   — workspace-local `nvimrc.json`
+--   * `env`     — `NVIM_<KEY>` environment variable
 --
 --
 -- Design notes
@@ -147,7 +162,7 @@ local uv = vim.uv or vim.loop
 
 --- Read json without expecption
 ---@param path string
----@return table|nil content
+---@return any content
 local function read_json(path)
   local fd = uv.fs_open(path, 'r', 438)
   if not fd then
@@ -212,6 +227,7 @@ local function write_json(path, data)
 end
 
 local DEFAULTS = require 'core.profile.defaults'
+local DEFAULT_KEYS = vim.tbl_keys(DEFAULTS)
 local RAW_LAZY_SPECS = require 'utils.datadir'.load_set(
   'plugins.opt',
   err,
@@ -220,6 +236,25 @@ local RAW_LAZY_SPECS = require 'utils.datadir'.load_set(
     set[table.concat(k, '.')] = v
   end
 )
+
+---@alias NvimrcSourceTy
+---| 'default'
+---| 'global'
+---| 'local'
+---| 'env'
+
+---@param src NvimrcSourceTy
+---@return table<string, NvimrcSourceTy>
+local function init_source(src)
+  local ret = {}
+  for _, k in ipairs(DEFAULT_KEYS) do
+    ret[k] = src
+  end
+  return ret
+end
+
+---@type table<string, NvimrcSourceTy>?
+local NvimrcSource
 
 function M.get_filtered_opt_specs(filters)
   local result = {}
@@ -233,36 +268,53 @@ function M.get_filtered_opt_specs(filters)
   return result
 end
 
----@return table
+---@return table?
 local function try_load_nvimrc(config_path)
   if not uv.fs_stat(config_path) then
     warn 'Cannot stat nvimrc.json, write in default config...'
     write_json(config_path, DEFAULTS)
-    return DEFAULTS
+    return nil
   end
 
   local res = read_json(config_path)
   if not res then
     err 'Fail to read nvimrc.json, fall back to default'
-    return DEFAULTS
+    return nil
   end
-  ---@type table
+
   return res
 end
 
-local nvimrc
-local nvimrc_path
+local Nvimrc
+local NvimrcPath
 
 ---@class ProfileOpt
----@field config_path? string
----@field files_to_merge? string[]
+---@field config_path? string path to the global `nvimrc.json`; defaults to `stdpath('config') .. '/nvimrc.json'`
+---@field local_nvimrc? string path to the workspace-local `nvimrc.json`, merged after the global file
 
-local function safe_replace(str, placeholder, repl)
-  local s, e = str:find(placeholder, 1, true)
+---@param str string
+---@param pat string
+---@param repl string
+---@param pos integer
+---@return string, boolean, integer
+local function safe_replace(str, pat, repl, pos)
+  local s, e = string.find(str, pat, pos, true)
   if not s then
-    return str
+    return str, false, pos
   end
-  return str:sub(1, s - 1) .. repl .. str:sub(e + 1)
+  return str:sub(1, s - 1) .. repl .. str:sub(e + 1), true, s + #repl
+end
+
+---@param str string
+---@param pat string
+---@param repl string
+---@return string
+local function safe_replace_all(str, pat, repl)
+  local ret, loop, pos = str, true, 1
+  while loop do
+    ret, loop, pos = safe_replace(ret, pat, repl, pos)
+  end
+  return ret
 end
 
 ---@param tbl table
@@ -291,95 +343,96 @@ local function schema_check(tbl)
   return ok, table.concat(errmsg, '\n')
 end
 
----@param base table base table, mutable
----@param ... table[] tables to merge
-local function merge_cfg(base, ...)
-  local to_merge = { ... }
-  if #to_merge == 0 then
-    return
-  end
-  for _, tbl in ipairs(to_merge) do
-    for k, new_val in pairs(tbl) do
+---@param base table
+---@param tbl table
+---@param src NvimrcSourceTy
+local function merge_cfg(base, tbl, src)
+  for _, k in ipairs(DEFAULT_KEYS) do
+    local new_val = tbl[k]
+    if new_val ~= nil then
       if type(new_val) == 'string' then
-        base[k] = safe_replace(new_val, '$@', base[k])
+        base[k] = safe_replace_all(new_val, '$@', base[k])
       else
         base[k] = new_val
       end
+      NvimrcSource[k] = src
     end
+  end
+end
+
+---@param tbl table?
+---@param ty NvimrcSourceTy
+local function check_and_merge(tbl, ty)
+  if tbl and tbl ~= vim.NIL and type(tbl) == 'table' then
+    local loaded_safe, err_msg = schema_check(tbl)
+    if loaded_safe then
+      merge_cfg(Nvimrc, tbl, ty)
+    else
+      err('%s config is ill formed: %s', ty, err_msg)
+    end
+  else
+    err('%s config is not a JSON table', ty)
   end
 end
 
 ---@param opts? ProfileOpt
 function M.setup(opts)
   opts = opts or {}
-  nvimrc_path = opts.config_path or vim.fn.stdpath 'config' .. '/nvimrc.json'
-  nvimrc = vim.deepcopy(DEFAULTS)
+  NvimrcPath = opts.config_path or vim.fn.stdpath('config') .. '/nvimrc.json'
+  Nvimrc = vim.deepcopy(DEFAULTS)
+  NvimrcSource = init_source 'default'
 
-  local data_to_merge = {}
-
-  local loaded_data = try_load_nvimrc(nvimrc_path)
-  local loaded_safe, err_msg = schema_check(loaded_data)
-
-  if loaded_safe then
-    table.insert(data_to_merge, loaded_data)
-  else
-    err('User config is ill formed: ' .. err_msg)
+  local global_nvimrc = try_load_nvimrc(NvimrcPath)
+  if global_nvimrc then
+    check_and_merge(global_nvimrc, 'global')
   end
 
-  if opts.files_to_merge then
-    if vim.islist(opts.files_to_merge) then
-      for _, file in ipairs(opts.files_to_merge) do
-        local data = read_json(file)
-        if data and data ~= vim.NIL and type(data) == 'table' then
-          local ok, emsg = schema_check(data)
-          if ok then
-            table.insert(data_to_merge, data)
-          else
-            err('config from file `' .. file .. '` is ill formed: ' .. emsg)
-          end
-        else
-          err('Cannot read json from `' .. file .. '`')
-        end
+  if opts.local_nvimrc then
+    if type(opts.local_nvimrc) == 'string' then
+      local local_nvimrc = read_json(opts.local_nvimrc)
+      if local_nvimrc then
+        check_and_merge(local_nvimrc, 'local')
       end
     else
       warn(
-        'Opts.files_to_merge is provided but is not a string[], detail:\n'
-          .. vim.inspect(opts.files_to_merge)
+        '`opts.local_nvimrc` is provided but not a string: `%s`',
+        vim.inspect(opts.local_nvimrc)
       )
     end
   end
 
-  -- resolve nvimrc
-  merge_cfg(nvimrc, unpack(data_to_merge))
-
   -- environment mask
-  for k, v in pairs(nvimrc) do
+  for _, k in ipairs(DEFAULT_KEYS) do
+    local v = Nvimrc[k]
     local env_name = 'NVIM_' .. k:upper()
     ---@type string|nil
     local env_val = vim.env[env_name]
     if env_val then
       local ty = type(v)
       if ty == 'boolean' then
-        nvimrc[k] = (env_val == '1' or env_val == 'true')
+        Nvimrc[k] = (env_val == '1' or env_val == 'true')
+        NvimrcSource[k] = 'env'
       elseif ty == 'number' then
         local num = tonumber(env_val)
         if num then
           ---@type number
-          nvimrc[k] = num
+          Nvimrc[k] = num
+          NvimrcSource[k] = 'env'
         else
           warn('Env %s is not a valid number', env_name)
         end
       elseif ty == 'string' then
         -- `$@` is replaced with current value of the option
-        local val = safe_replace(env_val, '$@', nvimrc[k])
-        nvimrc[k] = val
+        local val = safe_replace_all(env_val, '$@', Nvimrc[k])
+        Nvimrc[k] = val
+        NvimrcSource[k] = 'env'
       end
     end
   end
 end
 
 function M.get_raw_tbl()
-  return nvimrc
+  return Nvimrc
 end
 
 function M.get_defaults()
@@ -387,13 +440,15 @@ function M.get_defaults()
 end
 
 function M.debug_info()
+  local rc_source = NvimrcSource and vim.deepcopy(NvimrcSource) or {}
   local info = {
-    path = nvimrc_path,
-    values = nvimrc,
+    path = NvimrcPath,
+    values = vim.deepcopy(Nvimrc),
     masks = {},
+    rc_source = rc_source,
   }
-  for k, _ in pairs(DEFAULTS) do
-    if vim.env['NVIM_' .. k:upper()] then
+  for k, v in require 'utils.tblx'.sorted_pairs(rc_source) do
+    if v == 'env' then
       table.insert(info.masks, k)
     end
   end
@@ -402,7 +457,7 @@ end
 
 local Profile = setmetatable(M, {
   __index = function(_, key)
-    local ret = nvimrc[key]
+    local ret = Nvimrc[key]
     if ret == nil then
       log.error('unknown key `%s`', key)
     end

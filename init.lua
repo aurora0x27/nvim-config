@@ -148,7 +148,7 @@ local PatchDir, Nvimrc = require 'core.workspace'.probe()
 local ProfileApi = require 'core.profile'
 
 ProfileApi.setup {
-  files_to_merge = Nvimrc and { Nvimrc } or {},
+  local_nvimrc = Nvimrc,
 }
 
 require 'core.lang'.setup {
