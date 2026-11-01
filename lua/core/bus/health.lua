@@ -1,5 +1,7 @@
 local M = {}
 
+local sprintf = string.format
+
 function M.check()
   local Bus = require 'core.bus'
   local health = vim.health
@@ -29,24 +31,26 @@ function M.check()
   end
 
   health.info(
-    string.format(
-      'Initialized=%s Ready=%s FlushDepth=%d',
+    sprintf(
+      'Initialized=%s Ready=%s IsFlushing=%s',
       tostring(Stat.IsInitialized),
       tostring(Stat.Ready),
-      Stat.FlushDepth
+      Stat.Flushing and 'true' or 'false'
     )
   )
 
   ------------------------------------------------------------------
   -- Queue
   ------------------------------------------------------------------
-  health.info(string.format('Queue: %d pending messages', #Stat.Queue))
+  health.info(
+    sprintf('Queue: %d pending messages', #Stat.Queue - Stat.LastEmitted)
+  )
 
-  if Stat.QueueEnd > #Stat.Queue + 1 then
+  if Stat.LastEmitted > #Stat.Queue then
     health.error(
-      string.format(
-        'QueueEnd=%d exceeds queue length=%d',
-        Stat.QueueEnd,
+      sprintf(
+        'LastEmitted=%d exceeds queue length=%d',
+        Stat.LastEmitted,
         #Stat.Queue
       )
     )
@@ -61,7 +65,7 @@ function M.check()
     route_count = route_count + 1
   end
 
-  health.info(string.format('Route cache entries: %d', route_count))
+  health.info(sprintf('Route cache entries: %d', route_count))
 
   ------------------------------------------------------------------
   -- Observers
@@ -80,15 +84,12 @@ function M.check()
   if observer_enabled == 0 then
     health.error('No active observer')
   else
-    health.ok(string.format('%d active observer(s)', observer_enabled))
+    health.ok(sprintf('%d active observer(s)', observer_enabled))
   end
 
   if observer_total > observer_enabled then
     health.warn(
-      string.format(
-        '%d observer(s) disabled',
-        observer_total - observer_enabled
-      )
+      sprintf('%d observer(s) disabled', observer_total - observer_enabled)
     )
   end
 
@@ -100,7 +101,7 @@ function M.check()
   if panic_count == 0 then
     health.ok('No recorded internal panic')
   else
-    health.warn(string.format('%d panic record(s) stored', panic_count))
+    health.warn(sprintf('%d panic record(s) stored', panic_count))
 
     local start = math.max(1, panic_count - 10 + 1)
 
@@ -108,11 +109,7 @@ function M.check()
       local rec = Stat.PanicBuffer[i]
 
       health.info(
-        string.format(
-          '[%s] %s',
-          vim.log.levels[rec.level] or rec.level,
-          rec.msg
-        )
+        sprintf('[%s] %s', vim.log.levels[rec.level] or rec.level, rec.msg)
       )
     end
   end

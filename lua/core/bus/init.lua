@@ -6,18 +6,28 @@
 -- runtime events into tagged, identifiable messages and dispatching them to
 -- registered subscribers.
 --
--- The bus itself is intentionally stateless. Stateful behaviors such as
--- rendering, notification display, persistence, or message history are
--- implemented as independent adapters/backends that subscribe to the bus.
+-- The bus owns the routing state it needs: a FIFO of pending messages, the
+-- cursor of the last dequeued message (LastEmitted, 0 when empty), and the
+-- flags that serialize dispatch and draining. Stateful presentation such as
+-- rendering, notification display, persistence, or message history remains in
+-- independent adapters/backends that subscribe to the bus. This design lets
+-- different UI components (toast, progress, notification window, log recorder)
+-- consume the same stream without coupling producers to a presentation layer.
 --
--- This design allows different UI components (for example toast, progress
--- indicator, notification window, or log recorder) to consume the same message
--- stream without coupling producers to a specific presentation layer.
+-- Emission is synchronous when possible:
+--   * Ready and not Busy: dispatch immediately, then drain pending messages.
+--   * Busy: append to the queue; the active drain will process it.
+--   * fast-api context: append and schedule one safe-context drain.
+--   * not Ready: append; Bus.start() drains the startup queue.
 --
--- NOTE: LogQueue is a temporary logging infrastructure used during the preload
--- stage, before the message bus and notification backends are initialized.
--- It buffers early runtime messages and flushes them after the normal message
--- pipeline becomes available.
+-- Draining is iterative, not recursive. flush_queue processes the pending
+-- queue in epochs: messages emitted during one batch are handled in the next
+-- epoch. The pending queue is bounded by queue_limit; push() drops new messages
+-- when it is full. max_epoch bounds the number of epochs before the queue is
+-- dropped; full BusStat/Queue diagnostics on that path are still TODO.
+--
+-- The commented LogQueue below is kept as a record of the pre-bus startup
+-- buffering stage; it is no longer used.
 --
 -- ```lua
 --
@@ -79,7 +89,8 @@
 local M = {}
 
 ---@class BusInitOpt
----@field cache_max? integer
+---@field queue_limit? integer max pending messages (default 2048)
+---@field max_epoch?   integer max drain epochs per flush (default 8)
 
 ---@class BusSubscriber
 ---@field id string
@@ -123,7 +134,8 @@ local M = {}
 
 ---@type BusInitOpt
 local BUS_INIT_OPT_DEFAULT = {
-  cache_max = 2048,
+  queue_limit = 2048,
+  max_epoch = 8,
 }
 
 ---@type BusInitOpt
@@ -139,9 +151,8 @@ local Opt = vim.deepcopy(BUS_OPT_DEFAULT)
 ---@field Ready          boolean cache message when ui not ready
 ---@field Queue          Message[] fifo message buffer
 ---@field Busy           boolean is dispatching message?
----@field QueueEnd       integer end(head) of the message queue,
----                              point to the message to emit
----@field FlushDepth     integer
+---@field LastEmitted    integer index of the last dequeued message; 0 when empty
+---@field Flushing       boolean drain loop is active
 ---@field FlushScheduled boolean has scheduled a flush operation
 ---@field Subscribers    table<string, BusSubscriber>
 ---@field Observers      table<string, BusObserverCb>
@@ -152,10 +163,10 @@ local Opt = vim.deepcopy(BUS_OPT_DEFAULT)
 ---                   are *not* copied
 ---@field IsInitialized boolean
 ---@field Ready         boolean cache message when ui not ready
----@field QueueCapacity integer
+---@field QueuePending  integer number of messages not yet dequeued
 ---@field Busy          boolean is dispatching message?
----@field QueueEnd      integer
----@field FlushDepth    integer
+---@field LastEmitted   integer index of the last dequeued message
+---@field Flushing      boolean drain loop is active
 ---@field FlushScheduled boolean
 ---@field Subscribers   string[]
 ---@field Observers     string[]
@@ -167,8 +178,8 @@ local Stat = {
   Ready = false,
   Queue = {},
   Busy = false,
-  QueueEnd = 1,
-  FlushDepth = 0,
+  LastEmitted = 0,
+  Flushing = false,
   FlushScheduled = false,
   Subscribers = {},
   Observers = {},
@@ -194,14 +205,14 @@ function M.inspect()
   local ret = {
     Busy = Stat.Busy,
     Ready = Stat.Ready,
-    FlushDepth = Stat.FlushDepth,
+    Flushing = Stat.Flushing,
     FlushScheduled = Stat.FlushScheduled,
     IsInitialized = Stat.IsInitialized,
     Observers = vim.tbl_keys(Stat.Observers),
     Subscribers = vim.tbl_keys(Stat.Subscribers),
     PanicBuffer = vim.deepcopy(Stat.PanicBuffer),
-    QueueEnd = Stat.QueueEnd,
-    QueueCapacity = #Stat.Queue - Stat.QueueEnd,
+    LastEmitted = Stat.LastEmitted,
+    QueuePending = #Stat.Queue - Stat.LastEmitted,
   }
   return ret
 end
@@ -371,11 +382,16 @@ end
 local sprintf = string.format
 
 ---@param msg Message
+local function push(msg)
+  if #Stat.Queue - Stat.LastEmitted < InitOpt.queue_limit then
+    table.insert(Stat.Queue, msg)
+  end
+end
+
+---@param msg Message
 local function bus_dispatch(msg)
   if vim.in_fast_event() or Stat.Busy then
-    if #Stat.Queue < InitOpt.cache_max then
-      table.insert(Stat.Queue, msg)
-    end
+    push(msg)
     schedule_flush()
     return
   end
@@ -406,28 +422,46 @@ local function bus_dispatch(msg)
   Stat.Busy = false
 end
 
-local FLUSH_MAX_DEPTH = 4
-
 local function clear_queue()
   Stat.Queue = {}
-  Stat.QueueEnd = 1
+  Stat.LastEmitted = 0
 end
 
 ---@return boolean
 local function has_pending()
-  return Stat.QueueEnd <= #Stat.Queue
+  return Stat.LastEmitted < #Stat.Queue
 end
 
 ---@param msg Message
 local function safe_dispatch(msg)
   local ok, err = pcall(bus_dispatch, msg)
   if not ok then
-    bus_log(
+    pcall(
+      bus_log,
       '[Dispatcher] caused a panic for `' .. err .. '`',
       vim.log.levels.ERROR
     )
-    -- NOTE: keep Busy held while notifying observers; release after
-    Stat.Busy = false
+  end
+  -- NOTE: keep Busy held while notifying observers; release after
+  Stat.Busy = false
+end
+
+local function loop_drain()
+  local epoch = 0
+  while has_pending() do
+    if epoch >= InitOpt.max_epoch then
+      -- TODO: panic, dump bus state
+      clear_queue()
+      break
+    end
+    local batch_start = Stat.LastEmitted + 1
+    local batch_end = #Stat.Queue
+    for i = batch_start, batch_end do
+      local msg = Stat.Queue[i]
+      safe_dispatch(msg)
+      Stat.LastEmitted = Stat.LastEmitted + 1
+    end
+    epoch = epoch + 1
   end
 end
 
@@ -439,52 +473,22 @@ function M.flush_queue()
     schedule_flush()
     return
   end
-  if Stat.FlushDepth >= FLUSH_MAX_DEPTH then
-    -- force empty queue
-    bus_log(
-      sprintf(
-        '[Queue Flusher] flush_queue exceeded max depth (%d), queue dropped (%d msgs)',
-        FLUSH_MAX_DEPTH,
-        #Stat.Queue
-      ),
+  if Stat.Flushing then
+    return
+  end
+  Stat.Flushing = true
+  local ok, err = pcall(loop_drain)
+  if not ok then
+    pcall(
+      bus_log,
+      sprintf('[Queue Flusher] drain panic: `%s`', err),
       vim.log.levels.ERROR
     )
+    schedule_flush()
+  end
+  Stat.Flushing = false
+  if not has_pending() then
     clear_queue()
-    return
-  end
-
-  -- snapshot current batch
-  local batch_start = Stat.QueueEnd
-  local batch_end = #Stat.Queue
-  if batch_start > batch_end then
-    -- all clear
-    clear_queue()
-    return
-  end
-
-  -- mark current depth
-  Stat.FlushDepth = Stat.FlushDepth + 1
-
-  for i = batch_start, batch_end do
-    local msg = Stat.Queue[i]
-    Stat.QueueEnd = i + 1
-    safe_dispatch(msg)
-  end
-
-  if #Stat.Queue > batch_end then
-    M.flush_queue()
-  else
-    clear_queue()
-  end
-
-  -- unwind depth
-  Stat.FlushDepth = Stat.FlushDepth - 1
-end
-
----@param msg Message
-local function push(msg)
-  if #Stat.Queue < InitOpt.cache_max then
-    table.insert(Stat.Queue, msg)
   end
 end
 
@@ -495,6 +499,10 @@ local function emit_impl(msg)
   if vim.in_fast_event() or not Stat.Ready or Stat.Busy then
     push(msg)
     schedule_flush()
+    return id
+  end
+  if Stat.Flushing then
+    push(msg)
     return id
   end
   if has_pending() then
