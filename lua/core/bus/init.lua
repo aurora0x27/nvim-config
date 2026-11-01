@@ -15,9 +15,9 @@
 -- consume the same stream without coupling producers to a presentation layer.
 --
 -- Emission is synchronous when possible:
---   * Ready and not Busy: dispatch immediately, then drain pending messages.
---   * Busy: append to the queue; the active drain will process it.
---   * fast-api context: append and schedule one safe-context drain.
+--   * Ready, not Busy/Flushing: dispatch immediately, then drain pending.
+--   * Busy or Flushing: append; the active dispatch/drain owns the queue.
+--   * fast-api context (idle): append and schedule one safe-context drain.
 --   * not Ready: append; Bus.start() drains the startup queue.
 --
 -- Draining is iterative, not recursive. flush_queue processes the pending
@@ -404,11 +404,9 @@ end
 
 ---@param msg Message
 local function bus_dispatch(msg)
-  if vim.in_fast_event() or Stat.Busy then
-    push(msg)
-    schedule_flush()
-    return
-  end
+  -- Preconditions: safe context, not re-entrant. The caller owns the
+  -- post-dispatch drain (emit_impl or loop_drain).
+  assert(not vim.in_fast_event() and not Stat.Busy)
 
   Stat.Busy = true
 
@@ -557,14 +555,11 @@ local function loop_drain()
 end
 
 function M.flush_queue()
-  if not Stat.Ready then
+  if not Stat.Ready or Stat.Busy or Stat.Flushing then
     return
   end
-  if vim.in_fast_event() or Stat.Busy then
+  if vim.in_fast_event() then
     schedule_flush()
-    return
-  end
-  if Stat.Flushing then
     return
   end
   Stat.Flushing = true
@@ -587,13 +582,13 @@ end
 ---@return integer id
 local function emit_impl(msg)
   local id = msg.id
-  if vim.in_fast_event() or not Stat.Ready or Stat.Busy then
+  if not Stat.Ready or Stat.Busy or Stat.Flushing then
     push(msg)
-    schedule_flush()
     return id
   end
-  if Stat.Flushing then
+  if vim.in_fast_event() then
     push(msg)
+    schedule_flush()
     return id
   end
   if has_pending() then

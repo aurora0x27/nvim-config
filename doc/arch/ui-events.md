@@ -96,11 +96,13 @@ each runs under `pcall`, and `true` stops the remaining handlers while `false`
 or `nil` continues. No backend returns `true` today.
 
 Emission policy lives in the bus. `Bus.emit` dispatches immediately when
-`Ready`, not `Busy`, and nothing is already pending. Otherwise it appends to the
-queue: when the bus is idle but messages are pending it drains immediately; while
-`Busy` or in a fast-api callback it schedules one safe-context drain; while
-`Flushing` it leaves the message to the active epoch loop; before `Bus.start()`
-it leaves the message for `start()` to drain.
+`Ready`, not `Busy`, not `Flushing`, and nothing is already pending. Otherwise
+it appends to the queue. `Busy` and `Flushing` both mean an owner is already
+active—the dispatch frame or the epoch loop—so the message is left to that owner
+and no deferred flush is armed. Only an idle bus in a fast-api callback schedules
+one safe-context drain; before `Bus.start()` the message waits for `start()`.
+A deferred flush is armed only from an idle state; if the drain loop itself
+panics, `flush_queue` schedules one retry.
 
 `LastEmitted` is the index of the last dequeued message (0 when empty), so the
 pending count is `#Queue - LastEmitted`. `flush_queue` drains iteratively in
@@ -153,10 +155,11 @@ and the epoch limit writes a state dump before dropping the queue.
    filtering.
 7. **Dispatch order is undefined.** `pairs(Subscribers)` decides order; if two
    handlers returned `true`, the winner would depend on table iteration.
-8. **Sync and async paths interleave.** A safe-context emit dispatches
-   synchronously and drains pending messages; a fast, Busy, or pre-start emit
-   only queues and schedules. FIFO is preserved inside the queue, but producers
-   cannot tell which path an emit will take.
+8. **Sync and async paths interleave.** A safe, idle emit dispatches
+   synchronously and drains pending messages. A `Busy` or `Flushing` emit only
+   queues for the active owner; a fast emit on an idle bus queues and schedules
+   one drain; a pre-start emit waits for `start()`. FIFO is preserved inside the
+   queue, but producers cannot tell which path an emit will take.
 
 ## Lessons
 
