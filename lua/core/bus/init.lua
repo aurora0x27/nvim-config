@@ -23,8 +23,8 @@
 -- Draining is iterative, not recursive. flush_queue processes the pending
 -- queue in epochs: messages emitted during one batch are handled in the next
 -- epoch. The pending queue is bounded by queue_limit; push() drops new messages
--- when it is full. max_epoch bounds the number of epochs before the queue is
--- dropped; full BusStat/Queue diagnostics on that path are still TODO.
+-- when it is full. max_epoch bounds the number of epochs; exceeding it dumps the
+-- bus state to stdpath("log") and then drops the queue.
 --
 -- The commented LogQueue below is kept as a record of the pre-bus startup
 -- buffering stage; it is no longer used.

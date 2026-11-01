@@ -87,28 +87,31 @@ each runs under `pcall`, and `true` stops the remaining handlers while `false`
 or `nil` continues. No backend returns `true` today.
 
 Emission policy lives in the bus. `Bus.emit` dispatches immediately when
-`Ready` and not `Busy`, then drains pending messages. While `Busy`, in a
-fast-api callback, or before `Bus.start()`, it only enqueues; a fast-api emit
-schedules one safe-context drain.
+`Ready`, not `Busy`, and nothing is already pending. Otherwise it appends to the
+queue: when the bus is idle but messages are pending it drains immediately; while
+`Busy` or in a fast-api callback it schedules one safe-context drain; while
+`Flushing` it leaves the message to the active epoch loop; before `Bus.start()`
+it leaves the message for `start()` to drain.
 
 `LastEmitted` is the index of the last dequeued message (0 when empty), so the
 pending count is `#Queue - LastEmitted`. `flush_queue` drains iteratively in
 epochs: messages emitted during one batch are appended and handled in the next
-epoch. `max_epoch` bounds the number of epochs before the queue is dropped;
-state dumping on that path is still TODO. The pending queue is bounded by
-`queue_limit`, and `push` drops new messages when it is full.
+epoch. `max_epoch` bounds the number of epochs; exceeding it writes a bus state
+dump to `stdpath("log")/bus_state_dump-*.log`, records a panic, and then drops
+the queue. The pending queue is bounded by `queue_limit`, and `push` drops new
+messages when it is full.
 
 Messages are immutable; `Bus.dup` gives a copy a new identity and records
 `meta.derived_from`, which the recorder uses to replay.
 
 ## Backends
 
-| backend     | triggers                                                                                    | output                                 |
-| ----------- | ------------------------------------------------------------------------------------------- | -------------------------------------- |
-| `fidget`    | `msg.clear`, plus `msg.show.undo/echo/echomsg/unknown/bufwrite/progress/list_cmd/lua_print` | SE toast                               |
-| `notify`    | `notify`, `msg.clear`, plus `msg.show.emsg/wmsg/echoerr/lua_error/rpc_error`                | NE toast                               |
-| `recorder`  | selected `msg.show.*`, `msg.clear`, `msg.history_show`                                      | in-memory history, fzf, message buffer |
-| `shell-log` | prefix `msg.show.shell_`                                                                    | bottom split                           |
+| backend     | triggers                                                                           | output                                 |
+| ----------- | ---------------------------------------------------------------------------------- | -------------------------------------- |
+| `fidget`    | `msg.clear`, plus `msg.show.undo/echo/echomsg/unknown/progress/list_cmd/lua_print` | SE toast                               |
+| `notify`    | `notify`, `msg.clear`, plus `msg.show.emsg/wmsg/echoerr/lua_error/rpc_error`       | NE toast                               |
+| `recorder`  | selected `msg.show.*`, `msg.clear`, `msg.history_show`                             | in-memory history, fzf, message buffer |
+| `shell-log` | prefix `msg.show.shell_`                                                           | bottom split                           |
 
 `fidget` and `notify` are not two implementations of one policy: they are two
 stacks with different anchors and disjoint message sets. Ordinary echoes land in
@@ -118,7 +121,8 @@ bounded history (1024 messages by default) and can replay through `Bus.dup`.
 `recorder` and `notify` also register observers: they receive every bus-internal
 `bus` message without tag or level filtering, which surfaces dispatcher panics
 without the bus depending on a renderer. Queue-overflow diagnostics are still
-incomplete: `push` drops when full, and the epoch limit drops the queue.
+incomplete: `push` silently drops new messages when the pending queue is full,
+and the epoch limit writes a state dump before dropping the queue.
 
 ## Where the seams leak
 
