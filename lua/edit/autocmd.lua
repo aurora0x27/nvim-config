@@ -2,12 +2,20 @@
 -- Define some behaviors
 --------------------------------------------------------------------------------
 local M = {}
+local LOG_TITLE = 'Autocmd'
+local log = require 'utils.logger'.new(LOG_TITLE)
 
 local AUG = vim.api.nvim_create_augroup('UserCustomed', { clear = true })
 local CWD
 local summary = require 'utils.strx'.summary
 
+local _initialized = false
+
 function M.setup()
+  if _initialized then
+    log.error 'Should not initialize module twice'
+    return
+  end
   -- Highlight yanked text
   vim.api.nvim_create_autocmd('TextYankPost', {
     pattern = '*',
@@ -163,6 +171,7 @@ function M.setup()
       vim.g.BufferPoolState = bpm.to_json()
     end,
   })
+  _initialized = true
 end
 
 return M

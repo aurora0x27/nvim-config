@@ -573,8 +573,14 @@ end
 ---@field persist_local_mode? string
 ---@field persist_local_dir?  string
 
+local _initialized = false
+
 ---@param opt? PersistInitOpt
 function M.setup(opt)
+  if _initialized then
+    log.error 'Should not initialize module twice'
+    return
+  end
   opt = opt or {}
   if opt.persist_mode then
     PersistMode = parse_featstr(opt.persist_mode, PersistMode, log.error)
@@ -587,6 +593,7 @@ function M.setup(opt)
     PersistLocalDir = opt.persist_local_dir
   end
   setup_options()
+  _initialized = true
 end
 
 return M

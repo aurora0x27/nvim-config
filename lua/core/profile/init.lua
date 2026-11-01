@@ -375,8 +375,14 @@ local function check_and_merge(tbl, ty)
   end
 end
 
+local _initialized = false
+
 ---@param opts? ProfileOpt
 function M.setup(opts)
+  if _initialized then
+    log.error 'Should not initialize module twice'
+    return
+  end
   opts = opts or {}
   NvimrcPath = opts.config_path or vim.fn.stdpath('config') .. '/nvimrc.json'
   Nvimrc = vim.deepcopy(DEFAULTS)
@@ -429,6 +435,8 @@ function M.setup(opts)
       end
     end
   end
+
+  _initialized = true
 end
 
 function M.get_raw_tbl()

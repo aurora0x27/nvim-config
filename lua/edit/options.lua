@@ -26,7 +26,13 @@ local Opt = {
   confirm = true, -- confirm before quitting unsaved changes
 }
 
+local _initialized = false
+
 function M.setup()
+  if _initialized then
+    log.error 'Should not initialize module twice'
+    return
+  end
   -- An ungracefull way to fix neovide terminal color render bug
   if vim.g.neovide then
     vim.g.terminal_color_0 = '#45475a'
@@ -76,6 +82,7 @@ function M.setup()
   for k, v in pairs(Opt) do
     vim.o[k] = v
   end
+  _initialized = true
 end
 
 return M

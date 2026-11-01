@@ -111,11 +111,11 @@ local function convert_line(line)
   return table.concat(out)
 end
 
-local __init = false
+local _initialized = false
 
 function M.setup()
-  if __init then
-    log.error 'Should not setup more than once'
+  if _initialized then
+    log.error 'Should not initialize module twice'
     return
   end
   vim.api.nvim_create_user_command('PuncConv', function(opts)
@@ -130,7 +130,7 @@ function M.setup()
     range = '%',
     desc = 'Normalize full-width punctuation to half-width',
   })
-  __init = true
+  _initialized = true
 end
 
 return M

@@ -7,8 +7,16 @@ local M = {}
 local thunk = require 'utils.fnx'.thunk
 local bind = require 'utils.fnx'.bind
 local map = vim.keymap.set
+local LOG_TITLE = 'Keymaps'
+local log = require 'utils.logger'.new(LOG_TITLE)
+
+local _initialized = false
 
 function M.setup()
+  if _initialized then
+    log.error 'Should not initialize module twice'
+    return
+  end
   require 'edit.keymaps.buffer'
   require 'edit.keymaps.window'
   require 'edit.keymaps.tab'
@@ -115,6 +123,7 @@ function M.setup()
     '$',
     { noremap = true, silent = true, desc = 'Line end' }
   )
+  _initialized = true
 end
 
 return M

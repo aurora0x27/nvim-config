@@ -4,8 +4,16 @@
 -- This file contains settings to load before initializing lazy
 --------------------------------------------------------------------------------
 local M = {}
+local LOG_TITLE = 'Preload'
+local log = require 'utils.logger'.new(LOG_TITLE)
+
+local _initialized = false
 
 function M.setup()
+  if _initialized then
+    log.error 'Should not initialize module twice'
+    return
+  end
   -- set global leader
   vim.g.mapleader = ' '
   vim.g.maplocalleader = ' '
@@ -94,6 +102,7 @@ function M.setup()
       end
     end,
   })
+  _initialized = true
 end
 
 return M

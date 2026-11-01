@@ -673,10 +673,11 @@ local function mock_handlers()
   lsp.util.open_floating_preview = open_floating_preview
 end
 
-local is_setup = false
+local _initialized = false
 
 function M.setup()
-  if is_setup then
+  if _initialized then
+    log.error 'Should not initialize module twice'
     return
   end
 
@@ -689,7 +690,7 @@ function M.setup()
   init_usercmd()
   mock_handlers()
 
-  is_setup = true
+  _initialized = true
 end
 
 return M

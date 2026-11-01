@@ -3,6 +3,8 @@
 --------------------------------------------------------------------------------
 
 local M = {}
+local LOG_TITLE = 'Diagnostic'
+local log = require 'utils.logger'.new(LOG_TITLE)
 
 local IconDiag = require 'assets.icons'.get('diagnostics', true)
 
@@ -39,7 +41,13 @@ end)()
 local get_mode = require 'core.diagnostic'.get_mode
 local DIAGNOSE_MODE = require 'core.diagnostic'.MODE
 
+local _initialized = false
+
 function M.setup()
+  if _initialized then
+    log.error 'Should not initialize module twice'
+    return
+  end
   local with_underline = Profile.diagnose_with_fancy_underline
 
   -- diagnostic info
@@ -89,6 +97,7 @@ function M.setup()
     thunk('vim.diagnostic', 'open_float'),
     { desc = 'Hover [D]iagnostics' }
   )
+  _initialized = true
 end
 
 function M.get_icon_map()

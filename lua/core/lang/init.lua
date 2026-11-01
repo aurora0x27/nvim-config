@@ -499,8 +499,14 @@ local function parse_to_set(s)
   return res
 end
 
+local _initialized = false
+
 ---@param opt LangOpt
 function M.setup(opt)
+  if _initialized then
+    log.error 'Should not initialize module twice'
+    return
+  end
   local bl_s = opt.blacklist or ''
   local wl_s = opt.whitelist or ''
   local lvl_s = opt.levels or ''
@@ -526,6 +532,7 @@ function M.setup(opt)
   end
   parse_level(Data.EnabledLangs, lvl_s)
   generate_lists()
+  _initialized = true
 end
 
 ---@param lang string

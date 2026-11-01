@@ -920,9 +920,15 @@ local function install_usercmds()
   })
 end
 
+local _initialized = false
 function M.setup()
+  if _initialized then
+    log.error 'Should not initialize module twice'
+    return
+  end
   install_autocmds()
   install_usercmds()
+  _initialized = true
 end
 
 return M

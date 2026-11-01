@@ -2,6 +2,8 @@
 -- Fold Text Style
 --------------------------------------------------------------------------------
 local M = {}
+local LOG_TITLE = 'Fold'
+local log = require 'utils.logger'.new(LOG_TITLE)
 
 -- style
 -- foo { ... }   󰁂 [xx lines folded]
@@ -23,7 +25,13 @@ function M.custom_foldtext()
   return result
 end
 
+local _initialized = false
+
 function M.setup()
+  if _initialized then
+    log.error 'Should not initialize module twice'
+    return
+  end
   -- Fold hint
   local mocha = require 'catppuccin.palettes'.get_palette 'mocha'
   vim.api.nvim_set_hl(
@@ -40,6 +48,7 @@ function M.setup()
     vim.o.foldmethod = 'expr'
     vim.o.foldexpr = [[v:lua.vim.treesitter.foldexpr()]]
   end
+  _initialized = true
 end
 
 return M

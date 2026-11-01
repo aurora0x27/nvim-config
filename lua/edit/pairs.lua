@@ -6,6 +6,8 @@
 --   Improved together with: github.com/abel2333, merged back
 --------------------------------------------------------------------------------
 local M = {}
+local LOG_TITLE = 'Pairs'
+local log = require 'utils.logger'.new(LOG_TITLE)
 
 -- Key configuration for autopair functionality
 -- Each key defines whether it's an opening symbol and its paired character
@@ -195,13 +197,20 @@ local function exec()
   end
 end
 
+local _initialized = false
+
 ---Apply autopair functionality by setting up autocmds
 ---This delays the keymap setup until first use for better startup performance
 function M.setup()
+  if _initialized then
+    log.error 'Should not initialize module twice'
+    return
+  end
   vim.api.nvim_create_autocmd({ 'InsertEnter', 'CmdlineEnter' }, {
     once = true,
     callback = exec,
   })
+  _initialized = true
 end
 
 return M

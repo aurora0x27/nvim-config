@@ -37,7 +37,13 @@ local switch_mode = function()
   end
 end
 
+local _initialized = false
+
 M.setup = function()
+  if _initialized then
+    log.error 'Should not initialize module twice'
+    return
+  end
   vim.api.nvim_create_user_command('ClipboardSshModeSwitch', function()
     switch_mode()
   end, { desc = 'Enable or disable Clipboard Ssh Mode' })
@@ -51,6 +57,7 @@ M.setup = function()
   if auto_enable and on == false and vim.fn.exists '$SSH_TTY' == 1 then
     switch_mode()
   end
+  _initialized = true
 end
 
 return M

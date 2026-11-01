@@ -147,7 +147,13 @@ local function visual_wrapper(fn)
   vim.schedule(bind(exec_wrapper, fn))
 end
 
+local _initialized = false
+
 function M.setup()
+  if _initialized then
+    log.error 'Should not initialize module twice'
+    return
+  end
   vim.api.nvim_create_user_command(
     'ReplEval',
     bind(exec_wrapper, M.eval),
@@ -160,6 +166,7 @@ function M.setup()
     bind(visual_wrapper, M.eval),
     { silent = true, desc = 'Eval selected code' }
   )
+  _initialized = true
 end
 
 return M

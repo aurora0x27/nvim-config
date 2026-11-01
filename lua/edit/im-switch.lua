@@ -34,7 +34,13 @@ local function register_autocmd()
   })
 end
 
+local _initialized = false
+
 function M.setup()
+  if _initialized then
+    log.error 'Should not initialize module twice'
+    return
+  end
   if vim.fn.executable 'fcitx5-remote' == 1 then
     register_autocmd()
   else
@@ -44,6 +50,7 @@ function M.setup()
       end)
     end
   end
+  _initialized = true
 end
 
 return M

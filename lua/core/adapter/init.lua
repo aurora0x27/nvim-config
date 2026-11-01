@@ -2,6 +2,8 @@
 -- UI Event Adapter: hijack nvim ui-event system and send messages to bus
 --------------------------------------------------------------------------------
 local M = {}
+local LOG_TITLE = 'UI Event Adapter'
+local log = require 'utils.logger'.new(LOG_TITLE)
 local bind = require 'utils.fnx'.bind
 
 ---@class ExtHandlerDecl for use config
@@ -289,8 +291,14 @@ local function notify_impl(msg, lvl, opts)
   Bus.emit('notify', lvl or vim.log.levels.INFO, msg, opts)
 end
 
+local _initialized = false
+
 ---@param opts? AdapterOpt
 function M.setup(opts)
+  if _initialized then
+    log.error 'Should not initialize module twice'
+    return
+  end
   Opt = vim.tbl_deep_extend('force', Opt, opts or {})
   if not Bus then
     -- initialize the bus if not initialized
@@ -323,6 +331,7 @@ function M.setup(opts)
     end
   )
   vim.notify = notify_impl
+  _initialized = true
 end
 
 return M

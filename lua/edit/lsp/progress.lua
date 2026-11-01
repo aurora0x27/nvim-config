@@ -6,6 +6,8 @@
 ---@type table<number, {token:lsp.ProgressToken, msg:NvimMsgChunk[], done:boolean}[]>
 local progress = vim.defaulttable()
 local toast = require 'core.ui.toast'
+local LOG_TITLE = 'LSP Progress'
+local log = require 'utils.logger'.new(LOG_TITLE)
 
 local last_chunks_cache = {}
 
@@ -152,17 +154,29 @@ end
 
 local M = {}
 
+local AUG =
+  vim.api.nvim_create_augroup('LspProgressAnimation', { clear = true })
+
+local _initialized = false
+
 function M.setup()
+  if _initialized then
+    log.error 'Should not initialize module twice'
+    return
+  end
   vim.api.nvim_create_autocmd('LspProgress', {
+    group = AUG,
     callback = on_progress,
   })
 
   -- Clean the progress table when Lsp Detach
   vim.api.nvim_create_autocmd('LspDetach', {
+    group = AUG,
     callback = function(ev)
       progress[ev.data.client_id] = nil
     end,
   })
+  _initialized = true
 end
 
 return M
