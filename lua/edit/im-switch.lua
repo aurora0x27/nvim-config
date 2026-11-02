@@ -9,6 +9,7 @@
 local M = {}
 local LOG_TITLE = 'Im Switch'
 local log = require 'utils.logger'.new(LOG_TITLE)
+local AUG = vim.api.nvim_create_augroup('ImAutoSwitch', { clear = true })
 
 local fcitx5_state
 
@@ -19,6 +20,7 @@ end
 local function register_autocmd()
   fcitx5_state = get_fcitx5_state()
   vim.api.nvim_create_autocmd('InsertLeave', {
+    group = AUG,
     callback = function()
       fcitx5_state = get_fcitx5_state()
       vim.fn.system 'fcitx5-remote -c'
@@ -26,6 +28,7 @@ local function register_autocmd()
   })
 
   vim.api.nvim_create_autocmd('InsertEnter', {
+    group = AUG,
     callback = function()
       if fcitx5_state == 2 then
         vim.fn.system 'fcitx5-remote -o'
