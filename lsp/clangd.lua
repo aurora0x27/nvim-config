@@ -81,7 +81,7 @@ local clangd = {
     offsetEncoding = { 'utf-8', 'utf-16' },
   },
   reuse_client = function(client, config)
-    return client.name == config.name
+    return client.name == config.name and not client:is_stopped()
   end,
   settings = {
     clangd = {
