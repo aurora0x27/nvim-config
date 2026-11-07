@@ -12,7 +12,7 @@
 --   :Sh{} { echo a; echo b; }
 --
 -- Options:
---   interp        interpreter, default Profile.integrated_terminal_shell
+--   interp        interpreter, default `fish`
 --   timeout       ms, <=0 disables; timeout kills the process group
 --   merge_output  true merges stderr into stdout, false emits a separate
 --                 Stderr section
@@ -64,6 +64,7 @@ local M = {}
 local LOG_TITLE = 'Sh'
 local log = require 'utils.logger'.new(LOG_TITLE)
 local Clock = require 'utils.clock'
+local Ansi = require 'utils.ansi'
 
 local AUG = vim.api.nvim_create_augroup('AsyncSh', { clear = true })
 
@@ -123,7 +124,7 @@ local InterpProfiles = {
 local SHCTL_OPT_DEFAULT = {
   interp = 'fish',
   timeout = 0,
-  merge_output = true,
+  merge_output = false,
 }
 
 local sprintf = string.format
@@ -445,7 +446,9 @@ local function on_exit(id, out)
   local start_time_s = format_time(t.started_at)
   local end_time_s = format_time(t.end_at)
 
-  if t.signal ~= 0 or t.exit_code ~= 0 then
+  local failed = t.signal ~= 0 or t.exit_code ~= 0
+
+  if failed then
     log.warn(
       'Async shell command %d failed\nexit_code=%d, signal=%d, started_at %s\ncmdline: %s',
       t.id,
@@ -466,7 +469,10 @@ local function on_exit(id, out)
   end
 
   line_appendf(
-    'Async shell cmd id=%d interp=%s, exit=%s, signal=%s %s-%s',
+    Ansi.synth(
+      'Async shell cmd id=%d interp=%s, exit=%s, signal=%s %s-%s',
+      { bold = true, fg = failed and 'red' or 'cyan' }
+    ),
     t.id,
     t.o.interp,
     t.exit_code and tostring(t.exit_code) or '?',
@@ -474,9 +480,12 @@ local function on_exit(id, out)
     start_time_s,
     end_time_s
   )
-  line_appendf('Cmdline: %s', t.cmdline)
+  line_appendf(
+    Ansi.synth('Cmdline:', { bold = true, fg = 'magenta' }) .. ' %s',
+    t.cmdline
+  )
   if #t.emsg_buf > 0 then
-    line_appendf('Errors:')
+    line_appendf(Ansi.synth('Errors:', { bold = true, fg = 'red' }))
     for _, emsg in ipairs(t.emsg_buf) do
       local emsg_lines = vim.split(emsg, '\n')
       line_append_raw('- ' .. emsg_lines[1])
@@ -485,12 +494,12 @@ local function on_exit(id, out)
       end
     end
   end
-  line_appendf('Stdout:')
+  line_appendf(Ansi.synth('Stdout:', { bold = true, fg = 'green' }))
   for _, l in ipairs(t.stdout_buf) do
     line_append_raw(l)
   end
-  if not t.o.merge_output then
-    line_appendf('Stderr:')
+  if not t.o.merge_output and #t.stderr_buf > 0 then
+    line_appendf(Ansi.synth('Stderr:', { bold = true, fg = 'red' }))
     for _, l in ipairs(t.stderr_buf) do
       line_append_raw(l)
     end
@@ -664,10 +673,6 @@ local function cmd_sh(args)
 
   local ok, proc = pcall(vim.system, arglist, spawn_opts, lbind(on_exit, id))
 
-  if not ok then
-    log.error('Task %d crete failed, because %s', id, tostring(proc))
-  end
-
   local task = {
     id = id,
     stat = ok and 'running' or 'error',
@@ -683,8 +688,13 @@ local function cmd_sh(args)
     started_at = now,
   }
 
+  if ok then
+    start_timeout(task)
+  else
+    log.error('Task %d crete failed, because %s', id, tostring(proc))
+  end
+
   ShTasks[id] = task
-  start_timeout(task)
 end
 
 local STAT_HL = {
