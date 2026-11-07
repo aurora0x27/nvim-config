@@ -418,7 +418,6 @@ function M.select()
       ['--multi'] = true,
       ['--delimiter'] = '\t',
       ['--with-nth'] = '2..',
-      ['--nth'] = '2..',
     },
 
     actions = {
