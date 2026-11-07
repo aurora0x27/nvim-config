@@ -238,4 +238,4 @@ EOF
 fi
 
 say ""
-say "${CYAN}${BOLD}[OK]${RESET} Leaving debug shell..."
+say " ${CYAN}${BOLD}[OK]${RESET} Leaving debug shell..."
