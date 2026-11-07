@@ -134,7 +134,7 @@ vim.api.nvim_create_autocmd('User', {
     require 'edit.punc-conv'.setup()
 
     require 'edit.repl'.setup()
-    require 'edit.sh'.setup()
+    require 'edit.sh'.setup { shctl_opt_str = Profile.shctl_opt_base }
   end),
 })
 

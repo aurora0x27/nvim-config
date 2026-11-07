@@ -25,6 +25,7 @@ return {
   persist_local_dir = '.cache/nvim/',
   persist_local_mode = 'none',
   persist_mode = 'none',
+  shctl_opt_base = 'interp=fish,',
   statline_scrollbar_style = 'moon',
   transparent_mode = false,
   use_clice = false,

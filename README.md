@@ -168,6 +168,11 @@ inherit the value resolved so far. Here're customizable items:
     - **ENV:** `NVIM_DISABLE_IM_SWITCH`
     - **Defaults:** `false`
 
+  - _`shctl_opt_base`_ — Base option override for `sh` plugin
+    - **Type:** `string`
+    - **ENV:** `NVIM_SHCTL_OPT_BASE`
+    - **Defaults:** `'interp=fish,'`
+
   - _`use_neogit`_ — use [`neogit`](https://github.com/neogitorg/neogit) as enhanced git client
     - **Type:** `boolean`
     - **ENV:** `NVIM_USE_NEOGIT`

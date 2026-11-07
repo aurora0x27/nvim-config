@@ -121,7 +121,7 @@ local InterpProfiles = {
 ---@field interp string default interpreter
 ---@field merge_output boolean merge stdout and stderr
 local SHCTL_OPT_DEFAULT = {
-  interp = Profile.integrated_terminal_shell,
+  interp = 'fish',
   timeout = 0,
   merge_output = true,
 }

@@ -165,6 +165,11 @@ nvim # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
     - **ENV:** `NVIM_DISABLE_IM_SWITCH`
     - **Defaults:** `false`
 
+  - _`shctl_opt_base`_ — `sh` 插件选项的默认覆盖值
+    - **Type:** `string`
+    - **ENV:** `NVIM_SHCTL_OPT_BASE`
+    - **Defaults:** `'interp=fish,'`
+
   - _`use_neogit`_ — 使用 [`neogit`](https://github.com/neogitorg/neogit) 作为增强的 git 客户端.
     - **Type:** `boolean`
     - **ENV:** `NVIM_USE_NEOGIT`

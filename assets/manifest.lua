@@ -316,6 +316,16 @@ local Decls = {
       zh_CN = '用于存放工作区本地持久化数据的目录（相对于工作区根目录）。',
     },
   },
+
+  shctl_opt_base = {
+    type = 'string',
+    default = 'interp=fish,',
+    category = 'qol',
+    desc = 'Base option override for `sh` plugin',
+    i18n = {
+      zh_CN = '`sh` 插件选项的默认覆盖值',
+    },
+  },
 }
 
 local Category = {

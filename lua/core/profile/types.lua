@@ -56,6 +56,7 @@
 ---@field persist_local_dir string Workspace-relative directory used to store local persistence data.
 ---@field persist_local_mode string Store selected persistence features in the current workspace. Supported items: `session|undo|shada|swap`.
 ---@field persist_mode string Enable persistence features. Supported items: `session|undo|shada|swap`
+---@field shctl_opt_base string Base option override for `sh` plugin
 ---@field statline_scrollbar_style StatusScrollbarStyle heirline scroll bar style, which displays cursor position
 ---@field transparent_mode boolean enable transparent mode
 ---@field use_clice boolean use `clice` as cpp language server
