@@ -123,6 +123,37 @@ function M.setup()
     '$',
     { noremap = true, silent = true, desc = 'Line end' }
   )
+
+  ----------------------------------------------------------------------------
+  -- System clipboard operations
+  ----------------------------------------------------------------------------
+  map(
+    'x',
+    'Y',
+    '"+y',
+    { noremap = true, silent = true, desc = '[Y]ank to system clipboard' }
+  )
+  map('n', 'yY', '"+yy', {
+    noremap = true,
+    silent = true,
+    desc = '[Y]ank current line to system clipboard',
+  })
+  map('x', 'D', '"+D', {
+    noremap = true,
+    silent = true,
+    desc = 'Cut selected to system clipboard',
+  })
+  map({ 'n', 'x' }, 'g=', '"+p', {
+    noremap = true,
+    silent = true,
+    desc = 'Paste from system clipboard after cursor',
+  })
+  map('n', 'g+', '"+P', {
+    noremap = true,
+    silent = true,
+    desc = 'Paste from system clipboard before cursor',
+  })
+
   _initialized = true
 end
 
