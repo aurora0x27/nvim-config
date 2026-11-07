@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------
--- Ansi -- ANSI text to NvimMsgTuple conversion
+-- Ansi -- ANSI text encoding and conversion
 --
 -- Terminal output carries SGR escape sequences that describe colors and text
 -- attributes. Neovim's message protocol instead represents styled text as
@@ -16,6 +16,11 @@
 -- Neovim's `msg_show` text uses caret notation for ESC ("^["), while process
 -- output collected through `vim.system` keeps the raw byte. Call `normalize`
 -- on the former before feeding either representation to `to_tuples`.
+--
+-- In the other direction, `synth` composes a style table into a single SGR
+-- sequence and wraps text with it plus a reset. Generated sequences remain
+-- parseable by `to_tuples`, so indexed colors keep honoring the terminal
+-- palette.
 --------------------------------------------------------------------------------
 local M = {}
 
@@ -611,6 +616,203 @@ function M.to_tuples(s)
     return false, tostring(ret)
   end
   return true, ret
+end
+
+--------------------------------------------------------------------------------
+-- Encoding: AnsiStyleSpec -> SGR
+--------------------------------------------------------------------------------
+
+---@class AnsiStyleSpec
+---@field fg? string|integer  color name, 0-255 index, or '#rrggbb'
+---@field bg? string|integer  color name, 0-255 index, or '#rrggbb'
+---@field bold? boolean
+---@field dim? boolean
+---@field italic? boolean
+---@field underline? boolean
+---@field reverse? boolean
+---@field strikethrough? boolean
+
+--- ANSI palette indexes for the 16 base color names.
+---@type table<string, integer>
+local COLOR_INDEX = {
+  black = 0,
+  red = 1,
+  green = 2,
+  yellow = 3,
+  blue = 4,
+  magenta = 5,
+  cyan = 6,
+  white = 7,
+  bright_black = 8,
+  bright_red = 9,
+  bright_green = 10,
+  bright_yellow = 11,
+  bright_blue = 12,
+  bright_magenta = 13,
+  bright_cyan = 14,
+  bright_white = 15,
+}
+
+--- Attribute SGR codes in a fixed order so output is deterministic.
+---@type [string, integer][]
+local ATTR_CODES = {
+  { 'bold', 1 },
+  { 'dim', 2 },
+  { 'italic', 3 },
+  { 'underline', 4 },
+  { 'reverse', 7 },
+  { 'strikethrough', 9 },
+}
+
+---@param code integer
+---@return string
+local function sgr_seq(code)
+  return string.format('%s[%dm', ESC, code)
+end
+
+M.RESET = sgr_seq(0)
+M.BOLD = sgr_seq(1)
+M.DIM = sgr_seq(2)
+M.ITALIC = sgr_seq(3)
+M.UNDERLINE = sgr_seq(4)
+M.REVERSE = sgr_seq(7)
+M.STRIKETHROUGH = sgr_seq(9)
+
+--- Basic 16-color SGR sequences. These contain no reset, so they can be
+--- concatenated freely.
+---@type table<string, string>
+M.FG = {}
+---@type table<string, string>
+M.BG = {}
+for name, idx in pairs(COLOR_INDEX) do
+  if idx < 8 then
+    M.FG[name] = sgr_seq(30 + idx)
+    M.BG[name] = sgr_seq(40 + idx)
+  else
+    M.FG[name] = sgr_seq(90 + idx - 8)
+    M.BG[name] = sgr_seq(100 + idx - 8)
+  end
+end
+
+--- Build SGR parameters for one color.
+---@param color string|integer
+---@param is_fg boolean
+---@return integer[]
+local function color_params(color, is_fg)
+  local base = is_fg and 30 or 40
+  local bright = is_fg and 90 or 100
+  local extended = is_fg and 38 or 48
+
+  if type(color) == 'string' then
+    local r, g, b = color:match('^#(%x%x)(%x%x)(%x%x)$')
+    if r then
+      return {
+        extended,
+        2,
+        tonumber(r, 16),
+        tonumber(g, 16),
+        tonumber(b, 16),
+      }
+    end
+
+    local idx = COLOR_INDEX[color]
+    if not idx then
+      error(string.format('ansi: unknown color %q', color), 3)
+    end
+    if idx < 8 then
+      return { base + idx }
+    end
+    return { bright + idx - 8 }
+  end
+
+  if type(color) == 'number' and valid_color(color) then
+    if color < 8 then
+      return { base + color }
+    elseif color < 16 then
+      return { bright + color - 8 }
+    end
+    return { extended, 5, color }
+  end
+
+  error('ansi: invalid color', 3)
+end
+
+---@param spec? AnsiStyleSpec|string|integer
+---@return AnsiStyleSpec
+local function normalize_spec(spec)
+  if spec == nil then
+    return {}
+  end
+  if type(spec) == 'string' or type(spec) == 'number' then
+    return { fg = spec }
+  end
+  if type(spec) ~= 'table' then
+    error('ansi.sgr: expected style table, color name, or index', 3)
+  end
+  return spec
+end
+
+--- Build a single SGR escape sequence from a style spec.
+---
+--- `spec` may be a style table, a color name, or a 0-255 color index. A bare
+--- color is treated as the foreground. Returns an empty string when no style
+--- is requested.
+---
+--- Attributes are emitted first, then foreground, then background, so the
+--- output is deterministic.
+---@param spec? AnsiStyleSpec|string|integer
+---@return string
+function M.sgr(spec)
+  local style = normalize_spec(spec)
+  local params = {}
+
+  for _, attr in ipairs(ATTR_CODES) do
+    if style[attr[1]] then
+      params[#params + 1] = attr[2]
+    end
+  end
+
+  if style.fg ~= nil then
+    for _, param in ipairs(color_params(style.fg, true)) do
+      params[#params + 1] = param
+    end
+  end
+
+  if style.bg ~= nil then
+    for _, param in ipairs(color_params(style.bg, false)) do
+      params[#params + 1] = param
+    end
+  end
+
+  if #params == 0 then
+    return ''
+  end
+  return ESC .. '[' .. table.concat(params, ';') .. 'm'
+end
+
+--- Compose ANSI-colored text from a style spec.
+---
+--- The result is `prefix .. text .. RESET`. When `spec` is empty or nil, the
+--- text is returned unchanged. Because the trailing reset clears all
+--- attributes, the result should not be nested inside another `synth` call;
+--- use `sgr` and manage resets manually when nesting is required.
+---
+--- Example:
+---
+---     Ansi.synth('error', { fg = 'red', bold = true })
+---     Ansi.synth('note', 'blue')
+---     Ansi.synth('title', '#ff8800')
+---
+---@param text string
+---@param spec? AnsiStyleSpec|string|integer
+---@return string
+function M.synth(text, spec)
+  assert(type(text) == 'string', 'ansi.synth: expected string')
+  local prefix = M.sgr(spec)
+  if prefix == '' then
+    return text
+  end
+  return prefix .. text .. M.RESET
 end
 
 return M
