@@ -538,23 +538,39 @@ local function alloc_task_id()
   return id
 end
 
---- Split the leading `{...}` option block from the raw `:Sh` arguments.
---- Everything after the closing `}` is the shell command, unmodified.
----@param raw string
----@return string|nil opt_str
----@return string|nil cmd
----@return string|nil err
-local function split_sh_args(raw)
-  local leading = raw:match '^%s*' or ''
-  local start = #leading + 1
-  if raw:sub(start, start) ~= '{' then
-    return nil, raw, nil
+---@class ShCmdlineParse
+---@field opt_str? string
+---@field cmd? string
+---@field state 'no_opts'|'in_opts'|'after_opts'
+---@field cursor_ctx? {kind:'opt'|'cmd', text:string}
+---@field err? string
+
+--- Parse the `:Sh` arguments. When `cursorpos` is nil, parse the full string
+--- for execution. When it is provided, only the prefix up to the cursor is
+--- parsed and `cursor_ctx` describes the completion context.
+---@param args string arguments without the leading `Sh`
+---@param cursorpos? integer 0-based byte index
+---@return ShCmdlineParse
+local function parse_sh_cmdline(args, cursorpos)
+  local is_prefix = cursorpos ~= nil
+  local text = is_prefix and args:sub(1, cursorpos) or args
+
+  local leading = text:match '^%s*' or ''
+  local pos = #leading + 1
+
+  if text:sub(pos, pos) ~= '{' then
+    local cmd = text:sub(pos)
+    return {
+      cmd = cmd,
+      state = 'no_opts',
+      cursor_ctx = is_prefix and { kind = 'cmd', text = cmd } or nil,
+    }
   end
 
   local depth = 0
   local close
-  for i = start, #raw do
-    local c = raw:sub(i, i)
+  for i = pos, #text do
+    local c = text:sub(i, i)
     if c == '{' then
       depth = depth + 1
     elseif c == '}' then
@@ -566,33 +582,49 @@ local function split_sh_args(raw)
     end
   end
 
-  if not close then
-    return nil, nil, 'unterminated option block'
+  if close then
+    local opt_str = text:sub(pos + 1, close - 1)
+    local cmd = text:sub(close + 1):gsub('^%s+', '')
+    return {
+      opt_str = opt_str,
+      cmd = cmd,
+      state = 'after_opts',
+      cursor_ctx = is_prefix and { kind = 'cmd', text = cmd } or nil,
+    }
   end
 
-  local cmd = raw:sub(close + 1):gsub('^%s+', '')
-  return raw:sub(start + 1, close - 1), cmd, nil
+  local opt_text = text:sub(pos + 1)
+  local err
+  if not is_prefix then
+    err = 'unterminated option block'
+  end
+  return {
+    state = 'in_opts',
+    cursor_ctx = is_prefix and { kind = 'opt', text = opt_text } or nil,
+    err = err,
+  }
 end
 
 ---@param args vim.api.keyset.create_user_command.command_args
 local function cmd_sh(args)
   local opt = vim.deepcopy(ShctlOpt)
-  local opt_str, cmd_str, split_err = split_sh_args(args.args)
+  local parsed = parse_sh_cmdline(args.args)
 
-  if split_err then
-    log.error('Invalid option block: %s', split_err)
+  if parsed.err then
+    log.error('Invalid option block: %s', parsed.err)
     return
   end
 
-  if opt_str then
-    local parsed, err = parse_shctl_opt_str(opt_str)
-    if not parsed then
-      log.error('Malformed option string `%s`, emsg: `%s`', opt_str, err)
+  if parsed.opt_str ~= nil then
+    local parsed_opt, err = parse_shctl_opt_str(parsed.opt_str)
+    if not parsed_opt then
+      log.error('Malformed option string `%s`, emsg: `%s`', parsed.opt_str, err)
       return
     end
-    opt = vim.tbl_deep_extend('force', opt, parsed)
+    opt = vim.tbl_deep_extend('force', opt, parsed_opt)
   end
 
+  local cmd_str = parsed.cmd
   if not cmd_str or cmd_str:match '^%s*$' then
     log.error('Empty command')
     return
@@ -966,59 +998,12 @@ local function cmd_shctl(args)
   log.error('Unknown shctl subcommand `%s`', argv[1])
 end
 
---- Find the leading `{...}` options block and return its text before cursor.
---- Returns nil when the cursor is before the block or after its closing `}`.
----@param cmdline string
----@param cursorpos integer 0-based byte index
----@return integer|nil brace_pos
----@return string|nil block_text
-local function get_sh_opt_block(cmdline, cursorpos)
-  local before = cmdline:sub(1, cursorpos)
-  local start = before:find '%S'
-  if not start then
-    return nil
-  end
-
-  if before:sub(start, start) == ':' then
-    start = start + 1
-  end
-
-  if before:sub(start, start + 1) ~= 'Sh' then
-    return nil
-  end
-
-  local pos = start + 2
-  while pos <= #before and before:sub(pos, pos):match '%s' do
-    pos = pos + 1
-  end
-
-  if before:sub(pos, pos) ~= '{' then
-    return nil
-  end
-
-  local depth = 0
-  for i = pos, #before do
-    local c = before:sub(i, i)
-    if c == '{' then
-      depth = depth + 1
-    elseif c == '}' then
-      depth = depth - 1
-      if depth == 0 then
-        -- No completion after the options block.
-        return nil
-      end
-    end
-  end
-
-  return pos, before:sub(pos + 1)
-end
-
---- Return the text after the leading `{...}` block. Returns nil while the
---- cursor is still inside the block.
+--- Strip `:Sh` and leading whitespace from a completion cmdline. The result
+--- is the argument prefix up to the cursor.
 ---@param cmdline string
 ---@param cursorpos integer
 ---@return string|nil
-local function get_sh_cmd_prefix(cmdline, cursorpos)
+local function get_sh_args_prefix(cmdline, cursorpos)
   local before = cmdline:sub(1, cursorpos)
   local start = before:find '%S'
   if not start then
@@ -1038,24 +1023,7 @@ local function get_sh_cmd_prefix(cmdline, cursorpos)
     pos = pos + 1
   end
 
-  if before:sub(pos, pos) ~= '{' then
-    return before:sub(pos)
-  end
-
-  local depth = 0
-  for i = pos, #before do
-    local c = before:sub(i, i)
-    if c == '{' then
-      depth = depth + 1
-    elseif c == '}' then
-      depth = depth - 1
-      if depth == 0 then
-        return before:sub(i + 1)
-      end
-    end
-  end
-
-  return nil
+  return before:sub(pos)
 end
 
 ---@class ShCompleteCtx
@@ -1144,23 +1112,28 @@ end
 ---@param cursorpos integer
 ---@return string[]
 local function complete_sh(_, cmdline, cursorpos)
-  local brace_pos, text = get_sh_opt_block(cmdline, cursorpos)
-  if brace_pos and text then
-    local ctx = get_completion_context(text)
-
-    if ctx.kind == 'key' then
-      return complete_option_keys(true, ctx.fragment)
-    end
-
-    return complete_option_value(ctx.key, ctx.fragment)
-  end
-
-  local cmd_prefix = get_sh_cmd_prefix(cmdline, cursorpos)
-  if not cmd_prefix then
+  local args_prefix = get_sh_args_prefix(cmdline, cursorpos)
+  if not args_prefix then
     return {}
   end
 
-  return complete_sh_cmd_path(cmd_prefix)
+  local parsed = parse_sh_cmdline(args_prefix, #args_prefix)
+  local ctx = parsed.cursor_ctx
+  if not ctx then
+    return {}
+  end
+
+  if ctx.kind == 'opt' then
+    local opt_ctx = get_completion_context(ctx.text)
+
+    if opt_ctx.kind == 'key' then
+      return complete_option_keys(true, opt_ctx.fragment)
+    end
+
+    return complete_option_value(opt_ctx.key, opt_ctx.fragment)
+  end
+
+  return complete_sh_cmd_path(ctx.text)
 end
 
 ---@param cmdline string
