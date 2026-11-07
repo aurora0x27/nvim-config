@@ -24,7 +24,6 @@
 --------------------------------------------------------------------------------
 
 local Win = require 'core.ui.window'
-local Timer = require 'utils.timer'
 local Render = require 'utils.render'
 
 local NS = vim.api.nvim_create_namespace 'ToastNs'
@@ -84,7 +83,7 @@ local LAYOUT = {
 ---@field win      Win          Win instance
 ---@field buf      integer
 ---@field content  NvimMsgChunk[]
----@field timer    table|nil    Timer instance
+---@field timer    uv_timer_t|nil
 ---@field height   integer      current rendered height (without border)
 ---@field border   string       'rounded'|'single'|'none'
 
@@ -339,6 +338,7 @@ end
 local function remove_at(anchor, index)
   local entry = STACK[anchor][index]
   if entry.timer then
+    entry.timer:stop()
     entry.timer:close()
     entry.timer = nil
   end
@@ -360,6 +360,7 @@ end
 ---@param timeout number|false
 local function arm_timer(entry, timeout)
   if entry.timer then
+    entry.timer:stop()
     entry.timer:close()
     entry.timer = nil
   end
@@ -367,24 +368,31 @@ local function arm_timer(entry, timeout)
     return
   end
 
-  local t = Timer.new(timeout, function()
-    entry.timer = nil
-    -- find and close
-    for i, e in ipairs(STACK[entry.anchor]) do
-      if e == entry then
-        if e.win:is_valid() then
-          pcall(function()
-            e.win:close()
-          end)
-        else
-          remove_at(entry.anchor, i)
-        end
-        break
-      end
-    end
-  end)
+  local t = assert(vim.uv.new_timer())
   entry.timer = t
-  t:start()
+  t:start(
+    timeout,
+    0,
+    vim.schedule_wrap(function()
+      entry.timer = nil
+      if not t:is_closing() then
+        t:close()
+      end
+      -- find and close
+      for i, e in ipairs(STACK[entry.anchor]) do
+        if e == entry then
+          if e.win:is_valid() then
+            pcall(function()
+              e.win:close()
+            end)
+          else
+            remove_at(entry.anchor, i)
+          end
+          break
+        end
+      end
+    end)
+  )
 end
 
 --------------------------------------------------------------------------------

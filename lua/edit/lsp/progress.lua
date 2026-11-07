@@ -11,8 +11,8 @@ local log = require 'utils.logger'.new(LOG_TITLE)
 
 local last_chunks_cache = {}
 
----@type Timer|nil
-local UPDATE_TIMER = nil
+---@type uv.uv_timer_t|nil
+local UpdateTimer = nil
 
 -- Spinner glyphs used while progress is active
 local spinner =
@@ -82,12 +82,22 @@ local function do_render(client_id, client_name)
     relayout = true,
   })
 
-  if is_done and UPDATE_TIMER then
-    UPDATE_TIMER:close()
-    UPDATE_TIMER = nil
+  if is_done and UpdateTimer then
+    UpdateTimer:stop()
+    if not UpdateTimer:is_closing() then
+      UpdateTimer:close()
+    end
+    UpdateTimer = nil
     last_chunks_cache[client_id] = nil
-  elseif UPDATE_TIMER then
-    UPDATE_TIMER:restart()
+  elseif UpdateTimer then
+    UpdateTimer:stop()
+    UpdateTimer:start(
+      100,
+      0,
+      vim.schedule_wrap(function()
+        do_render(client_id, client_name)
+      end)
+    )
   end
 end
 
@@ -134,16 +144,15 @@ local function on_progress(ev)
   do_render(client.id, client.name)
 
   if #progress[client.id] > 0 then
-    if not UPDATE_TIMER then
-      local Timer = require 'utils.timer'
-      UPDATE_TIMER = Timer.new(100, function()
-        vim.schedule(function()
-          if client then
-            do_render(client.id, client.name)
-          end
+    if not UpdateTimer then
+      UpdateTimer = assert(vim.uv.new_timer())
+      UpdateTimer:start(
+        100,
+        0,
+        vim.schedule_wrap(function()
+          do_render(client.id, client.name)
         end)
-      end)
-      UPDATE_TIMER:start()
+      )
     end
   end
 end
