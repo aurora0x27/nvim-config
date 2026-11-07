@@ -134,6 +134,7 @@ vim.api.nvim_create_autocmd('User', {
     require 'edit.punc-conv'.setup()
 
     require 'edit.repl'.setup()
+    require 'edit.sh'.setup()
   end),
 })
 

@@ -78,6 +78,25 @@ function M.to_chunks(msg, text_hl, attr)
   }
 end
 
+---@param bufnr integer
+---@param ns integer
+---@param layout ChunkLayout
+---@param base? integer
+function M.render_into(bufnr, ns, layout, base)
+  base = base or 0
+  if not vim.api.nvim_buf_is_valid(bufnr) then
+    return
+  end
+  vim.api.nvim_buf_set_lines(bufnr, base, base, false, layout.lines)
+  for _, m in ipairs(layout.marks) do
+    pcall(vim.api.nvim_buf_set_extmark, bufnr, ns, m.row + base, m.col_start, {
+      end_col = m.col_end,
+      hl_group = m.hl,
+      priority = 100,
+    })
+  end
+end
+
 M.NEWLINE_CHUNK = { 0, '\n', 0 }
 
 return M

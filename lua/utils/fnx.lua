@@ -91,4 +91,46 @@ function M.bind(fn, ...)
   end
 end
 
+--- Left bind arguments to a function (partial application)
+--- Creates a new function with pre-bound leading arguments. Additional
+--- arguments can be supplied when the returned function is called.
+--- Useful for creating callbacks with fixed leading parameters while
+--- allowing dynamic arguments at execution time.
+---
+---@param fn function The target function to bind arguments to
+---@param ... any Arguments to bind to the beginning of the function's arguments
+---@return function A closure that, when called, executes `fn` with the
+--- bound arguments followed by the newly supplied arguments.
+--- Returns whatever `fn` returns.
+---
+---@usage
+--- ```lua
+--- -- Basic left binding
+--- local greet = M.lbind(print, "Hello")
+--- greet("World")  -- prints: Hello World
+---
+--- -- Multiple pre-bound arguments
+--- local notify = M.lbind(
+---   vim.notify,
+---   "Task completed",
+---   vim.log.levels.INFO
+--- )
+--- notify()  -- shows info notification
+---
+--- -- Combining with M.select for lazy execution
+--- local lazy_notify = M.select("vim", "notify")
+--- lazy_notify = M.lbind(lazy_notify, "Config loaded")
+--- -- Later, possibly in an autocommand:
+--- lazy_notify(vim.log.levels.INFO)
+--- -- Shows "Config loaded" notification
+--- ```
+function M.lbind(fn, ...)
+  local args = { ... }
+  local n = select('#', ...)
+
+  return function(...)
+    return fn(unpack_impl(args, 1, n), ...)
+  end
+end
+
 return M

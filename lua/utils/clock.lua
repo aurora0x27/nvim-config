@@ -95,4 +95,13 @@ function M.render(ts, fmt)
   return '??-??-??-' .. tostring(type(ts) == 'table' and ts.mono or '?')
 end
 
+---@return integer
+function M.unsafe_gettime()
+  local sec, usec = vim.uv.gettimeofday()
+  if not sec then
+    error('Cannot get time because `' .. usec .. '`')
+  end
+  return sec * 1000 + usec / 1000
+end
+
 return M
