@@ -129,7 +129,9 @@ local FzfLua = {
         width = 0.4,
         row = 0.5,
         col = 0.5,
-        border = WinBorder,
+        preview = {
+          title = false,
+        },
       },
     }
   end,
