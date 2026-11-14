@@ -12,13 +12,13 @@ local MarkdownPreview = {
       -- open the preview automatically after entering a markdown buffer
       auto_start = false,
       -- close the preview when leaving the markdown buffer
-      auto_close = true,
+      auto_close = false,
       -- only refresh on save / insert-leave instead of on every cursor move
       refresh_slow = false,
       -- make the commands available for every filetype
       command_for_global = false,
       -- filetypes that get the commands
-      filetypes = { 'markdown' },
+      filetypes = { 'markdown', 'html' },
 
       -- server
       open_to_the_world = false, -- listen on 0.0.0.0 instead of 127.0.0.1
@@ -56,7 +56,7 @@ local MarkdownPreview = {
     }
   end,
 
-  ft = { 'markdown' },
+  ft = { 'markdown', 'html' },
 }
 
 return MarkdownPreview
