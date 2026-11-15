@@ -1,11 +1,4 @@
-[*.{lua,md}]
-
-indent_style = space
-indent_size = 2
-tab_width = 2
-quote_style = single
-
-continuation_indent = 2
+root = true
 
 [*]
 # optional crlf/lf/cr/auto, if it is 'auto', in windows it is crlf other platforms are lf
@@ -13,3 +6,10 @@ continuation_indent = 2
 end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
+
+[*.{lua,md}]
+indent_style = space
+indent_size = 2
+tab_width = 2
+quote_style = single
+continuation_indent = 2
