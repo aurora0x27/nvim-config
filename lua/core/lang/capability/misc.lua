@@ -42,7 +42,6 @@ return {
       'typescript',
       'vim',
       'vimdoc',
-      'yaml',
       'yara',
       'yuck',
       'xml',
@@ -57,7 +56,7 @@ return {
   },
 
   {
-    ft = { 'json', 'scss', 'css', 'html', 'astro' },
+    ft = { 'json', 'scss', 'css', 'html', 'astro', 'yaml' },
     treesitter = true,
     formatter = { name = 'prettier' },
   },
