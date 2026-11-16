@@ -17,9 +17,9 @@ decoupling the three-part diagram suggests.
 
 Before the bus existed, startup notifications were handled by a small
 `LogQueue`: `vim.notify` calls were buffered and flushed once the notification
-backend was available. The bus later absorbed that job with its `Ready` flag and
-message queue. The `LogQueue` block at the top of `core/bus/init.lua` is kept as
-a record of that earlier stage.
+backend was available. The bus later absorbed that job, buffering until the
+backends registered. The `LogQueue` block at the top of `core/bus/init.lua` is
+kept as a record of that earlier stage.
 
 ## The pipeline
 
@@ -36,17 +36,16 @@ flowchart LR
 
 The lifecycle has two stages:
 
-- **Phase 1.** `core.adapter.setup()` runs before workspace, profile, language,
-  and lazy: it calls `Bus.init()` (`Ready = false`), attaches `vim.ui_attach`,
-  and replaces `vim.notify`.
-- **`UIEnter`.** The four backends register, then `Bus.start()` sets
-  `Ready = true` and drains the startup queue. The queue is bounded by
-  `queue_limit` (2048); cascaded epochs are bounded by `max_epoch` (8).
+- **Phase 1.** The adapter runs before the rest of the config. It installs the
+  UI-event hook, initializes the bus in buffering mode, and replaces
+  `vim.notify`, so early messages already have a destination.
+- **`UIEnter`.** Backends register, the bus switches to delivery, and buffered
+  startup messages are drained.
 
 The `ui_attach` callback returns `true` when it consumes an event and `false`
-when Neovim should handle it. The adapter also applies policy: `echo`,
-`echomsg`, `lua_print`, and `progress` are debounced for 20 ms into one
-`msg.show.<kind>` with `data.batched = true`.
+when Neovim should handle it. The adapter also applies policy: high-frequency
+message kinds are coalesced into a single routed message before they enter the
+bus.
 
 `confirm` is the exception: a `msg_show` with kind `confirm` is intercepted and
 cmdline events go to `ConfirmHandlers`. These views never enter the bus;
@@ -81,59 +80,50 @@ Tags are string literals repeated in the producer and in each consumer:
 is nominally opaque, but in practice it is `NvimMsgShowData`, which only `notify`
 fully reads.
 
-`timestamp` keeps two clocks apart. `real` is Unix epoch milliseconds and is
-best effort: `vim.uv.gettimeofday()` and `os.time()` can both fail, so it may be
-nil. `mono` is `uv.hrtime()` nanoseconds, monotonic and infallible; it is used
-for ordering and durations, and always identifies a message even when the wall
-clock is unavailable. Render through `utils.clock.render`: when `real` is nil
-the output is `??-??-??-<mono>`. `BusPanicRecord.time` has the same shape, and
-the bus re-anchors the wall clock on `VimResume`/`FocusGained` because the
-monotonic clock does not advance during suspend.
+`timestamp` keeps two independent facts apart: a best-effort wall-clock value
+for human display, and a monotonic value for identity and ordering within the
+session. The wall clock is optional; a timestamp without one is still valid.
+Rendering is total: an unavailable wall clock degrades to a placeholder rather
+than failing the caller. Panic records use the same timestamp shape.
 
 Subscribers declare `exact`, `prefix`, or `fuzzy` matchers plus `min_level`;
 results are cached. Once a message is dispatched, handlers run synchronously;
 each runs under `pcall`, and `true` stops the remaining handlers while `false`
 or `nil` continues. No backend returns `true` today.
 
-Emission policy lives in the bus. `Bus.emit` dispatches immediately when
-`Ready`, not `Busy`, not `Flushing`, and nothing is already pending. Otherwise
-it appends to the queue. `Busy` and `Flushing` both mean an owner is already
-active—the dispatch frame or the epoch loop—so the message is left to that owner
-and no deferred flush is armed. Only an idle bus in a fast-api callback schedules
-one safe-context drain; before `Bus.start()` the message waits for `start()`.
-A deferred flush is armed only from an idle state; if the drain loop itself
-panics, `flush_queue` schedules one retry.
+Emission policy lives in the bus. When the bus is idle and safe, `Bus.emit`
+delivers immediately and then drains anything queued behind it. When a dispatch
+or drain owner is already active, or when the caller is in a fast-api callback,
+the message is appended and left to that owner or to a later safe-context drain.
+FIFO is preserved by construction, and producers do not need to know which path
+an emit takes.
 
-`LastEmitted` is the index of the last dequeued message (0 when empty), so the
-pending count is `#Queue - LastEmitted`. `flush_queue` drains iteratively in
-epochs: messages emitted during one batch are appended and handled in the next
-epoch. `max_epoch` bounds the number of epochs; exceeding it writes a bus state
-dump to `stdpath("log")/bus_state_dump-*.log`, records a panic, and then drops
-the queue. The pending queue is bounded by `queue_limit`, and `push` drops new
-messages when it is full.
+Draining is iterative. Re-entrant emissions are picked up by the same drain, so
+message bursts cannot turn into recursive handler calls. A guarded, bounded
+queue keeps a misbehaving producer from wedging the editor: pathological
+cascades are captured as a state dump and panic record before the queue is
+discarded. Queue overflow is a lossy fallback, not a normal delivery path.
 
 Messages are immutable; `Bus.dup` gives a copy a new identity and records
 `meta.derived_from`, which the recorder uses to replay.
 
 ## Backends
 
-| backend     | triggers                                                                           | output                                 |
-| ----------- | ---------------------------------------------------------------------------------- | -------------------------------------- |
-| `fidget`    | `msg.clear`, plus `msg.show.undo/echo/echomsg/unknown/progress/list_cmd/lua_print` | SE toast                               |
-| `notify`    | `notify`, `msg.clear`, plus `msg.show.emsg/wmsg/echoerr/lua_error/rpc_error`       | NE toast                               |
-| `recorder`  | selected `msg.show.*`, `msg.clear`, `msg.history_show`                             | in-memory history, fzf, message buffer |
-| `shell-log` | prefix `msg.show.shell_`                                                           | bottom split                           |
+| backend     | role                                | output                                 |
+| ----------- | ----------------------------------- | -------------------------------------- |
+| `fidget`    | ordinary and status messages        | SE toast                               |
+| `notify`    | notifications, errors, and warnings | NE toast                               |
+| `recorder`  | history and replay                  | in-memory history, fzf, message buffer |
+| `shell-log` | shell output                        | bottom split                           |
 
 `fidget` and `notify` are not two implementations of one policy: they are two
 stacks with different anchors and disjoint message sets. Ordinary echoes land in
 the bottom-right, errors and warnings in the top-right. The recorder keeps a
-bounded history (1024 messages by default) and can replay through `Bus.dup`.
+bounded history and can replay through `Bus.dup`.
 
-`recorder` and `notify` also register observers: they receive every bus-internal
-`bus` message without tag or level filtering, which surfaces dispatcher panics
-without the bus depending on a renderer. Queue-overflow diagnostics are still
-incomplete: `push` silently drops new messages when the pending queue is full,
-and the epoch limit writes a state dump before dropping the queue.
+`recorder` and `notify` also register observers: they receive bus-internal
+diagnostics without subscriber filtering, so panics and queue-overflow evidence
+can be surfaced without making the bus depend on a renderer.
 
 ## Where the seams leak
 
@@ -147,27 +137,25 @@ and the epoch limit writes a state dump before dropping the queue.
 4. **Lifecycle is global and ordered.** Backends read a global `Bus`,
    registration must precede `Bus.start()`, and a missing backend silently
    drops messages.
-5. **The bus is stateful.** `Ready`, `Queue`, `LastEmitted`, `Busy`, `Flushing`,
-   `FlushScheduled`, `RouteCache`, and `PanicBuffer` are state; re-entrancy
-   control is the hard part.
+5. **The bus is stateful.** It owns queueing, ordering, and drain ownership;
+   re-entrancy control is the hard part.
 6. **Observers are a side channel.** Internal logs skip subscriber matching;
    `notify` and `recorder` re-inject them through a second path with different
    filtering.
-7. **Dispatch order is undefined.** `pairs(Subscribers)` decides order; if two
-   handlers returned `true`, the winner would depend on table iteration.
-8. **Sync and async paths interleave.** A safe, idle emit dispatches
-   synchronously and drains pending messages. A `Busy` or `Flushing` emit only
-   queues for the active owner; a fast emit on an idle bus queues and schedules
-   one drain; a pre-start emit waits for `start()`. FIFO is preserved inside the
-   queue, but producers cannot tell which path an emit will take.
+7. **Dispatch order is undefined.** If two handlers stop routing, the winner
+   depends on table iteration.
+8. **Sync and async paths interleave.** An idle emit is delivered
+   synchronously; a busy or fast emit is queued for the active owner or a later
+   safe-context drain. FIFO is preserved, but producers cannot tell which path
+   an emit will take.
 
 ## Lessons
 
 - **Complexity is conserved.** The bus moved noice's complexity into startup
   lifecycle, re-entrancy, queueing, and per-backend policy.
-- **Iterate, don't recurse, when re-entering the dispatcher.** An explicit epoch
-  counter keeps re-entrant emissions in the same FIFO and makes the drain state
-  observable; the epoch limit is a guard, not control flow.
+- **Iterate, don't recurse, when re-entering the dispatcher.** An explicit drain
+  owner keeps re-entrant emissions in the same FIFO and makes progress
+  observable; the overflow guard exists for diagnostics, not control flow.
 - **A bus needs a schema, not just tags.** A second protocol doubles translation
   unless the inner protocol is normalized once, in one shared type.
 - **Events are not states.** Cmdline and confirm do not fit a message stream;

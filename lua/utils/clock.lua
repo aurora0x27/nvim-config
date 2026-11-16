@@ -1,87 +1,32 @@
 --------------------------------------------------------------------------------
--- A clock that won't panic
+-- Timestamp helpers
 --
--- Two clocks are exposed together:
---   * `real`: Unix epoch milliseconds, best effort. Both gettimeofday() and
---     os.time() are fallible, so this may be nil.
---   * `mono`: uv.hrtime() nanoseconds, monotonic and infallible. Use it for
---     ordering and durations, never render it as a date.
---
--- The wall clock is anchored once, then advanced with the monotonic delta. A
--- failed calibration is retried periodically, and callers may re-anchor on
--- events such as VimResume (CLOCK_MONOTONIC does not include suspend time).
+-- A timestamp carries two independent facts: a best-effort wall-clock value
+-- for human display, and a monotonic value for identity and ordering. The wall
+-- clock is optional because it can be unavailable; the monotonic value always
+-- exists. Rendering is total: an unusable wall clock degrades to a placeholder
+-- instead of failing the caller.
 --------------------------------------------------------------------------------
 local M = {}
 
 local uv = vim.uv
 
--- Retry a failed wall-clock calibration at most this often.
-local RETRY_INTERVAL_NS = 5e9
-
---- Create a clock instance.
----
---- The returned `now` function never throws and always returns the monotonic
---- value; `real` is nil when the wall clock cannot be determined.
----
----@return fun(): number?, number  real (epoch ms or nil), mono (ns)
----@return fun(): boolean          calibrate() best-effort re-anchor
-function M.create_clock()
-  local wall_anchor
-  local mono_anchor = uv.hrtime()
-  local last_try = mono_anchor
-
-  ---@return boolean
-  local function calibrate()
-    local ok, sec, usec = pcall(uv.gettimeofday)
-    if ok and type(sec) == 'number' and sec > 0 and type(usec) == 'number' then
-      wall_anchor = sec * 1000 + usec / 1000
-      mono_anchor = uv.hrtime()
-      return true
-    end
-
-    local success, timestamp = pcall(os.time)
-    -- os.time() reports failure as -1, not nil.
-    if success and type(timestamp) == 'number' and timestamp > 0 then
-      wall_anchor = timestamp * 1000
-      mono_anchor = uv.hrtime()
-      return true
-    end
-
-    -- Do not keep serving a possibly stale anchor: this may be a failed
-    -- re-anchor after suspend. now() retries shortly and renders fallback
-    -- (??-??-??-<mono>) until then.
-    wall_anchor = nil
-    last_try = uv.hrtime()
-    return false
+---Return a timestamp without ever failing.
+---The wall-clock field is absent when it cannot be obtained.
+---@return BusTimestamp
+function M.safe_gettime()
+  local ret = { mono = uv.hrtime() } --[[@as BusTimestamp]]
+  local ok, ts = pcall(M.unsafe_gettime)
+  if ok then
+    ret.real = ts
   end
-
-  calibrate()
-
-  ---@return number?, number
-  local function now()
-    local mono = uv.hrtime()
-
-    if not wall_anchor and mono - last_try >= RETRY_INTERVAL_NS then
-      last_try = mono
-      if calibrate() then
-        mono = uv.hrtime()
-      end
-    end
-
-    if not wall_anchor then
-      return nil, mono
-    end
-
-    return math.floor(wall_anchor + (mono - mono_anchor) / 1e6), mono
-  end
-
-  return now, calibrate
+  return ret
 end
 
---- Render a BusTimestamp. When `real` is unavailable (or os.date() fails),
---- fall back to the monotonic value so the timestamp remains identifiable.
+---Render a timestamp for display.
+---Falls back to a placeholder when the wall clock is unavailable or unusable.
 ---
----@param ts { real: number?, mono: number }?
+---@param ts BusTimestamp
 ---@param fmt? string
 ---@return string
 function M.render(ts, fmt)
@@ -92,14 +37,16 @@ function M.render(ts, fmt)
       return ret
     end
   end
-  return '??-??-??-' .. tostring(type(ts) == 'table' and ts.mono or '?')
+  return '??:??:??'
 end
 
----@return integer
+---Return wall-clock time in milliseconds.
+---May raise; callers that cannot handle failure should use `safe_gettime`.
+---@return number
 function M.unsafe_gettime()
-  local sec, usec = vim.uv.gettimeofday()
+  local sec, usec = uv.gettimeofday()
   if not sec then
-    error('Cannot get time because `' .. usec .. '`')
+    error('Cannot get time because `' .. tostring(usec) .. '`')
   end
   return sec * 1000 + usec / 1000
 end

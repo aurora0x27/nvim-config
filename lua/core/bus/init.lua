@@ -6,25 +6,21 @@
 -- runtime events into tagged, identifiable messages and dispatching them to
 -- registered subscribers.
 --
--- The bus owns the routing state it needs: a FIFO of pending messages, the
--- cursor of the last dequeued message (LastEmitted, 0 when empty), and the
--- flags that serialize dispatch and draining. Stateful presentation such as
--- rendering, notification display, persistence, or message history remains in
--- independent adapters/backends that subscribe to the bus. This design lets
--- different UI components (toast, progress, notification window, log recorder)
--- consume the same stream without coupling producers to a presentation layer.
+-- The bus is the single scheduling point for the message stream. Producers emit
+-- tagged messages; the bus decides whether to deliver now or retain them for a
+-- later drain. A single FIFO preserves emission order, and only one dispatch or
+-- drain owner runs at a time, so re-entrant emissions are appended instead of
+-- being recursively dispatched.
 --
--- Emission is synchronous when possible:
---   * Ready, not Busy/Flushing: dispatch immediately, then drain pending.
---   * Busy or Flushing: append; the active dispatch/drain owns the queue.
---   * fast-api context (idle): append and schedule one safe-context drain.
---   * not Ready: append; Bus.start() drains the startup queue.
+-- The bus delivers synchronously when that is safe and otherwise leaves the
+-- message to the current owner or to a safe-context drain. Fast-api callbacks
+-- never dispatch inline. Queues are bounded and drains are guarded: pathological
+-- cascades are contained and captured as diagnostics instead of growing without
+-- bound.
 --
--- Draining is iterative, not recursive. flush_queue processes the pending
--- queue in epochs: messages emitted during one batch are handled in the next
--- epoch. The pending queue is bounded by queue_limit; push() drops new messages
--- when it is full. max_epoch bounds the number of epochs; exceeding it dumps the
--- bus state to stdpath("log") and then drops the queue.
+-- Presentation remains in independent backends. This lets toast, progress,
+-- notification, and history consumers share one stream without coupling
+-- producers to a specific presentation layer.
 --
 -- The commented LogQueue below is kept as a record of the pre-bus startup
 -- buffering stage; it is no longer used.
@@ -94,16 +90,16 @@ local M = {}
 
 ---@class BusSubscriber
 ---@field id string
----@field full_match table<string, boolean> extact strings match to match interested tags
----@field prefix_match string[]
----@field fuzzy_match string[] fuzzy patterns to match interested tags
+---@field full_match table<string, boolean> exact tag lookup
+---@field prefix_match string[] tag prefixes
+---@field fuzzy_match string[] Lua patterns matched against tags
 ---@field min_level vim.log.levels
 ---@field handler fun(msg: Message): boolean
 
 ---@class BusSubscriberInterestedTagDecl
----@field exact?  string[]   O(1) hash lookup
----@field prefix? string[]   O(n) startswith
----@field fuzzy?  string[]   O(n) lua pattern match
+---@field exact?  string[]
+---@field prefix? string[]
+---@field fuzzy?  string[]
 
 ---@alias BusSubscriberMessageConsumer fun(msg: Message): boolean
 
@@ -119,8 +115,8 @@ local M = {}
 ---@field subscribers? BusSubscriberDecl[]
 
 ---@class BusTimestamp
----@field real number? Unix epoch in milliseconds; nil when wall clock is unavailable
----@field mono number  uv.hrtime() nanoseconds, monotonic and never fails
+---@field real number? best-effort wall-clock milliseconds
+---@field mono number  monotonic nanoseconds; never fails
 
 ---@class Message
 ---@field id        integer        unique message id (stable for replace_last)
@@ -263,12 +259,10 @@ function M.unsubscribe(id)
 end
 
 local Clock = require 'utils.clock'
-local _clock_now, _calibrate_clock = Clock.create_clock()
 
 ---@return BusTimestamp
 local function get_time()
-  local real, mono = _clock_now()
-  return { real = real, mono = mono }
+  return Clock.safe_gettime()
 end
 
 ---@param msg string
@@ -463,8 +457,9 @@ end
 local function dump_state_summary(path, summary)
   local fd, err = vim.uv.fs_open(path, 'w', tonumber('644', 8))
   assert(fd, 'Cannot open `' .. path .. (err and '` because ' .. err or ''))
-  vim.uv.fs_write(fd, summary, 0)
+  local bytes = vim.uv.fs_write(fd, summary, 0)
   vim.uv.fs_close(fd)
+  assert(bytes == #summary, 'Failed to write panic file')
 end
 
 local PANIC_FMT = [[
@@ -475,7 +470,12 @@ Bus core state is dumped to `%s`
 local function panic_stat_dump(epoch)
   local time = get_time()
   local path = vim.fn.stdpath('log')
-    .. sprintf('/bus_state_dump-%d-%d.log', vim.uv.os_getpid(), time.mono)
+    .. sprintf(
+      '/bus_state_dump-%d-%s-%d.log',
+      vim.uv.os_getpid(),
+      Clock.render(time, '%H:%M:%S'),
+      math.floor(time.mono)
+    )
   local summary = {
     Time = time,
     TimeRendered = Clock.render(time, '%Y-%m-%d %H:%M:%S'),
@@ -673,13 +673,6 @@ function M.init(opts)
     return
   end
   InitOpt = vim.tbl_extend('force', InitOpt, opts or {})
-  _calibrate_clock()
-  -- hrtime() is CLOCK_MONOTONIC and does not advance during suspend; NTP can
-  -- also step the wall clock. Re-anchor whenever the editor resumes.
-  vim.api.nvim_create_autocmd({ 'VimResume', 'FocusGained' }, {
-    group = vim.api.nvim_create_augroup('BusClock', { clear = true }),
-    callback = _calibrate_clock,
-  })
   _G.Bus = M
   Stat.IsInitialized = true
 end
