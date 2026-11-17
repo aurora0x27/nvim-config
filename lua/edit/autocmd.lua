@@ -8,6 +8,10 @@ local log = require 'utils.logger'.new(LOG_TITLE)
 local AUG = vim.api.nvim_create_augroup('UserCustomed', { clear = true })
 local CWD
 local summary = require 'utils.strx'.summary
+local bind = require 'utils.fnx'.bind
+
+---NOTE: Remove later, after switch to 0.13
+local has_v13 = vim.fn.has('nvim-0.13') == 1
 
 local _initialized = false
 
@@ -16,17 +20,28 @@ function M.setup()
     log.error 'Should not initialize module twice'
     return
   end
+
   -- Highlight yanked text
   vim.api.nvim_create_autocmd('TextYankPost', {
     pattern = '*',
     group = AUG,
-    callback = function()
-      vim.highlight.on_yank {
+    callback = bind(has_v13 and vim.hl.hl_op or vim.highlight.on_yank, {
+      higroup = 'IncSearch',
+      timeout = 200,
+    }),
+  })
+
+  if has_v13 then
+    ---@diagnostic disable-next-line
+    vim.api.nvim_create_autocmd('TextPutPost', {
+      pattern = '*',
+      group = AUG,
+      callback = bind(vim.hl.hl_op, {
         higroup = 'IncSearch',
         timeout = 200,
-      }
-    end,
-  })
+      }),
+    })
+  end
 
   vim.api.nvim_create_autocmd('BufReadPost', {
     group = AUG,
