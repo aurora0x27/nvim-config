@@ -648,13 +648,6 @@ function M.from_json(data)
       local bufnr = vim.fn.bufadd(path)
       if bufnr > 0 then
         vim.fn.bufload(bufnr)
-        -- Manually trigger autocmds
-        vim.api.nvim_buf_call(bufnr, function()
-          vim.api.nvim_exec_autocmds('BufReadPre', { buf = bufnr })
-          vim.api.nvim_exec_autocmds('BufRead', { buf = bufnr })
-          vim.api.nvim_exec_autocmds('BufReadPost', { buf = bufnr })
-          vim.api.nvim_exec_autocmds('FileType', { buf = bufnr })
-        end)
         path_index[path] = bufnr
       end
     end
