@@ -68,7 +68,7 @@ local clangd = {
     '--completion-style=detailed',
     '--function-arg-placeholders=true',
     '-j=4',
-    '--fallback-style="{BasedOnStyle: LLVM, IndentWidth: 4}"',
+    '--fallback-style={BasedOnStyle: LLVM, IndentWidth: 4}',
   },
 
   capabilities = {
