@@ -132,7 +132,7 @@ function Win:_setup_keys()
       rhs = action
     end
     vim.keymap.set('n', key, rhs, {
-      buffer = self.buf,
+      buf = self.buf,
       nowait = true,
       silent = true,
       desc = type(action) == 'string' and action or nil,

@@ -7,6 +7,8 @@ local M = {}
 local LOG_TITLE = 'Preload'
 local log = require 'utils.logger'.new(LOG_TITLE)
 
+local bind = require 'utils.fnx'.bind
+
 local _initialized = false
 
 function M.setup()
@@ -87,10 +89,10 @@ function M.setup()
         vim.bo.undofile = false
         vim.bo.swapfile = false
         vim.api.nvim_create_autocmd('FileType', {
-          buffer = buf,
+          buf = buf,
           once = true,
           callback = vim.schedule_wrap(
-            require 'utils.fnx'.bind(
+            bind(
               vim.notify,
               'Large file detected, some features are disabled',
               vim.log.levels.INFO,

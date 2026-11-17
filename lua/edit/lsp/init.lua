@@ -111,7 +111,7 @@ local function on_attach(event)
     desc = 'LSP [R]ename Symbol',
     noremap = true,
     silent = true,
-    buffer = bufnr,
+    buf = bufnr,
   })
 
   local client = vim.lsp.get_client_by_id(event.data.client_id)
@@ -130,13 +130,13 @@ local function on_attach(event)
     local stat = lsp.inlay_hint.is_enabled { bufnr = bufnr }
     log.info('Lsp Inlay Hints ' .. (stat and 'Disabled' or 'Enabled'))
     lsp.inlay_hint.enable(not stat, { bufnr = bufnr })
-  end, { buffer = bufnr, desc = 'Toggle Inlay [H]ints' })
+  end, { buf = bufnr, desc = 'Toggle Inlay [H]ints' })
 
   map({ 'n', 'v' }, '<leader>la', thunk('fzf-lua', 'lsp_code_actions'), {
     desc = '[L]ist Code [A]ctions',
     noremap = true,
     silent = true,
-    buffer = bufnr,
+    buf = bufnr,
   })
 
   ---@param prefix string
