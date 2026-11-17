@@ -146,12 +146,22 @@ function M.setup()
   map({ 'n', 'x' }, 'g=', '"+p', {
     noremap = true,
     silent = true,
-    desc = 'Paste from system clipboard after cursor',
+    desc = '[P]aste after (sys clipboard)',
   })
-  map('n', 'g+', '"+P', {
+  map({ 'n', 'x' }, 'g+', '"+P', {
     noremap = true,
     silent = true,
-    desc = 'Paste from system clipboard before cursor',
+    desc = '[P]aste before (sys clipboard)',
+  })
+  map({ 'n', 'x' }, '<leader>p', '"+p', {
+    noremap = true,
+    silent = true,
+    desc = '[P]aste after (sys clipboard)',
+  })
+  map({ 'n', 'x' }, '<leader>P', '"+P', {
+    noremap = true,
+    silent = true,
+    desc = '[P]aste before (sys clipboard)',
   })
 
   _initialized = true

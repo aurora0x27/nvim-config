@@ -2,9 +2,9 @@ if vim.b.did_ftplugin then
   return
 end
 
-vim.keymap.set('n', '<leader>p', '<cmd>MarkdownPreviewToggle<CR>', {
-  desc = 'MarkdownPreviewToggle',
+vim.keymap.set('n', '<leader>lcp', '<cmd>MarkdownPreviewToggle<CR>', {
+  desc = '[P]review',
   noremap = true,
   silent = true,
-  buffer = true,
+  buf = 0,
 })
