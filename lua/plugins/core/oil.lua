@@ -117,13 +117,16 @@ local FsEditor = {
         opts = { exit_if_last_buf = true },
       },
       ['<c-l>'] = 'actions.refresh',
-      ['<leader>y'] = { 'actions.yank_entry' },
-      ['<leader>Y'] = { 'actions.yank_entry', opts = { modify = ':.' } },
+      ['gy'] = { 'actions.yank_entry', desc = '[Y]ank entry (absolute)' },
+      ['gY'] = {
+        'actions.yank_entry',
+        opts = { modify = ':.', desc = '[Y]ank entry (relative)' },
+      },
       ['gs'] = { 'actions.change_sort', mode = 'n' },
       ['gx'] = 'actions.open_external',
       ['g.'] = { 'actions.toggle_hidden', mode = 'n' },
       ['g\\'] = { 'actions.toggle_trash', mode = 'n' },
-      ['<leader>d'] = {
+      ['gd'] = {
         desc = 'Oil toggle detail',
         callback = function()
           vim.b.detail = not vim.b.detail
