@@ -3,6 +3,7 @@
 --------------------------------------------------------------------------------
 local border = require 'assets.theme'.border
 local thunk = require 'utils.fnx'.thunk
+local bind = require 'utils.fnx'.bind
 
 function _G.oil_get_winbar()
   local bufnr = vim.api.nvim_win_get_buf(vim.g.statusline_winid)
@@ -110,7 +111,11 @@ local FsEditor = {
       ['|'] = { 'actions.select', opts = { vertical = true } },
       ['-'] = { 'actions.select', opts = { horizontal = true } },
       ['<c-t>'] = { 'actions.select', opts = { tab = true } },
-      ['q'] = { 'actions.close', mode = 'n' },
+      ['q'] = {
+        'actions.close',
+        mode = 'n',
+        opts = { exit_if_last_buf = true },
+      },
       ['<c-l>'] = 'actions.refresh',
       ['<leader>y'] = { 'actions.yank_entry' },
       ['<leader>Y'] = { 'actions.yank_entry', opts = { modify = ':.' } },
@@ -276,17 +281,44 @@ local FsEditor = {
     {
       '-',
       thunk('oil', 'open'),
-      desc = 'Oil',
+      desc = 'Open Oil(buffer)',
     },
     {
       '<leader>wv-',
-      '<cmd>vsplit|Oil<cr>',
-      desc = '[V]split open Oil',
+      function()
+        vim.cmd 'vsplit'
+        require 'oil'.open()
+      end,
+      desc = '[V]split open Oil(buffer)',
     },
     {
       '<leader>ws-',
-      '<cmd>split|Oil<cr>',
-      desc = '[S]plit open Oil',
+      function()
+        vim.cmd 'split'
+        require 'oil'.open()
+      end,
+      desc = '[S]plit open Oil(buffer)',
+    },
+    {
+      '_',
+      bind(thunk('oil', 'open'), require 'utils.fs'.cwd()),
+      desc = 'Open Oil(cwd)',
+    },
+    {
+      '<leader>wv_',
+      function()
+        vim.cmd 'vsplit'
+        require 'oil'.open(require 'utils.fs'.cwd())
+      end,
+      desc = '[V]split open Oil(cwd)',
+    },
+    {
+      '<leader>ws_',
+      function()
+        vim.cmd 'split'
+        require 'oil'.open(require 'utils.fs'.cwd())
+      end,
+      desc = '[S]plit open Oil(cwd)',
     },
   },
 }

@@ -67,20 +67,8 @@ function M.setup()
   end, { silent = true })
 
   ----------------------------------------------------------------------------
-  -- File explorer
+  -- Move to display lines upward/downward
   ----------------------------------------------------------------------------
-  map('n', '<leader>e', function()
-    local open = require 'mini.files'.open
-    local close = require 'mini.files'.close
-    if not close() then
-      open()
-    end
-  end, {
-    desc = 'Toggle File [E]xplorer',
-    noremap = true,
-    silent = true,
-  })
-
   map({ 'n', 'x' }, 'j', 'gj', { noremap = true, silent = true })
   map({ 'n', 'x' }, 'k', 'gk', { noremap = true, silent = true })
 
