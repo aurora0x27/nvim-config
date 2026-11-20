@@ -297,8 +297,8 @@ local CAPABILITY = require 'utils.datadir'.load_set(
         else
           err(
             '[Lang]: Item %d in file `%s` does not have field `ft`',
-            table.concat(k, '/'),
-            i
+            i,
+            table.concat(k, '/')
           )
         end
       end
