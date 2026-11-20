@@ -41,7 +41,7 @@ local function safe_ts_start(args)
       log.error('Cannot start parser for `%s`, because\n%s', lang, e)
       return
     end
-    vim.bo.indentexpr = [[v:lua.require'nvim-treesitter'.indentexpr()]]
+    vim.bo[buf].indentexpr = [[v:lua.require'nvim-treesitter'.indentexpr()]]
   end)
 end
 
