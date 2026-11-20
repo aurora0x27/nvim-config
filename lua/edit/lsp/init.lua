@@ -402,14 +402,14 @@ local function init_usercmd()
 
   api.nvim_create_user_command(
     'LspStatus',
-    '<cmd>checkhealth lsp<CR>',
+    'checkhealth lsp',
     { desc = 'Alias to checkhealth lsp' }
   )
 
   api.nvim_create_user_command('LspLog', function()
     vim.cmd(sprintf('tabnew %s', lsp.log.get_filename()))
   end, {
-    desc = 'Opens the Nlsp client log.',
+    desc = 'Opens the lsp client log.',
   })
 
   api.nvim_create_user_command('LspStart', function(info)
