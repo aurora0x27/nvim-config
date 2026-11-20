@@ -125,11 +125,22 @@ end
 --- -- Shows "Config loaded" notification
 --- ```
 function M.lbind(fn, ...)
-  local args = { ... }
+  local prefix_args = { ... }
   local n = select('#', ...)
 
   return function(...)
-    return fn(unpack_impl(args, 1, n), ...)
+    local args = {}
+    local m = select('#', ...)
+
+    for i = 1, n do
+      args[i] = prefix_args[i]
+    end
+
+    for i = 1, m do
+      args[n + i] = select(i, ...)
+    end
+
+    return fn(unpack_impl(args, 1, n + m))
   end
 end
 
