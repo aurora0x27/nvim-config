@@ -316,10 +316,6 @@ function M.view_messages_buffer()
 end
 
 local function handler(msg)
-  if msg.tag == 'msg.clear' then
-    M.clear()
-    return false
-  end
   if msg.tag == 'msg.history_show' then
     M.view_messages_buffer()
     return
@@ -362,7 +358,6 @@ function M.setup(opts)
   Bus.register_subscriber('recorder', {
     exact = {
       'notify',
-      'msg.clear',
       'msg.show.emsg',
       'msg.show.echo',
       'msg.show.echoerr',
