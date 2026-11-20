@@ -167,6 +167,18 @@ function M.setup()
   vim.api.nvim_create_autocmd('User', {
     pattern = 'PersistLoadPost',
     group = AUG,
+    -- NOTE: `bpm.from_json()` lazily loads buffers that the session script
+    -- did not visit. Autocmds do not nest by default, so the `BufRead*` and
+    -- `FileType` handlers are skipped and the buffers keep an empty
+    -- `filetype`, losing syntax, ftplugin, tree-sitter and LSP setup.
+    -- Enable nesting so `vim.fn.bufload()` goes through the normal
+    -- read/filetype pipeline.
+    --
+    -- Regression from 98747bc ("Trigger autocmd only once, remove
+    -- duplicated ones"), which removed the manual triggers from
+    -- `from_json()` because `bufload()` already emits them. That is
+    -- only true outside an autocommand.
+    nested = true,
     callback = function()
       if type(vim.g.BufferPoolState) == 'string' then
         bpm.from_json(vim.g.BufferPoolState)
