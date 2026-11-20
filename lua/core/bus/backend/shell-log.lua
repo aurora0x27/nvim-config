@@ -91,6 +91,8 @@ function M.setup()
     vim.log.levels.DEBUG,
     function(msg)
       local lines
+      local caret_escaped = false
+      local str
       if vim.startswith(msg.tag, 'msg.show.shell_') then
         local content = msg.content
         local raw = ''
@@ -98,11 +100,18 @@ function M.setup()
           raw = raw .. segment[2]
         end
         lines = ensure_lines(raw)
+        caret_escaped = true
       elseif msg.tag == 'shell.log.append' then
         lines = msg.content
+      else
+        return false
       end
-      local str = table.concat(lines, '\n')
-      str = Ansi.normalize(str)
+      str = table.concat(lines, '\n')
+      if caret_escaped then
+        -- nvim's msg_show content is caret-escaped;
+        -- shell.log.append is raw output.
+        str = Ansi.normalize(str)
+      end
       local ok, ret = Ansi.to_tuples(str)
       if not ok then
         log.error('Cannot convert string to tuples, beacuse %s', tostring(ret))

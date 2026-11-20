@@ -39,7 +39,7 @@
 --
 -- Output:
 --   Bus tag `shell.log.append`; content is string[] of complete lines.
---   shell-log normalizes ANSI and appends without line buffering.
+--   shell-log renders ANSI as-is and appends without line buffering.
 --
 -- Task status:
 --   running / done / failed / killed / error
