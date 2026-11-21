@@ -152,12 +152,12 @@ inherit the value resolved so far. Here're customizable items:
     - **ENV:** `NVIM_PERSIST_LOCAL_DIR`
     - **Defaults:** `'.cache/nvim/'`
 
-  - _`persist_local_mode`_ — Store selected persistence features in the current workspace. Supported items: `session|undo|shada|swap`.
+  - _`persist_local_mode`_ — Store selected persistence features in the current workspace. Supported items: `session|undo|shada|swap|wb`.
     - **Type:** `string`
     - **ENV:** `NVIM_PERSIST_LOCAL_MODE`
     - **Defaults:** `'none'`
 
-  - _`persist_mode`_ — Enable persistence features. Supported items: `session|undo|shada|swap`
+  - _`persist_mode`_ — Enable persistence features. Supported items: `session|undo|shada|swap|wb`.
     - **Type:** `string`
     - **ENV:** `NVIM_PERSIST_MODE`
     - **Defaults:** `'none'`

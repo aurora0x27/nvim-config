@@ -291,9 +291,9 @@ local Decls = {
     type = 'string',
     default = 'none',
     category = 'persist',
-    desc = 'Enable persistence features. Supported items: `session|undo|shada|swap`',
+    desc = 'Enable persistence features. Supported items: `session|undo|shada|swap|wb`.',
     i18n = {
-      zh_CN = '启用持久化功能。支持：`session|undo|shada|swap`',
+      zh_CN = '启用持久化功能。支持：`session|undo|shada|swap|wb`。',
     },
   },
 
@@ -301,9 +301,9 @@ local Decls = {
     type = 'string',
     default = 'none',
     category = 'persist',
-    desc = 'Store selected persistence features in the current workspace. Supported items: `session|undo|shada|swap`.',
+    desc = 'Store selected persistence features in the current workspace. Supported items: `session|undo|shada|swap|wb`.',
     i18n = {
-      zh_CN = '将指定的持久化功能存储到当前工作区。支持：`session|undo|shada|swap`。',
+      zh_CN = '将指定的持久化功能存储到当前工作区。支持：`session|undo|shada|swap|wb`。',
     },
   },
 

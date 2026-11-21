@@ -56,19 +56,27 @@ local M = {}
 local LOG_TITLE = 'Persistence'
 local log = require 'utils.logger'.new(LOG_TITLE)
 
-local PERSIST_MODE_DEFAULTS = {
-  session = true,
-  undo = true,
-  shada = true,
-  swap = true,
+local PERSIST_MODE_FIELDS = {
+  'session',
+  'undo',
+  'shada',
+  'swap',
+  'wb',
 }
 
-local PERSIST_LOCAL_MODE_DEFAULTS = {
-  session = true,
-  undo = true,
-  shada = true,
-  swap = true,
-}
+---@param value boolean
+---@return table<string, boolean>
+local function make_feat(value)
+  local ret = {}
+  for _, key in ipairs(PERSIST_MODE_FIELDS) do
+    ret[key] = value
+  end
+  return ret
+end
+
+local PERSIST_MODE_DEFAULTS = make_feat(true)
+local PERSIST_LOCAL_MODE_DEFAULTS = make_feat(true)
+local PERSIST_MODE_OFF = make_feat(false)
 
 local CWD = require 'utils.fs'.cwd()
 local PERSIST_LOCAL_DIR_DEFAULT = CWD .. '/.cache/nvim'
@@ -582,11 +590,17 @@ function M.setup(opt)
   end
   opt = opt or {}
   if opt.persist_mode then
-    PersistMode = parse_featstr(opt.persist_mode, PersistMode, log.error)
+    local mask =
+      parse_featstr(opt.persist_mode, PERSIST_MODE_DEFAULTS, log.error)
+    PersistMode = vim.tbl_extend('force', PERSIST_MODE_OFF, mask)
   end
   if opt.persist_local_mode then
-    PersistLocalMode =
-      parse_featstr(opt.persist_local_mode, PersistLocalMode, log.error)
+    local mask = parse_featstr(
+      opt.persist_local_mode,
+      PERSIST_LOCAL_MODE_DEFAULTS,
+      log.error
+    )
+    PersistLocalMode = vim.tbl_extend('force', PERSIST_MODE_OFF, mask)
   end
   if opt.persist_local_dir then
     PersistLocalDir = opt.persist_local_dir

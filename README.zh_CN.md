@@ -149,12 +149,12 @@ nvim # 在此配置下启动 Neovim，无需修改您的 ~/.local/share 文件
     - **ENV:** `NVIM_PERSIST_LOCAL_DIR`
     - **Defaults:** `'.cache/nvim/'`
 
-  - _`persist_local_mode`_ — 将指定的持久化功能存储到当前工作区。支持：`session|undo|shada|swap`。
+  - _`persist_local_mode`_ — 将指定的持久化功能存储到当前工作区。支持：`session|undo|shada|swap|wb`。
     - **Type:** `string`
     - **ENV:** `NVIM_PERSIST_LOCAL_MODE`
     - **Defaults:** `'none'`
 
-  - _`persist_mode`_ — 启用持久化功能。支持：`session|undo|shada|swap`
+  - _`persist_mode`_ — 启用持久化功能。支持：`session|undo|shada|swap|wb`。
     - **Type:** `string`
     - **ENV:** `NVIM_PERSIST_MODE`
     - **Defaults:** `'none'`
