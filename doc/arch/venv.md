@@ -28,8 +28,9 @@ work, refactors, and upgrades.
 Isolation happens at three levels:
 
 1. `venv` wraps `nvim` so it launches with `--clean -u <repo>/init.lua` — ignoring
-   the user config and loading only this one. `--clean` also implies `-i NONE`, so
-   no ShaDa is read or written.
+   the user config and loading only this one. `--clean` also implies `-i NONE`,
+   which initially sets `shadafile` to `NONE`; `persist.setup()` re-enables
+   ShaDa inside the sandbox when it is configured (see below).
 2. `init.lua` detects debug mode (`NVIM_CONFIG_DEV=1`) and replaces the Lua-facing
    `vim.fn.stdpath`, so Lua code resolving `config`, `data`, `state`, `log`, `run`,
    `config_dirs` and `data_dirs` stays under `nvim-cache/`. This runs before
@@ -42,6 +43,15 @@ Isolation happens at three levels:
 If `persist_local_mode` enables swap, undo or `wb`, `persist.setup()` later
 moves those directories into the workspace's `.cache/nvim`; that is intentional
 and still outside the production state.
+
+ShaDa follows the same rule. When `persist_mode` enables `shada` without
+`persist_local_mode` storing it locally, `shadafile` points at
+`stdpath('state')/shada/main.shada` — under the shadowed `stdpath` that is
+`nvim-cache/state/shada/main.shada`. With `persist_local_mode` the file goes to
+the workspace's `.cache/nvim/shada/main.shada`. When `shada` is disabled,
+`'shada'` is emptied, so no ShaDa file is read or written. `persist.setup()`
+runs during startup before ShaDa is loaded, so the redirect applies to both
+reading and writing.
 
 ## Usage
 
@@ -70,12 +80,12 @@ itself is rejected.
 
 ## Environment
 
-| variable                      | purpose                                                                                             |
-| ----------------------------- | --------------------------------------------------------------------------------------------------- |
-| `NVIM_CONFIG_DEV_CONFIG_ROOT` | repo root — the sandboxed config source                                                             |
-| `NVIM_CONFIG_DEV_CACHE_ROOT`  | `nvim-cache/`, split into `share/`, `state/` (swap, undo, backup, logs, sessions), `cache/`, `run/` |
-| `NVIM_CONFIG_DEV_BINARY`      | resolved binary, forced absolute                                                                    |
-| `VIRTUAL_ENV`                 | sentinel reused to reject nested shells                                                             |
+| variable                      | purpose                                                                                                    |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `NVIM_CONFIG_DEV_CONFIG_ROOT` | repo root — the sandboxed config source                                                                    |
+| `NVIM_CONFIG_DEV_CACHE_ROOT`  | `nvim-cache/`, split into `share/`, `state/` (swap, undo, backup, shada, logs, sessions), `cache/`, `run/` |
+| `NVIM_CONFIG_DEV_BINARY`      | resolved binary, forced absolute                                                                           |
+| `VIRTUAL_ENV`                 | sentinel reused to reject nested shells                                                                    |
 
 Sandbox state lives under `nvim-cache/`, and `stdpath('config')` points at the
 repo root. Workspace-local persistence (when enabled) writes to the workspace's
@@ -103,9 +113,13 @@ The sandbox is a Lua-level path shadow, not an OS-level sandbox.
   it always goes to the real `stdpath('log')`. Only `$NVIM_LOG_FILE` or
   `XDG_STATE_HOME` set before launching `nvim` can move it; `venv` sets
   neither.
-- **ShaDa safety depends on `--clean`.** Entering debug mode by exporting
-  `NVIM_CONFIG_DEV=1` without `--clean` would read and write the real ShaDa.
-  Always launch through `venv`.
+- **ShaDa is owned by `persist`.** `--clean` sets `shadafile` to `NONE`, but
+  `persist.setup()` runs during init and points it at
+  `nvim-cache/state/shada/main.shada` (global) or
+  `.cache/nvim/shada/main.shada` (workspace-local), or empties `'shada'` when
+  the feature is off. Neovim reads ShaDa only after that, so production ShaDa
+  is never touched in debug mode. This does not change the rule that the
+  sandbox should be entered through `venv`.
 - **Unknown `stdpath` keys return `nil`.** The shadow covers only the keys in
   its own table and does not raise Neovim's `E6100`, so an invalid key fails
   later at the call site instead.

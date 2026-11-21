@@ -554,6 +554,8 @@ local function setup_options()
   if PersistMode.shada then
     if PersistLocalMode.shada then
       vim.o.shadafile = local_shada_path()
+    else
+      vim.o.shadafile = vim.fn.stdpath('state') .. '/shada/main.shada'
     end
   else
     vim.o.shada = ''
