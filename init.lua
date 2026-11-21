@@ -69,6 +69,17 @@ if vim.g.debug_mode == '1' then
     return shadow[what] --or vim.fn.call('stdpath', { what })
   end
 
+  --- WARN:
+  --- Redirect C-level path defaults that were resolved before this script ran.
+  --- `vim.fn.stdpath` cannot affect them, nor Vimscript's `stdpath()`.
+  local state_root = shadow.state
+  vim.fn.mkdir(state_root .. '/swap', 'p')
+  vim.fn.mkdir(state_root .. '/undo', 'p')
+  vim.fn.mkdir(state_root .. '/backup', 'p')
+  vim.o.directory = state_root .. '/swap//'
+  vim.o.undodir = state_root .. '/undo//'
+  vim.o.backupdir = state_root .. '/backup//'
+
   set_rtpath()
 
   --- Hint
