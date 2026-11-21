@@ -123,16 +123,16 @@ function M.setup()
     desc = '[Y]ank current line to system clipboard',
   })
   map('n', '<leader>y', function()
-    local val = vim.fn.getreg('"')
-    vim.fn.setreg('+', val, 'c')
+    local val = vim.fn.getreginfo('"')
+    vim.fn.setreg('+', val)
     vim.notify(
-      'Sychonized register `"` with system clipboard',
+      'Synchronized register `"` with system clipboard',
       vim.log.levels.INFO
     )
   end, {
     noremap = true,
     silent = true,
-    desc = 'Sync register `"` and `+`',
+    desc = 'Synchronize register `"` and `+`',
   })
   map('x', 'D', '"+D', {
     noremap = true,
