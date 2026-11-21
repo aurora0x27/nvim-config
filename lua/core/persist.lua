@@ -301,7 +301,7 @@ function M.load(opt)
   local name
   if opt.name then
     local data = { branch = branch(), name = opt.name }
-    file = dir .. mangling.encode(data)
+    file = dir .. mangling.encode(data) .. '.vim'
     name = opt.name
   else
     local sessions = list(dir)
