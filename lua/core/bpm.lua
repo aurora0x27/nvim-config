@@ -431,19 +431,21 @@ end
 ---@param buf?  integer
 ---@param tab?  integer
 ---@param policy? DetachPolicy
-function M.detach(buf, tab, policy)
+---@param force? boolean skip modified-buffer guard
+function M.detach(buf, tab, policy, force)
   if not buf or buf == 0 then
     buf = vim.api.nvim_get_current_buf()
   end
   tab = tab or vim.api.nvim_get_current_tabpage()
   policy = policy or 'replace'
+  force = force == true
 
   if not vim.api.nvim_buf_is_valid(buf) then
     return
   end
 
-  if vim.bo[buf].modifiable and vim.bo[buf].modified then
-    log.error 'Cannot detach unsaved buffer !'
+  if not force and vim.bo[buf].modifiable and vim.bo[buf].modified then
+    log.error('Cannot evict a modified buffer, use `:BpmDetach!` to force')
     return
   end
 
@@ -456,17 +458,44 @@ function M.detach(buf, tab, policy)
   BufNameCache.expire()
 end
 
+local function save_current_context()
+  local listed = get_listed_bufs()
+  local tab = vim.api.nvim_get_current_tabpage()
+  local meta = State.tabs[tab]
+  if not meta then
+    meta = { attached_buffers = {} }
+    State.tabs[tab] = meta
+  end
+  meta.attached_buffers = listed
+end
+
 --- Close a buffer, detach from all tabs
 ---@param buf?  integer
 ---@param policy? DetachPolicy
-function M.evict(buf, policy)
+---@param force? boolean skip modified-buffer guard
+function M.evict(buf, policy, force)
   if not buf or buf == 0 then
     buf = vim.api.nvim_get_current_buf()
   end
   policy = policy or 'replace'
-  for _, tab in ipairs(vim.tbl_keys(State.tabs)) do
-    M.detach(buf, tab, policy)
+  force = force == true
+
+  if not force then
+    if not vim.api.nvim_buf_is_valid(buf) then
+      return
+    end
+    if vim.bo[buf].modifiable and vim.bo[buf].modified then
+      log.error('Cannot evict a modified buffer, use `:BpmEvict!` to force')
+      return
+    end
   end
+
+  save_current_context()
+
+  for _, tab in ipairs(vim.tbl_keys(State.tabs)) do
+    M.detach(buf, tab, policy, force)
+  end
+
   if vim.api.nvim_buf_is_valid(buf) then
     vim.api.nvim_buf_delete(buf, { force = true })
   end
@@ -519,14 +548,7 @@ function M.rename_tab(tabid, new_name)
 end
 
 local function on_tab_leave()
-  local listed = get_listed_bufs()
-  local tab = vim.api.nvim_get_current_tabpage()
-  local meta = State.tabs[tab]
-  if not meta then
-    meta = { attached_buffers = {} }
-    State.tabs[tab] = meta
-  end
-  meta.attached_buffers = listed
+  save_current_context()
   mark_buflisted(false)
 end
 
@@ -824,10 +846,11 @@ local function install_usercmds()
     end
 
     for _, bufnr in ipairs(bufnrs) do
-      M.evict(bufnr, policy)
+      M.evict(bufnr, policy, args.bang)
     end
   end, {
     nargs = '*',
+    bang = true,
     complete = function(_, cmdline, _)
       local args = vim.split(cmdline, '%s+')
       if #args == 2 then
@@ -835,7 +858,7 @@ local function install_usercmds()
       end
       return vim.tbl_map(tostring, M.get_attached_buf())
     end,
-    desc = 'Evict buffer(s) all tabs and delete permanently. Usage: BpmEvict [policy] [bufnr...]',
+    desc = 'Evict buffer(s) all tabs and delete permanently. Usage: BpmEvict[!] [policy] [bufnr...]',
   })
 
   vim.api.nvim_create_user_command('BpmDetach', function(args)
@@ -867,10 +890,11 @@ local function install_usercmds()
 
     local tab = vim.api.nvim_get_current_tabpage()
     for _, bufnr in ipairs(bufnrs) do
-      M.detach(bufnr, tab, policy)
+      M.detach(bufnr, tab, policy, args.bang)
     end
   end, {
     nargs = '*',
+    bang = true,
     complete = function(_, cmdline, _)
       local args = vim.split(cmdline, '%s+')
       if #args == 2 then
@@ -878,7 +902,7 @@ local function install_usercmds()
       end
       return vim.tbl_map(tostring, M.get_attached_buf())
     end,
-    desc = 'Detach buffer(s) from the current tab. Usage: BpmDetach [policy] [bufnr...]',
+    desc = 'Detach buffer(s) from the current tab. Usage: BpmDetach[!] [policy] [bufnr...]',
   })
 
   vim.api.nvim_create_user_command('BpmListTab', function()
