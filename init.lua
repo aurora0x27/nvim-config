@@ -153,6 +153,9 @@ vim.api.nvim_create_autocmd('User', {
 -- Phase 1: Initialize UI event adapter, load preload module and detect
 --          workspace patch
 --------------------------------------------------------------------------------
+vim.g.nvim_restricted_mode = vim.env.NVIM_RESTRICTED_MODE == '1'
+  or vim.env.NVIM_RESTRICTED_MODE == 'true'
+
 require 'core.adapter'.setup()
 
 local PatchDir, Nvimrc = require 'core.workspace'.probe()

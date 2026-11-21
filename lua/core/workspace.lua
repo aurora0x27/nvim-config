@@ -17,6 +17,10 @@ local has_probed = false
 
 ---@return string? patch_dir, string? local_nvimrc
 function M.probe()
+  -- Do nothing on restricted mode
+  if vim.g.nvim_restricted_mode then
+    return nil, nil
+  end
   if has_probed then
     return patch_dir, local_nvimrc
   end

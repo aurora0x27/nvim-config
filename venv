@@ -207,6 +207,12 @@ function nvim --desc 'debug launch nvim'
     -u "$NVIM_CONFIG_DEV_CONFIG_ROOT/init.lua" \
     \$argv
 end
+function nvim-restricted --desc 'debug launch nvim in restricted mode'
+    NVIM_CONFIG_DEV=1 NVIM_RESTRICTED_MODE=1 command "$NVIM_CONFIG_DEV_BINARY" \
+    --clean \
+    -u "$NVIM_CONFIG_DEV_CONFIG_ROOT/init.lua" \
+    \$argv
+end
 function prof-startup --desc 'profile startup, require binary vim-startuptime'
     NVIM_CONFIG_DEV=1 vim-startuptime -vimpath "$NVIM_CONFIG_DEV_BINARY" \
     -count $PROF_COUNT \
@@ -222,6 +228,12 @@ else
 [[ -f ~/.zshrc ]] && source ~/.zshrc
 nvim() {
     NVIM_CONFIG_DEV=1 command "$NVIM_CONFIG_DEV_BINARY" \
+    --clean \
+    -u "$NVIM_CONFIG_DEV_CONFIG_ROOT/init.lua" \
+    "\$@"
+}
+nvim-restricted() {
+    NVIM_CONFIG_DEV=1 NVIM_RESTRICTED_MODE=1 command "$NVIM_CONFIG_DEV_BINARY" \
     --clean \
     -u "$NVIM_CONFIG_DEV_CONFIG_ROOT/init.lua" \
     "\$@"
