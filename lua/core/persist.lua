@@ -102,7 +102,7 @@ local uv = vim.uv
 local escape = vim.fn.fnameescape
 local is_dir = require 'utils.detect'.is_dir
 local sprintf = string.format
-local summary = require 'utils.strx'.summary
+local strx = require 'utils.strx'
 
 --- get current branch name
 ---@return string?
@@ -394,9 +394,9 @@ function M.select()
       local COL_WIDTH = 24
       local label_str = encoded
         .. sprintf(
-          '\t%-24s  %-24s  %s',
-          summary(name, COL_WIDTH),
-          summary(br, COL_WIDTH),
+          '\t%s  %s  %s',
+          strx.pad(strx.summary(name, COL_WIDTH), COL_WIDTH),
+          strx.pad(strx.summary(br, COL_WIDTH), COL_WIDTH),
           time
         )
 

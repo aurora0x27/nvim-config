@@ -1,8 +1,7 @@
 local M = {}
 
-local function pad(s, width)
-  return s .. string.rep(' ', width - #s)
-end
+local strx = require 'utils.strx'
+local pad = strx.pad
 
 function M.check()
   vim.health.start 'Profile Loader'
@@ -59,10 +58,8 @@ function M.check()
   local function get_str(s)
     if #s == 0 then
       return "''"
-    elseif #s > col_pad then
-      return s:sub(1, col_pad)
     end
-    return s
+    return strx.truncate(s, col_pad)
   end
 
   local rc_source = info.rc_source

@@ -7,6 +7,7 @@
 local Win = require 'core.ui.window'
 local LOG_TITLE = 'Popup'
 local log = require 'utils.logger'.new(LOG_TITLE)
+local u8 = require 'utils.utf8'
 local M = {}
 
 ---@class MatchDecl
@@ -244,10 +245,8 @@ local function redraw_marks(bufnr, prefix, hl, pos, content)
     return
   end
 
-  local char_at_cursor = content:sub(pos + 1, pos + 1)
-  if char_at_cursor == '' then
-    char_at_cursor = ' '
-  end
+  local ok, len = u8.is_valid_start_at(content, pos + 1)
+  local char_at_cursor = ok and content:sub(pos + 1, pos + len - 1) or ' '
 
   vim.api.nvim_buf_set_extmark(bufnr, ns_id, 0, pos, {
     virt_text = { { char_at_cursor, 'Cursor' } },

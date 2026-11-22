@@ -19,6 +19,7 @@ local Render = require 'utils.render'
 local calculate_layout = Render.calculate_layout
 local bind = require 'utils.fnx'.bind
 local Clock = require 'utils.clock'
+local strx = require 'utils.strx'
 
 local sprintf = string.format
 
@@ -92,10 +93,10 @@ function M.fzf_messages()
 
     local summary
     if type(msg.content) == 'string' then
-      summary = vim.split(msg.content, '\n')[1]:sub(1, 80)
+      summary = strx.truncate(vim.split(msg.content, '\n')[1], 80)
     else
       local layout = calculate_layout(msg.content)
-      summary = layout.lines[1]:gsub('\n', ' '):sub(1, 80)
+      summary = strx.truncate((layout.lines[1]:gsub('\n', ' ')), 80)
     end
 
     table.insert(

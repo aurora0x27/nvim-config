@@ -53,8 +53,7 @@ local ModifiedIcon = {
 -- Display summarized filename
 local FileName = {
   provider = function(self)
-    local filename = summary(self.filename)
-    return filename
+    return self.display_name
   end,
   hl = function(self)
     return self.is_active and { fg = 'text_fg', bold = true, italic = true }
@@ -73,9 +72,10 @@ local BufBlk = {
     self.extension = vim.fn.fnamemodify(self.filepath, ':e')
     local name = BufferPoolManager.resolve_bufname(self.bufnr)
     self.filename = name ~= '' and name or '[No Name]'
+    self.display_name = summary(self.filename, self.filename_max_length, 8, 8)
     self.modified =
       vim.api.nvim_get_option_value('modified', { buf = self.bufnr })
-    local current_width = 4 + #self.filename
+    local current_width = 4 + vim.fn.strdisplaywidth(self.display_name)
     local padding_needed = math.max(2, self.buffer_min_width - current_width)
     self.buffer_padding = math.floor(padding_needed / 2)
   end,
