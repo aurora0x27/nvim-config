@@ -119,4 +119,32 @@ function M.iter(s)
   end
 end
 
+--- Lenient iterator: mirrors the historical punc-conv decoder.
+--- Invalid/truncated sequences are yielded verbatim; never errors.
+---@param s string
+---@return fun():integer?, string?
+function M.iter_lossy(s)
+  local pos = 1
+  return function()
+    if pos > #s then
+      return nil
+    end
+
+    local b = string.byte(s, pos)
+    local len = 1
+    if b >= 0xF0 then
+      len = 4
+    elseif b >= 0xE0 then
+      len = 3
+    elseif b >= 0xC0 then
+      len = 2
+    end
+
+    local off = pos
+    local c = string.sub(s, pos, pos + len - 1)
+    pos = pos + len
+    return off, c
+  end
+end
+
 return M

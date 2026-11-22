@@ -26,6 +26,7 @@
 local M = {}
 local LOG_TITLE = 'PuncConv'
 local log = require 'utils.logger'.new(LOG_TITLE)
+local u8 = require 'utils.utf8'
 
 local PuncMap = {
   ['，'] = ',',
@@ -61,33 +62,18 @@ local Padding = {
   ['？'] = true,
 }
 
-local function utf8chars(s)
-  local chars = {}
-  local i, n = 1, #s
-  while i <= n do
-    local b = s:byte(i)
-    local len = 1
-    if b >= 0xF0 then
-      len = 4
-    elseif b >= 0xE0 then
-      len = 3
-    elseif b >= 0xC0 then
-      len = 2
-    end
-    chars[#chars + 1] = s:sub(i, i + len - 1)
-    i = i + len
-  end
-  return chars
-end
-
+---@param line string
+---@return string
 local function convert_line(line)
-  local chars = utf8chars(line)
+  local chars = {}
+  for _, c in u8.iter_lossy(line) do
+    chars[#chars + 1] = c
+  end
+
   local out = {}
   local i = 1
-
   while i <= #chars do
     local c = chars[i]
-
     local repl = PuncMap[c]
 
     if repl then
@@ -97,7 +83,6 @@ local function convert_line(line)
         while chars[i] == ' ' do
           i = i + 1
         end
-
         if i <= #chars then
           out[#out + 1] = ' '
         end
