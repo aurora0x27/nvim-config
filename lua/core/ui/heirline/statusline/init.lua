@@ -27,9 +27,11 @@ local RightCornerBlock = {
   { provider = ' ' },
 }
 
+local IconUI = require 'assets.icons'.get('ui', true)
+
 local DebugModeFlag = {
   static = {
-    icon = require 'assets.icons'.get('ui', true).Bug,
+    icon = IconUI.Bug,
   },
   condition = function()
     return vim.g.debug_mode == '1'
@@ -38,6 +40,19 @@ local DebugModeFlag = {
     return self.icon
   end,
   hl = { fg = 'yellow' },
+}
+
+local RestrictModeFlag = {
+  static = {
+    icon = IconUI.LockAlt,
+  },
+  condition = function()
+    return vim.g.nvim_restricted_mode
+  end,
+  provider = function(self)
+    return self.icon
+  end,
+  hl = { fg = 'yellow', bold = true },
 }
 
 local ctrl_v = string.char(22)
@@ -105,6 +120,7 @@ local StatusLine = {
   ScrollBar,
   CursorPos,
   DebugModeFlag,
+  RestrictModeFlag,
   { provider = '%=' },
   Diagnostics,
   LSPInfo,

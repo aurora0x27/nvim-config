@@ -156,6 +156,20 @@ vim.api.nvim_create_autocmd('User', {
 vim.g.nvim_restricted_mode = vim.env.NVIM_RESTRICTED_MODE == '1'
   or vim.env.NVIM_RESTRICTED_MODE == 'true'
 
+if vim.g.nvim_restricted_mode then
+  vim.api.nvim_create_autocmd('VimEnter', {
+    once = true,
+    callback = function()
+      vim.notify(
+        'RESTRICTED mode: workspace nvimrc.json and workspace patches are ignored',
+        vim.log.levels.WARN,
+        { title = 'Nvim' }
+      )
+    end,
+  })
+end
+
+-- Setup ui-events adapter and start recording
 require 'core.adapter'.setup()
 
 local PatchDir, Nvimrc = require 'core.workspace'.probe()

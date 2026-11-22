@@ -157,6 +157,7 @@ local data = {
     Left = '',
     List = '',
     Lock = '󰍁',
+    LockAlt = '',
     MiddleDot = '●',
     Modified = '✥',
     Modified_alt = '',
