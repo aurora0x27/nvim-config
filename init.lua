@@ -86,13 +86,11 @@ if vim.g.debug_mode == '1' then
   vim.api.nvim_create_autocmd('VimEnter', {
     once = true,
     callback = function()
-      vim.defer_fn(function()
-        vim.notify(
-          'Entered DEBUG mode',
-          vim.log.levels.WARN,
-          { title = LOG_TITLE }
-        )
-      end, 150)
+      vim.notify(
+        'Entered DEBUG mode',
+        vim.log.levels.WARN,
+        { title = LOG_TITLE }
+      )
     end,
   })
 end
